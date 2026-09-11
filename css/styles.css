@@ -521,51 +521,105 @@ a {
   top: 72px;
   z-index: 20;
   display: flex;
-  gap: 6px;
+  gap: 26px;
   overflow-x: auto;
-  padding: 12px 2px;
-  margin-bottom: 16px;
+  padding: 13px 2px 0;
+  margin-bottom: 18px;
   border-bottom: 1px solid var(--border);
   background: rgba(7, 9, 10, 0.86);
   backdrop-filter: blur(16px);
-  scrollbar-width: thin;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 22px, #000 calc(100% - 22px), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 22px, #000 calc(100% - 22px), transparent);
+  scrollbar-width: none;
+}
+
+.section-index::-webkit-scrollbar {
+  display: none;
+}
+
+.section-index::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  width: calc(var(--read, 0) * 100%);
+  height: 1px;
+  background: var(--accent);
+  content: "";
+  transition: width 0.12s linear;
 }
 
 .chip {
+  position: relative;
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
   gap: 7px;
   flex: 0 0 auto;
-  padding: 6px 10px;
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  background: transparent;
-  color: var(--text-muted);
+  max-width: 240px;
+  padding: 0 0 13px;
+  border: 0;
+  background: none;
+  color: var(--text-faint);
   cursor: pointer;
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-  font-size: 0.58rem;
-  letter-spacing: 0.02em;
+  font-family: inherit;
+  font-size: 0.72rem;
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.chip > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chip::after {
+  position: absolute;
+  right: 100%;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: var(--border-strong);
+  content: "";
+  transition: right 0.25s ease, background 0.2s ease;
 }
 
 .chip:hover {
-  border-color: var(--accent);
-  color: var(--accent-strong);
+  color: var(--text);
+}
+
+.chip:hover::after {
+  right: 0;
+}
+
+.chip.active {
+  color: var(--text);
+}
+
+.chip.active::after {
+  right: 0;
+  background: var(--accent-strong);
 }
 
 .chip.done {
-  border-color: rgba(114, 209, 155, 0.45);
-  background: var(--ok-soft);
   color: var(--ok);
 }
 
 .chip-check {
-  display: grid;
-  width: 17px;
-  height: 17px;
-  place-items: center;
-  border: 1px solid currentColor;
-  border-radius: 50%;
-  font-size: 0.55rem;
+  flex: none;
+  min-width: 1.5em;
+  color: var(--text-faint);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.58rem;
+  text-align: right;
+}
+
+.chip.done .chip-check {
+  color: var(--ok);
+}
+
+.chip.active .chip-check {
+  color: var(--accent-strong);
 }
 
 .lesson-list {
@@ -667,6 +721,16 @@ a {
   padding: 12px 0;
   border-top: 1px solid rgba(142, 183, 204, 0.16);
   border-bottom: 1px solid rgba(142, 183, 204, 0.16);
+  scrollbar-width: thin;
+}
+
+.lesson-body .katex-display::-webkit-scrollbar {
+  height: 4px;
+}
+
+.lesson-body .katex-display::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(142, 183, 204, 0.28);
 }
 
 .lesson-footer {
@@ -812,6 +876,7 @@ a {
 
   .section-index {
     top: 86px;
+    gap: 20px;
   }
 }
 

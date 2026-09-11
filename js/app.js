@@ -3,6 +3,7 @@
   var LAST_KEY = "mate-ultimo";
   var app = document.getElementById("app");
   var revealObserver = null;
+  var courseObserver = null;
   var reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   var MATH_OPTIONS = {
     delimiters: [
@@ -151,11 +152,42 @@
     });
   }
 
+  function setupCourseSpy() {
+    clearCourseSpy();
+    var nav = document.getElementById("section-index");
+    if (!nav || typeof window.IntersectionObserver !== "function") return;
+    var chips = nav.querySelectorAll(".chip");
+    courseObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        Array.prototype.forEach.call(chips, function (chip) {
+          chip.classList.toggle("active", chip.getAttribute("data-target") === entry.target.id);
+        });
+      });
+    }, { rootMargin: "-42% 0px -52% 0px", threshold: 0 });
+    Array.prototype.forEach.call(document.querySelectorAll(".lesson-section"), function (section) {
+      courseObserver.observe(section);
+    });
+  }
+
+  function clearCourseSpy() {
+    if (courseObserver) {
+      courseObserver.disconnect();
+      courseObserver = null;
+    }
+  }
+
   function setupParallax() {
     if (reduceMotion) return;
     var ticking = false;
     function update() {
-      document.documentElement.style.setProperty("--scroll", String(window.scrollY));
+      var scrollTop = window.scrollY;
+      document.documentElement.style.setProperty("--scroll", String(scrollTop));
+      var nav = document.getElementById("section-index");
+      if (nav) {
+        var max = document.documentElement.scrollHeight - window.innerHeight;
+        nav.style.setProperty("--read", max > 0 ? Math.min(1, scrollTop / max).toFixed(4) : "0");
+      }
       ticking = false;
     }
     window.addEventListener("scroll", function () {
@@ -236,6 +268,7 @@
       '<h2 class="section-title reveal">Áreas</h2>' +
       '<div class="area-grid">' + cards + "</div>";
 
+    clearCourseSpy();
     setupReveal();
   }
 
@@ -282,6 +315,7 @@
       "</section>" +
       '<div class="topic-list">' + topics + "</div>";
 
+    clearCourseSpy();
     setupReveal();
   }
 
@@ -317,7 +351,7 @@
     var chips = sections.map(function (sec, i) {
       var done = isSectionDone(area.id, tema.id, i);
       return (
-        '<button class="chip' + (done ? " done" : "") + '" data-target="seccion-' + i + '">' +
+        '<button class="chip' + (done ? " done" : "") + '" data-target="seccion-' + i + '" title="' + esc(sec.title) + '">' +
           '<span class="chip-check">' + (done ? "✓" : i + 1) + "</span>" +
           "<span>" + esc(sec.title) + "</span>" +
         "</button>"
@@ -375,6 +409,7 @@
 
     renderMath();
     setupReveal();
+    setupCourseSpy();
   }
 
   function updateCourseUI(areaId, temaId, index, button) {
