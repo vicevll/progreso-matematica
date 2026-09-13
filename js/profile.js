@@ -1,6 +1,7 @@
 (function () {
   var CACHE_KEY = "mate-perfil";
   var SEEN_KEY = "mate-perfil-prompt";
+  var PENDING_KEY = "mate-perfil-pendiente";
   var COLORS = ["#3b5bdb", "#0f766e", "#b45309", "#be123c", "#6d28d9", "#0369a1", "#15803d", "#a21caf"];
 
   var cache = loadJSON(CACHE_KEY, { uid: "", nickname: "", avatar: "" });
@@ -43,6 +44,7 @@
   function name(user) {
     return (
       cache.nickname ||
+      meta(user).nickname ||
       meta(user).full_name ||
       meta(user).name ||
       meta(user).given_name ||
@@ -104,24 +106,80 @@
       saveJSON(CACHE_KEY, cache);
       emit();
     }
-    if (loadedFor === user.id) return Promise.resolve();
+    if (!cache.nickname && meta(user).nickname) {
+      cache.nickname = meta(user).nickname;
+      saveJSON(CACHE_KEY, cache);
+      emit();
+    }
+    if (loadedFor === user.id) return retryPending();
     loadedFor = user.id;
     cache.uid = user.id;
     saveJSON(CACHE_KEY, cache);
+    var pendingLocal = hasPending();
     return window.SB.client
       .from("user_state")
       .select("nickname, avatar")
       .eq("user_id", user.id)
       .maybeSingle()
       .then(function (res) {
-        if (res && res.data) {
-          if (res.data.nickname) cache.nickname = res.data.nickname;
-          if (res.data.avatar) cache.avatar = res.data.avatar;
-          saveJSON(CACHE_KEY, cache);
-          emit();
+        if (res && res.data && !pendingLocal) {
+          var changed = false;
+          if (res.data.nickname && res.data.nickname !== cache.nickname) {
+            cache.nickname = res.data.nickname;
+            changed = true;
+          }
+          if (res.data.avatar && res.data.avatar !== cache.avatar) {
+            cache.avatar = res.data.avatar;
+            changed = true;
+          }
+          if (changed) {
+            saveJSON(CACHE_KEY, cache);
+            emit();
+          }
         }
       })
-      .catch(function () { /* sin conexión */ });
+      .catch(function () { /* sin conexión o columnas faltantes */ })
+      .then(retryPending);
+  }
+
+  function hasPending() {
+    try { return localStorage.getItem(PENDING_KEY) === "1"; } catch (e) { return false; }
+  }
+
+  function setPending() {
+    try { localStorage.setItem(PENDING_KEY, "1"); } catch (e) { /* ignorar */ }
+  }
+
+  function clearPending() {
+    try { localStorage.removeItem(PENDING_KEY); } catch (e) { /* ignorar */ }
+  }
+
+  function pushRemote() {
+    var user = currentUser();
+    if (!user || !window.SB || !window.SB.configured || !navigator.onLine) return Promise.resolve();
+    return window.SB.client
+      .from("user_state")
+      .upsert(
+        {
+          user_id: user.id,
+          nickname: cache.nickname || null,
+          avatar: cache.avatar || null,
+          updated_at: new Date().toISOString()
+        },
+        { onConflict: "user_id" }
+      )
+      .then(function (res) {
+        if (res.error) throw res.error;
+        clearPending();
+      })
+      .catch(function () {
+        setPending();
+      });
+  }
+
+  function retryPending() {
+    if (hasPending()) return pushRemote();
+    return Promise.resolve();
   }
 
   function save(nickname, avatar) {
@@ -132,23 +190,13 @@
     saveJSON(CACHE_KEY, cache);
     markSeen();
     emit();
-    if (user && window.SB && window.SB.configured && navigator.onLine) {
-      return window.SB.client
-        .from("user_state")
-        .upsert(
-          {
-            user_id: user.id,
-            nickname: cache.nickname || null,
-            avatar: cache.avatar || null,
-            updated_at: new Date().toISOString()
-          },
-          { onConflict: "user_id" }
-        )
-        .then(function (res) {
-          if (res.error) throw res.error;
-        })
-        .catch(function () { /* se reintentará al reconectar */ });
+    if (user && window.SB && window.SB.configured) {
+      try {
+        window.SB.client.auth.updateUser({ data: { nickname: cache.nickname } });
+      } catch (e) { /* ignorar */ }
+      if (navigator.onLine) return pushRemote();
     }
+    setPending();
     return Promise.resolve();
   }
 
@@ -278,6 +326,8 @@
     if (!currentUser() || cache.nickname || isSeen()) return;
     openEditor({ firstTime: true });
   }
+
+  window.addEventListener("online", retryPending);
 
   window.Profile = {
     load: load,
