@@ -14,23 +14,1183 @@
   };
 
   var RECURSOS = {
+    "algebra-escolar/algebra-elemental": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Álgebra elemental.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/algebra-elemental-simple.pdf",
+          fuente: "recursos/algebra-elemental-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/algebra-elemental-ejercicios.pdf",
+          fuente: "recursos/algebra-elemental-ejercicios.md"
+        }
+      ]
+    },
+    "algebra-escolar/numeros-reales-complejos": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Números reales y complejos.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/numeros-reales-complejos-simple.pdf",
+          fuente: "recursos/numeros-reales-complejos-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/numeros-reales-complejos-ejercicios.pdf",
+          fuente: "recursos/numeros-reales-complejos-ejercicios.md"
+        }
+      ]
+    },
+    "algebra-escolar/sucesiones-sumatorias": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Sucesiones y sumatorias.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/sucesiones-sumatorias-simple.pdf",
+          fuente: "recursos/sucesiones-sumatorias-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/sucesiones-sumatorias-ejercicios.pdf",
+          fuente: "recursos/sucesiones-sumatorias-ejercicios.md"
+        }
+      ]
+    },
+    "algebra-escolar/polinomios": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Polinomios y ecuaciones.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/polinomios-simple.pdf",
+          fuente: "recursos/polinomios-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/polinomios-ejercicios.pdf",
+          fuente: "recursos/polinomios-ejercicios.md"
+        }
+      ]
+    },
+    "algebra-escolar/demostracion": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Métodos de demostración.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/demostracion-simple.pdf",
+          fuente: "recursos/demostracion-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/demostracion-ejercicios.pdf",
+          fuente: "recursos/demostracion-ejercicios.md"
+        }
+      ]
+    },
+    "funciones-geometria/funciones": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Funciones.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/funciones-simple.pdf",
+          fuente: "recursos/funciones-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/funciones-ejercicios.pdf",
+          fuente: "recursos/funciones-ejercicios.md"
+        }
+      ]
+    },
+    "funciones-geometria/exp-log": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Funciones exponenciales y logarítmicas.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/exp-log-simple.pdf",
+          fuente: "recursos/exp-log-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/exp-log-ejercicios.pdf",
+          fuente: "recursos/exp-log-ejercicios.md"
+        }
+      ]
+    },
+    "funciones-geometria/trigonometria": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Trigonometría.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/trigonometria-simple.pdf",
+          fuente: "recursos/trigonometria-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/trigonometria-ejercicios.pdf",
+          fuente: "recursos/trigonometria-ejercicios.md"
+        }
+      ]
+    },
+    "funciones-geometria/geometria-euclidiana": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Geometría euclidiana.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/geometria-euclidiana-simple.pdf",
+          fuente: "recursos/geometria-euclidiana-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/geometria-euclidiana-ejercicios.pdf",
+          fuente: "recursos/geometria-euclidiana-ejercicios.md"
+        }
+      ]
+    },
+    "funciones-geometria/geometria-analitica": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Geometría analítica.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/geometria-analitica-simple.pdf",
+          fuente: "recursos/geometria-analitica-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/geometria-analitica-ejercicios.pdf",
+          fuente: "recursos/geometria-analitica-ejercicios.md"
+        }
+      ]
+    },
+    "funciones-geometria/geometria-vectorial": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Geometría vectorial.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/geometria-vectorial-simple.pdf",
+          fuente: "recursos/geometria-vectorial-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/geometria-vectorial-ejercicios.pdf",
+          fuente: "recursos/geometria-vectorial-ejercicios.md"
+        }
+      ]
+    },
+    "funciones-geometria/geometria-proyectiva": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Geometría proyectiva.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/geometria-proyectiva-simple.pdf",
+          fuente: "recursos/geometria-proyectiva-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/geometria-proyectiva-ejercicios.pdf",
+          fuente: "recursos/geometria-proyectiva-ejercicios.md"
+        }
+      ]
+    },
+    "calculo/limites": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Límites y continuidad.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/limites-simple.pdf",
+          fuente: "recursos/limites-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/limites-ejercicios.pdf",
+          fuente: "recursos/limites-ejercicios.md"
+        }
+      ]
+    },
+    "calculo/calc-diferencial": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Cálculo diferencial.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/calc-diferencial-simple.pdf",
+          fuente: "recursos/calc-diferencial-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/calc-diferencial-ejercicios.pdf",
+          fuente: "recursos/calc-diferencial-ejercicios.md"
+        }
+      ]
+    },
     "calculo/calc-integral": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Cálculo integral.",
       items: [
         {
           titulo: "Guía simple",
-          descripcion: "Teoría esencial + 10 ejercicios con respuestas.",
-          meta: "7 páginas · PDF",
-          archivo: "recursos/calculo-integral-simple.pdf",
-          fuente: "recursos/calculo-integral-simple.md"
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/calc-integral-simple.pdf",
+          fuente: "recursos/calc-integral-simple.md"
         },
         {
           titulo: "50 ejercicios",
           descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
           meta: "9 páginas · PDF",
-          archivo: "recursos/calculo-integral-ejercicios.pdf",
-          fuente: "recursos/calculo-integral-ejercicios.md"
+          archivo: "recursos/calc-integral-ejercicios.pdf",
+          fuente: "recursos/calc-integral-ejercicios.md"
+        }
+      ]
+    },
+    "calculo/series": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Sucesiones y series infinitas.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/series-simple.pdf",
+          fuente: "recursos/series-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/series-ejercicios.pdf",
+          fuente: "recursos/series-ejercicios.md"
+        }
+      ]
+    },
+    "calculo/calc-multivariable": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Cálculo multivariable.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/calc-multivariable-simple.pdf",
+          fuente: "recursos/calc-multivariable-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/calc-multivariable-ejercicios.pdf",
+          fuente: "recursos/calc-multivariable-ejercicios.md"
+        }
+      ]
+    },
+    "calculo/calc-vectorial": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Cálculo vectorial.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/calc-vectorial-simple.pdf",
+          fuente: "recursos/calc-vectorial-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/calc-vectorial-ejercicios.pdf",
+          fuente: "recursos/calc-vectorial-ejercicios.md"
+        }
+      ]
+    },
+    "calculo/edo": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Ecuaciones diferenciales ordinarias.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/edo-simple.pdf",
+          fuente: "recursos/edo-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/edo-ejercicios.pdf",
+          fuente: "recursos/edo-ejercicios.md"
+        }
+      ]
+    },
+    "calculo/edp": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Ecuaciones en derivadas parciales.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/edp-simple.pdf",
+          fuente: "recursos/edp-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/edp-ejercicios.pdf",
+          fuente: "recursos/edp-ejercicios.md"
+        }
+      ]
+    },
+    "calculo/variaciones": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Cálculo de variaciones.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/variaciones-simple.pdf",
+          fuente: "recursos/variaciones-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/variaciones-ejercicios.pdf",
+          fuente: "recursos/variaciones-ejercicios.md"
+        }
+      ]
+    },
+    "analisis/espacios-metricos": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Espacios métricos.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/espacios-metricos-simple.pdf",
+          fuente: "recursos/espacios-metricos-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/espacios-metricos-ejercicios.pdf",
+          fuente: "recursos/espacios-metricos-ejercicios.md"
+        }
+      ]
+    },
+    "analisis/analisis-real": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Análisis real.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "9 páginas · PDF",
+          archivo: "recursos/analisis-real-simple.pdf",
+          fuente: "recursos/analisis-real-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/analisis-real-ejercicios.pdf",
+          fuente: "recursos/analisis-real-ejercicios.md"
+        }
+      ]
+    },
+    "analisis/analisis-complejo": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Análisis complejo.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/analisis-complejo-simple.pdf",
+          fuente: "recursos/analisis-complejo-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/analisis-complejo-ejercicios.pdf",
+          fuente: "recursos/analisis-complejo-ejercicios.md"
+        }
+      ]
+    },
+    "analisis/medida": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Teoría de la medida e integral de Lebesgue.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/medida-simple.pdf",
+          fuente: "recursos/medida-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/medida-ejercicios.pdf",
+          fuente: "recursos/medida-ejercicios.md"
+        }
+      ]
+    },
+    "analisis/analisis-funcional": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Análisis funcional.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "9 páginas · PDF",
+          archivo: "recursos/analisis-funcional-simple.pdf",
+          fuente: "recursos/analisis-funcional-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/analisis-funcional-ejercicios.pdf",
+          fuente: "recursos/analisis-funcional-ejercicios.md"
+        }
+      ]
+    },
+    "analisis/analisis-armonico": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Análisis armónico.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/analisis-armonico-simple.pdf",
+          fuente: "recursos/analisis-armonico-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/analisis-armonico-ejercicios.pdf",
+          fuente: "recursos/analisis-armonico-ejercicios.md"
+        }
+      ]
+    },
+    "algebra-superior/algebra-lineal": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Álgebra lineal.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/algebra-lineal-simple.pdf",
+          fuente: "recursos/algebra-lineal-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/algebra-lineal-ejercicios.pdf",
+          fuente: "recursos/algebra-lineal-ejercicios.md"
+        }
+      ]
+    },
+    "algebra-superior/algebra-abstracta": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Álgebra abstracta.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/algebra-abstracta-simple.pdf",
+          fuente: "recursos/algebra-abstracta-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/algebra-abstracta-ejercicios.pdf",
+          fuente: "recursos/algebra-abstracta-ejercicios.md"
+        }
+      ]
+    },
+    "algebra-superior/grupos": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Teoría de grupos.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/grupos-simple.pdf",
+          fuente: "recursos/grupos-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/grupos-ejercicios.pdf",
+          fuente: "recursos/grupos-ejercicios.md"
+        }
+      ]
+    },
+    "algebra-superior/anillos": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Teoría de anillos.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/anillos-simple.pdf",
+          fuente: "recursos/anillos-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/anillos-ejercicios.pdf",
+          fuente: "recursos/anillos-ejercicios.md"
+        }
+      ]
+    },
+    "algebra-superior/galois": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Teoría de cuerpos y Galois.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/galois-simple.pdf",
+          fuente: "recursos/galois-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/galois-ejercicios.pdf",
+          fuente: "recursos/galois-ejercicios.md"
+        }
+      ]
+    },
+    "algebra-superior/algebra-conmutativa": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Álgebra conmutativa.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/algebra-conmutativa-simple.pdf",
+          fuente: "recursos/algebra-conmutativa-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/algebra-conmutativa-ejercicios.pdf",
+          fuente: "recursos/algebra-conmutativa-ejercicios.md"
+        }
+      ]
+    },
+    "algebra-superior/representaciones": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Teoría de representaciones.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/representaciones-simple.pdf",
+          fuente: "recursos/representaciones-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/representaciones-ejercicios.pdf",
+          fuente: "recursos/representaciones-ejercicios.md"
+        }
+      ]
+    },
+    "algebra-superior/homologica": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Álgebra homológica.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "9 páginas · PDF",
+          archivo: "recursos/homologica-simple.pdf",
+          fuente: "recursos/homologica-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/homologica-ejercicios.pdf",
+          fuente: "recursos/homologica-ejercicios.md"
+        }
+      ]
+    },
+    "algebra-superior/categorias": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Teoría de categorías.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/categorias-simple.pdf",
+          fuente: "recursos/categorias-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/categorias-ejercicios.pdf",
+          fuente: "recursos/categorias-ejercicios.md"
+        }
+      ]
+    },
+    "geometria-topologia/topologia-general": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Topología general.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/topologia-general-simple.pdf",
+          fuente: "recursos/topologia-general-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/topologia-general-ejercicios.pdf",
+          fuente: "recursos/topologia-general-ejercicios.md"
+        }
+      ]
+    },
+    "geometria-topologia/topologia-algebraica": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Topología algebraica.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/topologia-algebraica-simple.pdf",
+          fuente: "recursos/topologia-algebraica-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/topologia-algebraica-ejercicios.pdf",
+          fuente: "recursos/topologia-algebraica-ejercicios.md"
+        }
+      ]
+    },
+    "geometria-topologia/geo-diferencial": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Geometría diferencial de curvas y superficies.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/geo-diferencial-simple.pdf",
+          fuente: "recursos/geo-diferencial-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/geo-diferencial-ejercicios.pdf",
+          fuente: "recursos/geo-diferencial-ejercicios.md"
+        }
+      ]
+    },
+    "geometria-topologia/variedades": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Variedades diferenciables.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "9 páginas · PDF",
+          archivo: "recursos/variedades-simple.pdf",
+          fuente: "recursos/variedades-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/variedades-ejercicios.pdf",
+          fuente: "recursos/variedades-ejercicios.md"
+        }
+      ]
+    },
+    "geometria-topologia/geo-riemann": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Geometría de Riemann.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "9 páginas · PDF",
+          archivo: "recursos/geo-riemann-simple.pdf",
+          fuente: "recursos/geo-riemann-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/geo-riemann-ejercicios.pdf",
+          fuente: "recursos/geo-riemann-ejercicios.md"
+        }
+      ]
+    },
+    "geometria-topologia/geo-algebraica": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Geometría algebraica.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/geo-algebraica-simple.pdf",
+          fuente: "recursos/geo-algebraica-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/geo-algebraica-ejercicios.pdf",
+          fuente: "recursos/geo-algebraica-ejercicios.md"
+        }
+      ]
+    },
+    "geometria-topologia/nudos": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Teoría de nudos.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "9 páginas · PDF",
+          archivo: "recursos/nudos-simple.pdf",
+          fuente: "recursos/nudos-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/nudos-ejercicios.pdf",
+          fuente: "recursos/nudos-ejercicios.md"
+        }
+      ]
+    },
+    "discretas/conjuntos": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Teoría de conjuntos.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "10 páginas · PDF",
+          archivo: "recursos/conjuntos-simple.pdf",
+          fuente: "recursos/conjuntos-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/conjuntos-ejercicios.pdf",
+          fuente: "recursos/conjuntos-ejercicios.md"
+        }
+      ]
+    },
+    "discretas/logica": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Lógica matemática.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/logica-simple.pdf",
+          fuente: "recursos/logica-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/logica-ejercicios.pdf",
+          fuente: "recursos/logica-ejercicios.md"
+        }
+      ]
+    },
+    "discretas/numeros": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Teoría de números.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/numeros-simple.pdf",
+          fuente: "recursos/numeros-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/numeros-ejercicios.pdf",
+          fuente: "recursos/numeros-ejercicios.md"
+        }
+      ]
+    },
+    "discretas/combinatoria": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Combinatoria.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/combinatoria-simple.pdf",
+          fuente: "recursos/combinatoria-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/combinatoria-ejercicios.pdf",
+          fuente: "recursos/combinatoria-ejercicios.md"
+        }
+      ]
+    },
+    "discretas/grafos": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Teoría de grafos.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/grafos-simple.pdf",
+          fuente: "recursos/grafos-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/grafos-ejercicios.pdf",
+          fuente: "recursos/grafos-ejercicios.md"
+        }
+      ]
+    },
+    "discretas/matematica-discreta": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Matemática discreta.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/matematica-discreta-simple.pdf",
+          fuente: "recursos/matematica-discreta-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/matematica-discreta-ejercicios.pdf",
+          fuente: "recursos/matematica-discreta-ejercicios.md"
+        }
+      ]
+    },
+    "discretas/computabilidad": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Teoría de la computabilidad.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/computabilidad-simple.pdf",
+          fuente: "recursos/computabilidad-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/computabilidad-ejercicios.pdf",
+          fuente: "recursos/computabilidad-ejercicios.md"
+        }
+      ]
+    },
+    "discretas/complejidad": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Complejidad computacional.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/complejidad-simple.pdf",
+          fuente: "recursos/complejidad-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/complejidad-ejercicios.pdf",
+          fuente: "recursos/complejidad-ejercicios.md"
+        }
+      ]
+    },
+    "probabilidad-estadistica/probabilidad": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Probabilidad.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/probabilidad-simple.pdf",
+          fuente: "recursos/probabilidad-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/probabilidad-ejercicios.pdf",
+          fuente: "recursos/probabilidad-ejercicios.md"
+        }
+      ]
+    },
+    "probabilidad-estadistica/variables-aleatorias": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Variables aleatorias y distribuciones.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/variables-aleatorias-simple.pdf",
+          fuente: "recursos/variables-aleatorias-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/variables-aleatorias-ejercicios.pdf",
+          fuente: "recursos/variables-aleatorias-ejercicios.md"
+        }
+      ]
+    },
+    "probabilidad-estadistica/estadistica": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Estadística descriptiva e inferencial.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "9 páginas · PDF",
+          archivo: "recursos/estadistica-simple.pdf",
+          fuente: "recursos/estadistica-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/estadistica-ejercicios.pdf",
+          fuente: "recursos/estadistica-ejercicios.md"
+        }
+      ]
+    },
+    "probabilidad-estadistica/estadistica-matematica": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Estadística matemática.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/estadistica-matematica-simple.pdf",
+          fuente: "recursos/estadistica-matematica-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/estadistica-matematica-ejercicios.pdf",
+          fuente: "recursos/estadistica-matematica-ejercicios.md"
+        }
+      ]
+    },
+    "probabilidad-estadistica/procesos-estocasticos": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Procesos estocásticos.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/procesos-estocasticos-simple.pdf",
+          fuente: "recursos/procesos-estocasticos-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/procesos-estocasticos-ejercicios.pdf",
+          fuente: "recursos/procesos-estocasticos-ejercicios.md"
+        }
+      ]
+    },
+    "probabilidad-estadistica/series-tiempo": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Series de tiempo.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "9 páginas · PDF",
+          archivo: "recursos/series-tiempo-simple.pdf",
+          fuente: "recursos/series-tiempo-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/series-tiempo-ejercicios.pdf",
+          fuente: "recursos/series-tiempo-ejercicios.md"
+        }
+      ]
+    },
+    "probabilidad-estadistica/bayesiana": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Inferencia bayesiana.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "8 páginas · PDF",
+          archivo: "recursos/bayesiana-simple.pdf",
+          fuente: "recursos/bayesiana-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/bayesiana-ejercicios.pdf",
+          fuente: "recursos/bayesiana-ejercicios.md"
+        }
+      ]
+    },
+    "probabilidad-estadistica/decision": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Teoría de la decisión.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/decision-simple.pdf",
+          fuente: "recursos/decision-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/decision-ejercicios.pdf",
+          fuente: "recursos/decision-ejercicios.md"
         }
       ]
     }
