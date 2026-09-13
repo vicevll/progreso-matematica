@@ -51,3 +51,7 @@ create policy "state_insert_own" on public.user_state
 drop policy if exists "state_update_own" on public.user_state;
 create policy "state_update_own" on public.user_state
   for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- Perfil: apodo y avatar (imagen pequeña en base64) sobre user_state.
+alter table public.user_state add column if not exists nickname text;
+alter table public.user_state add column if not exists avatar text;

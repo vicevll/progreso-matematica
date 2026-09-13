@@ -31,30 +31,44 @@
     var user = window.ProgressStore.getUser();
     var state = window.ProgressStore.status();
 
-    if (user) {
+    if (!user) {
       box.innerHTML =
-        '<span class="sync-dot ' + state + '" title="' + esc(LABELS[state] || state) + '"></span>' +
-        '<span class="account-email" title="' + esc(user.email || "") + '">' +
-        esc(user.email || "Cuenta") +
-        "</span>" +
-        '<button class="account-btn" id="account-action" type="button">Salir</button>';
-    } else {
-      box.innerHTML =
-        '<button class="account-btn primary" id="account-action" type="button">Entrar con Google</button>';
+        '<button class="account-btn primary" id="account-login" type="button">Entrar con Google</button>';
+      return;
     }
+
+    box.innerHTML =
+      '<button class="account-profile" id="account-profile" type="button" title="Editar perfil">' +
+        window.Profile.avatarHtml(user, "sm") +
+        '<span class="account-name">' + esc(window.Profile.name(user)) + "</span>" +
+      "</button>" +
+      '<span class="sync-dot ' + state + '" title="' + esc(LABELS[state] || state) + '"></span>' +
+      '<button class="account-btn" id="account-logout" type="button">Salir</button>';
   }
 
   document.addEventListener("click", function (e) {
-    var button = e.target.closest("#account-action");
-    if (!button) return;
-    if (window.ProgressStore.getUser()) {
-      window.SB.signOut();
-    } else {
+    if (e.target.closest("#account-login")) {
       window.SB.signInWithGoogle();
+      return;
+    }
+    if (e.target.closest("#account-logout")) {
+      window.SB.signOut();
+      return;
+    }
+    if (e.target.closest("#account-profile")) {
+      window.Profile.openEditor();
     }
   });
 
   window.ProgressStore.init();
-  window.ProgressStore.onChange(render);
+  window.ProgressStore.onChange(function () {
+    render();
+    if (window.ProgressStore.getUser()) {
+      window.Profile.load().then(function () {
+        window.Profile.maybePrompt();
+      });
+    }
+  });
+  window.Profile.onChange(render);
   render();
 })();

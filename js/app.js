@@ -831,10 +831,24 @@
       }
     }
 
+    var user = window.ProgressStore ? window.ProgressStore.getUser() : null;
+    var greeting = "";
+    if (user && window.Profile) {
+      greeting =
+        '<div class="hero-user reveal">' +
+          window.Profile.avatarHtml(user, "md") +
+          '<span class="hero-user-text">' +
+            '<span class="hero-user-kicker">Hola,</span>' +
+            '<span class="hero-user-name">' + esc(window.Profile.name(user)) + "</span>" +
+          "</span>" +
+        "</div>";
+    }
+
     app.innerHTML =
       '<section class="hero-simple">' +
+        greeting +
         '<div class="eyebrow reveal">MAPA DE ESTUDIO <span>01—08</span></div>' +
-        '<h1 class="reveal">Tu ruta de<br><em>matemática</em></h1>' +
+        '<div class="hero-mark reveal"><img src="img/studappy.png" alt="Studappy" /></div>' +
         '<p class="reveal">' + counts.areas + " áreas y " + counts.temas + " temas, de 10° grado a último año de universidad. Cada curso se completa sección por sección.</p>" +
         '<div class="hero-progress reveal">' +
           '<div class="bar"><span style="width:' + pct + '%"></span></div>' +
@@ -1113,6 +1127,17 @@
       var y = window.scrollY;
       route();
       window.scrollTo(0, y);
+    });
+  }
+
+  if (window.Profile && typeof window.Profile.onChange === "function") {
+    window.Profile.onChange(function () {
+      var hash = location.hash.replace(/^#\/?/, "");
+      if (!hash) {
+        var y = window.scrollY;
+        route();
+        window.scrollTo(0, y);
+      }
     });
   }
 
