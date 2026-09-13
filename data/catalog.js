@@ -6,6 +6,24 @@ window.CATALOGO = [
     color: "#f59e0b",
     temas: [
       {
+        id: "operaciones-combinadas",
+        nombre: "Operaciones combinadas",
+        nivel: "10°",
+        descripcion: "Jerarquía de operaciones, signos, paréntesis y fracciones."
+      },
+      {
+        id: "ecuaciones",
+        nombre: "Ecuaciones",
+        nivel: "10°",
+        descripcion: "Lineales, cuadráticas, con fracciones, radicales, valor absoluto y sistemas."
+      },
+      {
+        id: "inecuaciones",
+        nombre: "Inecuaciones",
+        nivel: "10°",
+        descripcion: "Intervalos, lineales, cuadráticas, con valor absoluto y sistemas."
+      },
+      {
         id: "algebra-elemental",
         nombre: "Álgebra elemental",
         nivel: "10°–11°",

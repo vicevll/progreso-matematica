@@ -860,5 +860,356 @@ A veces se encadena con equivalencias: $P \Leftrightarrow R_1 \Leftrightarrow R_
 - La contrapositiva prueba la misma afirmación; la recíproca no.
 - La inducción necesita base, hipótesis y paso; la inducción fuerte usa todos los casos previos.
 - Elegir la técnica correcta ahorra la mitad del trabajo; escribir con precisión, la otra mitad.
+`,
+
+  "operaciones-combinadas": String.raw`
+## ¿Qué son las operaciones combinadas?
+Una expresión con operaciones combinadas mezcla sumas, restas, productos, cocientes, potencias y raíces, a veces con paréntesis. Resolverla exige un **orden fijo**: cambiar el orden cambia el resultado.
+
+Por eso importa la convención: $2 + 3 \times 4 = 14$, pero operar de izquierda a derecha sin reglas daría $20$. La jerarquía elimina la ambigüedad.
+
+## Jerarquía de las operaciones
+De mayor a menor prioridad:
+1. Paréntesis, corchetes y llaves (de dentro hacia fuera).
+2. Potencias y raíces.
+3. Multiplicaciones y divisiones, de izquierda a derecha.
+4. Sumas y restas, de izquierda a derecha.
+
+$$3 + 4 \times 2^2 = 3 + 4 \times 4 = 3 + 16 = 19$$
+
+**Ejemplo.** $20 \div 4 \times 5$: como multiplicación y división tienen igual prioridad, se resuelve de izquierda a derecha: $(20 \div 4) \times 5 = 25$, no $20 \div 20 = 1$.
+
+## Signos, opuestos y valor absoluto
+- Un menos delante de un paréntesis cambia todos los signos internos: $-(a - b) = -a + b$.
+- Signos en producto y cociente: $(-)(-) = +$ y $(-)(+) = -$.
+- El **valor absoluto** $|x|$ es la distancia al cero y nunca es negativo.
+
+$$|{-5}| = 5, \qquad -|{-5}| = -5, \qquad |-3 + 8| = 5$$
+
+**Ejemplo.** $8 - (3 - 10) = 8 - (-7) = 8 + 7 = 15$.
+
+## Paréntesis y corchetes anidados
+Se resuelven de dentro hacia fuera: primero el paréntesis interno, luego el corchete y la llave.
+
+$$2\big[5 + 3(4 - 1)\big] = 2[5 + 3 \times 3] = 2[5 + 9] = 28$$
+
+**Ejemplo.** $10 - \{3 + 2[4 - (1 + 1)]\} = 10 - \{3 + 2[4 - 2]\} = 10 - \{3 + 4\} = 3$.
+
+## Fracciones dentro de expresiones
+Una fracción es una división y la barra actúa como paréntesis. Para sumar hace falta común denominador.
+
+$$\frac{3}{4} + \frac{1}{6} = \frac{9}{12} + \frac{2}{12} = \frac{11}{12}$$
+
+**Ejemplo.** $\dfrac{2 + 4}{3} \times 5 = \dfrac{6}{3} \times 5 = 2 \times 5 = 10$, no $2 + \frac{4}{3} \times 5$.
+
+## Potencias y raíces combinadas
+- Potencia: $a^n$ multiplica $a$ por sí mismo $n$ veces.
+- Raíz: $\sqrt{a}$ es el número que al cuadrado da $a$.
+- Signos: $(-2)^2 = 4$, pero $-2^2 = -4$; la potencia afecta solo al $2$.
+- Exponente negativo: $a^{-n} = \dfrac{1}{a^n}$.
+
+$$(-3)^2 + \sqrt{25} - 2^3 = 9 + 5 - 8 = 6$$
+
+## Ejemplos resueltos: seis casos explicados
+**Ejemplo 1 (práctica).** $12 + 3 \times (8 - 5)^2 \div 3$.
+- Paréntesis y potencia: $(8-5)^2 = 9$.
+- $12 + 3 \times 9 \div 3 = 12 + 27 \div 3 = 12 + 9 = 21$.
+
+**Ejemplo 2 (práctica).** $5 - 2[3 - (4 - 6)]$.
+- Interior: $4 - 6 = -2$; $3 - (-2) = 5$; $2 \times 5 = 10$.
+- $5 - 10 = -5$.
+
+**Ejemplo 3 (práctica).** $\dfrac{3}{4} \div \dfrac{9}{8} + 2$.
+- Dividir es multiplicar por el inverso: $\frac{3}{4} \times \frac{8}{9} = \frac{2}{3}$.
+- $\frac{2}{3} + 2 = \frac{8}{3}$.
+
+**Ejemplo 4 (aplicación, compras).** Compras 3 cuadernos de 2500 y 2 lapiceros de 800, con $10\%$ de descuento.
+- Subtotal: $3 \times 2500 + 2 \times 800 = 9100$.
+- Total: $9100 \times 0.9 = 8190$.
+
+**Ejemplo 5 (aplicación, física).** Con $a = 10$ y $t = 4$, calcula $d = \frac{1}{2} a t^2$.
+- $t^2 = 16$; $\frac{1}{2} \times 10 \times 16 = 80$ m.
+
+**Ejemplo 6 (práctica).** $\dfrac{(-2)^3 + 4 \times 3}{5 - 7}$.
+- Numerador: $-8 + 12 = 4$; denominador: $-2$.
+- Resultado: $-2$.
+
+## Contextos donde se aplica
+- Finanzas: totales con descuentos e impuestos.
+- Física: fórmulas de cinemática y energía.
+- Programación: precedencia de operadores al evaluar expresiones.
+- Ingeniería: dimensiones y conversión de unidades.
+
+## Errores comunes
+- Operar de izquierda a derecha sin respetar prioridades.
+- Creer que $20 \div 4 \times 5 = 1$; el resultado correcto es $25$.
+- Confundir $-3^2 = -9$ con $(-3)^2 = 9$.
+- No cambiar los signos al quitar un paréntesis precedido de menos.
+- Olvidar el común denominador al sumar fracciones.
+
+## Ejercicios propuestos
+1. $8 + 2(5 - 3)^2$
+2. $18 \div 3 \times 2 - 4$
+3. $6 - \{4 + 2[3 - (1 + 1)]\}$
+4. $\frac{5}{6} + \frac{1}{3} \times \frac{1}{2}$
+5. $(-2)^3 + \sqrt{16} \times 2$
+6. $\dfrac{3 + 5 \times 2}{4 - 6}$
+
+**Respuestas:** 1) $16$. 2) $8$. 3) $0$. 4) $1$. 5) $0$. 6) $-6.5$.
+
+## Resumen
+- El orden es: paréntesis, potencias y raíces, multiplicación y división, suma y resta.
+- Multiplicación y división comparten nivel y se resuelven de izquierda a derecha.
+- Un menos delante de un paréntesis invierte los signos internos.
+- La barra de fracción agrupa como un paréntesis.
+- Distinguir $-a^2$ de $(-a)^2$ evita la mitad de los errores.
+`,
+
+  "ecuaciones": String.raw`
+## ¿Qué es una ecuación?
+Una **ecuación** es una igualdad entre dos expresiones que puede ser verdadera o falsa según el valor de la incógnita. **Resolverla** es hallar los valores que la hacen verdadera (las **soluciones**).
+
+$$3x + 2 = 11$$
+
+Aquí $x = 3$ es solución porque $3(3) + 2 = 11$. Una ecuación lineal tiene una solución; una cuadrática, hasta dos; otras no tienen solución real.
+
+## Propiedades de la igualdad
+La igualdad es una balanza: lo que se hace a un lado se hace al otro.
+- Sumar o restar lo mismo en ambos lados.
+- Multiplicar o dividir ambos lados por lo mismo, con divisor distinto de cero.
+- Elevar al cuadrado puede introducir **soluciones falsas**: hay que verificar.
+
+**Verificar** sustituyendo en la ecuación original es parte del método, no un extra.
+
+## Ecuaciones lineales
+Forma $ax + b = 0$ con $a \neq 0$. Método:
+1. Elimina paréntesis y denominadores.
+2. Agrupa las incógnitas en un lado y los números en el otro.
+3. Reduce y despeja.
+4. Verifica.
+
+**Ejemplo.** $5(x - 1) = 3x + 7$.
+- $5x - 5 = 3x + 7$.
+- $5x - 3x = 7 + 5 \Rightarrow 2x = 12 \Rightarrow x = 6$.
+- Verificación: $5(5) = 25$ y $3(6) + 7 = 25$.
+
+## Ecuaciones con fracciones
+Multiplica por el mínimo común múltiplo de los denominadores para eliminarlas.
+
+**Ejemplo.** $\dfrac{x}{2} + \dfrac{x}{3} = 5$.
+- MCM $= 6$: $3x + 2x = 30$.
+- $5x = 30 \Rightarrow x = 6$.
+- Verificación: $3 + 2 = 5$.
+
+## Ecuaciones cuadráticas
+Forma $ax^2 + bx + c = 0$. Tres caminos:
+1. **Factorización:** $(x - 2)(x - 3) = 0 \Rightarrow x = 2$ o $x = 3$.
+2. **Fórmula general:**
+$$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$$
+3. **Completar el cuadrado.**
+
+El **discriminante** $\Delta = b^2 - 4ac$ decide: $\Delta > 0$ dos soluciones reales; $\Delta = 0$ una doble; $\Delta < 0$ dos complejas conjugadas.
+
+**Ejemplo.** $x^2 - 5x + 6 = 0$: $\Delta = 1$; $x = \frac{5 \pm 1}{2}$, es decir $x = 3$ y $x = 2$.
+
+## Ecuaciones con radicales
+Aísla la raíz y eleva al cuadrado; repite si hay más de una. Verifica siempre, porque elevar puede crear soluciones extrañas.
+
+**Ejemplo.** $\sqrt{x + 5} = x - 1$.
+- Eleva: $x + 5 = x^2 - 2x + 1 \Rightarrow x^2 - 3x - 4 = 0$.
+- Raíces: $x = 4$ y $x = -1$.
+- Verifica: $x = 4$ cumple $\sqrt{9} = 3$; $x = -1$ da $\sqrt{4} = 2 \neq -2$.
+- Solución: $x = 4$.
+
+## Ecuaciones con valor absoluto
+$|A| = k$ con $k \geq 0$ significa $A = k$ o $A = -k$.
+
+**Ejemplo.** $|2x - 1| = 7$.
+- $2x - 1 = 7 \Rightarrow x = 4$.
+- $2x - 1 = -7 \Rightarrow x = -3$.
+- Soluciones: $x = 4$ y $x = -3$.
+
+## Sistemas de dos ecuaciones
+Métodos: sustitución, eliminación e igualación.
+
+**Ejemplo.** $\begin{cases} x + y = 10 \\ 2x - y = 2 \end{cases}$.
+- Suma las ecuaciones: $3x = 12 \Rightarrow x = 4$; entonces $y = 6$.
+- Verificación: $4 + 6 = 10$ y $8 - 6 = 2$.
+
+## Ejemplos resueltos: seis casos explicados
+**Ejemplo 1 (práctica, lineal).** $4(x + 2) = 3x + 11$.
+- $4x + 8 = 3x + 11 \Rightarrow x = 3$.
+
+**Ejemplo 2 (práctica, fracciones).** $\dfrac{2x}{3} - 1 = \dfrac{x}{6} + 2$.
+- MCM $6$: $4x - 6 = x + 12$.
+- $3x = 18 \Rightarrow x = 6$.
+
+**Ejemplo 3 (práctica, cuadrática).** $2x^2 - 4x - 6 = 0$.
+- Divide entre $2$: $x^2 - 2x - 3 = 0$.
+- $(x - 3)(x + 1) = 0 \Rightarrow x = 3$ o $x = -1$.
+
+**Ejemplo 4 (aplicación, edades).** La edad de Ana es el doble de la de Beto; hace 5 años sumaban 20.
+- Hoy: Ana $2b$, Beto $b$; hace 5 años: $(2b - 5) + (b - 5) = 20$.
+- $3b - 10 = 20 \Rightarrow b = 10$: Ana tiene 20 y Beto 10.
+
+**Ejemplo 5 (aplicación, física).** Un móvil parte con $v_0 = 2$ m/s y acelera a $4$ m/s$^2$. ¿Cuándo recorre 30 m?
+- $s = v_0t + \frac{1}{2}at^2$: $30 = 2t + 2t^2$.
+- $t^2 + t - 15 = 0 \Rightarrow t = \frac{-1 + \sqrt{61}}{2} \approx 3.4$ s; se descarta la raíz negativa.
+
+**Ejemplo 6 (aplicación, dinero).** Por 3 entradas de adulto y 2 de niño se pagaron 130; la de adulto cuesta 10 más que la de niño.
+- Niño $n$, adulto $n + 10$: $3(n + 10) + 2n = 130$.
+- $5n + 30 = 130 \Rightarrow n = 20$: niño 20 y adulto 30.
+
+## Contextos donde se aplica
+- Física: tiempo, distancia y velocidad.
+- Economía: puntos de equilibrio y máximos de beneficio.
+- Geometría: dimensiones que cumplen un área o perímetro dados.
+- Programación: despeje de parámetros y validaciones.
+
+## Errores comunes
+- No verificar, sobre todo tras elevar al cuadrado.
+- Dividir por una expresión que puede ser cero.
+- Errores de signo al pasar términos de un lado a otro.
+- Usar la fórmula cuadrática sin ordenar primero la ecuación.
+- No descartar soluciones fuera del dominio o del contexto.
+
+## Ejercicios propuestos
+1. $7x - 3 = 4x + 9$
+2. $\frac{x}{4} + 2 = \frac{x}{2} - 1$
+3. $x^2 - 9 = 0$
+4. $x^2 + 2x - 15 = 0$
+5. $\sqrt{x + 3} = x + 1$
+6. $|3x - 2| = 8$
+
+**Respuestas:** 1) $x = 4$. 2) $x = 12$. 3) $x = \pm 3$. 4) $x = 3$ o $x = -5$. 5) $x = 1$. 6) $x = \frac{10}{3}$ o $x = -2$.
+
+## Resumen
+- Resolver una ecuación es hallar los valores que la satisfacen; verifica siempre.
+- Las lineales se despejan; las cuadráticas usan factorización o fórmula general.
+- El discriminante decide cuántas soluciones reales hay.
+- Radicales y valor absoluto exigen aislar y desdoblar, con verificación.
+- Los sistemas se resuelven por sustitución o eliminación.
+`,
+
+  "inecuaciones": String.raw`
+## ¿Qué es una inecuación?
+Una **inecuación** es una desigualdad con incógnita: $x + 3 > 7$, $2x \leq 10$, $x^2 - 4 < 0$. Su solución no es un número, sino un **conjunto** de números que se expresa como **intervalo**.
+
+## Reglas y el cambio de sentido
+- Sumar o restar lo mismo en ambos lados no cambia el sentido.
+- Multiplicar o dividir por un número positivo no cambia el sentido.
+- Multiplicar o dividir por un número **negativo** **invierte** el sentido.
+
+$$-2x > 6 \Rightarrow x < -3$$
+
+## Inecuaciones lineales
+Método idéntico al de las ecuaciones, cuidando el signo.
+
+**Ejemplo.** $3x - 5 \leq 7$.
+- $3x \leq 12 \Rightarrow x \leq 4$.
+- Solución: $(-\infty, 4]$.
+
+**Ejemplo.** $5 - 2x < 1$.
+- $-2x < -4 \Rightarrow x > 2$.
+- Solución: $(2, \infty)$.
+
+## Notación de intervalos
+- $[a, b]$: cerrado, incluye los extremos.
+- $(a, b)$: abierto, los excluye.
+- $[a, \infty)$ y $(-\infty, b]$: semirrectas.
+- Con $\pm\infty$ se usa siempre paréntesis.
+
+## Inecuaciones cuadráticas
+1. Lleva todo a un lado y factoriza.
+2. Halla las raíces.
+3. Analiza el signo por intervalos con una tabla de signos.
+
+**Ejemplo.** $x^2 - x - 6 < 0$.
+- Factoriza: $(x - 3)(x + 2) < 0$.
+- Raíces: $x = -2$ y $x = 3$; el producto es negativo entre ellas.
+- Solución: $(-2, 3)$.
+
+**Ejemplo.** $x^2 \geq 9$.
+- $x^2 - 9 \geq 0 \Rightarrow (x - 3)(x + 3) \geq 0$.
+- Solución: $(-\infty, -3] \cup [3, \infty)$.
+
+## Inecuaciones con valor absoluto
+- $|A| < k \iff -k < A < k$: un intervalo.
+- $|A| > k \iff A > k$ o $A < -k$: dos rayos.
+- Si $k < 0$: $|A| < k$ no tiene solución y $|A| > k$ se cumple siempre.
+
+**Ejemplo.** $|2x - 6| \leq 4$.
+- $-4 \leq 2x - 6 \leq 4 \Rightarrow 2 \leq 2x \leq 10 \Rightarrow 1 \leq x \leq 5$.
+- Solución: $[1, 5]$.
+
+## Inecuaciones racionales
+Lleva todo a un lado, factoriza numerador y denominador y analiza el signo. El denominador **nunca** puede ser cero.
+
+**Ejemplo.** $\dfrac{x - 1}{x + 2} > 0$.
+- Puntos críticos: $x = 1$ y $x = -2$ (excluido).
+- La expresión es positiva en $(-\infty, -2)$ y en $(1, \infty)$.
+- Solución: $(-\infty, -2) \cup (1, \infty)$.
+
+## Sistemas de inecuaciones
+Se resuelven por separado y se **intersectan** las soluciones.
+
+**Ejemplo.** $\begin{cases} 2x - 1 > 3 \\ x + 4 \leq 10 \end{cases}$.
+- Primera: $x > 2$; segunda: $x \leq 6$.
+- Solución: $(2, 6]$.
+
+## Ejemplos resueltos: seis casos explicados
+**Ejemplo 1 (práctica, lineal).** $4x + 3 < 2x + 11$.
+- $2x < 8 \Rightarrow x < 4$.
+- Solución: $(-\infty, 4)$.
+
+**Ejemplo 2 (práctica, cambio de sentido).** $7 - 3x \geq 1$.
+- $-3x \geq -6 \Rightarrow x \leq 2$.
+- Solución: $(-\infty, 2]$.
+
+**Ejemplo 3 (práctica, cuadrática).** $x^2 + x - 12 > 0$.
+- $(x + 4)(x - 3) > 0$; positiva fuera de las raíces.
+- Solución: $(-\infty, -4) \cup (3, \infty)$.
+
+**Ejemplo 4 (práctica, valor absoluto).** $|x - 3| > 5$.
+- $x - 3 > 5$ o $x - 3 < -5$.
+- Solución: $(-\infty, -2) \cup (8, \infty)$.
+
+**Ejemplo 5 (aplicación, presupuesto).** Tienes 50 y cada café cuesta 4. ¿Cuántos puedes comprar para que te queden al menos 18?
+- $50 - 4x \geq 18 \Rightarrow -4x \geq -32 \Rightarrow x \leq 8$.
+- Hasta 8 cafés.
+
+**Ejemplo 6 (aplicación, tolerancia).** Una pieza debe medir 20 mm con error máximo de 0.3 mm. Expresa el rango válido.
+- $|x - 20| \leq 0.3 \Rightarrow 19.7 \leq x \leq 20.3$.
+- Solución: $[19.7, 20.3]$.
+
+## Contextos donde se aplica
+- Economía: presupuestos y umbrales de rentabilidad.
+- Ingeniería: tolerancias, rangos válidos y estabilidad.
+- Salud: dosis seguras y valores de referencia.
+- Programación: validaciones y condiciones de rango.
+
+## Errores comunes
+- No invertir el sentido al multiplicar o dividir por un negativo.
+- Incluir puntos donde el denominador se anula.
+- Usar corchetes con $\pm\infty$.
+- Olvidar el análisis de signos en cuadráticas y racionales.
+- Confundir $|A| < k$ (intervalo) con $|A| > k$ (dos rayos).
+
+## Ejercicios propuestos
+1. $5x - 2 \leq 13$
+2. $-3x + 1 > 10$
+3. $x^2 - 4x \geq 0$
+4. $|x + 1| < 3$
+5. $\frac{x - 2}{x + 1} \leq 0$
+6. $\begin{cases} x + 1 > 0 \\ 2x \leq 8 \end{cases}$
+
+**Respuestas:** 1) $(-\infty, 3]$. 2) $(-\infty, -3)$. 3) $(-\infty, 0] \cup [4, \infty)$. 4) $(-4, 2)$. 5) $(-1, 2]$. 6) $(-1, 4]$.
+
+## Resumen
+- Una inecuación tiene por solución un intervalo o una unión de intervalos.
+- Multiplicar o dividir por un negativo invierte el sentido.
+- Las cuadráticas y racionales se resuelven con análisis de signos.
+- El valor absoluto se desdobla: intervalo si es menor, dos rayos si es mayor.
+- Los sistemas se intersectan.
 `
 };
