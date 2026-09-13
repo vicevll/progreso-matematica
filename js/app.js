@@ -13,6 +13,29 @@
     throwOnError: false
   };
 
+  var RECURSOS = {
+    "calculo/calc-integral": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Cálculo integral.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 10 ejercicios con respuestas.",
+          meta: "7 páginas · PDF",
+          archivo: "recursos/calculo-integral-simple.pdf",
+          fuente: "recursos/calculo-integral-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "9 páginas · PDF",
+          archivo: "recursos/calculo-integral-ejercicios.pdf",
+          fuente: "recursos/calculo-integral-ejercicios.md"
+        }
+      ]
+    }
+  };
+
   function loadProgress() {
     try {
       return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
@@ -328,6 +351,43 @@
     );
   }
 
+  function renderRecursos(areaId, temaId) {
+    var pack = RECURSOS[areaId + "/" + temaId];
+    if (!pack) return "";
+
+    var cards = pack.items.map(function (item) {
+      return (
+        '<article class="recurso-card reveal">' +
+          '<span class="recurso-icon" aria-hidden="true">↓</span>' +
+          '<div class="recurso-body">' +
+            '<div class="recurso-top">' +
+              '<span class="recurso-titulo">' + esc(item.titulo) + "</span>" +
+              '<span class="recurso-meta">' + esc(item.meta) + "</span>" +
+            "</div>" +
+            '<p class="recurso-desc">' + esc(item.descripcion) + "</p>" +
+            '<div class="recurso-actions">' +
+              '<a class="recurso-btn" href="' + item.archivo + '" download>Descargar PDF</a>' +
+              (item.fuente
+                ? '<a class="recurso-link" href="' + item.fuente + '" download>Markdown</a>'
+                : "") +
+            "</div>" +
+          "</div>" +
+        "</article>"
+      );
+    }).join("");
+
+    return (
+      '<section class="recursos" aria-label="Material descargable">' +
+        '<header class="recursos-head reveal">' +
+          '<span class="recursos-kicker">' + esc(pack.titulo) + "</span>" +
+          "<h2>Guías para descargar</h2>" +
+          "<p>" + esc(pack.descripcion) + "</p>" +
+        "</header>" +
+        '<div class="recurso-grid">' + cards + "</div>" +
+      "</section>"
+    );
+  }
+
   function renderCurso(areaId, temaId) {
     setWide(true);
     var area = findArea(areaId);
@@ -396,6 +456,7 @@
           '<span id="course-progress-label">' + stats.done + " de " + stats.total + " secciones completadas</span>" +
         "</div>" +
       "</header>" +
+      renderRecursos(area.id, tema.id) +
       '<nav class="section-index" id="section-index">' + chips + "</nav>" +
       '<div class="lesson-list">' + lessons + "</div>" +
       '<div class="nav-row">' +
