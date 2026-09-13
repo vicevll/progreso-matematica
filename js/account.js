@@ -43,6 +43,7 @@
         '<span class="account-name">' + esc(window.Profile.name(user)) + "</span>" +
       "</button>" +
       '<span class="sync-dot ' + state + '" title="' + esc(LABELS[state] || state) + '"></span>' +
+      '<button class="account-btn" id="account-profile-btn" type="button">Perfil</button>' +
       '<button class="account-btn" id="account-logout" type="button">Salir</button>';
   }
 
@@ -55,7 +56,7 @@
       window.SB.signOut();
       return;
     }
-    if (e.target.closest("#account-profile")) {
+    if (e.target.closest("#account-profile") || e.target.closest("#account-profile-btn")) {
       window.Profile.openEditor();
     }
   });

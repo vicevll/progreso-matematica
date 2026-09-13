@@ -1280,12 +1280,6 @@ a {
 
 /* ---------- Marca, perfil y avatar ---------- */
 
-.brand-logo {
-  display: block;
-  height: 26px;
-  width: auto;
-}
-
 .hero-mark img {
   display: block;
   width: min(560px, 82%);
@@ -1521,10 +1515,6 @@ a {
 }
 
 @media (max-width: 640px) {
-  .brand-logo {
-    height: 22px;
-  }
-
   .hero-mark img {
     width: 100%;
   }
@@ -1535,6 +1525,57 @@ a {
 
   .profile-modal {
     padding: 22px 18px;
+  }
+}
+
+/* Aviso de novedades */
+
+.update-banner {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 90;
+  width: min(360px, calc(100% - 40px));
+  padding: 18px;
+  border: 1px solid var(--border-strong);
+  border-top: 2px solid var(--accent);
+  background: var(--surface-strong);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  animation: profileIn 0.3s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.update-kicker {
+  color: var(--accent);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.update-banner h3 {
+  margin: 6px 0 4px;
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.update-banner p {
+  margin: 0 0 14px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.update-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+@media (max-width: 640px) {
+  .update-banner {
+    right: 16px;
+    bottom: 16px;
+    left: 16px;
+    width: auto;
   }
 }
 
