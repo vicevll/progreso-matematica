@@ -72,6 +72,40 @@ window.mdToHtml = function (md) {
       continue;
     }
 
+    if (line.charAt(0) === "|") {
+      closeList();
+      var tableRows = [];
+      var t = i;
+      while (t < lines.length && lines[t].trim().charAt(0) === "|") {
+        tableRows.push(lines[t].trim());
+        t++;
+      }
+      i = t - 1;
+      var tableCells = tableRows.map(function (row) {
+        return row
+          .replace(/^\|/, "")
+          .replace(/\|$/, "")
+          .split("|")
+          .map(function (cell) { return cell.trim(); });
+      });
+      var head = tableCells[0] || [];
+      var body = tableCells.slice(2).filter(function (row) {
+        return !row.every(function (cell) { return /^[-:\s]*$/.test(cell); });
+      });
+      html.push(
+        '<div class="table-wrap"><table><thead><tr>' +
+          head.map(function (cell) { return "<th>" + inline(cell) + "</th>"; }).join("") +
+          "</tr></thead><tbody>" +
+          body
+            .map(function (row) {
+              return "<tr>" + row.map(function (cell) { return "<td>" + inline(cell) + "</td>"; }).join("") + "</tr>";
+            })
+            .join("") +
+          "</tbody></table></div>"
+      );
+      continue;
+    }
+
     closeList();
     html.push("<p>" + inline(line) + "</p>");
   }

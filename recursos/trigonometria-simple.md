@@ -43,18 +43,20 @@ $$\operatorname{sen}\theta = \frac{4}{5}, \qquad \cos\theta = -\frac{3}{5}, \qqu
 
 Los radianes son la unidad natural de ángulo: $2\pi$ radianes equivalen a $360°$, de modo que $\pi$ rad $= 180°$. Para convertir se multiplica por $\frac{\pi}{180}$ (grados a radianes) o por $\frac{180}{\pi}$ (radianes a grados).
 
+**Mini-ejemplo.** $150° = 150 \cdot \frac{\pi}{180} = \frac{5\pi}{6}$; y $\frac{5\pi}{4} = \frac{5\pi}{4} \cdot \frac{180}{\pi} = 225°$.
+
+:::fig right-triangle adj=1 opp=1 angle=45° adjLabel=1 oppLabel=1 hypLabel=√2 caption=Triángulo+45-45-90.
+
+:::fig right-triangle adj=1.732 opp=1 angle=30° adjLabel=√3 oppLabel=1 hypLabel=2 caption=Triángulo+30-60-90.
+
+La tabla completa, para tenerla a mano:
+
 | Ángulo (grados) | $0$ | $30$ | $45$ | $60$ | $90$ |
 |---|---|---|---|---|---|
 | Radianes | $0$ | $\dfrac{\pi}{6}$ | $\dfrac{\pi}{4}$ | $\dfrac{\pi}{3}$ | $\dfrac{\pi}{2}$ |
 | $\operatorname{sen}$ | $0$ | $\dfrac{1}{2}$ | $\dfrac{\sqrt{2}}{2}$ | $\dfrac{\sqrt{3}}{2}$ | $1$ |
 | $\cos$ | $1$ | $\dfrac{\sqrt{3}}{2}$ | $\dfrac{\sqrt{2}}{2}$ | $\dfrac{1}{2}$ | $0$ |
 | $\tan$ | $0$ | $\dfrac{\sqrt{3}}{3}$ | $1$ | $\sqrt{3}$ | no definida |
-
-**Mini-ejemplo.** $150° = 150 \cdot \frac{\pi}{180} = \frac{5\pi}{6}$; y $\frac{5\pi}{4} = \frac{5\pi}{4} \cdot \frac{180}{\pi} = 225°$.
-
-:::fig right-triangle adj=1 opp=1 angle=45° adjLabel=1 oppLabel=1 hypLabel=√2 caption=Triángulo+45-45-90.
-
-:::fig right-triangle adj=1.732 opp=1 angle=30° adjLabel=√3 oppLabel=1 hypLabel=2 caption=Triángulo+30-60-90.
 
 ## Identidades fundamentales
 

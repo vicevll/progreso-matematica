@@ -115,12 +115,16 @@
 
     var midX = (ax + cx) / 2;
     var midY = (ay + cy) / 2;
-    var rotation = -Math.atan2(cy - ay, cx - ax) * 180 / Math.PI;
-    parts.push(
-      '<text transform="translate(' + midX + ',' + midY + ') rotate(' + rotation + ') translate(0,-11)" fill="' +
-      theme.text + '" font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" text-anchor="middle">' +
-      esc(hypText) + "</text>"
-    );
+    var hx = cx - ax;
+    var hy = cy - ay;
+    var hlen = Math.sqrt(hx * hx + hy * hy) || 1;
+    var nx = hy / hlen;
+    var ny = -hx / hlen;
+    if ((bx - midX) * nx + (by - midY) * ny > 0) {
+      nx = -nx;
+      ny = -ny;
+    }
+    parts.push(label(midX + nx * 18, midY + ny * 18 + 5, hypText, theme));
 
     var bisect = rad / 2;
     var labR = arc + 17;

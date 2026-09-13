@@ -391,18 +391,20 @@ Esta definición coincide con la del triángulo para ángulos agudos y funciona 
 ## Ángulos notables y radianes
 Los radianes son la unidad natural: $2\pi$ radianes equivalen a $360$ grados, así que $\pi$ rad $= 180°$. Convertir: multiplicar por $\pi/180$ o por $180/\pi$.
 
+Estos valores se memorizan con dos triángulos: el isósceles rectángulo (45-45-90) y el medio triángulo equilátero (30-60-90).
+
+:::fig right-triangle adj=1 opp=1 angle=45° adjLabel=1 oppLabel=1 hypLabel=√2 caption=Triángulo+45-45-90:+catetos+iguales+e+hipotenusa+√2.
+
+:::fig right-triangle adj=1.732 opp=1 angle=30° adjLabel=√3 oppLabel=1 hypLabel=2 caption=Triángulo+30-60-90:+lados+en+razón+1:+√3:+2.
+
+La tabla completa, para tenerla a mano:
+
 | Ángulo (grados) | 0 | 30 | 45 | 60 | 90 |
 |---|---|---|---|---|---|
 | Radianes | $0$ | $\pi/6$ | $\pi/4$ | $\pi/3$ | $\pi/2$ |
 | $\text{sen}$ | $0$ | $1/2$ | $\sqrt{2}/2$ | $\sqrt{3}/2$ | $1$ |
 | $\cos$ | $1$ | $\sqrt{3}/2$ | $\sqrt{2}/2$ | $1/2$ | $0$ |
 | $\tan$ | $0$ | $\sqrt{3}/3$ | $1$ | $\sqrt{3}$ | no def. |
-
-Estos valores se memorizan con dos triángulos: el isósceles rectángulo (45-45-90) y el medio triángulo equilátero (30-60-90).
-
-:::fig right-triangle adj=1 opp=1 angle=45° adjLabel=1 oppLabel=1 hypLabel=√2 caption=Triángulo+45-45-90:+catetos+iguales+e+hipotenusa+√2.
-
-:::fig right-triangle adj=1.732 opp=1 angle=30° adjLabel=√3 oppLabel=1 hypLabel=2 caption=Triángulo+30-60-90:+lados+en+razón+1:+√3:+2.
 
 ## Identidades fundamentales
 La identidad pitagórica sale del círculo unitario ($x^2 + y^2 = 1$):

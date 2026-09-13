@@ -1549,6 +1549,34 @@ a {
   text-align: center;
 }
 
+.table-wrap {
+  margin: 20px 0;
+  overflow-x: auto;
+}
+
+.lesson-body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.lesson-body th,
+.lesson-body td {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  text-align: center;
+}
+
+.lesson-body th {
+  background: var(--surface-soft);
+  color: var(--accent-strong);
+  font-weight: 600;
+}
+
+.lesson-body tbody tr:hover {
+  background: rgba(142, 183, 204, 0.06);
+}
+
 /* Aviso de novedades */
 
 .update-banner {

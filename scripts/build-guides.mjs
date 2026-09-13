@@ -1,6 +1,6 @@
 import { createRequire } from "module";
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from "fs";
-import { execFileSync } from "child_process";
+import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from "fs";
+import { spawn } from "child_process";
 import { dirname, join, resolve } from "path";
 import { fileURLToPath } from "url";
 
@@ -218,7 +218,8 @@ ${body}
 }
 
 function runChrome(pdfPath, htmlPath, profile) {
-  const base = [
+  const flags = [
+    "--headless=new",
     "--disable-gpu",
     "--disable-extensions",
     "--disable-background-networking",
@@ -227,28 +228,38 @@ function runChrome(pdfPath, htmlPath, profile) {
     "--no-first-run",
     "--no-pdf-header-footer",
     `--user-data-dir=${profile}`,
-    "--virtual-time-budget=6000"
+    "--virtual-time-budget=6000",
+    `--print-to-pdf=${pdfPath}`,
+    "file://" + htmlPath
   ];
-  const url = "file://" + htmlPath;
-  for (const mode of ["--headless=new", "--headless"]) {
-    try {
-      execFileSync(CHROME, [mode, ...base, `--print-to-pdf=${pdfPath}`, url], { stdio: "inherit" });
-      return;
-    } catch (error) {
-      console.warn(`Chrome con ${mode} falló; probando otro modo.`);
-    }
-  }
-  throw new Error("No se pudo generar el PDF con Chrome.");
+  return new Promise((resolve, reject) => {
+    const before = existsSync(pdfPath) ? statSync(pdfPath).mtimeMs : 0;
+    const child = spawn(CHROME, flags, { stdio: "ignore" });
+    const started = Date.now();
+    const timer = setInterval(() => {
+      const fresh = existsSync(pdfPath) && statSync(pdfPath).mtimeMs > before + 500;
+      const settled = fresh && Date.now() - started > 4000;
+      if (settled) {
+        clearInterval(timer);
+        try { child.kill("SIGKILL"); } catch (e) { /* ya terminó */ }
+        resolve();
+      } else if (Date.now() - started > 90000) {
+        clearInterval(timer);
+        try { child.kill("SIGKILL"); } catch (e) { /* ignorar */ }
+        reject(new Error("Chrome no generó el PDF a tiempo: " + pdfPath));
+      }
+    }, 500);
+  });
 }
 
-function buildGuide(name, title) {
+async function buildGuide(name, title) {
   const mdPath = join(root, "recursos", `${name}.md`);
   const outDir = join(root, ".build");
   const htmlPath = join(outDir, `${name}.html`);
   const pdfPath = join(root, "recursos", `${name}.pdf`);
   mkdirSync(outDir, { recursive: true });
   writeFileSync(htmlPath, buildHtml(readFileSync(mdPath, "utf8"), title), "utf8");
-  runChrome(pdfPath, htmlPath, `/tmp/chrome-guides-${name}`);
+  await runChrome(pdfPath, htmlPath, `/tmp/chrome-guides-${name}`);
   console.log("PDF generado:", pdfPath);
 }
 
@@ -258,4 +269,4 @@ const guides = [
   ["trigonometria-ejercicios", "Trigonometría · 50 ejercicios"]
 ].filter(([name]) => !wanted || name === wanted);
 
-for (const [name, title] of guides) buildGuide(name, title);
+for (const [name, title] of guides) await buildGuide(name, title);

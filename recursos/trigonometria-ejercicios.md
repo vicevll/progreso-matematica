@@ -40,7 +40,7 @@ $$\frac{a}{\operatorname{sen}A} = \frac{b}{\operatorname{sen}B} = \frac{c}{\oper
 
 $$y = A\operatorname{sen}\big(B(x - C)\big) + D, \qquad \text{amplitud} = |A|, \qquad \text{periodo} = \frac{2\pi}{|B|}$$
 
-:::fig right-triangle adj=4 opp=3 angle=θ adjLabel=adyacente oppLabel=opuesto hypLabel=hipotenusa caption=Referencia+para+los+ejercicios+1+a+8:+identifica+adyacente,+opuesto+e+hipotenusa.
+:::fig right-triangle adj=4 opp=3 angle=θ adjLabel=adyacente oppLabel=opuesto hypLabel=hipotenusa caption=Referencia+para+los+ejercicios+1+a+7:+identifica+adyacente,+opuesto+e+hipotenusa.
 
 ## Ejercicios (50)
 
@@ -53,9 +53,7 @@ $$y = A\operatorname{sen}\big(B(x - C)\big) + D, \qquad \text{amplitud} = |A|, \
 5. Si $\operatorname{sen}\theta = \dfrac{7}{25}$ y $\theta$ está en el primer cuadrante, halla $\cos\theta$ y $\tan\theta$.
 6. El punto $(8, 15)$ está en el lado terminal de $\theta$. Halla $\operatorname{sen}\theta$, $\cos\theta$ y $\tan\theta$.
 7. El punto $(-7, 24)$ está en el lado terminal de $\theta$. Halla $\operatorname{sen}\theta$, $\cos\theta$ y $\tan\theta$.
-8. Desde $20$ m de un edificio se observa su cima con un ángulo de elevación de $30°$. Halla la altura.
-
-:::fig right-triangle adj=20 angleDeg=30 angle=30° adjLabel=20+m oppLabel=h caption=Ejercicio+8:+desde+20+m+se+mide+un+ángulo+de+elevación+de+30°.
+8. Si $\operatorname{sen}\theta = \dfrac{7}{25}$ y la hipotenusa mide $50$, halla los dos catetos.
 
 ### Círculo unitario, radianes y ángulos notables
 
@@ -127,7 +125,7 @@ $$y = A\operatorname{sen}\big(B(x - C)\big) + D, \qquad \text{amplitud} = |A|, \
 <div class="r"><b>05</b> $\cos\theta = \dfrac{24}{25}$, $\tan\theta = \dfrac{7}{24}$</div>
 <div class="r"><b>06</b> $\operatorname{sen}\theta = \dfrac{15}{17}$, $\cos\theta = \dfrac{8}{17}$, $\tan\theta = \dfrac{15}{8}$</div>
 <div class="r"><b>07</b> $\operatorname{sen}\theta = \dfrac{24}{25}$, $\cos\theta = -\dfrac{7}{25}$, $\tan\theta = -\dfrac{24}{7}$</div>
-<div class="r"><b>08</b> $h = \dfrac{20\sqrt{3}}{3} \approx 11.55$ m</div>
+<div class="r"><b>08</b> opuesto $= 14$, adyacente $= 48$</div>
 <div class="r"><b>09</b> $\dfrac{\pi}{4}$</div>
 <div class="r"><b>10</b> $\dfrac{5\pi}{6}$</div>
 <div class="r"><b>11</b> $\dfrac{5\pi}{3}$</div>
