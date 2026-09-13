@@ -1,1114 +1,751 @@
 window.CURSOS = window.CURSOS || {};
 window.CURSOS["algebra-superior"] = {
+  "matrices": String.raw`
+## ¿Qué es una matriz y para qué sirve?
+Una **matriz** es una tabla rectangular de números ordenada en **filas** (horizontales) y **columnas** (verticales). Por ejemplo:
+
+$$A = \begin{pmatrix} 2 & -1 \\ 0 & 3 \end{pmatrix}$$
+
+Esta matriz tiene **2 filas y 2 columnas**, por eso se dice que es de tamaño $2 \times 2$ (se lee "dos por dos": primero filas, luego columnas). El número que está en la fila $i$ y la columna $j$ se escribe $a_{ij}$. En el ejemplo, $a_{11} = 2$, $a_{12} = -1$, $a_{21} = 0$ y $a_{22} = 3$.
+
+**¿Por qué importan?** Porque permiten escribir y resolver sistemas de ecuaciones de forma ordenada, representar transformaciones del plano (rotaciones, reflejos, escalados), guardar datos en tablas y hacer cálculos que en computación aparecen por todas partes (gráficos, inteligencia artificial, simulaciones).
+
+**Cómo leer la notación.** Cada letra tiene un papel:
+- $A$ es el nombre de la matriz.
+- $a_{ij}$ es el número concreto en la fila $i$ y columna $j$.
+- $\mathbb{R}^{m \times n}$ se lee "matrices de $m$ filas y $n$ columnas con números reales".
+
+## Operaciones básicas: suma, resta y multiplicación por un número
+**Suma y resta.** Solo se pueden sumar o restar matrices **del mismo tamaño**, y se hace número con número en la misma posición:
+
+$$\begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix} + \begin{pmatrix} 5 & 6 \\ 7 & 8 \end{pmatrix} = \begin{pmatrix} 6 & 8 \\ 10 & 12 \end{pmatrix}$$
+
+**Multiplicación por un escalar.** Un **escalar** es simplemente un número. Se multiplica cada entrada por ese número:
+
+$$3 \cdot \begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix} = \begin{pmatrix} 3 & 6 \\ 9 & 12 \end{pmatrix}$$
+
+**Propiedades:** la suma es conmutativa ($A + B = B + A$) y asociativa; existe la matriz nula $O$ (todos sus números son $0$) que cumple $A + O = A$.
+
+## Multiplicación de matrices: la regla de fila por columna
+Multiplicar matrices **no** es multiplicar número con número. La regla es: se toma cada **fila** de la primera matriz y cada **columna** de la segunda, se multiplican término a término y se suman los resultados.
+
+$$(AB)_{ij} = \sum_{k=1}^{n} a_{ik} b_{kj}$$
+
+**Cómo leer esta fórmula.** $(AB)_{ij}$ es el número en la fila $i$ y columna $j$ del producto. El símbolo $\sum_{k=1}^{n}$ significa "sumar para $k$ desde $1$ hasta $n$". Es decir: multiplico el primer número de la fila $i$ por el primer número de la columna $j$, el segundo por el segundo, y así hasta el final; luego sumo todo.
+
+**Ejemplo paso a paso.**
+
+$$\begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}\begin{pmatrix} 5 & 6 \\ 7 & 8 \end{pmatrix} = \begin{pmatrix} 1\cdot 5 + 2\cdot 7 & 1\cdot 6 + 2\cdot 8 \\ 3\cdot 5 + 4\cdot 7 & 3\cdot 6 + 4\cdot 8 \end{pmatrix} = \begin{pmatrix} 19 & 22 \\ 43 & 50 \end{pmatrix}$$
+
+**Condición de tamaño:** solo se puede multiplicar $A$ (de tamaño $m \times n$) por $B$ (de tamaño $n \times p$): el número de columnas de $A$ debe coincidir con el de filas de $B$. El resultado es de tamaño $m \times p$.
+
+**Advertencia importante:** $AB$ y $BA$ pueden ser distintos. La multiplicación de matrices **no es conmutativa**.
+
+## Matriz identidad e inversa
+La **matriz identidad** $I_n$ es la matriz cuadrada con $1$ en la diagonal y $0$ en el resto:
+
+$$I_2 = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}$$
+
+Cumple el papel del número $1$: $A I = I A = A$.
+
+La **inversa** de una matriz cuadrada $A$ es otra matriz $A^{-1}$ que cumple:
+
+$$A A^{-1} = A^{-1} A = I$$
+
+No todas las matrices tienen inversa. Si existe, se dice que $A$ es **invertible** o no singular. Para $2 \times 2$ hay una fórmula directa:
+
+$$A = \begin{pmatrix} a & b \\ c & d \end{pmatrix}, \qquad A^{-1} = \frac{1}{ad - bc}\begin{pmatrix} d & -b \\ -c & a \end{pmatrix}, \quad \text{si } ad - bc \neq 0$$
+
+**Cómo leerla.** $ad - bc$ se llama **determinante** de $A$ y se escribe $\det(A)$. Si $\det(A) = 0$, no se puede dividir y la inversa no existe.
+
+## Determinantes
+El **determinante** es un número que se calcula a partir de una matriz cuadrada y que mide si la matriz es invertible.
+
+Para $2 \times 2$:
+
+$$\det\begin{pmatrix} a & b \\ c & d \end{pmatrix} = ad - bc$$
+
+Para $3 \times 3$ se usa la **regla de Sarrus** o el desarrollo por cofactores:
+
+$$\det\begin{pmatrix} a & b & c \\ d & e & f \\ g & h & i \end{pmatrix} = aei + bfg + cdh - ceg - bdi - afh$$
+
+**Propiedades clave:**
+- $\det(AB) = \det(A)\det(B)$.
+- Si una fila (o columna) es múltiplo de otra, el determinante es $0$.
+- $\det(A) \neq 0$ si y solo si $A$ es invertible.
+
+## Sistemas de ecuaciones y eliminación de Gauss
+Un sistema de ecuaciones lineales puede escribirse en forma matricial:
+
+$$\begin{cases} 2x + y = 5 \\ x - 3y = -1 \end{cases} \quad \Longleftrightarrow \quad \begin{pmatrix} 2 & 1 \\ 1 & -3 \end{pmatrix}\begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} 5 \\ -1 \end{pmatrix}$$
+
+**Cómo leer esto.** La matriz guarda los coeficientes, el vector de la derecha guarda los resultados, y el vector $(x, y)$ son las incógnitas. La igualdad matricial reproduce exactamente las dos ecuaciones.
+
+**Método de Gauss.** Se opera sobre la **matriz ampliada** (coeficientes y resultados en una sola tabla) con tres operaciones permitidas, que no cambian la solución:
+1. Intercambiar dos filas.
+2. Multiplicar una fila por un número distinto de cero.
+3. Sumar a una fila un múltiplo de otra.
+
+El objetivo es llegar a una forma escalonada (triangular) y luego despejar de abajo hacia arriba (sustitución hacia atrás).
+
+**Ejemplo.** Partiendo de la matriz ampliada:
+
+$$\left(\begin{array}{cc|c} 2 & 1 & 5 \\ 1 & -3 & -1 \end{array}\right) \longrightarrow \left(\begin{array}{cc|c} 1 & -3 & -1 \\ 2 & 1 & 5 \end{array}\right) \longrightarrow \left(\begin{array}{cc|c} 1 & -3 & -1 \\ 0 & 7 & 7 \end{array}\right)$$
+
+De la última fila, $7y = 7$, luego $y = 1$. Sustituyendo en la primera, $x - 3 = -1$, luego $x = 2$. La solución es $(x, y) = (2, 1)$.
+
+## Rango, sistemas compatibles e incompatibles
+El **rango** de una matriz es el número de filas no nulas que quedan al aplicarle Gauss. Indica cuánta información independiente contiene.
+
+Para un sistema $Ax = b$:
+- Si $\text{rango}(A) = \text{rango}(A \mid b) = n$ (número de incógnitas), hay **solución única**.
+- Si $\text{rango}(A) = \text{rango}(A \mid b) < n$, hay **infinitas soluciones**.
+- Si $\text{rango}(A) < \text{rango}(A \mid b)$, el sistema es **incompatible**: no tiene solución.
+
+**Ejemplo sin solución:** $x + y = 1$ y $x + y = 3$ son paralelas; al escalonar aparece una fila del tipo $0 = 2$, imposible.
+
+## Aplicaciones y por qué estudiar matrices
+- **Resolución de sistemas:** cualquier modelo lineal (circuitos, mezclas, economía) se resuelve con matrices.
+- **Transformaciones geométricas:** rotar, reflejar o escalar una figura es multiplicar sus puntos por una matriz.
+- **Computación gráfica y videojuegos:** cada objeto de la pantalla se transforma con matrices.
+- **Datos y aprendizaje automático:** las tablas de datos son matrices; los algoritmos usan productos de matrices.
+- **Cadenas de Markov y economía:** las probabilidades de transición se organizan en matrices.
+
+## Errores comunes y cómo evitarlos
+- **Sumar matrices de distinto tamaño.** Deben coincidir filas y columnas.
+- **Multiplicar entrada con entrada.** La multiplicación es fila por columna.
+- **Creer que $AB = BA$.** Casi nunca se cumple.
+- **Olvidar la condición de tamaño en el producto.** Columnas de la primera = filas de la segunda.
+- **Dividir entre el determinante cuando es cero.** Si $\det(A) = 0$, la inversa no existe.
+- **Confundir la matriz con su determinante.** La matriz es la tabla; el determinante es un número.
+
+## Ejemplos resueltos: seis casos explicados
+**Ejemplo 1 (práctica, suma y escalar).** Calcula $2A - B$ con $A = \begin{pmatrix} 1 & 0 \\ 2 & -1 \end{pmatrix}$ y $B = \begin{pmatrix} 3 & 2 \\ 0 & 1 \end{pmatrix}$.
+- $2A = \begin{pmatrix} 2 & 0 \\ 4 & -2 \end{pmatrix}$.
+- $2A - B = \begin{pmatrix} 2-3 & 0-2 \\ 4-0 & -2-1 \end{pmatrix} = \begin{pmatrix} -1 & -2 \\ 4 & -3 \end{pmatrix}$.
+
+**Ejemplo 2 (práctica, producto).** Multiplica $\begin{pmatrix} 2 & 1 \\ 0 & 3 \end{pmatrix}\begin{pmatrix} 1 & -1 \\ 2 & 4 \end{pmatrix}$.
+- Fila 1 por columna 1: $2 \cdot 1 + 1 \cdot 2 = 4$.
+- Fila 1 por columna 2: $2 \cdot (-1) + 1 \cdot 4 = 2$.
+- Fila 2 por columna 1: $0 \cdot 1 + 3 \cdot 2 = 6$.
+- Fila 2 por columna 2: $0 \cdot (-1) + 3 \cdot 4 = 12$.
+- Resultado: $\begin{pmatrix} 4 & 2 \\ 6 & 12 \end{pmatrix}$.
+
+**Ejemplo 3 (práctica, determinante e inversa).** Para $A = \begin{pmatrix} 4 & 2 \\ 1 & 3 \end{pmatrix}$, halla $\det(A)$ y $A^{-1}$.
+- $\det(A) = 4 \cdot 3 - 2 \cdot 1 = 10$.
+- $A^{-1} = \dfrac{1}{10}\begin{pmatrix} 3 & -2 \\ -1 & 4 \end{pmatrix} = \begin{pmatrix} 0.3 & -0.2 \\ -0.1 & 0.4 \end{pmatrix}$.
+- Verificación: $A A^{-1} = I$.
+
+**Ejemplo 4 (aplicación, sistema).** Resuelve con Gauss el sistema del apartado anterior: $2x + y = 5$, $x - 3y = -1$.
+- Se obtuvo $y = 1$ y $x = 2$.
+- Verificación: $2(2) + 1 = 5$ y $2 - 3(1) = -1$.
+
+**Ejemplo 5 (aplicación, geometría).** La matriz $\begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}$ aplicada a $(x, y)$ da $(-y, x)$: una rotación de $90°$ en sentido antihorario.
+- Aplicada a $(1, 0)$ da $(0, 1)$.
+- Aplicada a $(0, 1)$ da $(-1, 0)$.
+
+**Ejemplo 6 (aplicación, datos).** Las notas de 3 estudiantes en 2 pruebas se guardan en una matriz $3 \times 2$. Multiplicarla por el vector de ponderaciones $(0.4, 0.6)$ da la nota final de cada estudiante.
+- Cada fila se multiplica por el vector de pesos y se suman los productos.
+- Es un producto matriz por vector.
+
+## Contextos donde se aplica
+- **Ingeniería y física:** resolver sistemas de fuerzas, circuitos y estructuras.
+- **Computación:** gráficos 3D, inteligencia artificial, procesamiento de imágenes.
+- **Economía:** tablas input-output y modelos de producción.
+- **Estadística:** matrices de datos, covarianza y regresión.
+- **Matemática pura:** las matrices son la cara concreta de las transformaciones lineales.
+
+## Ejercicios propuestos
+1. Suma $\begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix} + \begin{pmatrix} 0 & -1 \\ 5 & 2 \end{pmatrix}$.
+2. Calcula $3\begin{pmatrix} 2 & -1 \\ 0 & 4 \end{pmatrix}$.
+3. Multiplica $\begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}\begin{pmatrix} 2 & 0 \\ 1 & 5 \end{pmatrix}$.
+4. Halla el determinante de $\begin{pmatrix} 3 & 5 \\ 2 & 4 \end{pmatrix}$.
+5. Halla la inversa de $\begin{pmatrix} 2 & 1 \\ 5 & 3 \end{pmatrix}$.
+6. Resuelve por Gauss: $x + y = 4$, $2x - y = 5$.
+7. ¿Es invertible $\begin{pmatrix} 1 & 2 \\ 2 & 4 \end{pmatrix}$? Justifica con el determinante.
+8. Escribe en forma matricial el sistema $3x - y = 2$, $x + 2y = 7$.
+
+**Respuestas:** 1) $\begin{pmatrix} 1 & 1 \\ 8 & 6 \end{pmatrix}$. 2) $\begin{pmatrix} 6 & -3 \\ 0 & 12 \end{pmatrix}$. 3) $\begin{pmatrix} 4 & 10 \\ 10 & 20 \end{pmatrix}$. 4) $2$. 5) $\begin{pmatrix} 3 & -1 \\ -5 & 2 \end{pmatrix}$. 6) $x = 3$, $y = 1$. 7) No: $\det = 0$. 8) $\begin{pmatrix} 3 & -1 \\ 1 & 2 \end{pmatrix}\begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} 2 \\ 7 \end{pmatrix}$.
+
+## Resumen
+- Una matriz es una tabla de números con filas y columnas; $a_{ij}$ es la entrada de la fila $i$ y columna $j$.
+- Se suman del mismo tamaño y se multiplican fila por columna; el producto no es conmutativo.
+- La identidad $I$ actúa como el $1$; la inversa $A^{-1}$ deshace el efecto de $A$.
+- El determinante decide si hay inversa y ayuda a resolver sistemas.
+- Gauss transforma un sistema en otro más simple con operaciones que conservan la solución.
+- El rango clasifica los sistemas en compatible determinado, indeterminado o incompatible.
+`,
+
   "algebra-lineal": String.raw`
-## Espacios vectoriales
-Un **espacio vectorial** sobre un cuerpo $\mathbb{K}$ es un conjunto $V$ con suma y producto por escalares que cumplen: conmutatividad, asociatividad, neutro $\vec{0}$, inverso, distributividad y compatibilidad de escalares.
+## ¿Qué es un espacio vectorial?
 
-**Ejemplos:** $\mathbb{R}^n$, matrices $M_{m\times n}$, polinomios $\mathbb{K}[x]$, funciones continuas $C[a,b]$, soluciones de una EDO lineal.
+El **álgebra lineal** es la rama de la matemática que estudia los vectores, las matrices y las transformaciones que actúan sobre ellos. Su objeto central es el **espacio vectorial**: un conjunto de objetos que se pueden sumar entre sí y multiplicar por números sin salirse del conjunto. La idea suena abstracta, pero es la misma que usas al moverte en un plano: puedes sumar desplazamientos y estirarlos, y nunca abandonas el plano. Vamos a construir la definición paso a paso, explicando cada símbolo desde cero.
 
-El álgebra lineal estudia estos espacios y las **transformaciones lineales** entre ellos. Todo problema se reduce a matrices y vectores propios.
+**El cuerpo de escalares $\mathbb{K}$.** La letra $\mathbb{K}$ (se lee "cuerpo K") representa el conjunto de números que usaremos para multiplicar vectores; a esos números se les llama **escalares**. Un cuerpo es un conjunto donde se puede sumar, restar, multiplicar y dividir (excepto entre cero) con las reglas de siempre. En casi todo este curso $\mathbb{K} = \mathbb{R}$, el conjunto de los números reales; en algunos problemas podría ser $\mathbb{C}$, el conjunto de los números complejos. Cuando veas $\mathbb{K}$, léelo como "el cuerpo de escalares que estemos usando".
 
-## Independencia, base y dimensión
-- **Combinación lineal:** $\alpha_1v_1 + \cdots + \alpha_nv_n$.
-- **Generan:** todo vector del espacio es combinación de ellos.
-- **Independientes:** la única combinación que da cero es la trivial.
-- **Base:** conjunto que genera y es independiente. Las coordenadas son únicas.
-- **Dimensión:** número de vectores de una base (bien definido).
+**El conjunto de vectores $V$.** La letra $V$ es simplemente el nombre de un conjunto cuyos elementos llamamos **vectores**. Un vector $v$ (se lee "vector v") puede ser una flecha, pero también una lista de números, una matriz, un polinomio o una función. Lo importante no es el aspecto del objeto, sino que se comporte bien frente a la suma y al producto por escalares.
 
-**Ejemplo.** En $\mathbb{R}^3$, $\{(1,0,0), (0,1,0), (0,0,1)\}$ es la base canónica; $\dim = 3$. Los vectores $(1,1,1)$ y $(2,2,2)$ son dependientes (uno es múltiplo del otro).
+**Las dos operaciones.** En $V$ deben estar definidas:
+
+- La **suma**: dados dos vectores $u, v \in V$, el símbolo $\in$ se lee "pertenece a" y significa que $u$ y $v$ son elementos del conjunto $V$. La suma se escribe $u + v$ y debe volver a ser un elemento de $V$.
+- El **producto por un escalar**: dados un número $\alpha \in \mathbb{K}$ (la letra griega $\alpha$, "alfa", es el nombre típico de un escalar) y un vector $v \in V$, el producto se escribe $\alpha v$ y también debe ser un elemento de $V$.
+
+### La definición, regla por regla
+
+Un **espacio vectorial sobre $\mathbb{K}$** es un conjunto $V$ con una suma y un producto por escalares que cumplen estas ocho reglas. Se enuncian de forma simbólica, pero cada una tiene una lectura en palabras:
+
+1. **Cerradura de la suma.** Si $u, v \in V$, entonces $u + v \in V$. En palabras: sumar dos vectores del conjunto nunca te saca del conjunto.
+2. **Cerradura del producto por escalar.** Si $\alpha \in \mathbb{K}$ y $v \in V$, entonces $\alpha v \in V$. En palabras: estirar o encoger un vector del conjunto no te saca del conjunto.
+3. **Conmutatividad.** $u + v = v + u$: el orden de la suma no cambia el resultado.
+4. **Asociatividad.** $(u + v) + w = u + (v + w)$: el modo de agrupar tres sumandos no cambia el resultado.
+5. **Neutro aditivo.** Existe un vector especial llamado **vector cero** o **vector nulo**, escrito $\vec{0}$ (se lee "vector cero"), tal que $v + \vec{0} = v$ para todo vector $v$. Es el equivalente vectorial del número $0$.
+6. **Inverso aditivo.** Para cada vector $v$ existe un vector $-v$, llamado su **opuesto**, tal que $v + (-v) = \vec{0}$. Es el equivalente vectorial del número negativo.
+7. **Distributividad.** Se cumplen $\alpha(u + v) = \alpha u + \alpha v$ y $(\alpha + \beta)v = \alpha v + \beta v$, donde $\alpha$ y $\beta$ son escalares. En palabras: multiplicar por una suma es multiplicar por cada sumando, y sumar escalares es lo mismo que sumar sus efectos.
+8. **Compatibilidad de escalares.** $(\alpha\beta)v = \alpha(\beta v)$ y $1 \cdot v = v$, donde $1$ es el neutro del producto en $\mathbb{K}$. En palabras: multiplicar por dos números seguidos equivale a multiplicar por su producto, y el número $1$ deja al vector intacto.
+
+**Analogía.** Piensa en un espacio vectorial como un "patio de juegos" con dos reglas de seguridad: puedes combinar dos jugadores (suma) y puedes cambiarles el tamaño (escalar), pero el juego se queda siempre dentro del patio. Todo lo que cumple esas reglas es un espacio vectorial, aunque no se parezca a flechas.
+
+### Ejemplos fundamentales
+
+- **$\mathbb{R}^n$.** El símbolo $\mathbb{R}^n$ (se lee "erre n" o "erre a la n") significa el conjunto de todas las listas ordenadas de $n$ números reales. Un elemento se escribe $(x_1, x_2, \ldots, x_n)$; cada $x_i$ (se lee "equis sub i") es un número real llamado la i-ésima coordenada. Para $n=1$ es la recta, para $n=2$ el plano y para $n=3$ el espacio. La suma y el producto por escalar se hacen coordenada a coordenada.
+- **Matrices $M_{m \times n}(\mathbb{R})$.** La letra $M$ viene de "matriz", $\mathbb{R}$ indica que las entradas son números reales, y los subíndices $m \times n$ (se lee "m por n") indican que hay $m$ filas y $n$ columnas. Es un espacio vectorial: las matrices del mismo tamaño se suman entrada con entrada y se multiplican por números.
+- **Polinomios $\mathbb{R}[x]$.** El símbolo $\mathbb{R}[x]$ (se lee "erre corchete equis") designa al conjunto de todos los polinomios con coeficientes reales en la variable $x$. Sumar polinomios y multiplicarlos por números da polinomios, así que es un espacio vectorial. El subconjunto de polinomios de grado menor o igual que $n$ se escribe $\mathbb{R}_n[x]$.
+- **Funciones continuas $C[a,b]$.** La letra $C$ recuerda "continua" y $[a,b]$ es un intervalo de números reales. Los elementos de $C[a,b]$ son funciones continuas definidas en ese intervalo; se suman función a función y se multiplican por números.
+- **Soluciones de una ecuación diferencial lineal homogénea.** El conjunto de todas las soluciones de una ecuación como $y'' + 3y' + 2y = 0$ es un espacio vectorial: la suma de soluciones y los múltiplos de soluciones vuelven a ser soluciones.
+
+### Subespacios vectoriales
+
+Un **subespacio** $W \subseteq V$ es un subconjunto no vacío dentro de un espacio vectorial que, por sí solo, también es un espacio vectorial con las operaciones heredadas. El símbolo $\subseteq$ se lee "subconjunto de". En la práctica no hace falta verificar las ocho reglas: basta comprobar que $\vec{0} \in W$, que la suma de dos elementos de $W$ sigue en $W$ y que multiplicar un elemento de $W$ por un escalar sigue dando un elemento de $W$.
+
+**Ejemplo de subespacio.** El conjunto $W = \{(x,y,z) : x + y + z = 0\}$ es un plano que pasa por el origen en $\mathbb{R}^3$. La notación $\{(x,y,z) : x + y + z = 0\}$ se lee "el conjunto de las ternas $(x,y,z)$ tales que $x+y+z=0$"; los dos puntos se leen "tales que". Comprobemos: $(0,0,0)$ cumple la ecuación, y si $u=(x_1,y_1,z_1)$ y $v=(x_2,y_2,z_2)$ cumplen $x_i+y_i+z_i=0$, entonces su suma cumple $(x_1+x_2)+(y_1+y_2)+(z_1+z_2)=0$, y el múltiplo $\alpha u$ también. Es un subespacio.
+
+**Ejemplo que no es subespacio.** El conjunto $W = \{(x,y) : x + y = 1\}$ es una recta que no pasa por el origen. Falla porque $(0,0)$ no pertenece a $W$ y porque $(1,0)+(0,1)=(1,1)$ no cumple $x+y=1$. Moraleja: los subespacios son rectas, planos o hiperplanos que **siempre pasan por el origen**.
+
+## Vectores, combinaciones lineales y cómo leer la notación
+
+Un **vector** de $\mathbb{R}^n$ es una lista ordenada de números: $v = (v_1, v_2, \ldots, v_n)$. Aquí $v$ es el nombre del vector y $v_1, v_2, \ldots$ son sus **coordenadas** o **componentes**, que son números concretos. Por ejemplo, en $\mathbb{R}^3$ escribimos $v = (2, -1, 4)$, donde la primera coordenada es $2$, la segunda es $-1$ y la tercera es $4$. En los problemas de geometría suele verse $v = (x,y,z)$, y entonces $x,y,z$ son simplemente los nombres de las tres coordenadas.
+
+**Cómo se suma y cómo se estira.** La suma de vectores se hace coordenada a coordenada:
+$$u + v = (u_1 + v_1,\; u_2 + v_2,\; \ldots,\; u_n + v_n)$$
+El producto por un escalar $\alpha$ multiplica cada coordenada:
+$$\alpha v = (\alpha v_1,\; \alpha v_2,\; \ldots,\; \alpha v_n)$$
+Geométricamente, si $\alpha > 1$ el vector se estira, si $0 < \alpha < 1$ se encoge y si $\alpha < 0$ cambia de sentido. Por ejemplo, en $\mathbb{R}^2$: si $u = (1,2)$ y $v = (3,-1)$, entonces $u+v = (4,1)$, y si $\alpha = 3$, entonces $\alpha v = (9,-3)$.
+
+### Diccionario de notación
+
+| Símbolo | Se lee | Qué representa y para qué sirve |
+| --- | --- | --- |
+| $v$ | "vector v" | Nombre genérico de un vector, es decir, de un elemento del espacio. |
+| $v_i$ | "v sub i" | La i-ésima coordenada de $v$; siempre es un número, no un vector. |
+| $\alpha$, $\beta$, $\lambda$ | "alfa, beta, lambda" | Letras griegas típicas para escalares, o sea, números. |
+| $u + v$ | "u más v" | Suma de vectores, coordenada a coordenada. |
+| $\alpha v$ | "alfa por v" | Producto de un escalar por cada coordenada del vector. |
+| $\vec{0}$ | "vector cero" | Vector con todas las coordenadas nulas; es el neutro de la suma. |
+| $\operatorname{span}$ | "span" o "el generado por" | Conjunto de todas las combinaciones lineales de unos vectores. |
+| $\in$ | "pertenece a" | Indica que un objeto es elemento de un conjunto. |
+| $\subseteq$ | "subconjunto de" | Indica que todos los elementos de un conjunto están en otro. |
+| $\mathbb{K}$ | "cuerpo K" | Conjunto de escalares; casi siempre $\mathbb{R}$ o $\mathbb{C}$. |
+| $\mathbb{R}^n$ | "erre n" | Listas de $n$ números reales; es el espacio vectorial modelo. |
+| $\{\;\}$ | "el conjunto de" | Agrupa objetos, por ejemplo $\{v_1, v_2\}$. |
+| $:$ | "tales que" | Describe una condición dentro de un conjunto. |
+| $\iff$ | "si y solo si" | Las dos afirmaciones que une son equivalentes. |
+
+**Combinación lineal.** Una **combinación lineal** de unos vectores $v_1, v_2, \ldots, v_k$ es cualquier expresión de la forma
+$$\alpha_1 v_1 + \alpha_2 v_2 + \cdots + \alpha_k v_k$$
+donde $\alpha_1, \ldots, \alpha_k$ son escalares elegidos libremente. Los puntos suspensivos indican que se continúa el patrón hasta llegar al índice $k$. La combinación se llama **trivial** cuando todos los escalares son cero, es decir, cuando la combinación vale $\vec{0}$ sin mérito alguno.
+
+**Ejemplo.** En $\mathbb{R}^2$, el vector $(4,3)$ es combinación lineal de $(1,2)$ y $(2,-1)$ porque
+$$(4,3) = 2(1,2) + 1(2,-1) = (2,4) + (2,-1) = (4,3).$$
+Para hallar esos coeficientes se plantea un sistema: si buscamos $\alpha(1,2) + \beta(2,-1) = (4,3)$, igualando coordenadas queda $\alpha + 2\beta = 4$ y $2\alpha - \beta = 3$, cuya solución es $\alpha = 2$, $\beta = 1$.
+
+**Conjunto generado.** El conjunto de **todas** las combinaciones lineales posibles de unos vectores se llama su **span** o **conjunto generado**, y se escribe
+$$\operatorname{span}\{v_1, v_2, \ldots, v_k\} = \{\alpha_1 v_1 + \cdots + \alpha_k v_k : \alpha_i \in \mathbb{K}\}.$$
+La palabra inglesa span significa "abarcar" o "extender": el span es todo lo que se puede alcanzar moviendo los coeficientes. Siempre es un subespacio vectorial. La notación $\operatorname{span}\{v_1, v_2, \ldots, v_k\}$ se lee "el espacio generado por $v_1, v_2, \ldots, v_k$". Por ejemplo, en $\mathbb{R}^3$:
+
+- $\operatorname{span}\{(1,0,0), (0,1,0)\}$ es el plano formado por los vectores cuya tercera coordenada es $0$, porque toda combinación tiene la forma $(a,b,0)$.
+- $\operatorname{span}\{(1,1,0)\}$ es una recta que pasa por el origen y por el punto $(1,1,0)$.
+- $\operatorname{span}\{(1,1,0), (2,2,0)\}$ es la misma recta: el segundo vector no aporta nada nuevo porque ya era múltiplo del primero.
+
+## Independencia lineal, base y dimensión
+
+**Dependencia lineal.** Un conjunto de vectores $v_1, \ldots, v_k$ es **linealmente dependiente** si existe una combinación lineal de ellos que da $\vec{0}$ sin que todos los coeficientes sean cero:
+$$\alpha_1 v_1 + \cdots + \alpha_k v_k = \vec{0} \quad \text{con algún } \alpha_i \neq 0.$$
+En palabras: hay redundancia, algún vector se puede escribir como combinación de los demás. Por ejemplo, $(1,2,3)$ y $(2,4,6)$ son dependientes porque $2(1,2,3) - 1(2,4,6) = (0,0,0)$: el segundo es el doble del primero.
+
+**Independencia lineal.** Los vectores son **linealmente independientes** si la única combinación que da $\vec{0}$ es la trivial, es decir, si
+$$\alpha_1 v_1 + \cdots + \alpha_k v_k = \vec{0} \quad \text{obliga a } \alpha_1 = \alpha_2 = \cdots = \alpha_k = 0.$$
+Geométricamente: ninguno se puede formar con los otros; cada uno aporta una dirección nueva.
+
+**Cómo comprobarlo.** Se colocan los vectores como columnas de una matriz y se resuelve el sistema homogéneo asociado. Si el rango (que estudiaremos enseguida) coincide con el número de vectores, son independientes; si es menor, son dependientes. Cuando hay $n$ vectores en $\mathbb{R}^n$, basta calcular el determinante de la matriz que forman: si $\det \neq 0$ son independientes, y si $\det = 0$ son dependientes. El símbolo $\det$ viene de "determinante" y se explicará en detalle más adelante.
+
+**Ejemplo.** Los vectores $v_1=(1,1,1)$, $v_2=(1,2,3)$ y $v_3=(1,0,0)$ de $\mathbb{R}^3$ forman la matriz
+$$M = \begin{pmatrix} 1 & 1 & 1 \\ 1 & 2 & 0 \\ 1 & 3 & 0 \end{pmatrix}$$
+cuyo determinante vale $1 \neq 0$. Por lo tanto son linealmente independientes: ninguno es combinación de los otros dos.
+
+**Base.** Una **base** de un espacio vectorial $V$ es un conjunto de vectores que cumple dos condiciones a la vez: **genera** a $V$ (todo vector del espacio es combinación lineal de ellos) y es **linealmente independiente** (sin redundancia). La utilidad de una base es que da un sistema de coordenadas: cada vector de $V$ se escribe de manera **única** como combinación de los vectores de la base.
+
+Ejemplos de bases:
+
+- En $\mathbb{R}^2$, $\{e_1, e_2\}$ con $e_1=(1,0)$ y $e_2=(0,1)$: es la **base canónica**. La letra $e$ viene de "estándar" y el subíndice indica la posición del $1$.
+- En $\mathbb{R}^3$, $\{e_1,e_2,e_3\}$ con $e_1=(1,0,0)$, $e_2=(0,1,0)$ y $e_3=(0,0,1)$.
+- En $\mathbb{R}^n$, la base canónica tiene $n$ vectores $e_1,\ldots,e_n$, donde $e_i$ tiene un $1$ en la posición $i$ y ceros en las demás.
+- En los polinomios de grado menor o igual que $2$, una base natural es $\{1, x, x^2\}$.
+
+**Coordenadas.** Si $B = \{v_1, \ldots, v_n\}$ es una base y $v = c_1 v_1 + \cdots + c_n v_n$, los números $c_1,\ldots,c_n$ se llaman las **coordenadas** de $v$ en la base $B$ y se escribe $[v]_B = (c_1, \ldots, c_n)$. Los corchetes con subíndice recuerdan que las coordenadas dependen de la base elegida. Por ejemplo, en la base $B=\{(1,1),(1,-1)\}$ de $\mathbb{R}^2$, el vector $v=(3,1)$ cumple $v = 2(1,1) + 1(1,-1)$, así que $[v]_B = (2,1)$.
+
+**Dimensión.** La **dimensión** de $V$, escrita $\dim V$ (el símbolo $\dim$ viene de "dimensión"), es el número de vectores de cualquiera de sus bases. El teorema fundamental dice que todas las bases de un mismo espacio tienen el mismo número de elementos, así que la dimensión está bien definida. Algunos valores típicos:
+
+- $\dim \mathbb{R}^n = n$: el plano tiene dimensión $2$ y el espacio dimensión $3$.
+- $\dim M_{m \times n} = mn$: hay una coordenada por cada entrada de la matriz.
+- Los polinomios de grado menor o igual que $n$ tienen dimensión $n+1$, gracias a la base $\{1,x,\ldots,x^n\}$.
+- El subespacio $\{\vec{0}\}$ tiene dimensión $0$.
+
+**Ejemplo.** El subespacio $W = \operatorname{span}\{(1,2,1), (2,4,2), (1,0,1)\}$ tiene dimensión $2$, porque el segundo vector es el doble del primero, de modo que una base es $\{(1,2,1), (1,0,1)\}$. En general, la dimensión de un span es el número de vectores que quedan tras eliminar los redundantes.
 
 ## Matrices y sistemas de ecuaciones
-Un sistema $A\vec{x} = \vec{b}$ se resuelve con **eliminación de Gauss**: operaciones elementales por filas hasta la forma escalonada.
 
-**Teorema de Rouché-Frobenius:**
-- $\text{rango}(A) < \text{rango}(A|b)$: incompatible (sin solución).
-- $\text{rango}(A) = \text{rango}(A|b) = n$: solución única.
-- $\text{rango}(A) = \text{rango}(A|b) < n$: infinitas soluciones con $n - r$ parámetros.
+**Matriz.** Una **matriz** $A$ es una tabla rectangular de números ordenada en filas (horizontales) y columnas (verticales). Si tiene $m$ filas y $n$ columnas se dice que es de tamaño $m \times n$ y se escribe $A \in \mathbb{R}^{m \times n}$. El número ubicado en la fila $i$ y la columna $j$ se llama **entrada** $(i,j)$ y se escribe $a_{ij}$ (se lee "a sub i j"). Por ejemplo, en
+$$A = \begin{pmatrix} 2 & -1 \\ 0 & 3 \end{pmatrix}$$
+tenemos $a_{11}=2$, $a_{12}=-1$, $a_{21}=0$ y $a_{22}=3$. Las matrices son la forma concreta de guardar información lineal: coeficientes de un sistema, datos de una tabla, pesos de una red neuronal o las probabilidades de una cadena de Markov.
 
-**Ejemplo.**
-$$\begin{cases} x + y = 3 \\ 2x - y = 0 \end{cases} \Rightarrow x = 1, \; y = 2$$
+**Operaciones básicas.** Dos matrices del mismo tamaño se suman entrada con entrada: $(A+B)_{ij} = a_{ij}+b_{ij}$, donde $(A+B)_{ij}$ denota la entrada en la fila $i$ y la columna $j$ de la suma. Un escalar $\alpha$ multiplica cada entrada: $(\alpha A)_{ij} = \alpha a_{ij}$. La **transpuesta** $A^T$ es la matriz que resulta de cambiar filas por columnas, es decir, $(A^T)_{ij} = a_{ji}$; la letra $T$ viene de "transpuesta". Una matriz es **simétrica** si $A = A^T$.
 
-## Rango, inversa y determinantes
-- **Rango:** número de filas (o columnas) independientes; dimensión de la imagen.
-- **Inversa:** $A$ es invertible si y solo si $\det A \neq 0$; entonces $A^{-1} = \dfrac{1}{\det A}\,\text{adj}(A)$.
-- **Determinante:** mide el volumen con signo del paralelepípedo de las columnas; $\det(AB) = \det A \det B$.
-- **Regla de Cramer:** para sistemas con $\det \neq 0$, $x_i = \det(A_i)/\det(A)$.
+**Producto de matrices.** Multiplicar matrices no es multiplicar entrada con entrada: la regla es **fila por columna**. Si $A$ es $m \times n$ y $B$ es $n \times p$, el producto $AB$ es $m \times p$ y su entrada $(i,j)$ se obtiene multiplicando la fila $i$ de $A$ por la columna $j$ de $B$ y sumando los resultados:
+$$(AB)_{ij} = \sum_{k=1}^{n} a_{ik} b_{kj}.$$
+El símbolo $\sum_{k=1}^{n}$ se lee "suma desde $k=1$ hasta $n$" y significa sumar todos los términos que resultan de reemplazar $k$ por $1,2,\ldots,n$. Condición clave: el número de columnas de $A$ debe coincidir con el número de filas de $B$; si no coinciden, el producto no está definido.
 
-**Ejemplo.** $\det\begin{pmatrix} 2 & 1 \\ 1 & 3 \end{pmatrix} = 5 \neq 0$: invertible.
+**Ejemplo paso a paso.**
+$$\begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}\begin{pmatrix} 5 & 6 \\ 7 & 8 \end{pmatrix} = \begin{pmatrix} 1\cdot 5 + 2\cdot 7 & 1\cdot 6 + 2\cdot 8 \\ 3\cdot 5 + 4\cdot 7 & 3\cdot 6 + 4\cdot 8 \end{pmatrix} = \begin{pmatrix} 19 & 22 \\ 43 & 50 \end{pmatrix}.$$
+Ojo: el producto **no es conmutativo**: casi siempre $AB \neq BA$, y a veces uno de los dos productos ni siquiera existe. En cambio sí es asociativo, $(AB)C = A(BC)$, y distributivo: $A(B+C) = AB + AC$. La **matriz identidad** $I_n$ es la matriz cuadrada con $1$ en la diagonal y $0$ en el resto; cumple $AI_n = I_nA = A$, así que juega el papel del número $1$. También se cumple $(AB)^T = B^T A^T$: la transpuesta invierte el orden del producto.
+
+**Interpretación del producto matriz-vector.** Multiplicar una matriz por un vector, $A\vec{x}$, combina las columnas de $A$ con pesos dados por las coordenadas de $\vec{x}$. Por ejemplo,
+$$\begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}\begin{pmatrix} 2 \\ 1 \end{pmatrix} = 2\begin{pmatrix} 1 \\ 3 \end{pmatrix} + 1\begin{pmatrix} 2 \\ 4 \end{pmatrix} = \begin{pmatrix} 4 \\ 10 \end{pmatrix}.$$
+Esta lectura es clave para entender la imagen de una transformación lineal: los resultados posibles son combinaciones de las columnas.
+
+**Sistema de ecuaciones.** Un sistema de $m$ ecuaciones lineales con $n$ incógnitas se escribe
+$$\begin{cases} a_{11}x_1 + a_{12}x_2 + \cdots + a_{1n}x_n = b_1 \\ a_{21}x_1 + a_{22}x_2 + \cdots + a_{2n}x_n = b_2 \\ \quad \vdots \\ a_{m1}x_1 + a_{m2}x_2 + \cdots + a_{mn}x_n = b_m \end{cases}$$
+donde las $x_j$ son las **incógnitas** (los números que buscamos), los $a_{ij}$ son los **coeficientes** (los números conocidos que multiplican a cada incógnita) y los $b_i$ son los **términos independientes** (los resultados conocidos que no multiplican a ninguna incógnita). Los puntos suspensivos verticales $\vdots$ indican que la lista continúa siguiendo el patrón. En forma matricial, todo el sistema se escribe de manera compacta como $A\vec{x} = \vec{b}$: aquí $A$ es la matriz de coeficientes, $\vec{x}$ es el vector columna de incógnitas y $\vec{b}$ es el vector columna de términos independientes. Por ejemplo,
+$$\begin{cases} 2x + y = 5 \\ x - 3y = -1 \end{cases} \quad \Longleftrightarrow \quad \begin{pmatrix} 2 & 1 \\ 1 & -3 \end{pmatrix}\begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} 5 \\ -1 \end{pmatrix}.$$
+La doble flecha $\Longleftrightarrow$ (se lee "si y solo si") indica que las dos escrituras contienen exactamente la misma información.
+
+**Matriz ampliada.** Para aplicar el método de Gauss se escribe la **matriz ampliada** $[A \mid \vec{b}]$, que junta la matriz de coeficientes y la columna de términos independientes separadas por una barra vertical $\mid$ (que aquí funciona como separador visual, no como operación):
+$$\left(\begin{array}{cc|c} 2 & 1 & 5 \\ 1 & -3 & -1 \end{array}\right).$$
+Esa barra recuerda dónde estaba el signo igual. La notación $[A \mid \vec{b}]$ se lee "matriz A ampliada con b".
+
+**Eliminación de Gauss.** El método consiste en transformar el sistema en otro equivalente pero más simple, usando tres operaciones permitidas que no cambian la solución:
+
+1. Intercambiar dos filas.
+2. Multiplicar una fila por un número distinto de cero.
+3. Sumar a una fila un múltiplo de otra fila.
+
+El objetivo es llegar a la **forma escalonada**: una matriz donde cada **pivote** (el primer número no nulo de una fila) está a la derecha del pivote de la fila anterior y las filas nulas quedan abajo. Después se despeja de abajo hacia arriba con **sustitución hacia atrás**.
+
+**Ejemplo completo.** Resolvamos
+$$\begin{cases} x + y + z = 6 \\ 2x - y + z = 3 \\ x + 2y - z = 2 \end{cases}$$
+La matriz ampliada y los pasos son:
+$$\left(\begin{array}{ccc|c} 1 & 1 & 1 & 6 \\ 2 & -1 & 1 & 3 \\ 1 & 2 & -1 & 2 \end{array}\right) \longrightarrow \left(\begin{array}{ccc|c} 1 & 1 & 1 & 6 \\ 0 & -3 & -1 & -9 \\ 0 & 1 & -2 & -4 \end{array}\right) \longrightarrow \left(\begin{array}{ccc|c} 1 & 1 & 1 & 6 \\ 0 & 1 & -2 & -4 \\ 0 & 0 & -7 & -21 \end{array}\right).$$
+En el primer paso se hicieron $F_2 \to F_2 - 2F_1$ y $F_3 \to F_3 - F_1$ (a la fila 2 se le restó el doble de la fila 1, y a la fila 3 se le restó la fila 1). En el segundo paso se intercambiaron las filas 2 y 3 y luego se hizo $F_3 \to F_3 + 3F_2$. La notación $F_i$ significa "fila i". De la última fila se lee $-7z = -21$, luego $z = 3$. Sustituyendo en la segunda, $y - 2(3) = -4$, luego $y = 2$. Sustituyendo en la primera, $x + 2 + 3 = 6$, luego $x = 1$. La solución es $(x,y,z) = (1,2,3)$.
+
+**Clasificación de sistemas.** En general, un sistema lineal puede tener una solución, infinitas soluciones o ninguna. Para saber en qué caso estamos se comparan los **rangos** de la matriz $A$ y de la matriz ampliada. El **rango** de una matriz es el número de filas no nulas que quedan al aplicarle Gauss, e informalmente mide cuánta información independiente contiene. Las reglas son:
+
+- Si rango$(A) = \text{rango}(A \mid b) = n$ (el número de incógnitas), hay **solución única**.
+- Si rango$(A) = \text{rango}(A \mid b) < n$, hay **infinitas soluciones** y quedan $n - r$ parámetros libres, donde $r$ es el rango común.
+- Si rango$(A) < \text{rango}(A \mid b)$, el sistema es **incompatible**: no tiene solución.
+
+**Ejemplo incompatible.** El sistema $x + y = 1$, $x + y = 3$ describe dos rectas paralelas. Al escalonar aparece una fila del tipo $0 = 2$, imposible: rango$(A) = 1 < \text{rango}(A \mid b) = 2$.
+
+**Sistemas homogéneos.** Un sistema es **homogéneo** si todos los términos independientes son cero, es decir, tiene la forma $A\vec{x} = \vec{0}$. Siempre admite la solución trivial $\vec{x} = \vec{0}$; tiene soluciones distintas de cero si y solo si rango$(A) < n$, es decir, si sobran incógnitas o hay ecuaciones redundantes.
+
+## Rango, determinantes e inversa
+
+**Rango.** El **rango** de una matriz $A$, escrito rango$(A)$, es el número de filas no nulas que quedan después de aplicar eliminación de Gauss. Mide cuántas filas (o columnas) independientes tiene la matriz, es decir, cuánta información lineal genuina contiene. Sus propiedades más útiles son:
+
+- Nunca supera al mínimo entre filas y columnas: $0 \leq \text{rango}(A) \leq \min(m,n)$.
+- El rango no cambia al intercambiar filas, multiplicar una fila por un número no nulo o sumar a una fila un múltiplo de otra.
+- Rango$(A)$ es también la dimensión del espacio generado por las columnas de $A$. Por eso, para una transformación lineal representada por $A$, el rango coincide con la dimensión de su imagen, como veremos en la sección del teorema de la dimensión.
+- Una matriz de $n \times n$ tiene rango $n$ si y solo si sus columnas son linealmente independientes.
+
+**Ejemplo.** La matriz
+$$\begin{pmatrix} 1 & 2 \\ 2 & 4 \end{pmatrix}$$
+tiene rango $1$ porque la segunda fila es el doble de la primera; al hacer $F_2 \to F_2 - 2F_1$ queda una fila nula.
+
+**Determinante.** El **determinante** es un número que se calcula a partir de una matriz **cuadrada** y que mide si la matriz es invertible. Se escribe $\det(A)$ o $\det A$ ("determinante de A"). Para una matriz $1 \times 1$, $\det(a) = a$. Para una $2 \times 2$:
+$$\det\begin{pmatrix} a & b \\ c & d \end{pmatrix} = ad - bc.$$
+En palabras: producto de la diagonal principal (de arriba a la izquierda abajo a la derecha) menos producto de la diagonal secundaria.
+
+Para una matriz $3 \times 3$ hay dos métodos. La **regla de Sarrus**:
+$$\det\begin{pmatrix} a & b & c \\ d & e & f \\ g & h & i \end{pmatrix} = aei + bfg + cdh - ceg - bdi - afh.$$
+Y el **desarrollo por cofactores**, que usa los conceptos de **menor** y **cofactor**. Dada una entrada $a_{ij}$, su menor $M_{ij}$ es el determinante de la matriz que queda al borrar la fila $i$ y la columna $j$, y su cofactor es $C_{ij} = (-1)^{i+j} M_{ij}$; el factor $(-1)^{i+j}$ produce un patrón de signos alternados que empieza con $+$ en la esquina superior izquierda. Entonces:
+$$\det A = a_{11}C_{11} + a_{12}C_{12} + a_{13}C_{13}.$$
+Esta fórmula se puede desarrollar por cualquier fila o cualquier columna, no solo por la primera.
+
+**Propiedades de los determinantes.** Todas se leen pensando en el determinante como una medida del "volumen con signo":
+
+- $\det(AB) = \det(A)\det(B)$: el determinante de un producto es el producto de los determinantes.
+- $\det(A^T) = \det(A)$: transponer no cambia el determinante.
+- Si una fila o columna es múltiplo de otra, o es nula, el determinante es $0$.
+- Intercambiar dos filas cambia el signo del determinante.
+- Sumar a una fila un múltiplo de otra no cambia el determinante.
+- En una matriz triangular (o diagonal), el determinante es el producto de los números de la diagonal.
+- $\det(\alpha A) = \alpha^n \det(A)$ para una matriz $n \times n$.
+- $A$ es invertible si y solo si $\det(A) \neq 0$.
+
+**Interpretación geométrica.** En $\mathbb{R}^2$, el valor absoluto del determinante de una matriz $2 \times 2$ es el área del paralelogramo que forman sus vectores columna, y en $\mathbb{R}^3$ es el volumen del paralelepípedo correspondiente. El signo indica si la orientación se conserva o se invierte. Si $\det(A) = 0$, los vectores columna son dependientes y el paralelogramo o paralelepípedo está achatado, con volumen cero: por eso no hay inversa.
+
+**Ejemplo de determinante $3 \times 3$.** Para
+$$A = \begin{pmatrix} 1 & 2 & 3 \\ 0 & 1 & 4 \\ 5 & 6 & 0 \end{pmatrix}$$
+desarrollando por la primera fila:
+$$\det A = 1\cdot\det\begin{pmatrix} 1 & 4 \\ 6 & 0 \end{pmatrix} - 2\cdot\det\begin{pmatrix} 0 & 4 \\ 5 & 0 \end{pmatrix} + 3\cdot\det\begin{pmatrix} 0 & 1 \\ 5 & 6 \end{pmatrix} = 1(0-24) - 2(0-20) + 3(0-5) = -24 + 40 - 15 = 1.$$
+
+**Inversa.** La **inversa** de una matriz cuadrada $A$ es la matriz $A^{-1}$ (se lee "A inversa") que cumple
+$$A A^{-1} = A^{-1} A = I,$$
+donde $I$ es la matriz identidad del mismo tamaño. La inversa deshace el efecto de $A$, igual que dividir deshace el efecto de multiplicar. No todas las matrices tienen inversa: si existe, se dice que $A$ es **invertible** o **no singular**, y si no existe, se dice **singular**. El criterio fundamental es: $A$ es invertible si y solo si $\det(A) \neq 0$.
+
+Para una matriz $2 \times 2$ hay una fórmula directa:
+$$A = \begin{pmatrix} a & b \\ c & d \end{pmatrix} \quad \Longrightarrow \quad A^{-1} = \frac{1}{ad - bc}\begin{pmatrix} d & -b \\ -c & a \end{pmatrix}, \quad \text{si } ad - bc \neq 0.$$
+La receta en palabras: se intercambian los elementos de la diagonal principal, se cambian de signo los de la diagonal secundaria y se divide todo entre el determinante.
+
+**Ejemplo.** Para $A = \begin{pmatrix} 4 & 2 \\ 1 & 3 \end{pmatrix}$ se tiene $\det(A) = 4\cdot 3 - 2\cdot 1 = 10$, luego
+$$A^{-1} = \frac{1}{10}\begin{pmatrix} 3 & -2 \\ -1 & 4 \end{pmatrix} = \begin{pmatrix} 0.3 & -0.2 \\ -0.1 & 0.4 \end{pmatrix}.$$
+Verificación: multiplicar $A$ por $A^{-1}$ debe dar la identidad.
+
+Para matrices mayores se usa la **adjunta**. La matriz adjunta de $A$, escrita adj$(A)$, es la transpuesta de la matriz de cofactores: en la posición $(i,j)$ lleva el cofactor $C_{ji}$. Entonces
+$$A^{-1} = \frac{1}{\det A}\,\text{adj}(A), \quad \text{si } \det A \neq 0.$$
+Por ejemplo, para la matriz del apartado anterior se obtiene
+$$A^{-1} = \begin{pmatrix} -24 & 18 & 5 \\ 20 & -15 & -4 \\ -5 & 4 & 1 \end{pmatrix},$$
+resultado que se comprueba multiplicando por $A$.
+
+**Método de Gauss-Jordan.** Otra vía para invertir consiste en ampliar la matriz con la identidad, $[A \mid I]$, y aplicar operaciones por filas hasta que el bloque izquierdo se convierta en la identidad; el bloque derecho será entonces $A^{-1}$, es decir, $[A \mid I] \to [I \mid A^{-1}]$.
+
+**Propiedades de la inversa.** $(A^{-1})^{-1} = A$; $(AB)^{-1} = B^{-1}A^{-1}$, donde el orden se invierte (como al quitarse los zapatos y luego los calcetines); $(A^T)^{-1} = (A^{-1})^T$; y $\det(A^{-1}) = 1/\det(A)$.
+
+**Regla de Cramer.** Para un sistema $A\vec{x} = \vec{b}$ con el mismo número de ecuaciones que de incógnitas y con $\det(A) \neq 0$, la solución se calcula entrada por entrada:
+$$x_i = \frac{\det(A_i)}{\det(A)},$$
+donde $A_i$ es la matriz que resulta de reemplazar la columna $i$ de $A$ por el vector $\vec{b}$. Es útil para sistemas pequeños o cuando solo interesa una incógnita.
+
+**Ejemplo de Cramer.** En el sistema $2x + y = 5$, $x - 3y = -1$, se tiene $\det(A) = -7$ y
+$$x = \frac{\det\begin{pmatrix} 5 & 1 \\ -1 & -3 \end{pmatrix}}{-7} = \frac{-14}{-7} = 2, \qquad y = \frac{\det\begin{pmatrix} 2 & 5 \\ 1 & -1 \end{pmatrix}}{-7} = \frac{-7}{-7} = 1.$$
 
 ## Transformaciones lineales
-$T: V \to W$ es **lineal** si $T(u + v) = T(u) + T(v)$ y $T(\alpha v) = \alpha T(v)$.
 
-Toda transformación lineal entre espacios de dimensión finita se representa con una **matriz** una vez elegidas las bases. Composición de transformaciones equivale a multiplicación de matrices.
+**Definición.** Una **transformación lineal** (o aplicación lineal) es una función $T: V \to W$ entre dos espacios vectoriales que respeta la suma y el producto por escalares. La notación $T: V \to W$ se lee "T de V en W": la letra $T$ es el nombre de la función, $V$ es el **dominio** (de dónde salen los vectores) y $W$ es el **codominio** (a dónde llegan). Para cada vector $v \in V$, el resultado $T(v)$ se llama la **imagen** de $v$ y pertenece a $W$. La linealidad se expresa con dos condiciones:
 
-**Ejemplo.** $T(x, y) = (2x, x + y)$ tiene matriz $\begin{pmatrix} 2 & 0 \\ 1 & 1 \end{pmatrix}$ en la base canónica.
+$$T(u + v) = T(u) + T(v) \qquad \text{y} \qquad T(\alpha v) = \alpha T(v).$$
+
+En palabras: la imagen de la suma es la suma de las imágenes, y la imagen de un múltiplo es el múltiplo de la imagen. Ambas juntas equivalen a decir que $T$ preserva cualquier combinación lineal: $T(\alpha u + \beta v) = \alpha T(u) + \beta T(v)$. Un primer dato práctico: toda transformación lineal cumple $T(\vec{0}) = \vec{0}$, porque $T(\vec{0}) = T(0\cdot\vec{0}) = 0\cdot T(\vec{0}) = \vec{0}$. Si al evaluar en el vector cero no obtienes el vector cero, no es lineal.
+
+**Ejemplos geométricos.** En $\mathbb{R}^2$:
+
+- Una **rotación** de ángulo $\theta$ (la letra griega $\theta$ se lee "theta" y representa el ángulo) se escribe $T(x,y) = (x\cos\theta - y\sin\theta,\; x\sin\theta + y\cos\theta)$. Para $\theta = 90°$ resulta $T(x,y) = (-y,x)$.
+- Un **reflejo** sobre el eje $x$: $T(x,y) = (x,-y)$.
+- Una **proyección** sobre el eje $x$: $T(x,y) = (x,0)$.
+- Un **escalado** uniforme: $T(x,y) = (3x,3y)$.
+
+Todos ellos son lineales. En cambio $T(x,y) = (x+1, y)$ no lo es, porque $T(0,0) = (1,0) \neq (0,0)$: es una traslación, no una transformación lineal.
+
+**Otros ejemplos.** La derivada de polinomios $T(p) = p'$ es lineal, porque $(p+q)' = p' + q'$ y $(\alpha p)' = \alpha p'$. La integral de funciones continuas también lo es. En cambio, el valor absoluto no es lineal.
+
+**Matriz de una transformación.** Toda transformación lineal entre espacios de dimensión finita se representa con una matriz, una vez elegidas las bases. En la base canónica de $\mathbb{R}^n$, la regla es sencilla: la columna $j$ de la matriz es el vector $T(e_j)$, donde $e_j$ es el j-ésimo vector de la base canónica. Por ejemplo, para $T(x,y) = (2x - y,\; x + y)$:
+$$T(1,0) = (2,1), \qquad T(0,1) = (-1,1) \quad \Longrightarrow \quad [T] = \begin{pmatrix} 2 & -1 \\ 1 & 1 \end{pmatrix}.$$
+Para comprobarlo, multiplica esa matriz por $(x,y)$: $\begin{pmatrix} 2 & -1 \\ 1 & 1 \end{pmatrix}\begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} 2x-y \\ x+y \end{pmatrix}$.
+
+**Composición.** Si $T: U \to V$ y $S: V \to W$ son transformaciones lineales, la composición $S \circ T$ (se lee "S compuesta con T") aplica primero $T$ y después $S$: $(S \circ T)(u) = S(T(u))$. La composición de transformaciones corresponde a la multiplicación de sus matrices, en el mismo orden. La transformación inversa $T^{-1}$ existe exactamente cuando la matriz de $T$ es invertible.
 
 ## Núcleo, imagen y teorema de la dimensión
-- **Núcleo:** $\ker T = \{v : T(v) = 0\}$; mide la pérdida de información.
-- **Imagen:** $\text{Im}\,T = \{T(v)\}$; es el alcance.
-- $T$ es inyectiva $\iff \ker T = \{0\}$; sobreyectiva $\iff \text{Im} = W$.
-- **Teorema de la dimensión:**
-$$\dim V = \dim(\ker T) + \dim(\text{Im}\,T)$$
 
-**Ejemplo.** $T(x,y,z) = (x + y + z, 0)$: núcleo de dimensión 2, imagen de dimensión 1; suma 3. Correcto.
+**Núcleo.** El **núcleo** de una transformación lineal $T: V \to W$, escrito $\ker T$ (la abreviatura viene del inglés kernel, "núcleo"), es el conjunto de todos los vectores del dominio que $T$ envía al vector cero:
+$$\ker T = \{v \in V : T(v) = \vec{0}\}.$$
+En palabras: mide cuánta información se pierde al aplicar $T$, porque todos los vectores del núcleo quedan aplastados contra el cero y ya no se distinguen entre sí. El núcleo siempre es un subespacio de $V$ y siempre contiene a $\vec{0}$.
 
-## Valores propios y diagonalización
-$\lambda$ es **valor propio** con **vector propio** $v \neq 0$ si $Av = \lambda v$. Se calcula con el polinomio característico $\det(A - \lambda I) = 0$.
+**Imagen.** La **imagen** de $T$, escrita $\operatorname{Im} T$, es el conjunto de todos los resultados posibles de $T$:
+$$\operatorname{Im} T = \{T(v) : v \in V\}.$$
+En palabras: es el alcance de la transformación, todo lo que se puede obtener a la salida. La imagen siempre es un subespacio de $W$. Si $T$ está dada por una matriz $A$ en la base canónica, entonces $\operatorname{Im} T$ es el conjunto generado por las columnas de $A$, llamado **espacio columna**, y su dimensión es el rango de $A$.
 
-**Diagonalizable:** existe base de vectores propios, equivalentemente $A = PDP^{-1}$. Es diagonalizable si la multiplicidad geométrica iguala la algebraica para cada valor propio.
+**Inyectiva, sobreyectiva y biyectiva.** Una transformación lineal $T$ es:
 
-**Teorema espectral:** las matrices simétricas reales son diagonalizables con base **ortonormal**.
+- **inyectiva** si vectores distintos tienen imágenes distintas; esto equivale a que $\ker T = \{\vec{0}\}$, es decir, a que solo el cero se aplasta.
+- **sobreyectiva** si todo vector del codominio es imagen de algún vector del dominio; esto equivale a que $\operatorname{Im} T = W$.
+- **biyectiva** si es inyectiva y sobreyectiva a la vez; en ese caso existe la transformación inversa $T^{-1}$.
 
-**Ejemplo.** $A = \begin{pmatrix} 2 & 0 \\ 0 & 3 \end{pmatrix}$: valores propios 2 y 3, diagonalizable. $B = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ no lo es (un solo vector propio).
+**Teorema de la dimensión.** Para una transformación lineal $T: V \to W$ con $V$ de dimensión finita:
+$$\dim V = \dim(\ker T) + \dim(\operatorname{Im} T).$$
+Cada término se lee así: $\dim V$ es la dimensión del espacio de partida (cuántas coordenadas independientes hay a la entrada); $\dim(\ker T)$ es la dimensión del núcleo (cuántas direcciones se pierden); $\dim(\operatorname{Im} T)$ es la dimensión de la imagen (cuántas direcciones sobreviven a la salida). El teorema dice que las direcciones de entrada se reparten entre las que se pierden y las que llegan: es una ley de conservación de la información. Si $T$ es la multiplicación por una matriz $A$ de $n$ columnas, el teorema se vuelve $n = \text{nulidad}(A) + \text{rango}(A)$, donde la **nulidad** es la dimensión del núcleo de $A$.
+
+**Consecuencia práctica.** Si $T: V \to W$ y $\dim V = \dim W$, entonces $T$ es inyectiva si y solo si es sobreyectiva: basta comprobar una de las dos. Además, $\dim(\operatorname{Im} T) \leq \dim W$, así que no se puede "fabricar" dimensión de la nada.
+
+**Ejemplo 1.** Para $T(x,y,z) = (x + y + z,\; 0)$: el núcleo son los vectores que cumplen $x+y+z=0$, un plano de dimensión $2$ con base $\{(-1,1,0), (-1,0,1)\}$; la imagen son los vectores de la forma $(t,0)$, una recta de dimensión $1$ con base $\{(1,0)\}$. Se cumple $3 = 2 + 1$.
+
+**Ejemplo 2.** Para $T(x,y) = (x - y,\; y - z,\; x - z)$ (definida en $\mathbb{R}^3$): el núcleo exige $x=y$ y $y=z$, luego es la recta $\operatorname{span}\{(1,1,1)\}$ de dimensión $1$; la imagen está formada por las ternas $(a,b,c)$ con $c = a + b$, un plano de dimensión $2$. De nuevo $3 = 1 + 2$.
+
+## Valores y vectores propios
+
+**La idea geométrica.** Cuando aplicas una matriz $A$ a un vector cualquiera, el resultado suele apuntar hacia una dirección distinta. Sin embargo, existen direcciones privilegiadas que no cambian de dirección: el vector solo se estira, se encoge o se da vuelta. Esas direcciones son los vectores propios, y el factor de escala asociado es el valor propio.
+
+**Definición.** Sea $A$ una matriz cuadrada. Un número $\lambda$ (la letra griega $\lambda$, "lambda") es un **valor propio** de $A$ si existe un vector $v \neq \vec{0}$ tal que
+$$A v = \lambda v.$$
+El vector $v$ es entonces un **vector propio** asociado a $\lambda$. Léase despacio: al multiplicar $v$ por la matriz $A$ se obtiene el mismo vector $v$ multiplicado por el escalar $\lambda$. En palabras, $A$ no cambia la dirección de $v$: solo la escala por $\lambda$. Si $\lambda > 1$ el vector se alarga, si $0 < \lambda < 1$ se acorta, si $\lambda < 0$ se invierte y si $\lambda = 0$ el vector es aplastado al cero (y entonces $v$ está en el núcleo de $A$). Se exige $v \neq \vec{0}$ porque el vector cero cumple $A\vec{0} = \lambda\vec{0}$ para cualquier $\lambda$ y no aporta información; en cambio, si $v$ es vector propio de $\lambda$, cualquier múltiplo $\alpha v$ con $\alpha \neq 0$ también lo es.
+
+**Cómo se calculan.** La ecuación $Av = \lambda v$ se reescribe como $Av - \lambda v = \vec{0}$. Para poder sacar factor común $v$ hay que escribir $\lambda v = \lambda I v$, donde $I$ es la matriz identidad del mismo tamaño que $A$ (así $\lambda$ se convierte en la matriz diagonal $\lambda I$). Entonces:
+$$(A - \lambda I)v = \vec{0}.$$
+Esto es un sistema homogéneo de matriz $A - \lambda I$. Tiene soluciones distintas de cero si y solo si el determinante de esa matriz es cero:
+$$\det(A - \lambda I) = 0.$$
+Esta ecuación se llama **ecuación característica**; el polinomio $p_A(\lambda) = \det(A - \lambda I)$ se llama **polinomio característico** de $A$ y tiene grado $n$ cuando $A$ es $n \times n$. Sus raíces son exactamente los valores propios.
+
+**Procedimiento.** 1) Forma la matriz $A - \lambda I$ restando $\lambda$ a cada entrada de la diagonal. 2) Calcula su determinante y resuelve $\det(A - \lambda I) = 0$. 3) Para cada valor propio $\lambda$, resuelve el sistema $(A - \lambda I)v = \vec{0}$ para hallar los vectores propios. 4) El conjunto de soluciones de ese sistema se llama **espacio propio** de $\lambda$ y se escribe $E_\lambda = \ker(A - \lambda I)$.
+
+**Ejemplo completo.** Para
+$$A = \begin{pmatrix} 4 & 1 \\ 2 & 3 \end{pmatrix}$$
+se tiene
+$$\det(A - \lambda I) = \det\begin{pmatrix} 4 - \lambda & 1 \\ 2 & 3 - \lambda \end{pmatrix} = (4-\lambda)(3-\lambda) - 2 = \lambda^2 - 7\lambda + 10 = (\lambda - 5)(\lambda - 2).$$
+Los valores propios son $\lambda = 5$ y $\lambda = 2$. Para $\lambda = 5$:
+$$(A - 5I)v = \begin{pmatrix} -1 & 1 \\ 2 & -2 \end{pmatrix}\begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix} \Longrightarrow -x + y = 0 \Longrightarrow y = x,$$
+así que un vector propio es $(1,1)$ y $E_5 = \operatorname{span}\{(1,1)\}$. Para $\lambda = 2$:
+$$(A - 2I)v = \begin{pmatrix} 2 & 1 \\ 2 & 1 \end{pmatrix}\begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix} \Longrightarrow 2x + y = 0,$$
+así que un vector propio es $(1,-2)$ y $E_2 = \operatorname{span}\{(1,-2)\}$.
+
+**Comprobación rápida.** La suma de los valores propios (contando multiplicidades) coincide con la **traza** de $A$, que es la suma de los elementos de la diagonal principal y se escribe $\operatorname{tr}(A)$: aquí $5 + 2 = 7 = 4 + 3$. El producto de los valores propios coincide con el determinante: $5 \cdot 2 = 10 = \det A$. Estas dos pistas permiten verificar los cálculos.
+
+**Ejemplo $3 \times 3$.** Para
+$$A = \begin{pmatrix} 2 & 0 & 0 \\ 0 & 3 & 1 \\ 0 & 0 & 3 \end{pmatrix}$$
+el polinomio característico es $p_A(\lambda) = (2-\lambda)(3-\lambda)^2$, porque la matriz $A - \lambda I$ es triangular. Los valores propios son $\lambda = 2$ (simple) y $\lambda = 3$ (doble). Para $\lambda = 2$, el espacio propio es $\operatorname{span}\{(1,0,0)\}$. Para $\lambda = 3$ hay que resolver $(A - 3I)v = \vec{0}$ con
+$$A - 3I = \begin{pmatrix} -1 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 0 & 0 \end{pmatrix},$$
+que obliga a $x = 0$ y $z = 0$, dejando $y$ libre: $E_3 = \operatorname{span}\{(0,1,0)\}$, de dimensión $1$. En total hay tres valores propios contando multiplicidad pero solo dos direcciones propias independientes; esta observación será clave al estudiar la diagonalización.
+
+**Multiplicidades.** La **multiplicidad algebraica** de $\lambda$ es el número de veces que $\lambda$ aparece como raíz del polinomio característico. La **multiplicidad geométrica** es la dimensión de su espacio propio, $\dim E_\lambda$. Siempre se cumple $1 \leq \text{geométrica} \leq \text{algebraica}$. Cuando no coinciden, la matriz no tendrá suficientes direcciones propias.
+
+**Un caso sin valores propios reales.** La matriz de rotación de $90°$,
+$$R = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix},$$
+tiene polinomio característico $\lambda^2 + 1 = 0$, cuyas raíces son $\lambda = i$ y $\lambda = -i$, números complejos. Tiene sentido geométrico: al rotar $90°$ ninguna dirección real se conserva, así que no hay vectores propios reales. Los valores propios complejos son perfectamente válidos y muy útiles (por ejemplo, describen oscilaciones), pero en este curso nos centraremos en los reales.
+
+## Diagonalización
+
+**Definición.** Una matriz cuadrada $A$ es **diagonalizable** si existen una matriz invertible $P$ y una matriz diagonal $D$ tales que
+$$A = P D P^{-1}.$$
+Cada símbolo: $P$ es la **matriz de paso**, cuyas columnas son los vectores propios de $A$; $P^{-1}$ es su inversa; y $D$ es una matriz **diagonal** (con ceros fuera de la diagonal) que lleva los valores propios en la diagonal, en el mismo orden en que se colocaron los vectores propios en $P$. La utilidad es enorme: en la base de vectores propios, $A$ se comporta como $D$, y $D$ es fácil de elevar a potencias, de invertir y de analizar. Diagonalizar es, en el fondo, cambiar de coordenadas para que la transformación sea un simple escalado por ejes.
+
+**Criterio.** Una matriz $n \times n$ es diagonalizable si y solo si tiene $n$ vectores propios linealmente independientes. En términos de multiplicidades: es diagonalizable si y solo si para cada valor propio la multiplicidad geométrica iguala a la algebraica. Un caso particular muy cómodo: si todos los valores propios son distintos (sin repeticiones), entonces la matriz es automáticamente diagonalizable.
+
+**Procedimiento.** 1) Halla los valores propios resolviendo $\det(A - \lambda I) = 0$. 2) Para cada uno, halla una base de su espacio propio. 3) Si juntando todas las bases obtienes $n$ vectores independientes, forma $P$ con ellos como columnas y $D$ con los valores propios correspondientes en la diagonal. 4) Escribe $A = PDP^{-1}$ y, si quieres, verifica multiplicando.
+
+**Ejemplo completo.** Para $A = \begin{pmatrix} 4 & 1 \\ 2 & 3 \end{pmatrix}$ ya obtuvimos los pares $(\lambda=5, v=(1,1))$ y $(\lambda=2, v=(1,-2))$. Entonces
+$$P = \begin{pmatrix} 1 & 1 \\ 1 & -2 \end{pmatrix}, \qquad D = \begin{pmatrix} 5 & 0 \\ 0 & 2 \end{pmatrix}, \qquad P^{-1} = \begin{pmatrix} 2/3 & 1/3 \\ 1/3 & -1/3 \end{pmatrix},$$
+y se cumple $A = PDP^{-1}$. En efecto, $P^{-1}$ se obtuvo con la fórmula de $2 \times 2$ (determinante de $P$ igual a $-3$) y la verificación directa reproduce las entradas originales.
+
+**Potencias de una matriz.** Si $A = PDP^{-1}$, entonces $A^k = P D^k P^{-1}$ para todo entero $k \geq 0$, porque los productos $P^{-1}P$ intermedios se cancelan. Calcular potencias grandes de $A$ se reduce a elevar números al exponente $k$ en la diagonal de $D$. Esta técnica es la base del análisis de sistemas que evolucionan paso a paso.
+
+**Aplicación: cadenas de Markov.** El modelo de dos estados
+$$M = \begin{pmatrix} 0.9 & 0.2 \\ 0.1 & 0.8 \end{pmatrix}$$
+representa probabilidades de transición. Sus valores propios son $\lambda = 1$ y $\lambda = 0.7$. El vector propio de $\lambda = 1$ es $(2,1)$, que normalizado (dividido entre su suma, $3$) da la distribución estable $(2/3, 1/3)$: a largo plazo el sistema converge a ese reparto, y el valor propio dominante $1$ garantiza que la masa total se conserva. Así se explican el clima, los mercados y el famoso algoritmo PageRank.
+
+**Teorema espectral.** Si $A$ es una matriz **simétrica** real (es decir, $A = A^T$), entonces es diagonalizable de forma especial: existe una matriz $Q$ cuyas columnas son vectores propios **ortonormales** (perpendiculares entre sí y de longitud $1$) tal que
+$$A = Q D Q^T, \quad \text{con } Q^T Q = I, \text{ o sea } Q^{-1} = Q^T.$$
+Aquí aparece $Q^T$, la transpuesta de $Q$; en matrices ortogonales coincide con la inversa, lo que hace el cálculo aún más sencillo. Ejemplo: $A = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}$ tiene valores propios $3$ y $1$, y se diagonaliza con $Q$ de columnas $(1,1)/\sqrt{2}$ y $(1,-1)/\sqrt{2}$.
+
+**Cuando no se puede diagonalizar.** La matriz
+$$B = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$$
+tiene un único valor propio $\lambda = 1$ (doble) y su espacio propio es $\operatorname{span}\{(1,0)\}$, de dimensión $1$. Como la multiplicidad geométrica ($1$) es menor que la algebraica ($2$), no es diagonalizable. Estos casos se estudian con la forma de Jordan, una versión casi diagonal que no veremos aquí.
 
 ## Producto interno y ortogonalidad
-El producto interno permite medir ángulos y distancias: $\langle u, v\rangle$; en $\mathbb{R}^n$, el producto punto. **Ortogonales** si $\langle u, v\rangle = 0$.
 
-- **Proyección** de $u$ sobre $v$: $\dfrac{\langle u, v\rangle}{\langle v, v\rangle}v$.
-- **Gram-Schmidt:** construye bases ortonormales.
-- **Mínimos cuadrados:** la mejor solución de $A\vec{x} = \vec{b}$ cuando no hay solución exacta sale de $A^TA\vec{x} = A^T\vec{b}$.
+**Producto interno.** El **producto interno** es una operación que asigna a cada par de vectores $u, v$ un número, escrito $\langle u, v \rangle$ (se lee "u punto v" o "producto interno de u con v"). Sirve para medir ángulos, longitudes y distancias, cosas que la estructura de espacio vectorial por sí sola no permite. En $\mathbb{R}^n$ el producto interno estándar es el **producto punto**:
+$$\langle u, v \rangle = u_1 v_1 + u_2 v_2 + \cdots + u_n v_n = \sum_{i=1}^{n} u_i v_i.$$
+Es decir: se multiplican las coordenadas correspondientes y se suman los resultados. Ejemplo: $\langle (1,2,3), (4,-1,0) \rangle = 1\cdot 4 + 2\cdot(-1) + 3\cdot 0 = 2$. Propiedades básicas: $\langle u, v \rangle = \langle v, u \rangle$ (conmutativo), es lineal en cada variable y $\langle v, v \rangle \geq 0$, con igualdad solo para $v = \vec{0}$.
 
-**Ejemplo.** Proyección de $(1,1)$ sobre $(1,0)$: $(1,0)$; la componente ortogonal es $(0,1)$.
+**Norma y distancia.** La **norma** o longitud de un vector es $\|v\| = \sqrt{\langle v, v \rangle}$; las dobles barras $\|\cdot\|$ son la notación estándar de longitud. En $\mathbb{R}^3$, $\|(3,4,0)\| = \sqrt{9+16} = 5$. La **distancia** entre $u$ y $v$ es $d(u,v) = \|u - v\|$. Un vector de norma $1$ se llama **unitario**; para normalizar $v \neq \vec{0}$ se divide entre su norma: $v/\|v\|$.
 
-## Ejemplos resueltos: seis casos explicados
-**Ejemplo 1 (práctica, sistema).** Resuelve $\begin{cases} x + 2y = 4 \\ 3x - y = 1 \end{cases}$.
-- Despeja: $y = 3x - 1$; sustituye: $x + 6x - 2 = 4$.
-- $x = 6/7$; $y = 11/7$.
+**Ángulo y ortogonalidad.** El ángulo $\theta$ entre dos vectores no nulos cumple
+$$\cos\theta = \frac{\langle u, v \rangle}{\|u\|\,\|v\|}.$$
+Dos vectores son **ortogonales** (perpendiculares) si $\langle u, v \rangle = 0$. Por ejemplo, $(1,2)$ y $(2,-1)$ son ortogonales porque $1\cdot 2 + 2\cdot(-1) = 0$. Un conjunto de vectores es **ortogonal** si todos sus elementos son perpendiculares entre sí, y es **ortonormal** si además todos tienen norma $1$. Las bases ortonormales son las mejores para calcular, porque las coordenadas se obtienen con simples productos internos: si $\{q_1,\ldots,q_n\}$ es ortonormal, entonces $v = \langle v, q_1\rangle q_1 + \cdots + \langle v, q_n\rangle q_n$.
 
-**Ejemplo 2 (práctica, determinante).** $\det\begin{pmatrix} 1 & 2 & 3 \\ 0 & 1 & 4 \\ 5 & 6 & 0 \end{pmatrix}$.
-- Expande: $1(0 - 24) - 2(0 - 20) + 3(0 - 5) = -24 + 40 - 15 = 1$.
+**Proyección.** La **proyección** de $u$ sobre $v$ (con $v \neq \vec{0}$) es el vector
+$$\operatorname{proy}_v(u) = \frac{\langle u, v \rangle}{\langle v, v \rangle}\, v.$$
+La fracción indica cuánto de $u$ apunta en la dirección de $v$. La diferencia $u - \operatorname{proy}_v(u)$ es la **componente ortogonal** y es perpendicular a $v$; así, la proyección descompone $u$ en una parte paralela y otra perpendicular a $v$. Ejemplo: la proyección de $(2,3)$ sobre $(1,1)$ es $\frac{5}{2}(1,1) = (2.5, 2.5)$, y la componente ortogonal es $(-0.5, 0.5)$.
 
-**Ejemplo 3 (práctica, valores propios).** $A = \begin{pmatrix} 4 & 1 \\ 2 & 3 \end{pmatrix}$.
-- $\det(A - \lambda I) = (4-\lambda)(3-\lambda) - 2 = \lambda^2 - 7\lambda + 10 = 0$.
-- Valores propios: $\lambda = 5$ y $\lambda = 2$.
+**Gram-Schmidt.** El método de **Gram-Schmidt** fabrica una base ortonormal a partir de una base cualquiera. Dados $v_1, v_2, \ldots$, se construyen vectores ortogonales $u_1, u_2, \ldots$ así: $u_1 = v_1$; luego $u_2 = v_2 - \operatorname{proy}_{u_1}(v_2)$; y en general a cada $v_k$ se le restan sus proyecciones sobre todos los $u_i$ anteriores. Al final se normaliza cada $u_i$ dividiéndolo entre su norma. Ejemplo con $v_1=(1,1,0)$ y $v_2=(1,0,1)$: $u_1 = (1,1,0)$ y
+$$u_2 = (1,0,1) - \frac{1}{2}(1,1,0) = \left(\tfrac{1}{2}, -\tfrac{1}{2}, 1\right),$$
+que es perpendicular a $u_1$, como se comprueba con el producto interno.
 
-**Ejemplo 4 (aplicación, población).** Un modelo de dos especies usa $A = \begin{pmatrix} 0.9 & 0.2 \\ 0.1 & 0.8 \end{pmatrix}$. Interpreta su valor propio dominante.
-- $\lambda = 1$ y $\lambda = 0.7$.
-- El sistema converge a la distribución estable del valor propio 1 (la población total se conserva).
+**Complemento ortogonal.** Dado un subespacio $W$ de $\mathbb{R}^n$, su **complemento ortogonal** $W^\perp$ (se lee "W perpendicular") es el conjunto de vectores perpendiculares a todos los de $W$. Se cumple que todo vector de $\mathbb{R}^n$ se descompone de forma única como suma de uno de $W$ y otro de $W^\perp$.
 
-**Ejemplo 5 (aplicación, mínimos cuadrados).** Ajusta una recta a $(1,2)$, $(2,3)$, $(3,5)$.
-- $A^TA\begin{pmatrix} b \\ m\end{pmatrix} = A^T\vec{y}$ con $A$ de unos y $x$.
-- Resultado: $y = 1.5x + 0.33$; residual mínimo.
+**Mínimos cuadrados.** Cuando el sistema $A\vec{x} = \vec{b}$ no tiene solución (es incompatible), a veces interesa la **mejor solución aproximada**: el vector $\vec{x}$ que hace mínima la distancia $\|A\vec{x} - \vec{b}\|$. Ese vector se obtiene resolviendo las **ecuaciones normales**
+$$A^T A \vec{x} = A^T \vec{b},$$
+donde $A^T$ es la transpuesta de $A$. La explicación geométrica: el error $\vec{b} - A\vec{x}$ debe ser perpendicular al espacio columna de $A$, y la condición de perpendicularidad con cada columna conduce exactamente a $A^T(A\vec{x} - \vec{b}) = \vec{0}$. Si las columnas de $A$ son independientes, $A^T A$ es invertible y $\vec{x} = (A^T A)^{-1} A^T \vec{b}$.
 
-**Ejemplo 6 (práctica, rango).** Halla el rango de $\begin{pmatrix} 1 & 2 \\ 2 & 4 \end{pmatrix}$.
-- La segunda fila es el doble de la primera.
-- Rango 1: las columnas son dependientes.
+**Ejemplo: ajustar una recta.** Se quieren ajustar los puntos $(1,2)$, $(2,3)$, $(3,5)$ a una recta $y = b + m x$, donde $b$ es la ordenada en el origen y $m$ la pendiente. Se plantea el sistema sobredeterminado
+$$\begin{pmatrix} 1 & 1 \\ 1 & 2 \\ 1 & 3 \end{pmatrix}\begin{pmatrix} b \\ m \end{pmatrix} = \begin{pmatrix} 2 \\ 3 \\ 5 \end{pmatrix}.$$
+Entonces $A^T A = \begin{pmatrix} 3 & 6 \\ 6 & 14 \end{pmatrix}$ y $A^T \vec{b} = \begin{pmatrix} 10 \\ 23 \end{pmatrix}$. Resolviendo, $m = 1.5$ y $b = 1/3 \approx 0.33$, así que la recta ajustada es $y \approx 1.5x + 0.33$. Este es el corazón de la **regresión lineal**, una de las herramientas más usadas en estadística y aprendizaje automático.
 
-## Contextos donde se aplica
-- **Computación gráfica:** rotaciones, escalados y proyecciones son matrices.
-- **Data science:** PCA usa valores propios; mínimos cuadrados es la regresión.
-- **Física:** momentos de inercia, mecánica cuántica (operadores), vibraciones.
-- **Ingeniería:** análisis estructural, circuitos, control.
-- **Economía:** modelos input-output de Leontief, equilibrio de mercados.
+## Ejemplos resueltos
 
-## Errores comunes y cómo evitarlos
-- **Confundir rango con número de filas.** El rango puede ser menor si hay dependencia.
-- **Suponer diagonalizable.** No toda matriz lo es (Jordan).
-- **Calcular mal el determinante por signos.** Usa cofactores con cuidado.
-- **Olvidar que la inversa solo existe con $\det \neq 0$.**
-- **Confundir inyectiva con sobreyectiva.** Usa el teorema de la dimensión para contarlas.
+Aquí tienes una colección de problemas resueltos de principio a fin, con todos los pasos y comentarios, para que veas cómo se combinan las ideas anteriores.
 
-## Ejercicios propuestos
-1. Determina si $\{(1,2), (2,4)\}$ es base de $\mathbb{R}^2$.
-2. Resuelve $\begin{cases} 2x + y = 5 \\ x - y = 1 \end{cases}$.
-3. Halla $\det\begin{pmatrix} 2 & -1 \\ 3 & 4 \end{pmatrix}$.
-4. Valores propios de $\begin{pmatrix} 3 & 0 \\ 0 & -2 \end{pmatrix}$.
-5. Núcleo e imagen de $T(x,y,z) = (x, 0, z)$.
-6. Proyecta $(2,3)$ sobre $(1,1)$.
-7. Diagonaliza $A = \begin{pmatrix} 2 & 2 \\ 0 & 2 \end{pmatrix}$ si es posible.
-8. Ajusta por mínimos cuadrados la recta a $(0,1)$, $(1,2)$, $(2,4)$.
+**Ejemplo 1 (subespacios).** Comprueba que $W = \{(x,y,z) : x + y + z = 0\}$ es un subespacio de $\mathbb{R}^3$, halla una base y su dimensión.
 
-**Respuestas:** 1) No (dependientes). 2) $x = 2$, $y = 1$. 3) $11$. 4) $3$ y $-2$. 5) Núcleo $\{(0,t,0)\}$; imagen el plano $xz$. 6) $\frac{5}{2}(1,1)$. 7) No: vector propio único $(1,0)$. 8) $y \approx 1.5x + 0.83$.
+Primero, $(0,0,0)$ cumple $0+0+0=0$, así que $\vec{0} \in W$. Segundo, si $u=(x_1,y_1,z_1)$ y $v=(x_2,y_2,z_2)$ están en $W$, entonces $u+v = (x_1+x_2, y_1+y_2, z_1+z_2)$ cumple $(x_1+x_2)+(y_1+y_2)+(z_1+z_2) = 0+0 = 0$, luego $u+v \in W$. Tercero, $\alpha u = (\alpha x_1, \alpha y_1, \alpha z_1)$ cumple $\alpha x_1 + \alpha y_1 + \alpha z_1 = \alpha \cdot 0 = 0$, luego $\alpha u \in W$. Es un subespacio.
+
+Para la base, despejamos $z = -x-y$: todo vector de $W$ es $(x, y, -x-y) = x(1,0,-1) + y(0,1,-1)$. Por lo tanto $W = \operatorname{span}\{(1,0,-1), (0,1,-1)\}$ y esos dos vectores son independientes (ninguno es múltiplo del otro). Base: $\{(1,0,-1), (0,1,-1)\}$; dimensión: $\dim W = 2$. Geométricamente, $W$ es un plano que pasa por el origen.
+
+**Ejemplo 2 (independencia, base y coordenadas).** Estudia los vectores $v_1=(1,1,1)$, $v_2=(1,2,3)$ y $v_3=(1,0,0)$ de $\mathbb{R}^3$.
+
+Con los vectores como columnas se forma
+$$M = \begin{pmatrix} 1 & 1 & 1 \\ 1 & 2 & 0 \\ 1 & 3 & 0 \end{pmatrix}.$$
+Desarrollando por la tercera columna: $\det M = 1 \cdot \det\begin{pmatrix} 1 & 2 \\ 1 & 3 \end{pmatrix} = 1 \cdot (3-2) = 1 \neq 0$. Como el determinante no es cero, los tres vectores son linealmente independientes y, al ser tres en un espacio de dimensión $3$, forman una base $B$ de $\mathbb{R}^3$.
+
+Hallemos las coordenadas de $w = (2,1,3)$ en esa base: buscamos $a,b,c$ con $a v_1 + b v_2 + c v_3 = w$, es decir,
+$$\begin{cases} a + b + c = 2 \\ a + 2b = 1 \\ a + 3b = 3 \end{cases}$$
+Restando las dos últimas ecuaciones, $b = 2$. Entonces $a = 1 - 2b = -3$ y $c = 2 - a - b = 2 + 3 - 2 = 3$. Así, $[w]_B = (-3, 2, 3)$, que significa $w = -3v_1 + 2v_2 + 3v_3$.
+
+**Ejemplo 3 (Gauss, solución única).** Resuelve
+$$\begin{cases} x + y + z = 2 \\ 2x - y + z = 2 \\ x - y - z = 2 \end{cases}$$
+La matriz ampliada es
+$$\left(\begin{array}{ccc|c} 1 & 1 & 1 & 2 \\ 2 & -1 & 1 & 2 \\ 1 & -1 & -1 & 2 \end{array}\right).$$
+Hacemos $F_2 \to F_2 - 2F_1$ y $F_3 \to F_3 - F_1$:
+$$\left(\begin{array}{ccc|c} 1 & 1 & 1 & 2 \\ 0 & -3 & -1 & -2 \\ 0 & -2 & -2 & 0 \end{array}\right).$$
+Dividimos $F_3$ entre $-2$: $F_3 \to -\frac{1}{2}F_3$ da $(0, 1, 1 : 0)$. Dividimos $F_2$ entre $-1$: $F_2 \to -F_2$ da $(0, 3, 1 : 2)$. Ahora $F_2 \to F_2 - 3F_3$:
+$$\left(\begin{array}{ccc|c} 1 & 1 & 1 & 2 \\ 0 & 0 & -2 & 2 \\ 0 & 1 & 1 & 0 \end{array}\right).$$
+De la fila 2, $-2z = 2$, luego $z = -1$. De la fila 3, $y + z = 0$, luego $y = 1$. De la fila 1, $x + 1 - 1 = 2$, luego $x = 2$. Solución única: $(x,y,z) = (2,1,-1)$. Verificación en la segunda ecuación original: $2(2) - 1 + (-1) = 2$. Correcto.
+
+**Ejemplo 4 (Gauss, infinitas soluciones).** Resuelve
+$$\begin{cases} x + 2y + z = 3 \\ 2x + 4y + 2z = 6 \end{cases}$$
+La segunda ecuación es el doble de la primera, así que aporta la misma información. Con $F_2 \to F_2 - 2F_1$ queda una fila de ceros y el rango común es $1$, menor que el número de incógnitas ($3$). Hay $3 - 1 = 2$ parámetros libres. Llamando $y = s$ y $z = t$, la primera ecuación da $x = 3 - 2s - t$. Solución general: $(x,y,z) = (3 - 2s - t,\; s,\; t)$ con $s, t \in \mathbb{R}$. Es un plano de soluciones.
+
+**Ejemplo 5 (Gauss, sistema incompatible).** Resuelve
+$$\begin{cases} 2x - y = 4 \\ 2x - y = 7 \end{cases}$$
+Al restar la primera ecuación de la segunda se obtiene $0 = 3$, un absurdo. En la matriz ampliada, $F_2 \to F_2 - F_1$ produce la fila $(0, 0 : 3)$, que significa $0x + 0y = 3$. rango$(A) = 1$ pero rango$(A \mid b) = 2$, así que el sistema es incompatible: las dos rectas son paralelas y no se cortan.
+
+**Ejemplo 6 (determinante e inversa $3 \times 3$).** Para
+$$A = \begin{pmatrix} 1 & 2 & 3 \\ 0 & 1 & 4 \\ 5 & 6 & 0 \end{pmatrix}$$
+ya calculamos $\det A = 1$. Como el determinante no es cero, $A$ es invertible. Hallemos los cofactores de la primera fila: $C_{11} = +(1\cdot 0 - 4\cdot 6) = -24$; $C_{12} = -(0\cdot 0 - 4\cdot 5) = 20$; $C_{13} = +(0\cdot 6 - 1\cdot 5) = -5$. Completando el resto y transponiendo se obtiene la adjunta, y dividiendo entre $\det A = 1$:
+$$A^{-1} = \begin{pmatrix} -24 & 18 & 5 \\ 20 & -15 & -4 \\ -5 & 4 & 1 \end{pmatrix}.$$
+Verificación de una entrada: la fila 1 de $A$ por la columna 2 de $A^{-1}$ debe dar $0$: $1\cdot 18 + 2\cdot(-15) + 3\cdot 4 = 18 - 30 + 12 = 0$. Correcto; de forma análoga, $A A^{-1} = I$.
+
+**Ejemplo 7 (rango, núcleo, imagen y teorema de la dimensión).** Para
+$$A = \begin{pmatrix} 1 & 2 & 3 \\ 2 & 4 & 6 \end{pmatrix}$$
+estudia rango, núcleo e imagen, y comprueba el teorema de la dimensión.
+
+Como la segunda fila es el doble de la primera, al escalonar queda una sola fila no nula: rango$(A) = 1$. El núcleo son los vectores $(x,y,z)$ con $x + 2y + 3z = 0$. Pasando $y$ y $z$ a parámetros, $x = -2y - 3z$; tomando $(y,z) = (1,0)$ y $(0,1)$ se obtienen las soluciones básicas $(-2,1,0)$ y $(-3,0,1)$. Entonces $\ker A = \operatorname{span}\{(-2,1,0), (-3,0,1)\}$ y su dimensión es $2$. La imagen es el espacio generado por las columnas: $\operatorname{span}\{(1,2), (2,4), (3,6)\} = \operatorname{span}\{(1,2)\}$, de dimensión $1$, que coincide con el rango. El teorema se cumple: $n = 3 = 2 + 1$.
+
+**Ejemplo 8 (valores y vectores propios).** Halla los valores y vectores propios de
+$$A = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}.$$
+$$\det(A - \lambda I) = \det\begin{pmatrix} 2 - \lambda & 1 \\ 1 & 2 - \lambda \end{pmatrix} = (2-\lambda)^2 - 1 = \lambda^2 - 4\lambda + 3 = (\lambda - 3)(\lambda - 1).$$
+Los valores propios son $\lambda = 3$ y $\lambda = 1$. Para $\lambda = 3$:
+$$\begin{pmatrix} -1 & 1 \\ 1 & -1 \end{pmatrix}\begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix} \Longrightarrow -x + y = 0 \Longrightarrow E_3 = \operatorname{span}\{(1,1)\}.$$
+Para $\lambda = 1$:
+$$\begin{pmatrix} 1 & 1 \\ 1 & 1 \end{pmatrix}\begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix} \Longrightarrow x + y = 0 \Longrightarrow E_1 = \operatorname{span}\{(1,-1)\}.$$
+Comprobación: la traza $2 + 2 = 4$ es la suma de los valores propios ($3+1$), y el determinante $3$ es su producto ($3 \cdot 1$).
+
+**Ejemplo 9 (diagonalización ortogonal).** Diagonaliza la matriz anterior $A = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}$, que es simétrica.
+
+Los vectores propios $(1,1)$ y $(1,-1)$ ya son perpendiculares entre sí (su producto interno es $1 - 1 = 0$). Normalizándolos (dividiendo cada uno entre $\sqrt{2}$) se obtiene
+$$Q = \begin{pmatrix} 1/\sqrt{2} & 1/\sqrt{2} \\ 1/\sqrt{2} & -1/\sqrt{2} \end{pmatrix}, \qquad D = \begin{pmatrix} 3 & 0 \\ 0 & 1 \end{pmatrix},$$
+y como $Q$ es ortogonal ($Q^{-1} = Q^T$), se escribe $A = Q D Q^T$. Verificación de la entrada $(1,2)$: primera fila de $Q$ por $D$ por segunda columna de $Q^T$ da $(3/\sqrt{2})(1/\sqrt{2}) + (1/\sqrt{2})(-1/\sqrt{2}) = 3/2 - 1/2 = 1$. Esta es la forma que garantiza el teorema espectral para toda matriz simétrica real.
+
+**Ejemplo 10 (proyección y descomposición ortogonal).** Proyecta $u = (1,2)$ sobre $v = (2,1)$ y descompón $u$ en parte paralela y perpendicular.
+
+Primero el producto interno: $\langle u, v \rangle = 1\cdot 2 + 2\cdot 1 = 4$; luego $\langle v, v \rangle = 4 + 1 = 5$. La proyección es
+$$\operatorname{proy}_v(u) = \frac{4}{5}(2,1) = \left(\frac{8}{5}, \frac{4}{5}\right) = (1.6, 0.8).$$
+La componente perpendicular es
+$$u - \operatorname{proy}_v(u) = \left(1 - \frac{8}{5}, 2 - \frac{4}{5}\right) = \left(-\frac{3}{5}, \frac{6}{5}\right).$$
+Comprobación: el producto interno con $v$ vale $(-3/5)(2) + (6/5)(1) = -6/5 + 6/5 = 0$, así que es perpendicular. La descomposición es $u = (1.6, 0.8) + (-0.6, 1.2)$.
+
+**Ejemplo 11 (mínimos cuadrados).** Ajusta una recta $y = b + mx$ a los puntos $(0,1)$, $(1,2)$, $(2,4)$.
+
+Se busca $b$ (ordenada en el origen) y $m$ (pendiente). El sistema que exigiría el paso exacto por los tres puntos es
+$$\begin{pmatrix} 1 & 0 \\ 1 & 1 \\ 1 & 2 \end{pmatrix}\begin{pmatrix} b \\ m \end{pmatrix} = \begin{pmatrix} 1 \\ 2 \\ 4 \end{pmatrix},$$
+donde cada fila de la primera matriz contiene un $1$ (para el término constante) y la coordenada $x$ del punto. Como los puntos no son colineales, no hay solución exacta; se usan las ecuaciones normales $A^T A \vec{x} = A^T \vec{b}$:
+$$A^T A = \begin{pmatrix} 3 & 3 \\ 3 & 5 \end{pmatrix}, \qquad A^T \vec{b} = \begin{pmatrix} 7 \\ 10 \end{pmatrix}.$$
+De $3b + 3m = 7$ y $3b + 5m = 10$, restando queda $2m = 3$, luego $m = 1.5$; sustituyendo, $b = 5/6 \approx 0.83$. La recta ajustada es $y \approx 1.5x + 0.83$, que minimiza la suma de los cuadrados de las distancias verticales a los puntos.
+
+## Aplicaciones y contexto
+
+El álgebra lineal aparece en prácticamente toda la ciencia y la ingeniería. Algunos contextos donde estos conceptos se usan a diario:
+
+- **Computación gráfica y videojuegos:** rotar, escalar, proyectar o reflejar objetos 3D se hace multiplicando sus coordenadas por matrices. La cámara, la luz y las animaciones son transformaciones lineales.
+- **Ciencia de datos y aprendizaje automático:** las tablas de datos son matrices; el análisis de componentes principales (PCA) usa valores y vectores propios de la matriz de covarianza; la regresión es un problema de mínimos cuadrados; las redes neuronales encadenan productos de matrices.
+- **Física e ingeniería:** los circuitos eléctricos, las estructuras, las vibraciones mecánicas y la mecánica cuántica se modelan con sistemas lineales y operadores cuyos valores propios son frecuencias o niveles de energía.
+- **Economía:** los modelos de insumo-producto de Leontief relacionan sectores mediante matrices y buscan su vector propio dominante.
+- **Búsqueda en internet:** el algoritmo PageRank calcula el vector propio principal de la matriz de enlaces de la web.
+- **Matemática pura:** el álgebra lineal es el lenguaje de las ecuaciones diferenciales, la geometría y el análisis numérico.
+
+## Errores comunes
+
+Estos son los tropiezos más frecuentes al empezar con álgebra lineal. Reconocerlos a tiempo ahorra muchos puntos en los exámenes.
+
+- **Sumar matrices de distinto tamaño.** La suma entrada con entrada solo existe si ambas matrices tienen las mismas filas y las mismas columnas. Si los tamaños difieren, la operación no está definida.
+- **Multiplicar matrices entrada con entrada.** El producto no es como la suma: se hace fila por columna y se suman los productos. Multiplicar $a_{ij}b_{ij}$ da un resultado equivocado.
+- **Creer que $AB = BA$.** El producto de matrices casi nunca es conmutativo; incluso puede ocurrir que $AB$ exista y $BA$ no. Siempre revisa los tamaños y el orden.
+- **Olvidar la condición de tamaño en el producto.** Para multiplicar $A$ por $B$ debe cumplirse que el número de columnas de $A$ sea igual al número de filas de $B$; el resultado tiene el número de filas de $A$ y el número de columnas de $B$.
+- **Confundir la matriz con su determinante.** La matriz es la tabla; el determinante es un número que sale de ella. Solo las matrices cuadradas tienen determinante.
+- **Dividir entre un determinante nulo.** Si $\det(A) = 0$, la inversa no existe y no se puede dividir entre $\det A$. Antes de calcular cualquier inversa, comprueba el determinante.
+- **Perder signos al desarrollar cofactores.** El factor $(-1)^{i+j}$ alterna los signos en forma de tablero de ajedrez. Un signo mal puesto arruina todo el determinante; anótalo o desarrolla por una fila con ceros.
+- **Creer que dos vectores dependientes deben ser distintos.** Dos vectores iguales o uno múltiplo del otro ya son dependientes; también lo es cualquier conjunto que contenga al vector $\vec{0}$.
+- **Creer que cualquier conjunto que genera es una base.** Generar no basta: hace falta además que el conjunto sea linealmente independiente. Un conjunto con redundancia genera, pero no es base.
+- **Confundir rango con número de filas.** El rango nunca supera el número de filas, pero puede ser menor si hay filas dependientes; es el número de filas o columnas independientes.
+- **Confundir núcleo con imagen.** El núcleo vive en el dominio y contiene lo que se aplasta al cero; la imagen vive en el codominio y contiene los resultados alcanzables. No son el mismo conjunto ni están en el mismo espacio.
+- **Confundir inyectiva con sobreyectiva.** Inyectiva significa que no hay dos entradas con la misma salida (equivale a $\ker T = \{\vec{0}\}$); sobreyectiva significa que toda salida posible se alcanza (equivale a $\operatorname{Im} T = W$).
+- **Suponer que toda matriz es diagonalizable.** Solo lo es si tiene suficientes vectores propios independientes. Ejemplo clásico: $\begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ no lo es.
+- **Creer que un vector propio puede ser $\vec{0}$.** Por definición se exige $v \neq \vec{0}$; el vector cero cumple la ecuación para cualquier $\lambda$ y no indica ninguna dirección propia. Tampoco te asustes con $\lambda = 0$: es un valor propio válido y significa que la matriz aplasta alguna dirección.
+- **Aplicar mal Gram-Schmidt.** A cada vector nuevo hay que restarle sus proyecciones sobre **todos** los vectores ortogonales anteriores, no solo sobre el último; si no, pierdes la ortogonalidad.
+- **Olvidar la transpuesta en mínimos cuadrados.** Las ecuaciones normales son $A^T A \vec{x} = A^T \vec{b}$: la $A^T$ debe multiplicar por la izquierda en ambos lados. Escribir $A\vec{x} = \vec{b}$ cuando no hay solución exacta es precisamente el error que la técnica corrige.
+
+## Ejercicios propuestos (con respuestas)
+
+Resuelve cada ejercicio y consulta las respuestas al final. Están ordenados de menor a mayor dificultad y cubren todos los temas.
+
+1. ¿Es $\{(1,2),(2,4)\}$ una base de $\mathbb{R}^2$?
+2. Halla la dimensión de $\operatorname{span}\{(1,0,2),(0,1,3)\}$.
+3. ¿Son linealmente independientes $(1,1,0)$, $(0,1,1)$ y $(1,0,1)$?
+4. Expresa $(4,3)$ como combinación lineal de $(1,2)$ y $(2,-1)$.
+5. Resuelve por Gauss: $x+y+z=2$, $x-y+z=0$, $2x+y-z=1$.
+6. Clasifica el sistema $x+y+z=1$, $2x+2y+2z=2$, $x-y=0$.
+7. Clasifica el sistema $x+y=2$, $2x+2y=5$.
+8. Calcula $\det\begin{pmatrix} 2 & 1 & 0 \\ 1 & 2 & 1 \\ 0 & 1 & 2 \end{pmatrix}$.
+9. Calcula $\det\begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}$.
+10. Halla la inversa de $\begin{pmatrix} 2 & 1 \\ 5 & 3 \end{pmatrix}$.
+11. Halla la inversa de $\begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}$.
+12. Halla el rango de $\begin{pmatrix} 1 & 2 & 3 \\ 0 & 1 & 4 \\ 1 & 3 & 7 \end{pmatrix}$.
+13. Escribe la matriz de $T(x,y) = (x+y,\; x-y)$ en la base canónica y decide si es biyectiva.
+14. Halla el núcleo y la imagen de $T(x,y,z) = (x,0,z)$.
+15. Halla los valores propios de $\begin{pmatrix} 3 & 1 \\ 1 & 3 \end{pmatrix}$.
+16. Halla los valores propios de $\begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}$.
+17. Diagonaliza $A = \begin{pmatrix} 3 & 1 \\ 1 & 3 \end{pmatrix}$ escribiendo $A = PDP^{-1}$.
+18. ¿Es diagonalizable $\begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$? Justifica.
+19. Proyecta $(3,4)$ sobre $(1,0)$.
+20. Ajusta por mínimos cuadrados una recta a los puntos $(0,0)$, $(1,2)$, $(2,3)$.
+
+**Respuestas.**
+
+1. No: los vectores son dependientes, porque $(2,4) = 2(1,2)$.
+2. $2$, porque los dos vectores no son múltiplos entre sí.
+3. Sí: el determinante de la matriz que forman vale $1 \neq 0$.
+4. $(4,3) = 2(1,2) + 1(2,-1)$.
+5. $(x,y,z) = (1/3, 1, 2/3)$.
+6. Infinitas soluciones: $x = y = t$, $z = 1 - 2t$ con $t \in \mathbb{R}$.
+7. Incompatible: al restar queda $0 = 1$; las rectas son paralelas.
+8. $4$ (desarrollo por la primera fila).
+9. $-1$.
+10. $\begin{pmatrix} 3 & -1 \\ -5 & 2 \end{pmatrix}$ (determinante $1$).
+11. $\begin{pmatrix} -2 & 1 \\ 3/2 & -1/2 \end{pmatrix}$ (determinante $-2$).
+12. Rango $2$: la tercera fila es la suma de las dos primeras.
+13. Matriz $\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}$; su determinante es $-2 \neq 0$, así que $T$ es inyectiva y sobreyectiva, es decir, biyectiva.
+14. Núcleo: $\{(0,t,0) : t \in \mathbb{R}\}$; imagen: el plano $xz$, formado por los vectores $(a,0,c)$.
+15. $\lambda = 4$ y $\lambda = 2$, porque $(3-\lambda)^2 - 1 = 0$.
+16. $\lambda = 1$ y $\lambda = -1$, porque $\lambda^2 - 1 = 0$.
+17. $P = \begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}$ y $D = \begin{pmatrix} 4 & 0 \\ 0 & 2 \end{pmatrix}$; los vectores propios son $(1,1)$ y $(1,-1)$.
+18. No: $\lambda = 1$ es doble pero el espacio propio es $\operatorname{span}\{(1,0)\}$, de dimensión $1$.
+19. $(3,0)$: la proyección conserva la primera coordenada y anula la segunda.
+20. $y \approx 1.5x + 0.17$; las ecuaciones normales dan $3b + 3m = 5$ y $3b + 5m = 8$.
 
 ## Resumen
-- Los espacios vectoriales se describen con base y dimensión; las coordenadas son únicas.
-- Los sistemas se resuelven con Gauss; Rouché-Frobenius clasifica las soluciones.
-- Las transformaciones lineales son matrices; el teorema de la dimensión relaciona núcleo e imagen.
-- La diagonalización y el teorema espectral simplifican el análisis.
-- Mínimos cuadrados resuelve sistemas incompatibles: la base de la regresión.
-`,
 
-  "algebra-abstracta": String.raw`
-## Operaciones y estructuras algebraicas
-Un **álgebra abstracta** es un conjunto con operaciones que cumplen axiomas. La matemática estudia las propiedades que se deducen de esos axiomas, sin importar de qué objetos se trate.
-
-Las tres estructuras fundamentales:
-- **Grupo:** una operación (suma o producto) con asociatividad, identidad e inversos.
-- **Anillo:** dos operaciones compatibles (suma y producto).
-- **Cuerpo:** anillo conmutativo donde todo elemento no nulo tiene inverso multiplicativo.
-
-La abstracción permite reutilizar teoremas: lo que se demuestra para grupos vale para simetrías, números, matrices y permutaciones a la vez.
-
-## Grupos: definición y ejemplos
-Un **grupo** $(G, *)$ cumple:
-1. **Cerradura:** $a * b \in G$.
-2. **Asociatividad:** $(a*b)*c = a*(b*c)$.
-3. **Identidad:** existe $e$ con $e*a = a*e = a$.
-4. **Inversos:** para cada $a$ existe $a^{-1}$ con $a*a^{-1} = e$.
-
-Es **abeliano** si además $a*b = b*a$.
-
-**Ejemplos:** $(\mathbb{Z}, +)$, $(\mathbb{Q}\setminus\{0\}, \cdot)$, las matrices invertibles $GL_n$, las permutaciones $S_n$, las simetrías de un polígono, $(\mathbb{Z}/n\mathbb{Z}, +)$.
-
-**Ejemplo no grupo.** $(\mathbb{Z}, \cdot)$ no es grupo: 2 no tiene inverso multiplicativo entero.
-
-## Anillos y cuerpos
-Un **anillo** $(R, +, \cdot)$ tiene: $(R, +)$ grupo abeliano, el producto es asociativo y distribuye sobre la suma. Si el producto es conmutativo, es anillo conmutativo; si hay identidad multiplicativa, es unitario.
-
-**Dominio de integridad:** anillo conmutativo con unidad sin divisores de cero ($ab = 0 \Rightarrow a = 0$ o $b = 0$).
-
-**Cuerpo:** todo elemento no nulo tiene inverso. Todo cuerpo es dominio; el recíproco es falso ($\mathbb{Z}$ es dominio, no cuerpo).
-
-**Ejemplos:** $\mathbb{Z}$, $\mathbb{Q}$, $\mathbb{R}$, $\mathbb{C}$, $\mathbb{Z}/p\mathbb{Z}$ con $p$ primo (cuerpo), matrices $M_n$ (anillo no conmutativo).
-
-## Homomorfismos
-Un **homomorfismo** es una función que preserva la operación:
-$$\phi(a * b) = \phi(a) * \phi(b)$$
-
-- **Núcleo:** $\ker\phi = \{a : \phi(a) = e\}$; mide la pérdida de información.
-- **Imagen:** $\text{Im}\,\phi$.
-- **Isomorfismo:** homomorfismo biyectivo; los grupos son "el mismo" estructuralmente.
-- **Teorema de isomorfía:** $G/\ker\phi \cong \text{Im}\,\phi$.
-
-**Ejemplo.** $\phi: \mathbb{Z} \to \mathbb{Z}/5\mathbb{Z}$, $\phi(n) = n \bmod 5$: núcleo $5\mathbb{Z}$, imagen todo $\mathbb{Z}/5\mathbb{Z}$; $\mathbb{Z}/5\mathbb{Z} \cong \mathbb{Z}_5$.
-
-## Subestructuras
-- **Subgrupo** $H \leq G$: cerrado bajo la operación e inversos. Criterio: $H \neq \emptyset$ y $ab^{-1} \in H$.
-- **Subgrupo normal** $N \trianglelefteq G$: $gNg^{-1} = N$; permite construir el cociente $G/N$.
-- **Ideal** $I \subseteq R$: cerrado bajo suma y bajo multiplicación por elementos del anillo; permite el cociente $R/I$.
-- **Subcuerpo:** subconjunto que es cuerpo con las operaciones heredadas.
-
-**Ejemplo.** $3\mathbb{Z} \leq \mathbb{Z}$ es subgrupo (y normal, porque $\mathbb{Z}$ es abeliano). El cociente $\mathbb{Z}/3\mathbb{Z} = \mathbb{Z}_3$.
-
-## Isomorfismo y clasificación
-Dos estructuras son **isomorfas** si existe una biyección que preserva las operaciones. La clasificación busca describir todas las estructuras de un tipo salvo isomorfismo.
-
-**Ejemplos:**
-- Todo grupo cíclico de orden $n$ es isomorfo a $\mathbb{Z}_n$.
-- Hay un solo grupo de orden 5 (salvo isomorfismo): $\mathbb{Z}_5$.
-- Los grupos de orden 4 son dos: $\mathbb{Z}_4$ y $\mathbb{Z}_2 \times \mathbb{Z}_2$.
-
-**Cayley:** todo grupo finito es isomorfo a un subgrupo de permutaciones. La abstracción siempre se puede concretar.
-
-## Ejemplos resueltos: seis casos explicados
-**Ejemplo 1 (práctica, grupo).** ¿Es $(\mathbb{R}, \cdot)$ grupo?
-- Asociativo y con identidad 1.
-- $0$ no tiene inverso multiplicativo.
-- No es grupo (sí lo es $\mathbb{R}\setminus\{0\}$).
-
-**Ejemplo 2 (práctica, subgrupo).** ¿Es $H = \{0, 2, 4\}$ subgrupo de $\mathbb{Z}_6$ con la suma?
-- $0$ es identidad; $2+4 = 0$, $4+2 = 0$, $2+2 = 4$.
-- Cerrado e inversos: sí, es subgrupo (isomorfo a $\mathbb{Z}_3$).
-
-**Ejemplo 3 (práctica, orden).** Orden de $\bar{3}$ en $\mathbb{Z}_{12}$.
-- Múltiplos: $3, 6, 9, 0$.
-- Orden 4 (el menor $k$ con $3k \equiv 0$).
-
-**Ejemplo 4 (aplicación, simetrías).** El grupo diedral $D_4$ de simetrías del cuadrado tiene orden 8.
-- 4 rotaciones y 4 reflexiones.
-- No es abeliano: rotar y luego reflejar difiere de reflejar y luego rotar.
-
-**Ejemplo 5 (aplicación, criptografía).** En $\mathbb{Z}_7^* = \{1, \ldots, 6\}$ con producto, $3$ es generador.
-- Potencias: $3, 2, 6, 4, 5, 1$ (recorre todo el grupo).
-- Los grupos cíclicos sostienen protocolos como Diffie-Hellman.
-
-**Ejemplo 6 (práctica, homomorfismo).** ¿Es $\phi: \mathbb{Z} \to \mathbb{Z}$, $\phi(n) = 2n$ homomorfismo?
-- $\phi(m + n) = 2(m+n) = 2m + 2n = \phi(m) + \phi(n)$.
-- Sí; su imagen son los pares y su núcleo $\{0\}$.
-
-## Contextos donde se aplica
-- **Criptografía:** grupos cíclicos, curvas elípticas, RSA.
-- **Física:** grupos de simetría, partículas elementales, cristalografía.
-- **Química:** simetrías moleculares y espectroscopía.
-- **Computación:** códigos correctores, teoría de autómatas.
-- **Matemática:** base del álgebra moderna, teoría de Galois y geometría algebraica.
-
-## Errores comunes y cómo evitarlos
-- **Confundir cerradura con subgrupo.** También hacen falta identidad e inversos (o el criterio $ab^{-1}$).
-- **Suponer que todo anillo es cuerpo.** $\mathbb{Z}$ no lo es.
-- **Creer que todo subgrupo es normal.** Solo en abelianos es automático.
-- **Confundir orden del grupo con orden de un elemento.** El segundo divide al primero (Lagrange).
-- **Olvidar verificar ambos lados de la identidad.** $e$ debe funcionar por izquierda y derecha.
-
-## Ejercicios propuestos
-1. Demuestra que $(\mathbb{Q}, +)$ es grupo.
-2. ¿Es $\{1, -1, i, -i\}$ grupo con el producto?
-3. Halla el orden de $\bar{4}$ en $\mathbb{Z}_{10}$.
-4. ¿Es $2\mathbb{Z}$ ideal de $\mathbb{Z}$?
-5. Clasifica los grupos de orden 6 (salvo isomorfismo).
-6. Halla el núcleo de $\phi: \mathbb{Z} \to \mathbb{Z}_4$, $\phi(n) = n \bmod 4$.
-7. Demuestra que todo grupo de orden primo es cíclico.
-8. ¿Es $\mathbb{Z}_6$ isomorfo a $\mathbb{Z}_2 \times \mathbb{Z}_3$?
-
-**Respuestas:** 1) Neutro 0, inverso $-a$. 2) Sí, cíclico de orden 4. 3) $5$ (4·5 = 20 ≡ 0). 4) Sí. 5) $\mathbb{Z}_6$ y $S_3$. 6) $4\mathbb{Z}$. 7) Los subgrupos solo pueden tener orden 1 o $p$. 8) Sí, por el teorema chino del resto.
-
-## Resumen
-- Grupos, anillos y cuerpos capturan la estructura común de objetos muy distintos.
-- Los homomorfismos preservan operaciones; los isomorfismos identifican estructuras.
-- Los subgrupos normales y los ideales permiten cocientes.
-- La clasificación busca todas las estructuras de un tipo salvo isomorfismo.
-- Las simetrías y la criptografía son aplicaciones centrales.
-`,
-
-  "grupos": String.raw`
-## Grupos y ejemplos fundamentales
-Un grupo $(G, *)$ tiene cerradura, asociatividad, identidad e inversos. El **orden** $|G|$ es el número de elementos; el **orden de un elemento** $g$ es el menor $n > 0$ con $g^n = e$.
-
-**Familias importantes:**
-- **Cíclicos** $\mathbb{Z}_n$: generados por un elemento.
-- **Simétricos** $S_n$: permutaciones de $n$ elementos; $|S_n| = n!$.
-- **Alternantes** $A_n$: permutaciones pares; $|A_n| = n!/2$ para $n \geq 2$.
-- **Diedrales** $D_n$: simetrías del polígono regular; $|D_n| = 2n$.
-- **Matriciales** $GL_n(\mathbb{R})$: matrices invertibles.
-
-**Ejemplo.** En $S_3$, la permutación $(1\,2)$ tiene orden 2; el ciclo $(1\,2\,3)$ tiene orden 3.
-
-## Subgrupos y el teorema de Lagrange
-$H \leq G$ es subgrupo si es cerrado bajo la operación e inversos. Criterio práctico: $H \neq \emptyset$ y $a, b \in H \Rightarrow ab^{-1} \in H$.
-
-**Teorema de Lagrange:** si $G$ es finito y $H \leq G$, entonces
-$$|G| = |H| \cdot [G : H]$$
-el orden de $H$ **divide** al orden de $G$. El número de clases laterales es el índice $[G:H]$.
-
-**Consecuencias:**
-- El orden de todo elemento divide a $|G|$ (aplica a $\langle g\rangle$).
-- Todo grupo de orden primo es cíclico.
-- El recíproco de Lagrange es **falso**: $A_4$ tiene orden 12 pero no subgrupo de orden 6.
-
-## Subgrupos normales y cocientes
-$N \trianglelefteq G$ es **normal** si $gNg^{-1} = N$ para todo $g$; equivalentemente, las clases laterales izquierdas y derechas coinciden. Entonces $G/N$ es un grupo con la operación inducida.
-
-**Teorema de isomorfía:** $\phi: G \to H$ homomorfismo $\Rightarrow G/\ker\phi \cong \text{Im}\,\phi$.
-
-**Ejemplo.** En $\mathbb{Z}$, todo subgrupo $n\mathbb{Z}$ es normal y $\mathbb{Z}/n\mathbb{Z} = \mathbb{Z}_n$.
-
-**Centro** $Z(G)$ y **conmutador** $[G, G]$ son subgrupos normales importantes: el segundo mide cuán no abeliano es el grupo.
-
-## Acciones de grupo
-Una **acción** de $G$ sobre un conjunto $X$ es un homomorfismo $G \to \text{Perm}(X)$: cada $g$ mueve elementos de $X$ respetando la estructura.
-
-**Conceptos:** órbita ($Gx = \{gx\}$), estabilizador ($G_x = \{g : gx = x\}$) y la relación:
-$$|Gx| = \frac{|G|}{|G_x|}$$
-
-**Fórmula de clases:** $|G| = |Z(G)| + \sum [G : C_G(g_i)]$, herramienta para clasificar grupos.
-
-**Fórmula de Burnside:** el número de órbitas es $\dfrac{1}{|G|}\sum_{g \in G}|X^g|$; cuenta coloraciones únicas.
-
-**Ejemplo.** Colorear las caras de un cubo con 2 colores: Burnside da 10 coloraciones distintas salvo rotación.
-
-## Teoremas de Sylow
-Si $|G| = p^m \cdot r$ con $p \nmid r$, un **p-subgrupo de Sylow** tiene orden $p^m$. Teoremas:
-
-1. **Existencia:** hay al menos un Sylow $p$.
-2. **Conjugación:** todos los Sylow $p$ son conjugados.
-3. **Conteo:** el número $n_p$ cumple $n_p \equiv 1 \pmod p$ y $n_p \mid r$.
-
-**Aplicación típica:** demostrar que un grupo de orden dado no es simple, contando Sylows. Ejemplo: todo grupo de orden $pq$ con $p < q$, $p \nmid q - 1$ es cíclico.
-
-## Clasificación de grupos pequeños
-- Orden 4: $\mathbb{Z}_4$ o $\mathbb{Z}_2^2$.
-- Orden 6: $\mathbb{Z}_6$ o $S_3$.
-- Orden 8: $\mathbb{Z}_8$, $\mathbb{Z}_4 \times \mathbb{Z}_2$, $\mathbb{Z}_2^3$, $D_4$, y el grupo de cuaterniones $Q_8$.
-- Orden $p$: solo $\mathbb{Z}_p$.
-- Orden $p^2$: solo $\mathbb{Z}_{p^2}$ o $\mathbb{Z}_p^2$ (siempre abelianos).
-
-La clasificación completa de grupos finitos es uno de los mayores logros de la matemática (teorema de clasificación, terminado en 2004).
-
-## Ejemplos resueltos: seis casos explicados
-**Ejemplo 1 (práctica, orden).** Orden de $(1\,2\,3\,4)$ en $S_4$.
-- Es un ciclo de longitud 4.
-- Orden 4: $(1\,2\,3\,4)^4 = e$ y no antes.
-
-**Ejemplo 2 (práctica, Lagrange).** ¿Existe un subgrupo de orden 3 en $\mathbb{Z}_{12}$?
-- $3 \mid 12$: Lagrange no lo prohíbe.
-- Sí: $\{0, 4, 8\}$ (generado por 4).
-
-**Ejemplo 3 (práctica, cociente).** $\mathbb{Z}/6\mathbb{Z} \cong \mathbb{Z}_6$.
-- Núcleo de $\phi(n) = n \bmod 6$ es $6\mathbb{Z}$.
-- Por isomorfía, el cociente es $\mathbb{Z}_6$.
-
-**Ejemplo 4 (aplicación, Burnside).** Collares de 4 cuentas con 2 colores, rotaciones identificadas.
-- Rotaciones: identidad (16 fijas), 2 rotaciones de 90° (2 fijas cada una), 1 de 180° (4 fijas).
-- Burnside: $(16 + 2 + 4 + 2)/4 = 6$ collares distintos.
-
-**Ejemplo 5 (aplicación, Sylow).** Demuestra que todo grupo de orden 15 es cíclico.
-- $n_3 \equiv 1 \pmod 3$ y $n_3 \mid 5$: $n_3 = 1$ o $4$.
-- $n_5 \equiv 1 \pmod 5$ y $n_5 \mid 3$: $n_5 = 1$ si $n_5 \neq$ 3... $n_5 = 1$.
-- Ambos normales; el grupo es producto directo $\mathbb{Z}_3 \times \mathbb{Z}_5 \cong \mathbb{Z}_{15}$.
-
-**Ejemplo 6 (práctica, acción).** ¿Cuántas simetrías dejan fijo el vértice 1 en $D_4$?
-- Estabilizador del vértice: identidad y la reflexión por la diagonal del vértice.
-- $|G_x| = 2$; la órbita tiene $8/2 = 4$ vértices. Coherente.
-
-## Contextos donde se aplica
-- **Cristalografía:** los 230 grupos espaciales clasifican cristales.
-- **Física de partículas:** simetrías gauge y grupos de Lie.
-- **Química:** teoría de grupos para vibraciones moleculares.
-- **Computación:** algoritmos de permutación, rompecabezas (cubo de Rubik), criptografía.
-- **Matemática:** geometría, topología, teoría de Galois.
-
-## Errores comunes y cómo evitarlos
-- **Creer que el recíproco de Lagrange vale.** No: hay divisores sin subgrupo.
-- **Suponer que todo subgrupo es normal.** Revisa conjugados.
-- **Confundir orden de elemento con orden de grupo.** Divide, no iguala.
-- **Olvidar la no conmutatividad.** $ab \neq ba$ en general; cuida el orden.
-- **Aplicar Sylow sin calcular $n_p$.** Verifica las dos condiciones de congruencia y divisibilidad.
-
-## Ejercicios propuestos
-1. Orden de $(1\,2)(3\,4\,5)$ en $S_5$.
-2. ¿Tiene $\mathbb{Z}_8$ subgrupos de orden 3?
-3. Halla todos los subgrupos de $\mathbb{Z}_6$.
-4. Demuestra que $S_3$ no es abeliano.
-5. ¿Cuántos grupos de orden 9 hay?
-6. Calcula el número de coloraciones de un triángulo con 3 colores salvo rotación.
-7. Demuestra que el centro de $S_3$ es trivial.
-8. ¿Es $A_4$ simple?
-
-**Respuestas:** 1) $\text{mcm}(2,3) = 6$. 2) No (3 no divide 8). 3) $\{0\}$, $\{0,3\}$, $\{0,2,4\}$, $\mathbb{Z}_6$. 4) $(1\,2)(1\,3) \neq (1\,3)(1\,2)$. 5) Dos: $\mathbb{Z}_9$ y $\mathbb{Z}_3^2$. 6) $(27 + 3 + 3)/3 = 11$. 7) Solo $e$ conmuta con todos. 8) No: tiene el subgrupo normal de Klein.
-
-## Resumen
-- Los grupos capturan la simetría; Lagrange restringe los subgrupos posibles.
-- Los normales permiten cocientes; la isomorfía identifica estructuras.
-- Las acciones cuentan órbitas y coloraciones (Burnside).
-- Sylow da la estructura de los subgrupos primos y clasifica grupos pequeños.
-- La teoría de grupos es el lenguaje de la simetría en toda la ciencia.
-`,
-
-  "anillos": String.raw`
-## Anillos: definición y ejemplos
-Un **anillo** $(R, +, \cdot)$ tiene: $(R, +)$ grupo abeliano, producto asociativo y distributivo sobre la suma. Si el producto es conmutativo, es **conmutativo**; si hay $1$, es **unitario**.
-
-**Tipos importantes:**
-- **Dominio de integridad:** conmutativo, unitario, sin divisores de cero.
-- **Cuerpo:** todo elemento no nulo es invertible.
-- **Anillo de polinomios** $\mathbb{K}[x]$.
-- **Anillo de matrices** $M_n(\mathbb{K})$ (no conmutativo).
-- **Enteros módulo $n$** $\mathbb{Z}_n$: dominio si y solo si $n$ es primo.
-
-**Ejemplo.** En $\mathbb{Z}_6$, $2 \cdot 3 = 0$: hay divisores de cero, no es dominio.
-
-## Ideales
-Un **ideal** $I \subseteq R$ es un subgrupo aditivo cerrado bajo multiplicación por elementos del anillo: $r \in R$, $a \in I \Rightarrow ra \in I$.
-
-**Tipos:**
-- **Principal:** $I = (a) = \{ra : r \in R\}$, generado por un elemento.
-- **Primo:** $ab \in I \Rightarrow a \in I$ o $b \in I$.
-- **Maximal:** no existe ideal propio que lo contenga estrictamente.
-
-**Ejemplo.** En $\mathbb{Z}$, los ideales son $(n) = n\mathbb{Z}$. El ideal $(5)$ es primo y maximal; $(6)$ no es primo ($2 \cdot 3 \in (6)$ pero ninguno está).
-
-## Anillos cociente
-El cociente $R/I$ (con $I$ ideal) hereda las operaciones de $R$ módulo $I$. La proyección $\pi: R \to R/I$ es un homomorfismo con núcleo $I$.
-
-**Diccionario fundamental:**
-- $I$ primo $\iff$ $R/I$ es dominio de integridad.
-- $I$ maximal $\iff$ $R/I$ es cuerpo.
-
-**Ejemplo.** $\mathbb{Z}/(5) = \mathbb{Z}_5$ es cuerpo porque $(5)$ es maximal. $\mathbb{Z}/(6)$ no es dominio.
-
-**Teorema de isomorfía:** $R/\ker\phi \cong \text{Im}\,\phi$ para homomorfismos de anillos.
-
-## Divisibilidad: DIP, DFU y euclídeos
-- **DIP** (dominio de ideales principales): todo ideal es principal. Ejemplo: $\mathbb{Z}$, $\mathbb{K}[x]$.
-- **DFU** (factorización única): todo elemento no nulo y no invertible se factoriza de forma única en irreducibles. Todo DIP es DFU.
-- **Dominio euclídeo:** tiene una función de tamaño que permite división con resto. Todo euclídeo es DIP.
-
-**Cadena:** euclídeo $\Rightarrow$ DIP $\Rightarrow$ DFU $\Rightarrow$ dominio.
-
-**Ejemplo.** En $\mathbb{Z}$, la factorización en primos es única. En $\mathbb{Z}[\sqrt{-5}]$, $6 = 2 \cdot 3 = (1+\sqrt{-5})(1-\sqrt{-5})$: no es DFU.
-
-## Polinomios sobre un cuerpo
-$\mathbb{K}[x]$ con $\mathbb{K}$ cuerpo es un dominio euclídeo: se divide con resto y se calcula el máximo común divisor con Euclides.
-
-**Resultados:**
-- Un polinomio de grado $n$ tiene a lo más $n$ raíces.
-- **Criterio de Eisenstein:** si un primo $p$ divide a todos los coeficientes menos al líder y $p^2$ no divide al constante, el polinomio es irreducible sobre $\mathbb{Q}$.
-- **Criterio de racionalidad:** las raíces racionales de un polinomio entero son $p/q$ con $p \mid$ constante, $q \mid$ líder.
-
-**Ejemplo.** $x^3 - 2$ es irreducible sobre $\mathbb{Q}$ por Eisenstein con $p = 2$.
-
-## Ejemplos resueltos: seis casos explicados
-**Ejemplo 1 (práctica, divisor de cero).** Halla divisores de cero en $\mathbb{Z}_{12}$.
-- $2 \cdot 6 = 12 \equiv 0$; $3 \cdot 4 = 0$; $8 \cdot 3 = 0$.
-- Divisores: $2, 3, 4, 6, 8, 9, 10$ (los no coprimos con 12).
-
-**Ejemplo 2 (práctica, ideal).** ¿Es $(2)$ primo en $\mathbb{Z}$?
-- Si $ab$ es par, alguno de $a, b$ es par.
-- Sí, y además maximal: $\mathbb{Z}/(2) = \mathbb{Z}_2$ es cuerpo.
-
-**Ejemplo 3 (práctica, cociente).** Describe $\mathbb{Z}[x]/(x^2 + 1)$.
-- Es el anillo de polinomios con $x^2 = -1$.
-- Es isomorfo a los enteros gaussianos $\mathbb{Z}[i]$.
-
-**Ejemplo 4 (aplicación, factorización).** Factoriza $x^3 - 1$ sobre $\mathbb{R}$ y sobre $\mathbb{C}$.
-- Sobre $\mathbb{R}$: $(x - 1)(x^2 + x + 1)$.
-- Sobre $\mathbb{C}$: $(x - 1)(x - \omega)(x - \omega^2)$ con $\omega = e^{2\pi i/3}$.
-
-**Ejemplo 5 (aplicación, Eisenstein).** ¿Es irreducible $x^4 + 10x + 5$ sobre $\mathbb{Q}$?
-- Primo $p = 5$: divide 10 y 5; no divide al líder 1; $25 \nmid 5$.
-- Irreducible por Eisenstein.
-
-**Ejemplo 6 (práctica, euclídeo).** Halla el mcd de $x^3 - 1$ y $x^2 - 1$ en $\mathbb{Q}[x]$.
-- Euclides: resto de $x^3 - 1$ entre $x^2 - 1$ es $x - 1$.
-- Resto de $x^2 - 1$ entre $x - 1$ es 0: mcd $= x - 1$.
-
-## Contextos donde se aplica
-- **Criptografía:** aritmética modular y anillos de enteros algebraicos.
-- **Teoría de códigos:** códigos cíclicos sobre anillos de polinomios módulo $x^n - 1$.
-- **Geometría algebraica:** los ideales definen variedades.
-- **Física:** anillos de operadores, matrices, álgebras de Clifford.
-- **Computación:** aritmética exacta y factorización simbólica en sistemas CAS.
-
-## Errores comunes y cómo evitarlos
-- **Confundir primo con irreducible.** Coinciden en DFU; en general no.
-- **Suponer que todo ideal es principal.** Falso fuera de DIP.
-- **Olvidar que $\mathbb{Z}_n$ es cuerpo solo si $n$ es primo.**
-- **Aplicar Eisenstein con un primo que divide al líder.** La condición es crítica.
-- **Creer que todo dominio es DFU.** $\mathbb{Z}[\sqrt{-5}]$ es el contraejemplo clásico.
-
-## Ejercicios propuestos
-1. ¿Es $\mathbb{Z}_7$ cuerpo? ¿Y $\mathbb{Z}_8$?
-2. Halla los ideales de $\mathbb{Z}_{12}$.
-3. ¿Es $(x^2 + 1)$ maximal en $\mathbb{R}[x]$?
-4. Factoriza $x^4 - 1$ sobre $\mathbb{R}$.
-5. Aplica Eisenstein a $x^3 + 3x + 3$.
-6. Halla el mcd de $x^2 - 1$ y $x^2 - 2x + 1$.
-7. ¿Es $\mathbb{Z}[x]$ un DIP?
-8. Muestra que $\mathbb{Z}_6$ tiene divisores de cero.
-
-**Respuestas:** 1) $\mathbb{Z}_7$ sí; $\mathbb{Z}_8$ no. 2) Los $(d)$ con $d \mid 12$. 3) Sí: $\mathbb{R}[x]/(x^2+1) \cong \mathbb{C}$. 4) $(x-1)(x+1)(x^2+1)$. 5) Irreducible ($p = 3$; $9 \nmid 3$). 6) $x - 1$. 7) No. 8) $2 \cdot 3 = 0$.
-
-## Resumen
-- Los anillos combinan dos operaciones; dominios y cuerpos son los casos más regulares.
-- Los ideales permiten cocientes; primos y maximales corresponden a dominios y cuerpos.
-- DIP, DFU y euclídeos ordenan la divisibilidad; en polinomios, Eisenstein decide irreducibilidad.
-- La factorización única no es universal: hay dominios sin ella.
-- Los anillos son el escenario de la aritmética abstracta y la geometría algebraica.
-`,
-
-  "galois": String.raw`
-## Extensiones de cuerpos
-Una **extensión** $F \subseteq K$ es un cuerpo mayor que contiene a $F$. El **grado** $[K : F]$ es la dimensión de $K$ como espacio vectorial sobre $F$.
-
-**Extensión simple:** $K = F(\alpha)$, el menor cuerpo que contiene a $F$ y a $\alpha$.
-
-**Ejemplo.** $[\mathbb{C} : \mathbb{R}] = 2$; $[\mathbb{Q}(\sqrt{2}) : \mathbb{Q}] = 2$; $[\mathbb{Q}(\sqrt[3]{2}) : \mathbb{Q}] = 3$.
-
-**Torre:** $[K : F] = [K : E]\cdot[E : F]$. Es la herramienta para calcular grados.
-
-## Elementos algebraicos y polinomio mínimo
-$\alpha$ es **algebraico** sobre $F$ si es raíz de un polinomio no nulo con coeficientes en $F$. El **polinomio mínimo** $m_\alpha(x)$ es el mónico de menor grado; es irreducible y divide a todo polinomio que anule a $\alpha$.
-
-**Propiedades:**
-- $[F(\alpha) : F] = \deg m_\alpha$.
-- Las raíces de $m_\alpha$ son los **conjugados** de $\alpha$.
-- $\alpha$ trascendente (como $\pi$ o $e$ sobre $\mathbb{Q}$) no tiene polinomio mínimo.
-
-**Ejemplo.** Sobre $\mathbb{Q}$, el polinomio mínimo de $\sqrt[3]{2}$ es $x^3 - 2$ (Eisenstein); grado 3.
-
-## Cuerpo de descomposición
-El **cuerpo de descomposición** de un polinomio $f$ sobre $F$ es el menor cuerpo que contiene a $F$ y a **todas** las raíces de $f$.
-
-**Ejemplo.** $x^3 - 2$ sobre $\mathbb{Q}$: raíces $\sqrt[3]{2}$, $\omega\sqrt[3]{2}$, $\omega^2\sqrt[3]{2}$ con $\omega = e^{2\pi i/3}$; el cuerpo es $\mathbb{Q}(\sqrt[3]{2}, \omega)$ de grado 6.
-
-El cuerpo de descomposición es el escenario natural de la teoría: allí el polinomio se factoriza en lineales.
-
-## El grupo de Galois
-El **grupo de Galois** $\text{Gal}(K/F)$ son los automorfismos de $K$ que fijan $F$ punto a punto, con la composición.
-
-**Propiedades:**
-- $|\text{Gal}(K/F)| \leq [K : F]$, con igualdad si la extensión es **de Galois** (normal y separable).
-- Cada automorfismo permuta las raíces del polinomio mínimo.
-- $\text{Gal}(K/F)$ es un subgrupo de $S_n$ cuando $K$ es el cuerpo de descomposición de un polinomio de grado $n$.
-
-**Ejemplo.** $\text{Gal}(\mathbb{Q}(\sqrt{2})/\mathbb{Q}) = \{id, \sigma\}$ con $\sigma(\sqrt{2}) = -\sqrt{2}$: isomorfo a $\mathbb{Z}_2$.
-
-## La correspondencia de Galois
-Para una extensión de Galois $K/F$ con grupo $G = \text{Gal}(K/F)$, hay una biyección que invierte inclusiones:
-$$\{E : F \subseteq E \subseteq K\} \longleftrightarrow \{H : H \leq G\}$$
-$$E = K^H, \qquad H = \text{Gal}(K/E)$$
-
-**Propiedades:**
-- $[K : E] = |H|$ y $[E : F] = [G : H]$.
-- $E/F$ es normal $\iff$ $H$ es normal en $G$; entonces $\text{Gal}(E/F) \cong G/H$.
-
-La correspondencia convierte problemas de cuerpos en problemas de grupos: eso es la magia de Galois.
-
-## Solubilidad por radicales
-Un polinomio es **soluble por radicales** si sus raíces se expresan con sumas, productos, cocientes y raíces n-ésimas de los coeficientes.
-
-**Teorema de Galois:** $f$ es soluble por radicales sobre un cuerpo de característica 0 si y solo si su grupo de Galois es **soluble** (cadena de subgrupos normales con cocientes abelianos).
-
-**Consecuencia histórica:** la quíntica general no es soluble por radicales porque $S_5$ no es soluble (contiene $A_5$, simple no abeliano). Abel y Galois cerraron un problema abierto 300 años.
-
-## Imposibilidades clásicas
-Los tres problemas griegos se resuelven con Galois:
-
-1. **Duplicar el cubo** (construir $\sqrt[3]{2}$): grado 3, no es construible con regla y compás (solo grados potencias de 2).
-2. **Trisecar el ángulo** ($60°$): equivale a resolver $x^3 - 3x - 1 = 0$, irreducible de grado 3.
-3. **Cuadrar el círculo:** $\pi$ es trascendente (Lindemann): imposible.
-
-**Construibilidad:** un número es construible si y solo si vive en una torre de extensiones de grado 2. Esto explica por qué el pentágono regular y el heptadecágono (Gauss) sí se construyen.
-
-## Ejemplos resueltos: seis casos explicados
-**Ejemplo 1 (práctica, grado).** $[\mathbb{Q}(\sqrt{2}, \sqrt{3}) : \mathbb{Q}]$.
-- $\sqrt{3} \notin \mathbb{Q}(\sqrt{2})$: grado 2 sobre él.
-- Total: $2 \cdot 2 = 4$.
-
-**Ejemplo 2 (práctica, polinomio mínimo).** Halla el de $\alpha = \sqrt{2} + \sqrt{3}$.
-- $\alpha^2 = 5 + 2\sqrt{6} \Rightarrow (\alpha^2 - 5)^2 = 24$.
-- $m(x) = x^4 - 10x^2 + 1$, irreducible de grado 4.
-
-**Ejemplo 3 (práctica, grupo de Galois).** Grupo de $x^2 - 2$ sobre $\mathbb{Q}$.
-- Raíces $\pm\sqrt{2}$; automorfismo que las intercambia.
-- $\text{Gal} \cong \mathbb{Z}_2$.
-
-**Ejemplo 4 (aplicación, correspondencia).** Para $\mathbb{Q}(\sqrt{2}, \sqrt{3})/\mathbb{Q}$ con grupo $\mathbb{Z}_2 \times \mathbb{Z}_2$, lista los subcuerpos.
-- Subgrupos de orden 2: tres; subcuerpos cuadráticos: $\mathbb{Q}(\sqrt{2})$, $\mathbb{Q}(\sqrt{3})$, $\mathbb{Q}(\sqrt{6})$.
-- Correspondencia perfecta.
-
-**Ejemplo 5 (aplicación, insolubilidad).** El polinomio $x^5 - 6x + 3$ tiene grupo $S_5$.
-- $S_5$ no es soluble.
-- No existe fórmula por radicales para sus raíces.
-
-**Ejemplo 6 (práctica, construibilidad).** ¿Es construible el heptágono regular?
-- Requiere raíces de $x^7 - 1$; el grupo de Galois es cíclico de orden 6, no potencia de 2.
-- No es construible con regla y compás; el pentágono (grado 4) sí.
-
-## Contextos donde se aplica
-- **Teoría de números:** solubilidad de ecuaciones, cuerpos de clases.
-- **Criptografía:** teoría de Galois en curvas elípticas y códigos.
-- **Geometría:** construcciones con regla y compás, polígonos regulares.
-- **Computación algebraica:** factorización de polinomios y simplificación simbólica.
-- **Matemática:** fundamento de la teoría de cuerpos y la geometría algebraica.
-
-## Errores comunes y cómo evitarlos
-- **Confundir extensión normal con separable.** Galois requiere ambas (automática en característica 0).
-- **Suponer que el grupo de Galois siempre tiene orden $[K:F]$.** Solo en extensiones de Galois.
-- **Olvidar la torre de grados.** Multiplica los grados en extensiones sucesivas.
-- **Creer que toda quíntica es insoluble.** Solo la general; algunas sí se resuelven por radicales.
-- **Confundir $S_n$ con $A_n$.** El grupo alternante aparece en polinomios con discriminante cuadrado.
-
-## Ejercicios propuestos
-1. ¿Cuál es $[\mathbb{Q}(\sqrt{5}) : \mathbb{Q}]$?
-2. Halla el polinomio mínimo de $i$ sobre $\mathbb{Q}$.
-3. Grupo de Galois de $x^2 + 1$ sobre $\mathbb{R}$.
-4. ¿Es soluble por radicales $x^4 - 2$? (grupo de Galois).
-5. ¿Se puede construir un polígono regular de 9 lados con regla y compás?
-6. Lista los subcuerpos de $\mathbb{Q}(\sqrt{2})$.
-7. Demuestra que $\sqrt{2} + \sqrt{3}$ tiene grado 4.
-8. ¿Por qué no se puede trisecar un ángulo de $60°$?
-
-**Respuestas:** 1) 2. 2) $x^2 + 1$. 3) Trivial (no hay raíces en $\mathbb{R}$). 4) Grupo $D_4$ (orden 8), soluble: sí. 5) No (grado 6 no potencia de 2). 6) $\mathbb{Q}$ y $\mathbb{Q}(\sqrt{2})$. 7) Ya calculado: mínimo de grado 4. 8) Equivale a raíz cúbica no construible.
-
-## Resumen
-- Las extensiones de cuerpos se miden por su grado; el polinomio mínimo determina la extensión simple.
-- El grupo de Galois permuta las raíces y la correspondencia lo conecta con subcuerpos.
-- Soluble por radicales equivale a grupo de Galois soluble.
-- Las imposibilidades clásicas (cubo, ángulo, círculo) se demuestran con esta teoría.
-- Galois convierte álgebra de cuerpos en teoría de grupos.
-`,
-
-  "algebra-conmutativa": String.raw`
-## Anillos conmutativos y espectro
-El álgebra conmutativa estudia anillos conmutativos unitarios y sus ideales, con la mirada puesta en la **geometría algebraica**: los ideales corresponden a conjuntos geométricos.
-
-El **espectro** de un anillo $R$ es el conjunto de sus ideales primos:
-$$\text{Spec}(R) = \{\mathfrak{p} \subseteq R : \mathfrak{p} \text{ primo}\}$$
-Con la topología de Zariski, $\text{Spec}(R)$ es un espacio topológico cuyos puntos son "lugares" del anillo. Los ideales maximales corresponden a puntos cerrados; los primos no maximales, a puntos genéricos.
-
-**Ejemplo.** $\text{Spec}(\mathbb{Z}) = \{(0)\} \cup \{(p) : p \text{ primo}\}$. El punto genérico $(0)$ está "denso" en el espectro.
-
-## Localización
-**Localizar** un anillo significa invertir un conjunto multiplicativo $S$: se crean fracciones $r/s$ con $s \in S$. Se denota $S^{-1}R$.
-
-- **Localización en un primo** $\mathfrak{p}$: $R_\mathfrak{p}$ es un anillo **local** (un único maximal), que captura el comportamiento "cerca" del punto $\mathfrak{p}$.
-- **Cuerpo de fracciones:** localizar en todos los elementos no nulos de un dominio.
-- **Localización en $f$:** $R_f$ permite estudiar donde $f \neq 0$.
-
-**Ejemplo.** $\mathbb{Z}_{(p)}$ (denominadores no divisibles por $p$) es local con maximal $(p)$: contiene la información $p$-ádica de $\mathbb{Z}$.
-
-## Anillos noetherianos
-$R$ es **noetheriano** si toda cadena ascendente de ideales se estabiliza:
-$$I_1 \subseteq I_2 \subseteq I_3 \subseteq \cdots \Rightarrow I_n = I_{n+1} = \cdots$$
-
-Equivalencias: todo ideal es finitamente generado; todo conjunto de ideales tiene maximal.
-
-**Teorema de la base de Hilbert:** si $R$ es noetheriano, $R[x]$ también lo es. Por inducción, $\mathbb{K}[x_1, \ldots, x_n]$ es noetheriano.
-
-La noetherianidad es la finitud que hace tratable la geometría algebraica: las variedades se definen con finitas ecuaciones.
-
-## Descomposición primaria
-Generaliza la factorización en primos a ideales: todo ideal noetheriano se descompone como intersección de ideales **primarios**:
-$$I = Q_1 \cap Q_2 \cap \cdots \cap Q_n$$
-
-Un ideal primario tiene radical primo; los primos asociados son los "factores". En $\mathbb{Z}$, la descomposición primaria de $(n)$ son las potencias de primos de su factorización.
-
-**Ejemplo.** $(12) = (4) \cap (3)$ en $\mathbb{Z}$: primario con radicales $(2)$ y $(3)$.
-
-## Dimensión de Krull
-La **dimensión** de $R$ es la longitud máxima de cadenas de ideales primos:
-$$\mathfrak{p}_0 \subsetneq \mathfrak{p}_1 \subsetneq \cdots \subsetneq \mathfrak{p}_n$$
-
-Geométricamente, es la dimensión de la variedad correspondiente. El teorema de Krull (altura) y el teorema de los ideales principales (Krull) acotan la dimensión.
-
-**Ejemplo.** $\dim \mathbb{K}[x_1, \ldots, x_n] = n$; $\dim \mathbb{Z} = 1$ (los primos son puntos, $(0)$ el punto genérico).
-
-## Nullstellensatz de Hilbert
-El diccionario entre geometría y álgebra:
-
-- **Versión débil:** si $\mathbb{K}$ es algebraicamente cerrado, los ideales maximales de $\mathbb{K}[x_1,\ldots,x_n]$ corresponden a puntos de $\mathbb{K}^n$.
-- **Versión fuerte:** para un ideal $I$, los polinomios que se anulan en la variedad $V(I)$ son exactamente los del radical $\sqrt{I}$:
-$$I(V(I)) = \sqrt{I}$$
-
-**Consecuencia:** los objetos geométricos (variedades) y los algebraicos (ideales radicales) son equivalentes. Es la fundación de la geometría algebraica clásica.
-
-## Ejemplos resueltos: seis casos explicados
-**Ejemplo 1 (práctica, espectro).** Describe $\text{Spec}(\mathbb{Z}_6)$.
-- $\mathbb{Z}_6 \cong \mathbb{Z}_2 \times \mathbb{Z}_3$ (chino del resto).
-- Primos: $(2)$ y $(3)$; ambos maximales. Dos puntos.
-
-**Ejemplo 2 (práctica, localización).** Calcula $\mathbb{Z}_{(2)}$ y su maximal.
-- Fracciones $a/b$ con $b$ impar.
-- Único maximal: $2\mathbb{Z}_{(2)}$ (elementos con numerador par no invertibles).
-
-**Ejemplo 3 (práctica, primario).** Descompón $(18)$ en $\mathbb{Z}$.
-- $18 = 2 \cdot 3^2$.
-- $(18) = (2) \cap (9)$: primarios con radicales $(2)$ y $(3)$.
-
-**Ejemplo 4 (aplicación, Nullstellensatz).** Describe $V(x^2 + y^2 - 1)$ en $\mathbb{R}^2$ y su ideal.
-- Es la circunferencia unitaria.
-- Sobre $\mathbb{R}$, $I(V)$ es el radical de $(x^2 + y^2 - 1)$, que ya es radical.
-
-**Ejemplo 5 (aplicación, dimensión).** ¿Cuál es la dimensión de $\mathbb{C}[x,y]/(y - x^2)$?
-- El cociente es $\mathbb{C}[x]$ (sustituye $y = x^2$).
-- Dimensión 1: es la parábola.
-
-**Ejemplo 6 (práctica, Noether).** ¿Es noetheriano $\mathbb{K}[x, y, z]$?
-- Por el teorema de la base de Hilbert, sí.
-- Todo ideal es finitamente generado.
-
-## Contextos donde se aplica
-- **Geometría algebraica:** variedades, esquemas, haces.
-- **Teoría de números:** anillos de enteros, cuerpos locales, aritmética.
-- **Criptografía:** curvas elípticas, emparejamientos.
-- **Robótica y visión:** geometría algebraica en cinemática y reconstrucción.
-- **Computación simbólica:** bases de Gröbner y resolución de sistemas polinomiales.
-
-## Errores comunes y cómo evitarlos
-- **Confundir primo con maximal.** Todo maximal es primo; el recíproco no vale fuera de DIP.
-- **Olvidar que localizar pierde información global.** El anillo local solo ve lo cercano.
-- **Suponer noetheriano sin verificar.** Anillos de polinomios infinitos pueden no serlo.
-- **Aplicar Nullstellensatz sobre cuerpos no cerrados.** $\mathbb{R}$ exige cuidado.
-- **Confundir el radical con el ideal.** En general $I \subseteq \sqrt{I}$.
-
-## Ejercicios propuestos
-1. Halla los ideales maximales de $\mathbb{C}[x]$.
-2. Describe $\text{Spec}(\mathbb{Z}_{12})$.
-3. Descompón primariamente $(20)$ en $\mathbb{Z}$.
-4. ¿Cuál es la dimensión de $\mathbb{Z}_6$?
-5. Localiza $\mathbb{Z}$ en $(5)$: describe el anillo.
-6. ¿Qué variedad define $(x^2 - y)$ en $\mathbb{C}^2$?
-7. Demuestra que $(x^2 + 1)$ es maximal en $\mathbb{R}[x]$.
-8. ¿Por qué $\mathbb{Z}$ es noetheriano?
-
-**Respuestas:** 1) $(x - a)$ para cada $a \in \mathbb{C}$. 2) Primos $(2)$ y $(3)$. 3) $(4) \cap (5) = $ potencias de 2 y 5. 4) Dimensión 0 (artiniano). 5) Fracciones con denominador no múltiplo de 5; local. 6) La parábola $y = x^2$. 7) El cociente es $\mathbb{C}$. 8) Todo ideal es principal, generado por el mcd.
-
-## Resumen
-- El espectro de un anillo convierte álgebra en geometría; localizar estudia vecindades.
-- Noetheriano significa finitud; Hilbert la preserva en polinomios.
-- La descomposición primaria generaliza la factorización; la dimensión de Krull mide cadenas de primos.
-- El Nullstellensatz identifica variedades e ideales radicales.
-- Es la base del álgebra conmutativa moderna y de la geometría algebraica.
-`,
-
-  "representaciones": String.raw`
-## ¿Qué es una representación?
-Una **representación** de un grupo $G$ es un homomorfismo a las matrices invertibles de un espacio vectorial:
-$$\rho: G \to GL(V)$$
-Es decir: hacer que el grupo abstracto actúe como transformaciones lineales. Así los problemas de grupos se vuelven problemas de álgebra lineal.
-
-**Ejemplos:**
-- La representación trivial $\rho(g) = 1$.
-- La representación regular: $G$ actúa sobre el espacio de funciones de $G$.
-- La representación de permutación: $S_n$ actúa sobre $\mathbb{C}^n$ permutando coordenadas.
-- Las rotaciones de $S^1$ como matrices $2 \times 2$.
-
-El teorema de Cayley es la primera representación: todo grupo es subgrupo de permutaciones.
-
-## Subrepresentaciones e irreducibles
-Un **subespacio invariante** $W \subseteq V$ cumple $\rho(g)W \subseteq W$ para todo $g$; da una **subrepresentación**. Una representación es **irreducible** si no tiene subrepresentaciones propias no triviales.
-
-**Ejemplo.** La representación de $S_3$ sobre $\mathbb{C}^3$ (permutación de coordenadas) se descompone en:
-- El subespacio de vectores con coordenadas iguales (trivial).
-- El plano de suma cero (irreducible de dimensión 2).
-
-**Indescomponible** es distinto de irreducible: puede descomponerse como suma directa, pero no en suma de irreducibles (raro en grupos finitos).
-
-## Lema de Schur
-**Lema de Schur:** si $V$ y $W$ son irreducibles y $T: V \to W$ es un morfismo de representaciones ($T\rho_V = \rho_W T$), entonces:
-- $T = 0$ o $T$ es isomorfismo.
-- Si $V = W$ sobre $\mathbb{C}$, $T = \lambda I$ (escalar).
-
-**Consecuencias:**
-- Las representaciones irreducibles son los "átomos" de la teoría.
-- Los escalares que conmutan con toda la representación forman un álgebra de división.
-- En grupos abelianos, toda irreducible sobre $\mathbb{C}$ es de dimensión 1.
-
-## Caracteres
-El **carácter** de una representación es la función $\chi(g) = \text{tr}(\rho(g))$. Es una función de clases: constante en cada clase de conjugación.
-
-**Propiedades:**
-- $\chi(e) = \dim V$ (la dimensión de la representación).
-- $\chi(g^{-1}) = \overline{\chi(g)}$.
-- **Ortogonalidad:** $\langle \chi_i, \chi_j\rangle = \dfrac{1}{|G|}\sum_g \chi_i(g)\overline{\chi_j(g)} = \delta_{ij}$ para irreducibles.
-- Dos representaciones son isomorfas si y solo si tienen el mismo carácter.
-
-**Fórmula de descomposición:** la multiplicidad de la irreducible $i$ en $V$:
-$$m_i = \langle \chi_V, \chi_i \rangle$$
-
-Los caracteres reducen el álgebra lineal a tablas numéricas.
-
-## Teorema de Maschke y descomposición
-**Maschke:** si $G$ es finito y $\mathbb{K}$ tienen característica 0 (o coprima con $|G|$), toda representación se descompone en suma directa de irreducibles:
-$$V \cong V_1^{\oplus m_1} \oplus \cdots \oplus V_k^{\oplus m_k}$$
-
-**Consecuencias:**
-- Las representaciones quedan clasificadas por sus caracteres.
-- El número de irreducibles es el número de clases de conjugación.
-- Se cumple $\sum_i (\dim V_i)^2 = |G|$.
-
-**Ejemplo.** $S_3$ tiene 3 clases de conjugación: 3 irreducibles, de dimensiones $1, 1, 2$; $1 + 1 + 4 = 6 = |S_3|$.
-
-## Tablas de caracteres
-La **tabla de caracteres** lista los caracteres de las irreducibles en cada clase de conjugación. Se construye con ortogonalidad y propiedades algebraicas.
-
-**Ejemplo ($S_3$):** clases $\{e\}$, transposiciones (3), ciclos de 3 (2):
-
-| Clase | $e$ | $(1\,2)$ | $(1\,2\,3)$ |
-|---|---|---|---|
-| Trivial | 1 | 1 | 1 |
-| Signo | 1 | $-1$ | 1 |
-| Estándar | 2 | 0 | $-1$ |
-
-La tabla permite descomponer cualquier representación calculando productos internos.
-
-## Ejemplos resueltos: seis casos explicados
-**Ejemplo 1 (práctica, dimensión).** Verifica $\sum (\dim V_i)^2 = |G|$ para $\mathbb{Z}_4$.
-- Abelianas: 4 irreducibles de dimensión 1.
-- $1 + 1 + 1 + 1 = 4$. Correcto.
-
-**Ejemplo 2 (práctica, carácter).** Carácter de la representación de permutación de $S_3$ sobre $\mathbb{C}^3$.
-- $\chi(e) = 3$; una transposición fija 1 elemento: $\chi = 1$; un 3-ciclo fija 0: $\chi = 0$.
-- Descompone como trivial + estándar ($3 = 1 + 2$).
-
-**Ejemplo 3 (aplicación, descomposición).** Descompón $\chi = (3, 1, 0)$ en $S_3$.
-- $\langle\chi, \text{trivial}\rangle = \frac{1}{6}(3 + 3\cdot1 + 2\cdot0) = 1$.
-- $\langle\chi, \text{signo}\rangle = \frac{1}{6}(3 - 3 + 0) = 0$.
-- $\langle\chi, \text{estándar}\rangle = 1$: $\chi = $ trivial $+$ estándar.
-
-**Ejemplo 4 (aplicación, física).** Las rotaciones de $SO(3)$ actúan en la mecánica cuántica: los irreducibles corresponden al momento angular $l$.
-- Las dimensiones son $2l + 1$.
-- Las reglas de selección surgen de la descomposición de productos tensoriales.
-
-**Ejemplo 5 (práctica, Schur).** ¿Por qué las irreducibles de grupos abelianos son de dimensión 1?
-- Todos los $\rho(g)$ conmutan; por Schur son escalares.
-- Todo subespacio es invariante: irreducible de dimensión 1.
-
-**Ejemplo 6 (práctica, regular).** Dimensión del espacio de la representación regular de $G$ y su descomposición.
-- Dimensión $|G|$.
-- Contiene cada irreducible con multiplicidad igual a su dimensión.
-
-## Contextos donde se aplica
-- **Física de partículas:** clasificación de partículas por representaciones del grupo de Poincaré.
-- **Química:** espectros vibracionales y reglas de selección.
-- **Cristalografía:** representaciones de grupos espaciales.
-- **Matemática:** teoría de números (formas automorfas), geometría.
-- **Computación cuántica:** puertas y simetrías.
-
-## Errores comunes y cómo evitarlos
-- **Confundir irreducible con indescomponible.** Coinciden bajo Maschke; en general no.
-- **Olvidar que los caracteres son de clase.** No dependen del representante.
-- **Usar Maschke en característica que divide a $|G|$.** Falla.
-- **Confundir dimensión de la representación con $|G|$.** Es la dimensión del espacio.
-- **Sumar caracteres sin multiplicidades.** Usa el producto interno.
-
-## Ejercicios propuestos
-1. ¿Cuántas irreducibles tiene $\mathbb{Z}_6$?
-2. Verifica $\sum (\dim V_i)^2 = |G|$ para $S_3$.
-3. Carácter de la representación trivial de $S_4$.
-4. Descompón la representación de permutación de $S_4$ sobre $\mathbb{C}^4$.
-5. ¿Por qué todo carácter toma el valor de la dimensión en $e$?
-6. Halla el producto interno de la trivial consigo misma.
-7. ¿Cuál es la dimensión de la representación regular de $D_4$?
-8. ¿Cómo se relaciona el número de irreducibles con las clases de conjugación?
-
-**Respuestas:** 1) 6. 2) $1+1+4=6$. 3) Constante 1. 4) Trivial + estándar de dimensión 3. 5) $\rho(e) = I$. 6) 1. 7) 8. 8) Son iguales.
-
-## Resumen
-- Representar un grupo es hacerlo actuar por matrices; las irreducibles son sus átomos.
-- Schur restringe los morfismos; los caracteres codifican la representación en números.
-- Maschke garantiza descomposición en irreducibles para grupos finitos.
-- Las tablas de caracteres clasifican y permiten descomponer.
-- Es el puente entre álgebra abstracta, álgebra lineal y física.
-`,
-
-  "homologica": String.raw`
-## Sucesiones exactas
-Una **sucesión exacta** es una cadena de módulos y homomorfismos donde la imagen de cada uno es exactamente el núcleo del siguiente:
-$$\cdots \to A \xrightarrow{f} B \xrightarrow{g} C \to \cdots, \qquad \text{Im}\,f = \ker g$$
-
-**Casos clave:**
-- $0 \to A \xrightarrow{f} B$ exacta $\iff$ $f$ inyectiva.
-- $B \xrightarrow{g} C \to 0$ exacta $\iff$ $g$ sobreyectiva.
-- $0 \to A \to B \to C \to 0$ (sucesión corta): $C \cong B/A$.
-
-La exactitud mide "cuánto falla" la igualdad imagen-núcleo, y ese fallo es precisamente lo que mide la homología.
-
-## Complejos y grupos de homología
-Un **complejo de cadenas** es una sucesión donde $g \circ f = 0$ (imagen contenida en el núcleo, no necesariamente igual):
-$$\cdots \to C_{n+1} \xrightarrow{\partial_{n+1}} C_n \xrightarrow{\partial_n} C_{n-1} \to \cdots$$
-
-Los **grupos de homología** miden el fallo de exactitud:
-$$H_n = \frac{\ker \partial_n}{\text{Im}\,\partial_{n+1}}$$
-
-- Homología cero: la sucesión era exacta en ese punto.
-- Homología no cero: hay "agujeros" algebraicos.
-
-**Ejemplo.** En topología, la homología de un espacio cuenta sus agujeros: $H_0$ componentes conexas, $H_1$ túneles, $H_2$ cavidades.
-
-## Resoluciones
-Una **resolución proyectiva** de un módulo $M$ es una sucesión exacta con proyectivos $P_i$:
-$$\cdots \to P_2 \to P_1 \to P_0 \to M \to 0$$
-
-Sirve para "reemplazar" $M$ por objetos mejores (proyectivos) y definir funtores derivados. Las **resoluciones inyectivas** son el dual.
-
-**Ejemplo.** Para $\mathbb{Z}/2$ sobre $\mathbb{Z}$: $\cdots \to \mathbb{Z} \xrightarrow{2} \mathbb{Z} \xrightarrow{2} \mathbb{Z} \to \mathbb{Z}/2 \to 0$.
-
-## Funtores derivados: Tor y Ext
-Un funtor que no es exacto se convierte en una **familia de funtores derivados**:
-
-- **Tor:** $\text{Tor}_n(-, B)$ mide el fallo de $\otimes$ en preservar inyectividad.
-- **Ext:** $\text{Ext}^n(-, B)$ mide el fallo de $\text{Hom}$ en preservar sobreyectividad.
-
-**Propiedades:** $\text{Tor}_0 = \otimes$ y $\text{Ext}^0 = \text{Hom}$; los superiores capturan la torsión y las extensiones.
-
-**Ejemplo.** $\text{Tor}_1^{\mathbb{Z}}(\mathbb{Z}/2, \mathbb{Z}/2) = \mathbb{Z}/2$: detecta la torsión de los módulos.
-
-**Extensiones:** $\text{Ext}^1(A, B)$ clasifica las sucesiones cortas $0 \to B \to E \to A \to 0$.
-
-## Lema de la serpiente y diagramas
-**Lema de la serpiente:** de un diagrama conmutativo con filas exactas se construye una sucesión exacta larga que conecta las homologías:
-$$\ker f \to \ker g \to \ker h \xrightarrow{\delta} \text{coker}\,f \to \text{coker}\,g \to \text{coker}\,h$$
-
-El morfismo de conexión $\delta$ es la "serpiente". Es la herramienta técnica que hace funcionar la homología.
-
-**Lema de los cinco:** si cuatro de cinco morfismos de un diagrama son isomorfismos, el quinto también.
-
-**Lema del zig-zag:** generalización que permite demostrar la exactitud de sucesiones largas.
-
-## Cohomología
-La **cohomología** es la versión dual: complejos con índices crecientes y diferenciales que suben:
-$$H^n = \frac{\ker d^{n}}{\text{Im}\,d^{n-1}}$$
-
-**Ejemplos de teorías cohomológicas:**
-- Cohomología singular y de De Rham (topología y geometría diferencial).
-- Cohomología de grupos: $H^n(G, M)$ clasifica extensiones y acciones.
-- Cohomología de haces (geometría algebraica).
-- Cohomología de Galois en teoría de números.
-
-**De Rham:** las formas cerradas módulo exactas miden los agujeros de una variedad; teorema de De Rham: coincide con la cohomología singular.
-
-## Ejemplos resueltos: seis casos explicados
-**Ejemplo 1 (práctica, exactitud).** ¿Es exacta $0 \to \mathbb{Z} \xrightarrow{2} \mathbb{Z} \to \mathbb{Z}_2 \to 0$?
-- $2\mathbb{Z}$ es el núcleo de la reducción módulo 2.
-- Sí: inyectiva al inicio, exacta en el medio, sobreyectiva al final.
-
-**Ejemplo 2 (práctica, homología).** Calcula $H_0$ del complejo $\mathbb{Z} \xrightarrow{0} \mathbb{Z} \xrightarrow{0} 0$.
-- $\ker \partial_0 = \mathbb{Z}$; imagen del anterior es 0.
-- $H_0 = \mathbb{Z}$.
-
-**Ejemplo 3 (práctica, Tor).** Calcula $\text{Tor}_1(\mathbb{Z}/3, \mathbb{Z}/3)$.
-- Resolución: $0 \to \mathbb{Z} \xrightarrow{3} \mathbb{Z} \to \mathbb{Z}/3 \to 0$.
-- Tensando con $\mathbb{Z}/3$: el núcleo de multiplicar por 3 es $\mathbb{Z}/3$; Tor$_1 = \mathbb{Z}/3$.
-
-**Ejemplo 4 (aplicación, topología).** La homología del toro $T^2$.
-- $H_0 = \mathbb{Z}$ (conexo), $H_1 = \mathbb{Z}^2$ (dos túneles), $H_2 = \mathbb{Z}$ (cavidad).
-- La característica de Euler: $\chi = 1 - 2 + 1 = 0$.
-
-**Ejemplo 5 (aplicación, extensión de grupos).** $\text{Ext}^1(\mathbb{Z}/2, \mathbb{Z}/2) = \mathbb{Z}/2$.
-- Hay dos extensiones: la trivial y la no escindida (el grupo cíclico de orden 4).
-- Ext clasifica cómo pegar módulos.
-
-**Ejemplo 6 (práctica, serpiente).** Define el morfismo de conexión en la sucesión del lema.
-- Se construye "persiguiendo el diagrama": sube por inyectividad y baja por sobreyectividad.
-- Aunque no se vea explícito, la construcción es natural (independiente de elecciones).
-
-## Contextos donde se aplica
-- **Topología algebraica:** homología y cohomología de espacios; invariantes.
-- **Geometría algebraica:** haces, cohomología, teoremas de dualidad.
-- **Teoría de números:** cohomología de Galois, clase de cuerpos.
-- **Física teórica:** cohomología en teorías de gauge y anomalías.
-- **Computación:** homología persistente en topología de datos.
-
-## Errores comunes y cómo evitarlos
-- **Confundir exacta con complejo.** En el complejo solo $g \circ f = 0$; en la exacta, la igualdad.
-- **Olvidar que Tor y Ext dependen de la resolución.** El resultado es independiente, pero hay que elegir una.
-- **Perderse en los índices.** Dibuja el diagrama y sigue flechas.
-- **Suponer que $\text{Hom}$ es exacto.** Solo es exacto por la izquierda; de ahí Ext.
-- **Confundir homología con cohomología.** Una baja índices, la otra sube.
-
-## Ejercicios propuestos
-1. ¿Es exacta $0 \to \mathbb{Z} \to \mathbb{Q} \to \mathbb{Q}/\mathbb{Z} \to 0$?
-2. Calcula $H_0$ y $H_1$ del complejo $0 \to \mathbb{Z} \xrightarrow{2} \mathbb{Z} \to 0$.
-3. Halla $\text{Ext}^1(\mathbb{Z}, \mathbb{Z})$.
-4. ¿Qué mide $\text{Tor}_1(A, B)$ si $A$ es libre?
-5. Homología de la esfera $S^2$.
-6. Enuncia el lema de los cinco.
-7. ¿Por qué $\otimes$ no es exacto por la izquierda?
-8. Relaciona la característica de Euler con los números de Betti.
-
-**Respuestas:** 1) Sí. 2) $H_0 = \mathbb{Z}$, $H_1 = \mathbb{Z}/2$. 3) $0$ ($\mathbb{Z}$ es proyectivo). 4) $0$ (libre implica plano). 5) $H_0 = \mathbb{Z}$, $H_1 = 0$, $H_2 = \mathbb{Z}$. 6) Si cuatro son iso, el quinto también. 7) $\mathbb{Z} \xrightarrow{2} \mathbb{Z}$ pierde la inyectividad al tensar con $\mathbb{Z}/2$. 8) $\chi = \sum (-1)^i b_i$.
-
-## Resumen
-- Las sucesiones exactas relacionan núcleos e imágenes; la homología mide el fallo de exactitud.
-- Las resoluciones reemplazan módulos por proyectivos; Tor y Ext derivan los funtores no exactos.
-- El lema de la serpiente produce sucesiones exactas largas.
-- La cohomología dualiza la construcción y aparece en topología, geometría y aritmética.
-- Es el lenguaje que unifica grandes áreas de la matemática moderna.
-`,
-
-  "categorias": String.raw`
-## ¿Qué es una categoría?
-Una **categoría** $\mathcal{C}$ consta de:
-1. Una colección de **objetos**.
-2. **Morfismos** entre objetos: $\text{Hom}(A, B)$.
-3. **Composición** asociativa: $g \circ f$.
-4. **Identidades** $1_A$ para cada objeto.
-
-**Ejemplos:** **Set** (conjuntos y funciones), **Grp** (grupos y homomorfismos), **Vect** (espacios y transformaciones lineales), **Top** (espacios y continuas), **R-Mod** (módulos), **Pos** (conjuntos ordenados).
-
-La idea central: las matemáticas se organizan por **relaciones** (morfismos) más que por objetos. Muchos teoremas son "la misma historia" en categorías distintas.
-
-## Funtores
-Un **funtor** $F: \mathcal{C} \to \mathcal{D}$ asigna objetos a objetos y morfismos a morfismos, preservando composición e identidades:
-$$F(g \circ f) = F(g) \circ F(f), \qquad F(1_A) = 1_{F(A)}$$
-
-- **Covariante:** preserva la dirección de los morfismos.
-- **Contravariante:** invierte la dirección; $F(g \circ f) = F(f) \circ F(g)$.
-
-**Ejemplos:** el funtor de olvido $Grp \to Set$ (olvida la operación); el dual $V \mapsto V^*$ (contravariante); $\pi_1: Top \to Grp$ (grupo fundamental); el funtor libre $Set \to Grp$.
-
-Los funtores "traducen" una categoría en otra y revelan analogías profundas.
-
-## Transformaciones naturales
-Una **transformación natural** $\eta: F \Rightarrow G$ entre funtores asigna a cada objeto $A$ un morfismo $\eta_A: F(A) \to G(A)$ que conmuta con todos los morfismos:
-$$G(f) \circ \eta_A = \eta_B \circ F(f)$$
-
-Es la noción correcta de "morfismo entre funtores". Ejemplo: el determinante es una transformación natural de $GL_n$ al funtor de unidades; la doble dualidad $V \to V^{**}$ es natural (a diferencia de $V \to V^*$).
-
-Eilenberg y Mac Lane introdujeron las categorías precisamente para formalizar la naturalidad.
-
-## Equivalencia de categorías
-Una **equivalencia** entre categorías captura la idea de que dos teorías son "esencialmente la misma": funtores $F: C \to D$, $G: D \to C$ con isomorfismos naturales $G \circ F \cong 1_C$ y $F \circ G \cong 1_D$.
-
-**Ejemplo.** La categoría de espacios vectoriales de dimensión finita es equivalente a su dual; los grupos finitos abelianos son equivalentes a módulos sobre $\mathbb{Z}$ de torsión.
-
-## Límites y colímites
-Los **límites** generalizan construcciones universales:
-- **Producto:** límite del diagrama de dos objetos; en **Set**, el producto cartesiano.
-- **Pullback:** límite de un cospan $A \to C \leftarrow B$.
-- **Ecualizador:** límite de dos flechas paralelas.
-
-Los **colímites** son duales:
-- **Coproducto:** unión disjunta; en **Ab**, la suma directa.
-- **Pushout:** pegado de espacios; en **Top**, unión identificando.
-- **Cociente:** colímite de una relación.
-
-**Propiedad universal:** el objeto límite se define por su relación con todos los demás: para cada objeto compatible existe un único morfismo. Es la forma moderna de definir "el mejor objeto que encaja".
-
-## Adjunciones
-Una **adjunción** $F \dashv G$ entre funtores $F: C \to D$ y $G: D \to C$ da una biyección natural:
-$$\text{Hom}_D(F(A), B) \cong \text{Hom}_C(A, G(B))$$
-
-**Ejemplos:**
-- Libre $\dashv$ olvido: construir el grupo libre sobre un conjunto.
-- Producto $\dashv$ exponencial (curryficación en programación funcional).
-- Tensor $\dashv$ Hom (la adjunción que origina Tor y Ext).
-
-Las adjunciones son omnipresentes: "construcción libre" a la izquierda, "olvido" a la derecha. Capturan la esencia de muchas dualidades.
-
-## Lema de Yoneda
-**Yoneda:** un objeto queda determinado por los morfismos que recibe (o emite). Formalmente:
-$$\text{Nat}(\text{Hom}(A, -), F) \cong F(A)$$
-
-**Interpretación:** para entender un objeto, mira cómo se relaciona con todos los demás. Es la versión categórica de "dime con quién andas".
-
-**Consecuencias:** las construcciones universales son únicas salvo isomorfismo único; las pruebas por propiedades universales son más limpias que las construcciones explícitas.
-
-## Mónadas
-Una **mónada** es un endofuntor $T$ con transformaciones naturales $\eta: 1 \to T$ y $\mu: T^2 \to T$ que cumplen leyes de coherencia. Modelan efectos y estructuras computacionales.
-
-**En programación funcional:** mónadas para manejar estado, errores (Maybe), listas, IO, promesas. Haskell popularizó su uso.
-
-**Origen matemático:** álgebras sobre mónadas, teoría de cómputo (Eugenio Moggi), y la construcción de categorías de álgebras.
-
-## Ejemplos resueltos: seis casos explicados
-**Ejemplo 1 (práctica, categoría).** Verifica que **Set** es una categoría.
-- Objetos: conjuntos; morfismos: funciones.
-- Composición de funciones es asociativa; identidad es la función identidad. $\blacksquare$
-
-**Ejemplo 2 (práctica, funtor).** El funtor de olvido $U: Grp \to Set$.
-- A cada grupo le asocia su conjunto subyacente.
-- A cada homomorfismo, la misma función; preserva composición.
-
-**Ejemplo 3 (aplicación, producto).** El producto cartesiano es el límite en **Set**.
-- Con proyecciones $\pi_1, \pi_2$.
-- Para cualquier par de funciones al producto, existe una única que las factoriza.
-
-**Ejemplo 4 (aplicación, adjunción).** La construcción del grupo libre sobre un conjunto.
-- $\text{Hom}_{Grp}(F(S), G) \cong \text{Hom}_{Set}(S, U(G))$.
-- Los generadores no tienen relaciones: es el grupo más general posible.
-
-**Ejemplo 5 (aplicación, Yoneda).** Demuestra que la representación de un objeto es única.
-- Si dos objetos representan el mismo funtor, son isomorfos por Yoneda.
-- No hace falta construir el isomorfismo: Yoneda lo da.
-
-**Ejemplo 6 (aplicación, mónada).** La mónada Maybe en programación.
-- $T(X) = X \cup \{\text{fallo}\}$; $\eta$ mete el valor; $\mu$ aplana.
-- Modela cálculos que pueden fallar sin excepciones.
-
-## Contextos donde se aplica
-- **Matemática:** unifica álgebra, topología y geometría; fundamentos con teoría de haces y esquemas.
-- **Programación funcional:** funtores, mónadas y tipado (Haskell, Scala, Rust).
-- **Física:** teorías de campos topológicas, categorías tensoriales.
-- **Lógica:** semántica categórica, teoría de tipos.
-- **Inteligencia artificial:** composición de modelos y sistemas de tipos.
-
-## Errores comunes y cómo evitarlos
-- **Confundir categoría con conjunto.** Los morfismos no siempre son funciones.
-- **Suponer que todo funtor es fiel o pleno.** La mayoría no lo es.
-- **Confundir naturalidad con igualdad.** Es isomorfismo natural, no literal.
-- **Ignorar las leyes de coherencia.** Composición e identidad deben cumplirse.
-- **Abusar de la abstracción.** La teoría de categorías organiza, no sustituye el cálculo.
-
-## Ejercicios propuestos
-1. Define la categoría **Vect** y su composición.
-2. ¿Es contravariante el funtor $V \mapsto V^*$?
-3. Demuestra que el producto en **Set** es único salvo isomorfismo.
-4. ¿Qué es el coproducto en **Set**?
-5. Da un ejemplo de transformación natural.
-6. Explica la adjunción libre-olvido para espacios vectoriales.
-7. ¿Qué dice Yoneda sobre un objeto y sus morfismos?
-8. ¿Qué mónada modela las listas?
-
-**Respuestas:** 1) Objetos: espacios; morfismos: lineales; composición usual. 2) Sí. 3) Propiedad universal + unicidad. 4) Unión disjunta. 5) Determinante: $GL_n \to (\cdot)^*$. 6) Base libre es el espacio más general que mapea a cualquier espacio. 7) Queda determinado por sus morfismos. 8) La mónada de listas (concatenación como multiplicación).
-
-## Resumen
-- Las categorías organizan objetos y morfismos; los funtores traducen entre categorías.
-- Las transformaciones naturales formalizan la naturalidad; Yoneda caracteriza objetos por sus relaciones.
-- Límites y colímites unifican productos, cocientes y pegados.
-- Las adjunciones capturan dualidades y construcciones libres.
-- Las mónadas modelan efectos en matemática y programación.
+- Un **espacio vectorial** es un conjunto $V$ con suma y producto por escalares que cumplen las reglas de cerradura, conmutatividad, asociatividad, neutro $\vec{0}$, inverso, distributividad y compatibilidad. Sus ejemplos típicos son $\mathbb{R}^n$, las matrices, los polinomios y las funciones continuas. Un **subespacio** es un subconjunto cerrado bajo suma y escalares que siempre contiene a $\vec{0}$.
+- Una **combinación lineal** es $\alpha_1 v_1 + \cdots + \alpha_k v_k$; el **span** es el conjunto de todas ellas. Los vectores son **independientes** si la única combinación que da $\vec{0}$ es la trivial. Una **base** genera y es independiente; la **dimensión** es su número de vectores y las **coordenadas** respecto de una base son únicas.
+- Un **sistema lineal** se escribe $A\vec{x} = \vec{b}$ y se resuelve con eliminación de Gauss sobre la matriz ampliada $[A \mid \vec{b}]$. La clasificación depende del **rango**: solución única si rango$(A) = \text{rango}(A \mid b) = n$; infinitas soluciones si ambos coinciden y son menores que $n$; incompatible si rango$(A) < \text{rango}(A \mid b)$.
+- El **determinante** $\det A$ es un número que mide volumen con signo; $A$ es invertible si y solo si $\det A \neq 0$, y entonces $A^{-1} = \frac{1}{\det A}\operatorname{adj}(A)$. La **regla de Cramer** resuelve sistemas cuadrados con $x_i = \det(A_i)/\det(A)$.
+- Una **transformación lineal** $T: V \to W$ respeta sumas y escalares; toda ella se representa con una matriz cuyas columnas son las imágenes de los vectores de la base. La composición corresponde al producto de matrices.
+- El **núcleo** $\ker T = \{v : T(v) = \vec{0}\}$ mide la pérdida de información y la **imagen** $\operatorname{Im} T = \{T(v)\}$ mide el alcance. $T$ es inyectiva si y solo si $\ker T = \{\vec{0}\}$, y el **teorema de la dimensión** afirma $\dim V = \dim(\ker T) + \dim(\operatorname{Im} T)$.
+- Un **valor propio** $\lambda$ y su **vector propio** $v \neq \vec{0}$ cumplen $A v = \lambda v$; se calculan con el polinomio característico $p_A(\lambda) = \det(A - \lambda I) = 0$. La suma de los valores propios es la traza y su producto es el determinante.
+- Una matriz es **diagonalizable**, $A = PDP^{-1}$, si tiene $n$ vectores propios independientes; siempre lo es si sus valores propios son distintos, y toda matriz simétrica real se diagonaliza ortogonalmente: $A = QDQ^T$.
+- El **producto interno** $\langle u, v \rangle$ mide longitudes y ángulos; la **proyección** de $u$ sobre $v$ es $\frac{\langle u,v\rangle}{\langle v,v\rangle}v$; **Gram-Schmidt** construye bases ortonormales; y los **mínimos cuadrados** resuelven sistemas incompatibles mediante $A^T A \vec{x} = A^T \vec{b}$, la base de la regresión lineal.
 `
 };

@@ -3,27 +3,33 @@
 **Cuaderno de práctica · Cálculo · Universidad 1**
 *Formulario completo, 50 ejercicios por niveles y solucionario solo con resultados.*
 
+Antes de resolver, conviene tener a mano el significado de cada símbolo. Las tablas del formulario traducen la notación a palabras y explican cómo se usa cada regla; así ningún ejercicio se vuelve una sopa de letras.
+
 ---
 
 ## Formulario
 
-### Definición de la derivada
+### La derivada y cómo leerla
 
-$$f'(x)=\lim_{h\to0}\frac{f(x+h)-f(x)}{h}$$
+$$f'(x)=\lim_{h\to 0}\frac{f(x+h)-f(x)}{h}$$
+
+Se lee: "efe prima de equis es el límite, cuando $h$ tiende a cero, de efe de equis más $h$, menos efe de equis, todo dividido por $h$". Cada símbolo: $f$ es el nombre de la regla, $x$ la entrada, $f(x)$ la salida, $h$ un cambio pequeño en la entrada, $f(x+h)$ el valor en la entrada desplazada, y $h\to 0$ significa acercar $h$ a cero sin llegar a cero. El resultado $f'(x)$ da la pendiente de la recta tangente y la razón de cambio instantánea. También se usan $\dfrac{dy}{dx}$ (derivada de $y$ respecto de $x$) y $\dot{y}$ (derivada respecto del tiempo, en física).
 
 ### Reglas básicas
 
-| Regla | Fórmula |
-|---|---|
-| Constante | $(c)'=0$ |
-| Potencia | $(x^n)'=nx^{n-1}$ |
-| Múltiplo constante | $(cf)'=cf'$ |
-| Suma | $(f\pm g)'=f'\pm g'$ |
-| Producto | $(fg)'=f'g+fg'$ |
-| Cociente | $\left(\dfrac{f}{g}\right)'=\dfrac{f'g-fg'}{g^2}$ |
-| Cadena | $(f(g(x)))'=f'(g(x))\,g'(x)$ |
+| Regla | Fórmula | Cómo se usa |
+|---|---|---|
+| Constante | $(c)'=0$ | la pendiente de una horizontal es cero |
+| Potencia | $(x^n)'=nx^{n-1}$ | baja el exponente y réstale uno |
+| Múltiplo constante | $(cf)'=cf'$ | el número fijo solo escala |
+| Suma | $(f\pm g)'=f'\pm g'$ | se deriva término a término |
+| Producto | $(fg)'=f'g+fg'$ | primera por derivada de la segunda, más la segunda por derivada de la primera |
+| Cociente | $\left(\dfrac{f}{g}\right)'=\dfrac{f'g-fg'}{g^2}$ | derivada de arriba por abajo, menos arriba por derivada de abajo, sobre abajo al cuadrado |
+| Cadena | $(f(g(x)))'=f'(g(x))\,g'(x)$ | deriva la capa externa y multiplica por la derivada de la interna |
 
 ### Derivadas notables
+
+El número $e\approx2.71828$ es la base de los logaritmos naturales y $\ln x$ es el logaritmo en base $e$. La secante es $\sec x=\dfrac{1}{\cos x}$.
 
 | Función | Derivada |
 |---|---|
@@ -40,22 +46,28 @@ $$f'(x)=\lim_{h\to0}\frac{f(x+h)-f(x)}{h}$$
 
 $$f''(x)=\frac{d}{dx}f'(x)\qquad y-f(a)=f'(a)(x-a)\qquad f(x)\approx f(a)+f'(a)(x-a)$$
 
+$f''$ es la derivada segunda (se deriva dos veces); $a$ es el punto de tangencia; $f(a)$ su altura y $f'(a)$ su pendiente. La tercera igualdad es la aproximación lineal, válida cerca de $x=a$.
+
 ### Extremos, concavidad y teoremas
 
 | Concepto | Criterio |
 |---|---|
 | Punto crítico | $f'(x)=0$ o $f'$ no existe |
-| Máximo local | $f'$ pasa de $+$ a $-$ (o $f''<0$) |
-| Mínimo local | $f'$ pasa de $-$ a $+$ (o $f''>0$) |
+| Máximo local | $f'$ pasa de $+$ a $-$; o $f'(c)=0$ con $f''(c)<0$ |
+| Mínimo local | $f'$ pasa de $-$ a $+$; o $f'(c)=0$ con $f''(c)>0$ |
 | Cóncava hacia arriba | $f''>0$ |
 | Cóncava hacia abajo | $f''<0$ |
 | Punto de inflexión | $f''$ cambia de signo |
-| Valor medio | $f'(c)=\dfrac{f(b)-f(a)}{b-a}$ |
-| L'Hôpital | $\lim\dfrac{f}{g}=\lim\dfrac{f'}{g'}$ en $\dfrac{0}{0}$ o $\dfrac{\infty}{\infty}$ |
+| Valor medio | $f'(c)=\dfrac{f(b)-f(a)}{b-a}$ con $c$ entre $a$ y $b$ |
+| L'Hôpital | $\lim\dfrac{f}{g}=\lim\dfrac{f'}{g'}$ solo si la forma es $\dfrac{0}{0}$ o $\dfrac{\infty}{\infty}$ |
 
 ### Razones relacionadas
 
+Si dos cantidades dependen del tiempo, se derivan respecto de $t$ aplicando la regla de la cadena:
+
 $$\frac{dV}{dt}=4\pi r^2\frac{dr}{dt}\qquad \frac{dA}{dt}=2\pi r\frac{dr}{dt}\qquad \frac{dV}{dt}=3a^2\frac{da}{dt}$$
+
+La primera es para una esfera ($V$ volumen, $r$ radio), la segunda para un círculo ($A$ área) y la tercera para un cubo ($a$ arista).
 
 ---
 

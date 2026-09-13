@@ -1,63 +1,71 @@
 # Cálculo integral · 50 ejercicios
 
 **Cuaderno de práctica · Cálculo · Universidad 1–2**
-*Formulario completo, 50 integrales por niveles y solucionario solo con resultados.*
+*Formulario explicado, 50 integrales por niveles y solucionario solo con resultados.*
 
 ---
 
 ## Formulario
 
+En todas las fórmulas, $\displaystyle\int$ es el signo integral (una S alargada, de "suma"): representa la acumulación de infinitas rebanadas. La letra $C$ es la **constante de integración** (un número arbitrario) y aparece siempre en la integral indefinida, porque todas las antiderivadas de una función difieren en una constante. El símbolo $dx$ es el **diferencial de $x$**: indica la variable de integración y el ancho infinitesimal de cada rebanada.
+
 ### Integrales inmediatas
 
-| Integral | Resultado |
-|---|---|
-| $\displaystyle\int k\,dx$ | $kx + C$ |
-| $\displaystyle\int x^{n}\,dx$ | $\dfrac{x^{n+1}}{n+1} + C \quad (n \neq -1)$ |
-| $\displaystyle\int \frac{1}{x}\,dx$ | $\ln\mid x\mid + C$ |
-| $\displaystyle\int e^{x}\,dx$ | $e^{x} + C$ |
-| $\displaystyle\int a^{x}\,dx$ | $\dfrac{a^{x}}{\ln a} + C$ |
-| $\displaystyle\int \operatorname{sen}x\,dx$ | $-\cos x + C$ |
-| $\displaystyle\int \cos x\,dx$ | $\operatorname{sen}x + C$ |
-| $\displaystyle\int \sec^{2}x\,dx$ | $\tan x + C$ |
-| $\displaystyle\int \frac{1}{1+x^{2}}\,dx$ | $\arctan x + C$ |
-| $\displaystyle\int \frac{1}{\sqrt{1-x^{2}}}\,dx$ | $\arcsin x + C$ |
+| Integral | Resultado | Cómo se lee |
+|---|---|---|
+| $\displaystyle\int k\,dx$ | $kx + C$ | $k$ es una constante: integrarla acumula $kx$. |
+| $\displaystyle\int x^{n}\,dx$ | $\dfrac{x^{n+1}}{n+1} + C \quad (n \neq -1)$ | Regla de la potencia: sube el exponente en 1 y divide entre el nuevo exponente. |
+| $\displaystyle\int \frac{1}{x}\,dx$ | $\ln\mid x\mid + C$ | La potencia $n=-1$ es la excepción; el valor absoluto cubre $x<0$. |
+| $\displaystyle\int e^{x}\,dx$ | $e^{x} + C$ | La exponencial es su propia derivada. |
+| $\displaystyle\int a^{x}\,dx$ | $\dfrac{a^{x}}{\ln a} + C$ | Se divide entre $\ln a$ para compensar ese factor. |
+| $\displaystyle\int \operatorname{sen}x\,dx$ | $-\cos x + C$ | Con signo menos porque $(\cos x)' = -\operatorname{sen}x$. |
+| $\displaystyle\int \cos x\,dx$ | $\operatorname{sen}x + C$ | La derivada del seno es el coseno. |
+| $\displaystyle\int \sec^{2}x\,dx$ | $\tan x + C$ | La derivada de $\tan x$ es $\sec^2 x$. |
+| $\displaystyle\int \frac{1}{1+x^{2}}\,dx$ | $\arctan x + C$ | Antiderivada del arco tangente. |
+| $\displaystyle\int \frac{1}{\sqrt{1-x^{2}}}\,dx$ | $\arcsin x + C$ | Antiderivada del arco seno. |
 
 ### Propiedades
 
 $$\int \big[\alpha f + \beta g\big]\,dx = \alpha\!\int f\,dx + \beta\!\int g\,dx \qquad \int_a^b f = -\int_b^a f \qquad \int_a^a f = 0$$
 
+Las letras $\alpha$ y $\beta$ son constantes que salen del signo integral (linealidad). Los números $a$ y $b$ son los **límites de integración** (de dónde a dónde se acumula). Cambiar el orden de los límites cambia el signo, y acumular de $a$ a $a$ da cero.
+
 ### Teorema fundamental del cálculo
 
 $$\frac{d}{dx}\int_a^x f(t)\,dt = f(x) \qquad \int_a^b f(x)\,dx = F(b) - F(a)$$
 
+En la primera igualdad, $\frac{d}{dx}$ significa "deriva respecto a $x$" y $t$ es una variable muda: derivar una acumulación devuelve la función, porque derivar e integrar son inversos. En la segunda, $F$ es cualquier antiderivada de $f$ ($F' = f$), y $F(b) - F(a)$ es evaluar $F$ en el límite superior $b$ menos su valor en el límite inferior $a$ (la constante $C$ se cancela en esa resta).
+
 ### Técnicas
 
-1. **Sustitución:** $\displaystyle\int f(g(x))\,g'(x)\,dx = \int f(u)\,du$, con $u = g(x)$.
-2. **Por partes:** $\displaystyle\int u\,dv = uv - \int v\,du$ (orden LIATE).
-3. **Fracciones parciales:** descompón $P(x)/Q(x)$ en fracciones simples.
-4. **Sustitución trigonométrica:**
+1. **Sustitución:** $\displaystyle\int f(g(x))\,g'(x)\,dx = \int f(u)\,du$, con $u = g(x)$. La letra $u$ es la función interior, y $du = g'(x)\,dx$ es su diferencial. Es la regla de la cadena al revés.
+2. **Por partes:** $\displaystyle\int u\,dv = uv - \int v\,du$ (orden LIATE). Se parte el integrando en dos piezas $u$ y $dv$; luego $du$ es la derivada de $u$ y $v$ la antiderivada de $dv$. Es la regla del producto al revés.
+3. **Fracciones parciales:** descompón $P(x)/Q(x)$ en fracciones simples $\frac{A}{x-r}$ o $\frac{Ax+B}{x^2+bx+c}$; las primeras dan logaritmos y las segundas, logaritmos y arcotangentes.
+4. **Sustitución trigonométrica:** elimina raíces cuadráticas usando identidades pitagóricas ($a$ es una constante positiva):
 
-| Radical | Sustitución |
-|---|---|
-| $\sqrt{a^{2}-x^{2}}$ | $x = a\operatorname{sen}\theta$ |
-| $\sqrt{a^{2}+x^{2}}$ | $x = a\tan\theta$ |
-| $\sqrt{x^{2}-a^{2}}$ | $x = a\sec\theta$ |
+| Radical | Sustitución | Identidad que usa |
+|---|---|---|
+| $\sqrt{a^{2}-x^{2}}$ | $x = a\operatorname{sen}\theta$ | $1-\operatorname{sen}^2\theta = \cos^2\theta$ |
+| $\sqrt{a^{2}+x^{2}}$ | $x = a\tan\theta$ | $1+\tan^2\theta = \sec^2\theta$ |
+| $\sqrt{x^{2}-a^{2}}$ | $x = a\sec\theta$ | $\sec^2\theta-1 = \tan^2\theta$ |
 
 ### Aplicaciones
 
-| Cantidad | Fórmula |
-|---|---|
-| Área entre curvas | $A = \displaystyle\int_a^b \big\lvert f-g\big\rvert\,dx$ |
-| Volumen (discos) | $V = \pi\displaystyle\int_a^b [f(x)]^{2}\,dx$ |
-| Volumen (arandelas) | $V = \pi\displaystyle\int_a^b \big([R]^{2}-[r]^{2}\big)\,dx$ |
-| Volumen (cascarones) | $V = 2\pi\displaystyle\int_a^b x\,f(x)\,dx$ |
-| Longitud de arco | $L = \displaystyle\int_a^b \sqrt{1+[f'(x)]^{2}}\,dx$ |
-| Valor promedio | $\bar f = \dfrac{1}{b-a}\displaystyle\int_a^b f$ |
-| Trabajo | $W = \displaystyle\int_a^b F(x)\,dx$ |
+| Cantidad | Fórmula | Significado de los símbolos |
+|---|---|---|
+| Área entre curvas | $A = \displaystyle\int_a^b \big\lvert f-g\big\rvert\,dx$ | $f$ y $g$ son las curvas; $a$ y $b$ sus cortes. |
+| Volumen (discos) | $V = \pi\displaystyle\int_a^b [f(x)]^{2}\,dx$ | Giro de $y=f(x)$ alrededor del eje $x$; el radio es $f(x)$. |
+| Volumen (arandelas) | $V = \pi\displaystyle\int_a^b \big([R]^{2}-[r]^{2}\big)\,dx$ | $R$ es el radio exterior y $r$ el interior. |
+| Volumen (cascarones) | $V = 2\pi\displaystyle\int_a^b x\,f(x)\,dx$ | Giro alrededor del eje $y$; el radio de cada tubo es $x$. |
+| Longitud de arco | $L = \displaystyle\int_a^b \sqrt{1+[f'(x)]^{2}}\,dx$ | $f'$ es la derivada de $f$ (la pendiente). |
+| Valor promedio | $\bar f = \dfrac{1}{b-a}\displaystyle\int_a^b f$ | La altura del rectángulo de igual área. |
+| Trabajo | $W = \displaystyle\int_a^b F(x)\,dx$ | $F(x)$ es la fuerza y $x$ el desplazamiento. |
 
 ### Integrales impropias
 
 $$\int_a^{\infty} f(x)\,dx = \lim_{t\to\infty}\int_a^t f(x)\,dx \qquad \int_1^{\infty}\frac{1}{x^{p}}\,dx \text{ converge si } p>1$$
+
+Cuando el límite superior es $\infty$, la integral se define como el límite cuando $t$ crece sin fin. La letra $p$ es el exponente del denominador: con $p > 1$ la integral converge (da un número finito); con $p \leq 1$, diverge. Si la función se dispara dentro del intervalo, se usa un límite análogo acercándose al punto problemático.
 
 ---
 

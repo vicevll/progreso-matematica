@@ -3,55 +3,69 @@
 *Matrices, espacios vectoriales, valores propios y diagonalización.*
 
 ## Formulario
+
 ### Espacios vectoriales y bases
-- Base canónica de $\mathbb{R}^n$: $\{e_1, e_2, \ldots, e_n\}$
-- $\dim V = \dim(\ker T) + \dim(\text{Im}\,T)$
-- $T$ es inyectiva $\iff \ker T = \{\vec{0}\}$
-- Coordenadas únicas respecto de una base
+- **Espacio vectorial:** conjunto $V$ con una suma $u+v$ y un producto por escalares $\alpha v$ que cumplen las reglas habituales; $u$ y $v$ son vectores y $\alpha$ es un número (escalar).
+- **Subespacio $W \subseteq V$:** subconjunto no vacío cerrado bajo suma y escalares; siempre contiene al vector cero $\vec{0}$.
+- **Combinación lineal:** expresión $\alpha_1 v_1 + \cdots + \alpha_k v_k$, donde los $\alpha_i$ son escalares concretos y los $v_i$ son vectores.
+- **Span:** $\operatorname{span}\{v_1,\ldots,v_k\}$ es el conjunto de todas las combinaciones lineales; se lee "el generado por" y siempre es un subespacio.
+- **Base canónica de $\mathbb{R}^n$:** $\{e_1, e_2, \ldots, e_n\}$, donde $e_i$ es el vector con un $1$ en la posición $i$ y $0$ en las demás. Por ejemplo, en $\mathbb{R}^3$, $e_1=(1,0,0)$, $e_2=(0,1,0)$ y $e_3=(0,0,1)$.
+- **Coordenadas respecto de una base:** si $B=\{v_1,\ldots,v_n\}$ y $v = c_1v_1+\cdots+c_nv_n$, entonces $[v]_B = (c_1,\ldots,c_n)$; son únicas.
+- **Teorema de la dimensión:** $\dim V = \dim(\ker T) + \dim(\operatorname{Im} T)$; aquí $\dim$ es el número de vectores de una base, $\ker T = \{v : T(v)=\vec{0}\}$ es el núcleo (lo que se aplasta al cero) y $\operatorname{Im} T = \{T(v) : v \in V\}$ es la imagen (los resultados alcanzables).
+- **Inyectividad:** $T$ es inyectiva (dos entradas distintas no comparten salida) si y solo si $\ker T = \{\vec{0}\}$.
 
 ### Matrices y operaciones
-- $(AB)_{ij} = \sum_k a_{ik} b_{kj}$
-- $(AB)^T = B^T A^T$
-- $A I_n = I_n A = A$
-- Producto matriz-vector: $A\vec{x}$ combina las columnas de $A$
+- **Suma e producto por escalar:** se hacen entrada con entrada, siempre que las matrices tengan el mismo tamaño $m \times n$ (filas por columnas); $(\alpha A)_{ij} = \alpha a_{ij}$.
+- **Producto:** $(AB)_{ij} = \sum_k a_{ik} b_{kj}$; el símbolo $\sum_k$ significa sumar sobre todos los índices $k$ posibles, y la entrada $(i,j)$ se obtiene de la fila $i$ de $A$ con la columna $j$ de $B$.
+- **Condición de tamaño:** $A$ de $m \times n$ por $B$ de $n \times p$ da $m \times p$; las columnas de la primera deben coincidir con las filas de la segunda.
+- **Transpuesta:** $(AB)^T = B^T A^T$; el superíndice $T$ significa cambiar filas por columnas, y el orden del producto se invierte.
+- **Identidad:** $A I_n = I_n A = A$; $I_n$ es la matriz con $1$ en la diagonal y $0$ en el resto, y juega el papel del número $1$.
+- **Producto matriz-vector:** $A\vec{x}$ combina las columnas de $A$ con pesos dados por las coordenadas de $\vec{x}$.
 
 ### Determinantes
-- $\det\begin{pmatrix} a & b \\ c & d \end{pmatrix} = ad - bc$
-- $\det(AB) = \det A \det B$
-- $\det(A^{-1}) = \dfrac{1}{\det A}$
-- $\det A = 0 \iff A$ no es invertible
-- En una matriz triangular, el determinante es el producto de la diagonal
+- $\det\begin{pmatrix} a & b \\ c & d \end{pmatrix} = ad - bc$; el símbolo $\det$ viene de "determinante" y el resultado es un número.
+- $\det(AB) = \det A \det B$: el determinante de un producto es el producto de los determinantes.
+- $\det(A^{-1}) = \dfrac{1}{\det A}$: la inversa invierte el determinante.
+- $\det A = 0 \iff A$ no es invertible; si el determinante es cero, la matriz es singular y no tiene inversa.
+- En una matriz triangular (o diagonal), el determinante es el producto de los números de la diagonal.
+- **Cofactores:** el cofactor de la entrada $a_{ij}$ es $C_{ij} = (-1)^{i+j}M_{ij}$, donde $M_{ij}$ es el determinante que queda al borrar la fila $i$ y la columna $j$; desarrollar por cualquier fila o columna da lo mismo.
 
 ### Sistemas lineales
-- Rouché-Frobenius: compara $\text{rango}(A)$ con $\text{rango}(A \mid b)$
-- Único si ambos rangos igualan $n$; infinitas si ambos son menores que $n$; incompatible si difieren
-- Cramer: $x_i = \dfrac{\det(A_i)}{\det A}$ con $\det A \neq 0$
-- Eliminación de Gauss: operaciones elementales por filas hasta la escalonada
+- Un sistema se escribe $A\vec{x} = \vec{b}$: $A$ es la matriz de coeficientes, $\vec{x}$ el vector de incógnitas y $\vec{b}$ el vector de términos independientes.
+- **Rouché-Frobenius:** se compara el rango de $A$ con el rango de la matriz ampliada $(A \mid b)$, que añade la columna $\vec{b}$ separada por una barra; el rango es el número de filas no nulas tras aplicar Gauss.
+- **Solución única** si ambos rangos son iguales al número $n$ de incógnitas; **infinitas soluciones** si ambos son iguales pero menores que $n$ (quedan $n-r$ parámetros libres); **incompatible** si el rango de $A$ es menor que el de la ampliada.
+- **Cramer:** con $\det A \neq 0$, cada incógnita vale $x_i = \dfrac{\det(A_i)}{\det A}$, donde $A_i$ es $A$ con la columna $i$ reemplazada por $\vec{b}$.
+- **Eliminación de Gauss:** operaciones elementales por filas (intercambiar, multiplicar por un número no nulo, sumar un múltiplo) hasta la forma escalonada, y luego sustitución hacia atrás.
 
 ### Rango e inversa
-- Rango = número de filas no nulas en la forma escalonada
-- $A^{-1} = \dfrac{1}{\det A}\,\text{adj}(A)$
-- $A^{-1} = \begin{pmatrix} a & b \\ c & d \end{pmatrix}^{-1} = \dfrac{1}{ad-bc}\begin{pmatrix} d & -b \\ -c & a \end{pmatrix}$
+- **Rango:** número de filas no nulas en la forma escalonada; coincide con la dimensión de la imagen y con el número de columnas independientes.
+- **Inversa general:** $A^{-1} = \dfrac{1}{\det A}\,\text{adj}(A)$; la adjunta $\text{adj}(A)$ es la transpuesta de la matriz de cofactores.
+- **Inversa $2 \times 2$:** para $A = \begin{pmatrix} a & b \\ c & d \end{pmatrix}$ con $ad-bc \neq 0$ se tiene $A^{-1} = \dfrac{1}{ad-bc}\begin{pmatrix} d & -b \\ -c & a \end{pmatrix}$.
+- **Propiedades:** $(AB)^{-1} = B^{-1}A^{-1}$ (el orden se invierte) y $(A^T)^{-1} = (A^{-1})^T$.
 
 ### Valores y vectores propios
-- $\det(A - \lambda I) = 0$ da el polinomio característico
-- $A v = \lambda v$ con $v \neq \vec{0}$
-- $\lambda_1 + \cdots + \lambda_n = \text{tr}(A)$
-- $\lambda_1 \lambda_2 \cdots \lambda_n = \det A$
+- $\det(A - \lambda I) = 0$ es la ecuación característica; $\lambda$ (letra griega "lambda") es el valor propio y $I$ es la identidad del mismo tamaño que $A$. Las raíces de ese polinomio son los valores propios.
+- $A v = \lambda v$ con $v \neq \vec{0}$ define al vector propio $v$: al aplicarle $A$ no cambia de dirección, solo se escala por $\lambda$.
+- **Traza y determinante:** $\lambda_1 + \cdots + \lambda_n = \operatorname{tr}(A)$ es la suma de los valores propios (contando multiplicidades) y coincide con la traza, la suma de los elementos de la diagonal de $A$; y $\lambda_1 \lambda_2 \cdots \lambda_n = \det A$.
+- **Espacio propio:** $E_\lambda = \ker(A - \lambda I)$ es el conjunto de vectores propios de $\lambda$ más el vector cero; su dimensión es la multiplicidad geométrica.
 
 ### Diagonalización
-- $A = P D P^{-1}$ con $D$ diagonal y $P$ de vectores propios
-- Diagonalizable $\iff$ existe una base de vectores propios
-- Multiplicidad geométrica igual a la algebraica en cada valor propio
-- Toda matriz simétrica real es diagonalizable ortogonalmente
+- $A = P D P^{-1}$ con $D$ diagonal y $P$ formada por columnas que son vectores propios; $P^{-1}$ es la inversa de $P$. Así, $A^k = P D^k P^{-1}$, lo que facilita calcular potencias.
+- Diagonalizable $\iff$ existe una base de vectores propios, es decir, hay $n$ vectores propios linealmente independientes.
+- Multiplicidad geométrica (dimensión del espacio propio) igual a la algebraica (veces que $\lambda$ es raíz) en cada valor propio; si difieren, no hay diagonalización.
+- Si todos los valores propios son distintos, la matriz es diagonalizable.
+- Toda matriz simétrica real ($A = A^T$) es diagonalizable ortogonalmente: $A = QDQ^T$ con $Q$ de columnas ortonormales, y como $Q$ es ortogonal se cumple $Q^{-1} = Q^T$.
 
 ### Producto interno y ortogonalidad
-- $\langle u, v \rangle = \sum_i u_i v_i$
-- Proyección de $u$ sobre $v$: $\dfrac{\langle u, v \rangle}{\langle v, v \rangle}\,v$
-- $u \perp v \iff \langle u, v \rangle = 0$
-- Mínimos cuadrados: $A^T A \vec{x} = A^T \vec{b}$
+- $\langle u, v \rangle = \sum_i u_i v_i$ es el producto interno (producto punto en $\mathbb{R}^n$); asigna un número a cada par de vectores.
+- **Norma:** $\|u\| = \sqrt{\langle u,u\rangle}$ es la longitud del vector $u$; un vector es unitario si $\|u\| = 1$.
+- Proyección de $u$ sobre $v$: $\dfrac{\langle u, v \rangle}{\langle v, v \rangle}\,v$; es la parte de $u$ que apunta en la dirección de $v$.
+- $u \perp v \iff \langle u, v \rangle = 0$; el símbolo $\perp$ se lee "es perpendicular a".
+- **Gram-Schmidt:** a cada vector se le restan sus proyecciones sobre los anteriores y luego se normaliza, produciendo una base ortonormal.
+- **Mínimos cuadrados:** cuando $A\vec{x}=\vec{b}$ no tiene solución, la mejor aproximación sale de $A^T A \vec{x} = A^T \vec{b}$, donde $A^T$ es la transpuesta de $A$.
 
 ## Ejercicios (50)
+
 ### Nivel 1 — Matrices y operaciones
 1. Calcula $\begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix} + \begin{pmatrix} 5 & 6 \\ 7 & 8 \end{pmatrix}$.
 2. Calcula $2\begin{pmatrix} 1 & -1 \\ 0 & 3 \end{pmatrix}$.
