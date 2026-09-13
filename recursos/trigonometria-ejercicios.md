@@ -40,6 +40,8 @@ $$\frac{a}{\operatorname{sen}A} = \frac{b}{\operatorname{sen}B} = \frac{c}{\oper
 
 $$y = A\operatorname{sen}\big(B(x - C)\big) + D, \qquad \text{amplitud} = |A|, \qquad \text{periodo} = \frac{2\pi}{|B|}$$
 
+:::fig right-triangle adj=4 opp=3 angle=θ adjLabel=adyacente oppLabel=opuesto hypLabel=hipotenusa caption=Referencia+para+los+ejercicios+1+a+8:+identifica+adyacente,+opuesto+e+hipotenusa.
+
 ## Ejercicios (50)
 
 ### Razones en el triángulo rectángulo
@@ -52,6 +54,8 @@ $$y = A\operatorname{sen}\big(B(x - C)\big) + D, \qquad \text{amplitud} = |A|, \
 6. El punto $(8, 15)$ está en el lado terminal de $\theta$. Halla $\operatorname{sen}\theta$, $\cos\theta$ y $\tan\theta$.
 7. El punto $(-7, 24)$ está en el lado terminal de $\theta$. Halla $\operatorname{sen}\theta$, $\cos\theta$ y $\tan\theta$.
 8. Desde $20$ m de un edificio se observa su cima con un ángulo de elevación de $30°$. Halla la altura.
+
+:::fig right-triangle adj=20 angleDeg=30 angle=30° adjLabel=20+m oppLabel=h caption=Ejercicio+8:+desde+20+m+se+mide+un+ángulo+de+elevación+de+30°.
 
 ### Círculo unitario, radianes y ángulos notables
 

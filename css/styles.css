@@ -1528,6 +1528,27 @@ a {
   }
 }
 
+/* Figuras (SVG generado) */
+
+.fig {
+  margin: 22px 0;
+}
+
+.fig-svg {
+  display: block;
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.fig figcaption {
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  text-align: center;
+}
+
 /* Aviso de novedades */
 
 .update-banner {

@@ -4,6 +4,15 @@
 
   var ENTRIES = [
     {
+      version: "2026-09-13-triangulos",
+      titulo: "Trigonometría con dibujos",
+      texto: "Los ejemplos y las guías de Trigonometría ahora incluyen triángulos rectángulos dibujados.",
+      accion: "Ver",
+      onProbar: function () {
+        window.location.hash = "#/curso/funciones-geometria/trigonometria";
+      }
+    },
+    {
       version: VERSION,
       titulo: "Nuevo: tu perfil",
       texto: "Elige tu foto y un apodo. Tu correo ya no se muestra.",

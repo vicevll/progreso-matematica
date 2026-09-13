@@ -56,6 +56,22 @@ window.mdToHtml = function (md) {
       continue;
     }
 
+    var fig = line.match(/^:::fig\s+([a-z-]+)\s*(.*)$/);
+    if (fig) {
+      closeList();
+      var attrs = "";
+      (fig[2] || "").split(/\s+/).forEach(function (pair) {
+        if (!pair) return;
+        var kv = pair.split("=");
+        if (!kv[0]) return;
+        var value = String(kv[1] || "").replace(/\+/g, " ");
+        try { value = decodeURIComponent(value); } catch (e) { /* dejar tal cual */ }
+        attrs += " data-" + kv[0] + '="' + value.replace(/"/g, "&quot;") + '"';
+      });
+      html.push('<figure class="fig" data-fig="' + fig[1] + '"' + attrs + "></figure>");
+      continue;
+    }
+
     closeList();
     html.push("<p>" + inline(line) + "</p>");
   }

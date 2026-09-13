@@ -14,6 +14,8 @@ $$\tan\theta = \frac{\text{cateto opuesto}}{\text{cateto adyacente}} = \frac{\op
 
 Estas razones dependen solo del ángulo, no del tamaño del triángulo, porque todos los triángulos rectángulos con el mismo $\theta$ son semejantes.
 
+:::fig right-triangle adj=4 opp=3 angle=θ adjLabel=adyacente oppLabel=opuesto hypLabel=hipotenusa caption=El+ángulo+θ+y+los+tres+lados+del+triángulo+rectángulo.
+
 **Mini-ejemplo.** En un triángulo de catetos $3$ y $4$ e hipotenusa $5$, para el ángulo opuesto al cateto $3$:
 
 $$\operatorname{sen}\theta = \frac{3}{5}, \qquad \cos\theta = \frac{4}{5}, \qquad \tan\theta = \frac{3}{4}$$
@@ -49,6 +51,10 @@ Los radianes son la unidad natural de ángulo: $2\pi$ radianes equivalen a $360�
 | $\tan$ | $0$ | $\dfrac{\sqrt{3}}{3}$ | $1$ | $\sqrt{3}$ | no definida |
 
 **Mini-ejemplo.** $150° = 150 \cdot \frac{\pi}{180} = \frac{5\pi}{6}$; y $\frac{5\pi}{4} = \frac{5\pi}{4} \cdot \frac{180}{\pi} = 225°$.
+
+:::fig right-triangle adj=1 opp=1 angle=45° adjLabel=1 oppLabel=1 hypLabel=√2 caption=Triángulo+45-45-90.
+
+:::fig right-triangle adj=1.732 opp=1 angle=30° adjLabel=√3 oppLabel=1 hypLabel=2 caption=Triángulo+30-60-90.
 
 ## Identidades fundamentales
 

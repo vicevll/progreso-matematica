@@ -369,6 +369,8 @@ Es el puente entre la geometría y el análisis: cada señal periódica se desco
 
 ## Razones trigonométricas en el triángulo rectángulo
 En un triángulo rectángulo con un ángulo agudo $\theta$:
+
+:::fig right-triangle adj=4 opp=3 angle=θ adjLabel=adyacente oppLabel=opuesto hypLabel=hipotenusa caption=El+ángulo+θ+y+los+tres+lados:+adyacente,+opuesto+e+hipotenusa.
 $$\text{sen}\,\theta = \frac{\text{cateto opuesto}}{\text{hipotenusa}}, \qquad \cos\theta = \frac{\text{cateto adyacente}}{\text{hipotenusa}}$$
 $$\tan\theta = \frac{\text{cateto opuesto}}{\text{cateto adyacente}} = \frac{\text{sen}\,\theta}{\cos\theta}$$
 
@@ -397,6 +399,10 @@ Los radianes son la unidad natural: $2\pi$ radianes equivalen a $360$ grados, as
 | $\tan$ | $0$ | $\sqrt{3}/3$ | $1$ | $\sqrt{3}$ | no def. |
 
 Estos valores se memorizan con dos triángulos: el isósceles rectángulo (45-45-90) y el medio triángulo equilátero (30-60-90).
+
+:::fig right-triangle adj=1 opp=1 angle=45° adjLabel=1 oppLabel=1 hypLabel=√2 caption=Triángulo+45-45-90:+catetos+iguales+e+hipotenusa+√2.
+
+:::fig right-triangle adj=1.732 opp=1 angle=30° adjLabel=√3 oppLabel=1 hypLabel=2 caption=Triángulo+30-60-90:+lados+en+razón+1:+√3:+2.
 
 ## Identidades fundamentales
 La identidad pitagórica sale del círculo unitario ($x^2 + y^2 = 1$):
@@ -482,6 +488,8 @@ $$c^2 = 49 + 100 - 2 \cdot 7 \cdot 10 \cdot \frac{1}{2} = 79 \Rightarrow c \appr
 - $\tan 30° = \dfrac{h}{50} \Rightarrow h = 50\tan 30°$.
 - $h = 50 \cdot \dfrac{\sqrt{3}}{3} \approx 28.87$ m.
 
+:::fig right-triangle adj=50 angleDeg=30 angle=30° adjLabel=50+m oppLabel=h caption=Desde+50+m+se+mide+un+ángulo+de+elevación+de+30°+y+se+busca+la+altura+h.
+
 **Ejemplo 2 (aplicación, agrimensura).** Dos lados de un terreno miden 7 y 10 m y forman $60°$. Halla el tercer lado.
 - Ley de cosenos: $c^2 = 49 + 100 - 2(7)(10)\cos 60°$.
 - $c^2 = 149 - 70 = 79 \Rightarrow c \approx 8.89$ m.
@@ -502,6 +510,8 @@ $$c^2 = 49 + 100 - 2 \cdot 7 \cdot 10 \cdot \frac{1}{2} = 79 \Rightarrow c \appr
 **Ejemplo 6 (práctica, razones).** El punto $(-3, 4)$ está en el lado terminal de $\theta$. Halla las tres razones.
 - $r = \sqrt{9 + 16} = 5$.
 - $\text{sen}\,\theta = \dfrac{4}{5}$, $\cos\theta = -\dfrac{3}{5}$, $\tan\theta = -\dfrac{4}{3}$.
+
+:::fig right-triangle adj=3 opp=4 angle=θ adjLabel=3 oppLabel=4 hypLabel=5 caption=El+punto+(-3,+4)+forma+un+triángulo+rectángulo+de+catetos+3+y+4+e+hipotenusa+5.
 
 ## Contextos donde se aplica
 - **Física:** movimiento armónico, ondas, péndulos, corriente alterna; sonido y luz como ondas sinusoidales.

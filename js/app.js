@@ -1040,6 +1040,7 @@
       "</div>";
 
     renderMath();
+    if (window.Diagram) window.Diagram.hydrate(app);
     setupReveal();
     setupCourseSpy();
   }
