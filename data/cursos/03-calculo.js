@@ -1,138 +1,353 @@
 window.CURSOS = window.CURSOS || {};
 window.CURSOS["calculo"] = {
   "limites": String.raw`
-## ¿Qué es un límite?
-El límite describe **a qué valor se acerca** una función cuando la variable se aproxima a un punto, sin importar si la función está definida en ese punto.
+## La idea de límite
 
-$$\lim_{x \to c} f(x) = L$$
+Toda la matemática del cambio —la que llamamos cálculo— se apoya en una sola pregunta: **¿qué le ocurre a una cantidad cuando otra cantidad se acerca cada vez más a un valor especial?** La herramienta que responde esa pregunta se llama **límite**.
 
-significa que $f(x)$ se puede hacer tan cercano a $L$ como se quiera, tomando $x$ suficientemente cerca de $c$. La función puede no estar definida en $c$: el límite describe el comportamiento alrededor, no en el punto.
+Empecemos por el vocabulario básico. Una **función** es una regla que a cada número de entrada le asigna un único número de salida. La escribimos con una letra, típicamente $f$, y la notación $f(x)$ se lee "efe de equis" y significa "la salida que la regla $f$ produce para la entrada $x$". Por ejemplo, si la regla es $f(x) = x^2$ (elevar al cuadrado), entonces $f(3) = 9$ y $f(-2) = 4$.
 
-**Ejemplo intuitivo.** $f(x) = \dfrac{x^2 - 1}{x - 1}$ no está definida en $x = 1$, pero para $x \neq 1$ se simplifica a $x + 1$, que se acerca a $2$. Entonces $\lim_{x\to 1} f(x) = 2$.
+Ahora imagina que la entrada $x$ se va acercando a un número fijo. ¿Qué le pasa a la salida $f(x)$? El límite responde describiendo **el valor al que se acerca $f(x)$**, sin importar si $f$ está definida o no en ese punto de llegada. La clave de la idea es esta: **el límite mira el comportamiento alrededor del punto, no el valor en el punto**.
 
-El límite es el concepto que sostiene todo el cálculo: la derivada y la integral se definen como límites.
+Veamos el ejemplo clásico. Considera la función
 
-## Definición formal épsilon-delta
-$$\lim_{x \to c} f(x) = L \iff \forall \varepsilon > 0 \; \exists \delta > 0 : 0 < |x - c| < \delta \Rightarrow |f(x) - L| < \varepsilon$$
+$$f(x) = \dfrac{x^2 - 1}{x - 1}.$$
 
-En palabras: para cualquier margen $\varepsilon$ que exijas alrededor de $L$, existe un margen $\delta$ alrededor de $c$ donde todos los valores de $f$ caen dentro. El $\varepsilon$ es el reto; el $\delta$ es la respuesta.
+Esta fracción tiene un problema en $x = 1$: el denominador se anula ($1 - 1 = 0$) y **dividir entre cero no está permitido** en matemática, así que $f(1)$ no existe. Sin embargo, nada nos impide preguntarnos qué ocurre cuando $x$ está *cerca* de $1$. Calculemos con valores cercanos:
 
-**Ejemplo.** Para demostrar $\lim_{x\to 3}(2x - 1) = 5$: dado $\varepsilon$, elige $\delta = \varepsilon/2$; si $|x - 3| < \delta$ entonces $|2x - 1 - 5| = 2|x - 3| < 2\delta = \varepsilon$.
+| $x$ | $f(x) = \dfrac{x^2 - 1}{x - 1}$ |
+|---|---|
+| $0{,}9$ | $1{,}9$ |
+| $0{,}99$ | $1{,}99$ |
+| $0{,}999$ | $1{,}999$ |
+| $1{,}001$ | $2{,}001$ |
+| $1{,}01$ | $2{,}01$ |
+| $1{,}1$ | $2{,}1$ |
 
-## Límites laterales y existencia
-El límite por izquierda ($x \to c^-$) usa valores menores que $c$; el límite por derecha ($x \to c^+$), valores mayores.
+Cuanto más se acerca $x$ a $1$, más se acerca $f(x)$ a $2$. Ese número $2$ es el límite. Lo escribimos así:
 
-**Teorema clave:** $\lim_{x\to c} f(x)$ existe si y solo si ambos límites laterales existen y **coinciden**.
+$$\lim_{x \to 1} f(x) = 2$$
 
-Es la herramienta para funciones por partes y para detectar saltos. Ejemplo: $f(x) = |x|/x$ tiene límite $-1$ por izquierda y $+1$ por derecha en $0$: el límite no existe.
+y se lee: "el límite de efe de equis cuando equis tiende a uno es dos". Observa lo sorprendente: la función **no está definida** en $x = 1$, y sin embargo el límite existe y vale $2$. ¿Por qué funciona? Porque para todo $x \neq 1$ la fracción se puede simplificar: como $x^2 - 1 = (x - 1)(x + 1)$, se tiene
 
-## Propiedades y álgebra de límites
-Si $\lim f = L$ y $\lim g = M$:
-$$\lim (f \pm g) = L \pm M, \qquad \lim (f \cdot g) = L \cdot M, \qquad \lim \frac{f}{g} = \frac{L}{M} \;(M \neq 0)$$
-$$\lim [f(x)]^n = L^n, \qquad \lim \sqrt[n]{f(x)} = \sqrt[n]{L}$$
+$$\dfrac{x^2 - 1}{x - 1} = \dfrac{(x - 1)(x + 1)}{x - 1} = x + 1 \quad \text{para todo } x \neq 1,$$
 
-También: $\lim c = c$, $\lim x = c$, y el límite de una función continua en $c$ es $f(c)$.
+y la expresión $x + 1$ se acerca a $2$ cuando $x$ se acerca a $1$. La simplificación es válida precisamente porque en el límite $x$ nunca llega a ser exactamente $1$; solo se aproxima.
 
-**Estrategia inicial:** casi siempre se intenta **sustitución directa**. Solo si aparece una indeterminación se pasa a técnicas.
+¿Por qué importa tanto este concepto? Porque la **derivada** (la razón de cambio instantánea) y la **integral** (el área bajo una curva) se definen como límites, y la **continuidad** de una función se define con un límite. Entender límites es entender el idioma en que está escrito todo el cálculo.
+
+## Cómo leer la notación
+
+La notación de límites está llena de símbolos; la buena noticia es que cada uno tiene un significado preciso y se lee en voz alta de una manera natural. Vamos a diseccionar la expresión completa
+
+$$\lim_{x \to a} f(x) = L$$
+
+pieza por pieza:
+
+- **$\lim$** se lee "límite". Es el operador principal: ordena "estudia hacia dónde se acercan los valores de la función".
+- **$x \to a$** se lee "equis tiende a a". La flecha $\to$ se lee "tiende a" y describe un **acercamiento**: la variable $x$ se acerca al número fijo $a$ tanto como queramos, sin necesidad de llegar a tocarlo. La letra $a$ es un número cualquiera: en los ejemplos anteriores era $a = 1$, pero podría ser $a = 3$, $a = 0$ o $a = -2$.
+- **$f(x)$** se lee "efe de equis": la salida de la regla $f$ para la entrada $x$. Es la cantidad que se está acercando a algo.
+- **$=$** se lee "es igual a". Conecta la expresión del límite con su resultado.
+- **$L$** es el resultado: el número al que se acercan los valores de $f(x)$. La letra $L$ viene de "límite".
+
+La expresión completa se lee en voz alta así: **"el límite de efe de equis, cuando equis tiende a a, es igual a ele"**.
+
+Ahora los símbolos adicionales que aparecen en las variantes del tema:
+
+- **$x \to a^{+}$** se lee "equis tiende a a por la derecha": significa acercarse a $a$ usando **solo valores mayores** que $a$ (por ejemplo, acercarse a $1$ usando $1{,}1$, $1{,}01$, $1{,}001$...). El signo $+$ como superíndice marca la derecha, porque en la recta numérica los números mayores que $a$ están a su derecha.
+- **$x \to a^{-}$** se lee "equis tiende a a por la izquierda": acercarse usando **solo valores menores** que $a$ ($0{,}9$, $0{,}99$, $0{,}999$...). El signo $-$ marca la izquierda.
+- **$x \to \infty$** se lee "equis tiende a infinito": la variable $x$ **crece sin límite**, haciéndose más grande que cualquier número fijo que imaginemos ($1000$, luego un millón, luego un billón...). El símbolo $\infty$ se lee "infinito" y **no es un número**: es una idea que resume "crecer sin tope". No se puede operar con él como con un número (no existe "infinito más uno" en este contexto).
+- **$x \to -\infty$** se lee "equis tiende a menos infinito": la variable se hace negativa cada vez más lejos, sin límite en la dirección negativa.
+- **$\varepsilon$** (la letra griega épsilon) representa un **margen de error permitido en la salida**: un número positivo, normalmente pensado como muy pequeño. "La salida debe quedar a menos de épsilon de $L$".
+- **$\delta$** (la letra griega delta) representa un **margen en la entrada**: un número positivo que dice "toma $x$ a menos de delta de $a$".
+- **$\forall$** se lee "para todo". Indica que una afirmación vale para cualquier valor del símbolo que le sigue: por ejemplo, $\forall x > 0$ se lee "para todo equis mayor que cero".
+- **$\exists$** se lee "existe". Afirma que al menos un objeto con cierta propiedad puede encontrarse.
+- **$\Rightarrow$** se lee "implica" o "entonces". Conecta una hipótesis con su consecuencia: $A \Rightarrow B$ se lee "si ocurre A, entonces ocurre B".
+- **$\iff$** se lee "si y solo si". Es una doble implicación: ambas direcciones valen.
+- **$|x - a|$** se lee "valor absoluto de equis menos a". El **valor absoluto** de un número es su distancia al cero en la recta numérica, siempre positiva o nula: $|3| = 3$, $|-3| = 3$, $|0| = 0$. Por eso $|x - a|$ es exactamente **la distancia entre $x$ y $a$**: da lo mismo el orden ($|x - a|$ y $|a - x|$ son el mismo número). Por ejemplo, si $x = 2{,}9$ y $a = 3$, la distancia es $|2{,}9 - 3| = 0{,}1$.
+- **$<$** se lee "menor que" y **$>$** "mayor que"; los símbolos $\leq$ y $\geq$ añaden el caso de igualdad ("menor o igual", "mayor o igual").
+- **$0 < |x - a|$** se lee "la distancia de equis a a es mayor que cero" y significa simplemente que **$x$ no es igual a $a$**: en el límite estudiamos puntos cercanos a $a$, pero nunca el punto $a$ mismo.
+
+Con este diccionario ya se puede descifrar cualquier texto de límites. La práctica recomendada es leer en voz alta cada fórmula la primera vez que se ve, sustituyendo símbolo por símbolo.
+
+## Definición formal
+
+La idea intuitiva —"los valores de $f(x)$ se acercan a $L$ cuando $x$ se acerca a $a$"— se puede convertir en una definición matemática rigurosa. Su versión informal dice:
+
+> El límite de $f(x)$ cuando $x$ tiende a $a$ es $L$ si podemos hacer que $f(x)$ esté **tan cerca de $L$ como queramos**, con tal de tomar $x$ **suficientemente cerca de $a$** (pero distinto de $a$).
+
+Las palabras "tan cerca como queramos" y "suficientemente cerca" se precisan con los márgenes $\varepsilon$ y $\delta$. La definición formal, llamada **definición épsilon-delta**, es:
+
+$$\lim_{x \to a} f(x) = L \iff \forall \varepsilon > 0 \; \exists \delta > 0 : \; 0 < |x - a| < \delta \Rightarrow |f(x) - L| < \varepsilon$$
+
+Leamos esta cadena de símbolos en voz alta, por partes:
+
+1. **$\forall \varepsilon > 0$** — "para todo épsilon mayor que cero": alguien (un adversario, si lo pensamos como juego) propone **cualquier** margen de error positivo, por pequeño que sea, alrededor de $L$.
+2. **$\exists \delta > 0$** — "existe un delta mayor que cero": nosotros debemos responder encontrando un margen $\delta$ alrededor de $a$.
+3. **$0 < |x - a| < \delta$** — "si la distancia de $x$ a $a$ es positiva (es decir, $x \neq a$) y menor que delta": consideramos cualquier entrada $x$ que esté dentro del margen $\delta$ de $a$, sin ser $a$ misma.
+4. **$\Rightarrow |f(x) - L| < \varepsilon$** — "entonces la distancia de $f(x)$ a $L$ es menor que épsilon": todos esos $x$ producen salidas que caen dentro del margen de error exigido.
+
+En la metáfora del juego: **el épsilon es el reto y el delta es la respuesta**. Si para cada reto $\varepsilon$, por exigente que sea, somos capaces de responder con un $\delta$ que funciona, entonces el límite vale $L$.
+
+Nota la condición **$0 < |x - a|$**: exige que $x$ sea distinto de $a$. Esa es la forma técnica de decir que el valor $f(a)$ —si existe o no— es irrelevante para el límite. Solo importa lo que ocurre en los puntos **alrededor** de $a$.
+
+Veamos la definición en acción con una demostración completa. Vamos a probar que
+
+$$\lim_{x \to 3} (2x - 1) = 5.$$
+
+Aquí la función es $f(x) = 2x - 1$ (doblar la entrada y restarle uno), el punto es $a = 3$ y el candidato a límite es $L = 5$ (efectivamente, $f(3) = 2 \cdot 3 - 1 = 5$). Para probarlo con épsilon-delta razonamos así:
+
+1. Nos dan un $\varepsilon > 0$ cualquiera (el reto).
+2. Queremos conseguir que $|f(x) - 5| < \varepsilon$. Calculemos esa distancia: $|f(x) - 5| = |(2x - 1) - 5| = |2x - 6| = |2(x - 3)| = 2|x - 3|$. El factor $2$ sale del valor absoluto porque $2$ es positivo.
+3. La condición que queremos es $2|x - 3| < \varepsilon$, es decir, $|x - 3| < \varepsilon / 2$. Entonces la respuesta al reto es tomar **$\delta = \varepsilon / 2$** (delta igual a épsilon partido por dos).
+4. Verificación: si $0 < |x - 3| < \delta = \varepsilon / 2$, entonces $|f(x) - 5| = 2|x - 3| < 2 \cdot (\varepsilon/2) = \varepsilon$, exactamente lo pedido.
+
+Conclusión: el límite vale $5$. Observa la receta general de estas demostraciones: **se parte de la distancia $|f(x) - L|$, se reescribe en función de $|x - a|$ y se elige $\delta$ para que la cadena cierre**.
+
+Un segundo ejemplo, más corto. Para probar $\lim_{x \to 2}(3x + 1) = 7$, calculamos $|(3x + 1) - 7| = |3x - 6| = 3|x - 2|$. Queremos $3|x - 2| < \varepsilon$, así que basta $|x - 2| < \varepsilon / 3$: la respuesta es $\delta = \varepsilon/3$. (Comprobación: $f(2) = 3 \cdot 2 + 1 = 7$, el valor esperado.)
+
+Conviene aclarar: en la práctica diaria **no se demuestra cada límite con épsilon-delta**; para eso existen las técnicas de las próximas secciones. Pero la definición formal es el contrato que da validez a todas esas técnicas, y aparece en los cursos porque garantiza que la palabra "acercarse" significa algo preciso.
+
+## Límites laterales
+
+A veces el comportamiento de una función cambia según de qué lado nos acerquemos al punto. Para estudiarlo se definen los **límites laterales**.
+
+- El **límite por la izquierda**, escrito $\lim_{x \to a^{-}} f(x)$, considera solo entradas $x$ **menores** que $a$ (acercamiento desde la izquierda en la recta numérica).
+- El **límite por la derecha**, escrito $\lim_{x \to a^{+}} f(x)$, considera solo entradas $x$ **mayores** que $a$ (acercamiento desde la derecha).
+
+El teorema central del tema es este:
+
+> El límite de $f(x)$ cuando $x$ tiende a $a$ existe **si y solo si** los dos límites laterales existen y son **iguales**. En símbolos: $\lim_{x \to a} f(x) = L \iff \lim_{x \to a^{-}} f(x) = L \;\text{y}\; \lim_{x \to a^{+}} f(x) = L$.
+
+Si los dos laterales existen pero valen distinto, el límite bilateral **no existe**.
+
+El ejemplo más famoso es $f(x) = \dfrac{|x|}{x}$, con $x \neq 0$. Recordemos el valor absoluto: $|x| = x$ cuando $x \geq 0$, y $|x| = -x$ cuando $x < 0$. Entonces:
+
+- Por la izquierda ($x < 0$): $|x| = -x$, así que $\dfrac{|x|}{x} = \dfrac{-x}{x} = -1$ para todo $x < 0$. Luego $\lim_{x \to 0^{-}} \dfrac{|x|}{x} = -1$.
+- Por la derecha ($x > 0$): $|x| = x$, así que $\dfrac{|x|}{x} = \dfrac{x}{x} = 1$ para todo $x > 0$. Luego $\lim_{x \to 0^{+}} \dfrac{|x|}{x} = 1$.
+
+Los laterales valen $-1$ y $+1$: no coinciden, y por el teorema el límite en $0$ **no existe**. Gráficamente, la función vale $-1$ en toda la mitad izquierda y $+1$ en toda la mitad derecha: el gráfico da un **salto** en $0$.
+
+Los límites laterales son la herramienta natural para las **funciones por partes**, definidas con fórmulas distintas en tramos distintos. Ejemplo:
+
+$$f(x) = \begin{cases} x^2 + 1 & \text{si } x < 2 \\ 3x - 1 & \text{si } x \geq 2 \end{cases}$$
+
+Para estudiar el límite en $a = 2$ miramos cada lado con su fórmula:
+
+- Por la izquierda ($x \to 2^{-}$, usamos $x^2 + 1$): los valores se acercan a $2^2 + 1 = 5$.
+- Por la derecha ($x \to 2^{+}$, usamos $3x - 1$): los valores se acercan a $3 \cdot 2 - 1 = 5$.
+
+Ambos laterales valen $5$: coinciden, y por lo tanto $\lim_{x \to 2} f(x) = 5$. Nota además que $f(2) = 3 \cdot 2 - 1 = 5$: aquí el límite coincide con el valor de la función, lo que anticipa la noción de continuidad.
+
+## Cálculo práctico de límites
+
+En el trabajo cotidiano, el primer intento para calcular un límite es siempre el mismo: **sustitución directa**.
+
+**Estrategia de sustitución directa.** Para calcular $\lim_{x \to a} f(x)$, reemplaza $x$ por $a$ en la fórmula de $f$ y evalúa. Si el resultado es un número real (no aparece una división entre cero ni otra operación prohibida), ese número **es** el límite. La justificación es que la mayoría de las funciones elementales (polinomios, raíces, exponenciales, seno, coseno, logaritmos) son continuas en su dominio: el valor en el punto coincide con el límite.
+
+**Ejemplo.** $\lim_{x \to 2} (3x^2 - 4x + 1)$. Sustituimos $x = 2$: $3 \cdot 2^2 - 4 \cdot 2 + 1 = 12 - 8 + 1 = 5$. Sin más trabajo: el límite es $5$.
+
+**Ejemplo donde la sustitución falla.** $\lim_{x \to 1} \dfrac{x^2 - 1}{x - 1}$: al sustituir $x = 1$ aparece $\dfrac{0}{0}$, que no es un número. Aquí la sustitución **no decide** nada; es una **indeterminación** (sección siguiente) y hay que transformar la expresión.
+
+Cuando los límites de funciones individuales existen, se pueden combinar con las **propiedades algebraicas**. Si $\lim_{x \to a} f(x) = L$ y $\lim_{x \to a} g(x) = M$, entonces:
+
+- **Suma y resta:** $\lim_{x \to a} [f(x) \pm g(x)] = L \pm M$. El límite de una suma es la suma de los límites (el signo $\pm$ significa "más o menos", la misma regla vale para restar).
+- **Producto:** $\lim_{x \to a} [f(x) \cdot g(x)] = L \cdot M$. El punto $\cdot$ indica multiplicación.
+- **Cociente:** $\lim_{x \to a} \dfrac{f(x)}{g(x)} = \dfrac{L}{M}$, **siempre que $M \neq 0$**. Dividir entre cero no está permitido, así que esta regla solo vale cuando el límite del denominador no es cero.
+- **Potencia:** $\lim_{x \to a} [f(x)]^n = L^n$. El exponente $n$ es un número fijo.
+- **Raíz:** $\lim_{x \to a} \sqrt[n]{f(x)} = \sqrt[n]{L}$ (con el cuidado de que la raíz exista; por ejemplo, las raíces de índice par no admiten números negativos).
+
+Además hay dos límites triviales que conviene memorizar:
+
+- **Límite de una constante:** $\lim_{x \to a} c = c$. Si $f(x) = c$ siempre vale lo mismo, el límite es $c$ (la letra $c$ denota un número fijo).
+- **Límite de la identidad:** $\lim_{x \to a} x = a$. La función $f(x) = x$ acerca sus salidas al mismo $a$ al que se acerca la entrada.
+
+**Ejemplo combinado.** $\lim_{x \to 1} (x^2 + 3)$: por la regla de la suma, $\lim (x^2) + \lim (3) = (1)^2 + 3 = 4$, usando el límite de la identidad y el de la constante.
 
 ## Indeterminaciones y técnicas
-Las formas indeterminadas son $\frac{0}{0}$, $\frac{\infty}{\infty}$, $0 \cdot \infty$, $\infty - \infty$, $1^\infty$, $0^0$, $\infty^0$. Cada una exige una técnica:
 
-1. **Factorización:** para $\frac{0}{0}$ con polinomios. $\lim_{x\to 2}\frac{x^2-4}{x-2} = \lim (x+2) = 4$.
-2. **Racionalización:** para raíces. Multiplica por el conjugado.
-3. **Común denominador:** para $\infty - \infty$.
-4. **División por la potencia dominante:** para $\frac{\infty}{\infty}$.
-5. **Límites notables:** $\lim_{x\to 0}\frac{\text{sen}\,x}{x} = 1$, $\lim_{x\to 0}\frac{1 - \cos x}{x} = 0$.
-6. **L'Hôpital:** si hay $\frac{0}{0}$ o $\frac{\infty}{\infty}$, deriva numerador y denominador.
+Una **indeterminación** es lo que queda escrito tras sustituir, cuando el resultado tiene una forma que **no determina** el valor del límite. La más famosa es $\dfrac{0}{0}$: no se le puede asignar un valor, porque infinitos números cumplirían el papel (si $2 \cdot 0 = 0$ y $5 \cdot 0 = 0$, ¿cuánto valdría $\dfrac{0}{0}$? Cualquier cosa). Las formas indeterminadas clásicas son siete:
 
-**Ejemplo con raíz.** $\lim_{x\to 0}\dfrac{\sqrt{x+1} - 1}{x} = \lim \dfrac{x}{x(\sqrt{x+1}+1)} = \dfrac{1}{2}$.
+$$\frac{0}{0},\qquad \frac{\infty}{\infty},\qquad 0 \cdot \infty,\qquad \infty - \infty,\qquad 1^{\infty},\qquad 0^{0},\qquad \infty^{0}$$
+
+Leídas en voz alta: "cero sobre cero" (numerador y denominador tienden a cero); "infinito sobre infinito" (ambos crecen sin límite); "cero por infinito" (un factor tiende a cero y el otro crece sin límite); "infinito menos infinito" (dos cantidades que crecen sin límite se restan); "uno a la infinito" (la base tiende a $1$ y el exponente crece sin límite — ojo: **no** vale $1$ automáticamente); "cero a la cero" y "infinito a la cero". Cada forma exige una técnica específica.
+
+**Técnica 1: factorización (para $\frac{0}{0}$ con polinomios).** Si numerador y denominador son polinomios que se anulan en $x = a$, ambos contienen el factor $(x - a)$, que se puede cancelar.
+
+**Ejemplo.** $\lim_{x \to 3} \dfrac{x^2 - 9}{x - 3}$. Al sustituir: $\dfrac{0}{0}$. Factorizamos el numerador como diferencia de cuadrados: $x^2 - 9 = (x - 3)(x + 3)$. Entonces
+
+$$\frac{x^2 - 9}{x - 3} = \frac{(x - 3)(x + 3)}{x - 3} = x + 3 \quad \text{para } x \neq 3,$$
+
+y ahora sí: $\lim_{x \to 3}(x + 3) = 6$. Cancelar $(x - 3)$ es legítimo porque en el límite $x \neq 3$.
+
+**Técnica 2: racionalización (para $\frac{0}{0}$ con raíces).** Cuando aparecen raíces cuadradas, se multiplica numerador y denominador por el **conjugado**, aprovechando la identidad $(a - b)(a + b) = a^2 - b^2$, que elimina las raíces.
+
+**Ejemplo.** $\lim_{x \to 0} \dfrac{\sqrt{x + 1} - 1}{x}$. Al sustituir: $\dfrac{0}{0}$. El conjugado del numerador es $\sqrt{x + 1} + 1$. Multiplicamos arriba y abajo por él (multiplicar por $\dfrac{\sqrt{x+1}+1}{\sqrt{x+1}+1}$ es multiplicar por $1$):
+
+$$\frac{\sqrt{x + 1} - 1}{x} \cdot \frac{\sqrt{x + 1} + 1}{\sqrt{x + 1} + 1} = \frac{(x + 1) - 1}{x\,(\sqrt{x + 1} + 1)} = \frac{x}{x\,(\sqrt{x + 1} + 1)} = \frac{1}{\sqrt{x + 1} + 1}.$$
+
+Cancelamos el factor $x$ (válido porque $x \neq 0$ en el límite) y al sustituir $x = 0$ queda $\dfrac{1}{\sqrt{1} + 1} = \dfrac{1}{2}$.
+
+**Técnica 3: común denominador (para $\infty - \infty$).** Si la expresión es una resta de fracciones cuyos denominadores tienden a cero, se combinan en una sola fracción y se simplifica.
+
+**Ejemplo.** $\lim_{x \to 0} \left( \dfrac{1}{x} - \dfrac{1}{x^2 + x} \right)$. Cada fracción crece sin límite en valor absoluto: es la forma $\infty - \infty$. El denominador común es $x(x + 1)$, y
+
+$$\frac{1}{x} - \frac{1}{x(x+1)} = \frac{(x + 1) - 1}{x(x + 1)} = \frac{x}{x(x + 1)} = \frac{1}{x + 1}.$$
+
+Al hacer $x \to 0$: el límite es $1$. La resta de dos "infinitos" dio un número finito: por eso la forma era indeterminada.
+
+**Técnica 4: división por la potencia dominante (para $\frac{\infty}{\infty}$).** Se divide numerador y denominador por la mayor potencia de $x$ que aparece, y se usa que los términos como $\dfrac{1}{x}$ o $\dfrac{1}{x^2}$ tienden a cero cuando $x \to \infty$. Se desarrolla en la próxima sección.
+
+**Técnica 5: límites notables.** Ciertas formas con funciones trigonométricas o exponenciales tienen valores estándar (sección de límites notables).
+
+**Técnica 6: regla de L'Hôpital (para $\frac{0}{0}$ o $\frac{\infty}{\infty}$).** Si el cociente es indeterminado, se deriva numerador y denominador **por separado** (no es la regla del cociente de la derivación) y se repite si hace falta:
+
+$$\lim_{x \to a} \frac{f(x)}{g(x)} = \lim_{x \to a} \frac{f'(x)}{g'(x)}.$$
+
+El apóstrofo $f'$ se lee "efe prima" y denota la **derivada** de $f$. **Advertencia:** antes de usarla hay que verificar que la forma sea efectivamente $\dfrac{0}{0}$ o $\dfrac{\infty}{\infty}$; en otros casos la regla produce resultados falsos.
+
+**Ejemplo.** $\lim_{x \to 0} \dfrac{1 - \cos x}{x^2}$ es $\dfrac{0}{0}$ (recordando que $\cos 0 = 1$). Primera aplicación: $\lim \dfrac{\text{sen}\,x}{2x}$, todavía $\dfrac{0}{0}$. Segunda: $\lim \dfrac{\cos x}{2} = \dfrac{1}{2}$.
 
 ## Límites al infinito
-Describen el comportamiento a largo plazo; definen las **asíntotas horizontales**.
 
-- En un cociente de polinomios manda el grado mayor: $\lim_{x\to\infty}\dfrac{3x^2 + x}{2x^2 - 5} = \dfrac{3}{2}$.
-- Si el grado del numerador es mayor, el límite es $\pm\infty$.
-- Si el del denominador es mayor, el límite es $0$.
-- Funciones exponenciales dominan a polinomios: $\lim_{x\to\infty}\dfrac{x^n}{e^x} = 0$.
+Los límites con $x \to \infty$ (equis tiende a infinito) describen el **comportamiento a largo plazo** de la función: qué le ocurre cuando la entrada crece sin límite. Para un cociente de dos polinomios —una **función racional**— manda el **grado** de cada uno. El grado de un polinomio es el mayor exponente de $x$ que aparece: por ejemplo, $3x^2 + x$ tiene grado $2$ y $2x^2 - 5$ también tiene grado $2$.
 
-**Asíntotas verticales:** aparecen donde el denominador se anula y el límite es infinito, como en $f(x) = \frac{1}{x-2}$ en $x = 2$.
+Hay tres casos, según los grados del numerador (arriba) y del denominador (abajo):
 
-## Continuidad
-$f$ es **continua en $c$** si se cumplen tres condiciones:
-1. $f(c)$ existe.
-2. $\lim_{x\to c} f(x)$ existe.
-3. $\lim_{x\to c} f(x) = f(c)$.
+1. **Grado del numerador menor que grado del denominador:** el límite es $0$. El denominador crece más rápido y la fracción se aplasta contra cero. Ejemplo: $\lim_{x \to \infty} \dfrac{3x + 1}{x^2 + 2x} = 0$ (arriba grado $1$, abajo grado $2$).
+2. **Grados iguales:** el límite es el **cociente de los coeficientes principales** (los números que acompañan a la mayor potencia). Ejemplo: $\lim_{x \to \infty} \dfrac{3x^2 + x}{2x^2 - 5} = \dfrac{3}{2}$, porque ambos grados son $2$ y los coeficientes principales son $3$ y $2$.
+3. **Grado del numerador mayor:** la fracción crece sin límite; el resultado es $+\infty$ o $-\infty$ según los signos. Ejemplo: $\lim_{x \to \infty} \dfrac{x^2 + 1}{x + 1} = +\infty$, mientras que $\lim_{x \to \infty} \dfrac{x^3 + x}{1 - x^2} = -\infty$ (el signo negativo del denominador domina al final).
 
-**Tipos de discontinuidad:** evitable (el límite existe pero no coincide con el valor), de salto (laterales distintos), infinita (asíntota vertical).
+La técnica que justifica todo esto es la **división por la potencia dominante**: se divide numerador y denominador por la mayor potencia de $x$ del denominador y se observa que los términos restantes, del tipo $\dfrac{1}{x}$ o $\dfrac{1}{x^2}$, tienden a cero. En el ejemplo del caso 2, dividiendo arriba y abajo por $x^2$:
 
-**Propiedades:** sumas, productos, cocientes y composiciones de continuas son continuas. Polinomios, seno, coseno, exponencial y logaritmo son continuos en su dominio.
+$$\frac{3x^2 + x}{2x^2 - 5} = \frac{3 + \frac{1}{x}}{2 - \frac{5}{x^2}} \to \frac{3 + 0}{2 - 0} = \frac{3}{2}.$$
 
-**Teorema del valor intermedio:** si $f$ es continua en $[a, b]$ y $k$ está entre $f(a)$ y $f(b)$, existe $c \in (a,b)$ con $f(c) = k$. Es la base del método de bisección.
+Estos límites definen las **asíntotas horizontales**: si $\lim_{x \to \pm\infty} f(x) = L$, la recta horizontal $y = L$ (todos los puntos del plano con segunda coordenada igual a $L$) es una asíntota horizontal del gráfico: la curva se pega a esa recta cuando nos alejamos mucho.
 
-## El número e como límite
-$$e = \lim_{n \to \infty}\left(1 + \frac{1}{n}\right)^n = \lim_{x \to 0}(1 + x)^{1/x} \approx 2.71828$$
+**Asíntotas verticales:** aparecen donde el denominador se anula y el límite (o algún lateral) es infinito. Ejemplo: $f(x) = \dfrac{1}{x - 2}$ en $x = 2$. Por la derecha ($x \to 2^{+}$, con $x - 2 > 0$ pequeño) la fracción es positiva y enorme: el límite es $+\infty$. Por la izquierda ($x \to 2^{-}$, con $x - 2 < 0$ pequeño) es negativa y enorme: $-\infty$. La recta vertical $x = 2$ es una asíntota vertical: el gráfico se dispara hacia arriba por un lado y hacia abajo por el otro.
 
-Este límite define la base del crecimiento continuo. La forma general:
-$$\lim_{n\to\infty}\left(1 + \frac{r}{n}\right)^n = e^r$$
+Una comparación útil de velocidades: **las funciones exponenciales dominan a las potencias**. Si $n$ es un exponente fijo cualquiera,
 
-**Ejemplo.** $\lim_{n\to\infty}\left(1 + \frac{0.05}{n}\right)^n = e^{0.05} \approx 1.05127$: el factor de crecimiento continuo al $5\%$.
+$$\lim_{x \to \infty} \frac{x^n}{e^x} = 0,$$
 
-## Ejemplos resueltos: seis casos explicados
-**Ejemplo 1 (práctica, factorización).** $\lim_{x\to 3}\dfrac{x^2 - 9}{x - 3}$.
-- Indeterminación $\frac{0}{0}$; factoriza: $\dfrac{(x-3)(x+3)}{x-3} = x + 3$.
-- Límite: $6$.
+donde $e \approx 2{,}71828$ es la constante de Euler y $e^x$ es la función exponencial (crece multiplicándose por $e$ en cada paso). Por grande que sea $n$, la exponencial termina ganando.
 
-**Ejemplo 2 (práctica, racionalización).** $\lim_{x\to 4}\dfrac{\sqrt{x} - 2}{x - 4}$.
-- Multiplica por el conjugado: $\dfrac{1}{\sqrt{x} + 2}$.
-- Límite: $\dfrac{1}{4}$.
+## Límites notables
 
-**Ejemplo 3 (práctica, infinito).** $\lim_{x\to\infty}\dfrac{5x^3 - 2x}{4x^3 + x^2}$.
-- Divide entre $x^3$: $\dfrac{5 - 2/x^2}{4 + 1/x} \to \dfrac{5}{4}$.
+Ciertos límites con funciones trigonométricas y exponenciales tienen valores exactos que conviene memorizar, porque permiten resolver familias enteras de ejercicios. Recordemos los protagonistas: **$\text{sen}\,x$** (el seno de $x$), **$\cos x$** (el coseno de $x$) y **$e$**, el número de Euler, una constante irracional, $e \approx 2{,}71828$, base del crecimiento continuo. En cálculo, los ángulos de seno y coseno se miden en **radianes** (la unidad natural de ángulo, donde media vuelta mide $\pi \approx 3{,}1416$ radianes).
 
-**Ejemplo 4 (aplicación, física).** La posición de un móvil es $s(t) = 20t - 5t^2$. Halla la velocidad instantánea en $t = 2$ como límite del cociente incremental.
-- $\dfrac{s(2+h) - s(2)}{h} = \dfrac{40 + 20h - 20 - 20h - 5h^2 - 20}{h}$.
-- Simplifica: $\dfrac{-5h^2}{h} = -5h \to 0$; espera, el cálculo directo da $s(2) = 20$ y $s(2+h) = 40 + 20h - 5(2+h)^2 = 40 + 20h - 20 - 20h - 5h^2 = 20 - 5h^2$.
-- Cociente: $\dfrac{20 - 5h^2 - 20}{h} = -5h$; el límite es $0$. La velocidad en el punto más alto es $0$.
+Los cuatro límites notables fundamentales:
 
-**Ejemplo 5 (aplicación, economía).** El costo de producir $x$ unidades es $C(x) = 0.1x^2 + 5x + 200$. El costo marginal es $\lim_{h\to 0}\frac{C(x+h)-C(x)}{h}$.
-- Desarrolla y simplifica: $0.2x + 5$.
-- En $x = 100$: costo marginal $25$ por unidad adicional.
+$$\lim_{x \to 0} \frac{\text{sen}\,x}{x} = 1, \qquad \lim_{x \to 0} \frac{1 - \cos x}{x} = 0, \qquad \lim_{x \to 0} \frac{1 - \cos x}{x^2} = \frac{1}{2}, \qquad \lim_{x \to 0} \frac{e^x - 1}{x} = 1.$$
 
-**Ejemplo 6 (práctica, continuidad).** Halla $k$ para que $f(x) = \begin{cases} x^2 + 1 & x < 2 \\ kx & x \geq 2 \end{cases}$ sea continua.
-- Por izquierda: $4 + 1 = 5$; por derecha: $2k$.
-- Iguala: $2k = 5 \Rightarrow k = 2.5$.
+Leamos el primero: "el límite de seno de equis sobre equis, cuando equis tiende a cero, es uno". La intuición: cerca de $x = 0$, la curva $y = \text{sen}\,x$ se confunde con la recta $y = x$ (su recta tangente en el origen tiene pendiente $1$), de modo que el cociente tiende a $1$. El tercero dice que $1 - \cos x$ se hace pequeño como $x^2/2$ (el numerador se anula "el doble de rápido" que en el segundo).
 
-## Contextos donde se aplica
-- **Física:** velocidad y aceleración instantáneas, valores límite de procesos.
-- **Economía:** costo marginal, elasticidad, comportamiento a largo plazo.
-- **Ingeniería:** estabilidad de sistemas, resistencias límite, señales.
-- **Biología:** crecimiento poblacional a largo plazo, capacidades de carga.
-- **Matemática:** es la base de derivadas, integrales y series.
+**Cómo usarlos.** La clave es **reescribir** la expresión hasta que aparezca la forma exacta del notable. Ejemplo: $\lim_{x \to 0} \dfrac{\text{sen}\,3x}{x}$. Queremos que el denominador sea $3x$ (lo mismo que está dentro del seno). Multiplicamos y dividimos por $3$:
 
-## Errores comunes y cómo evitarlos
-- **Sustituir cuando hay indeterminación.** Si aparece $\frac{0}{0}$, sustituir no decide; hay que transformar la expresión.
-- **Concluir que el límite no existe porque $f(c)$ no existe.** El límite no depende del valor en el punto.
-- **Aplicar L'Hôpital sin indeterminación.** Solo vale para $\frac{0}{0}$ o $\frac{\infty}{\infty}$.
-- **Confundir $1^\infty$ con $1$.** $1^\infty$ es indeterminada; puede dar $e$ o divergir.
-- **Olvidar comparar laterales.** Un límite existe solo si ambos coinciden.
+$$\lim_{x \to 0} \frac{\text{sen}\,3x}{x} = \lim_{x \to 0} 3 \cdot \frac{\text{sen}\,3x}{3x} = 3 \cdot 1 = 3.$$
 
-## Ejercicios propuestos
-1. $\lim_{x\to 2}(3x^2 - 4x + 1)$.
-2. $\lim_{x\to -1}\dfrac{x^2 - 1}{x + 1}$.
-3. $\lim_{x\to 0}\dfrac{\sqrt{4 + x} - 2}{x}$.
-4. $\lim_{x\to\infty}\dfrac{2x^2 + 3x}{5x^2 - 1}$.
-5. $\lim_{x\to 0}\dfrac{\text{sen}\,3x}{x}$.
-6. $\lim_{x\to\infty}\left(1 + \dfrac{1}{x}\right)^{2x}$.
-7. Analiza la continuidad de $f(x) = \dfrac{x-1}{x^2 - 1}$.
-8. Demuestra con épsilon-delta: $\lim_{x\to 1}(3x) = 3$.
+El cambio "dentro del seno y en el denominador" debe ser **el mismo**: cuando $x \to 0$, también $3x \to 0$, así que $\dfrac{\text{sen}\,3x}{3x} \to 1$. Otro ejemplo: $\lim_{x \to 0} \dfrac{\text{sen}\,5x}{2x} = \dfrac{5}{2} \cdot \lim \dfrac{\text{sen}\,5x}{5x} = \dfrac{5}{2}$.
 
-**Respuestas:** 1) $5$. 2) $-2$. 3) $1/4$. 4) $2/5$. 5) $3$. 6) $e^2$. 7) Discontinua evitable en $x = 1$ (límite $1/2$); infinita en $x = -1$. 8) Toma $\delta = \varepsilon/3$.
+**El número $e$ como límite.** El número $e$ nace precisamente de un límite:
+
+$$e = \lim_{n \to \infty} \left( 1 + \frac{1}{n} \right)^n = \lim_{x \to 0} (1 + x)^{1/x} \approx 2{,}71828.$$
+
+Leído: "base uno más uno sobre ene, todo elevado a la ene, tiende a $e$ cuando ene tiende a infinito". La forma general, con una tasa $r$ fija, es:
+
+$$\lim_{n \to \infty} \left( 1 + \frac{r}{n} \right)^n = e^{r}.$$
+
+**Ejemplo.** $\lim_{n \to \infty} \left( 1 + \dfrac{0{,}05}{n} \right)^n = e^{0{,}05} \approx 1{,}0513$: es el factor de crecimiento continuo de un capital al $5\%$ anual con capitalización continua. Y una variante frecuente en exámenes: $\lim_{x \to \infty} \left( 1 + \dfrac{1}{x} \right)^{2x} = \left[ \lim_{x \to \infty} \left( 1 + \dfrac{1}{x} \right)^x \right]^2 = e^2$, usando la regla de la potencia de límites.
+
+## Continuidad y discontinuidades
+
+Intuitivamente, una función es **continua** en un punto si su gráfico pasa por ese punto **sin saltos ni huecos**: se puede dibujar sin levantar el lápiz. La definición formal exige tres condiciones, todas a la vez, para que $f$ sea continua en $a$:
+
+1. **$f(a)$ existe.** El punto $a$ debe estar en el dominio de la función: hay un valor asignado en $a$.
+2. **$\lim_{x \to a} f(x)$ existe.** Los valores de $f$ se acercan a un único número cuando $x$ se acerca a $a$ (los laterales coinciden).
+3. **$\lim_{x \to a} f(x) = f(a)$.** El número al que se acercan los valores es exactamente el valor en el punto.
+
+Si falla cualquiera de las tres, hay una **discontinuidad**, y se clasifica según cuál falló:
+
+- **Evitable (o removible):** el límite existe pero no coincide con $f(a)$, típicamente porque $f(a)$ no está definido o está definido en otro valor. Ejemplo: $f(x) = \dfrac{x^2 - 1}{x - 1}$ en $x = 1$: el límite es $2$ pero $f(1)$ no existe. Se llama evitable porque podríamos "reparar" la función definiendo $f(1) = 2$.
+- **De salto:** los dos laterales existen, son finitos y distintos. Ejemplo: $f(x) = \dfrac{|x|}{x}$ en $x = 0$: laterales $-1$ y $1$. El gráfico salta de un nivel a otro.
+- **Infinita:** algún límite lateral es $+\infty$ o $-\infty$; el gráfico se dispara junto a una asíntota vertical. Ejemplo: $f(x) = \dfrac{1}{x - 2}$ en $x = 2$.
+
+**Propiedades útiles.** Si $f$ y $g$ son continuas en $a$, también lo son su suma, su resta, su producto y su cociente (este último donde $g(a) \neq 0$), así como las composiciones (una función aplicada dentro de otra). Además, los polinomios, el seno, el coseno, la exponencial y el logaritmo son continuos en todo su dominio. Por eso la sustitución directa funciona con ellos.
+
+**Teorema del valor intermedio (TVI).** Si $f$ es continua en el intervalo cerrado $[a, b]$ (todos los números entre $a$ y $b$, incluidos los extremos, con $a < b$) y $k$ es cualquier número entre $f(a)$ y $f(b)$, entonces **existe** al menos un punto $c$ en el intervalo abierto $(a, b)$ (los extremos excluidos) tal que $f(c) = k$. Geométricamente: una curva continua que va de una altura a otra **tiene que pasar por todas las alturas intermedias**.
+
+**Ejemplo.** La función $f(x) = x^3 - x - 1$ es continua (es un polinomio). En los extremos del intervalo $[1, 2]$: $f(1) = 1 - 1 - 1 = -1$ y $f(2) = 8 - 2 - 1 = 5$. Como $0$ está entre $-1$ y $5$, el TVI garantiza que existe un $c$ en $(1, 2)$ con $f(c) = 0$: la ecuación $x^3 - x - 1 = 0$ tiene una raíz entre $1$ y $2$. Este razonamiento es la base del método de bisección para hallar raíces.
+
+**Determinar parámetros para lograr continuidad.** Ejemplo: hallar $k$ para que sea continua la función
+
+$$f(x) = \begin{cases} x^2 + 1 & \text{si } x < 2 \\ kx & \text{si } x \geq 2 \end{cases}$$
+
+El único punto en duda es $x = 2$. Por la izquierda el límite es $2^2 + 1 = 5$. Por la derecha es $k \cdot 2 = 2k$. Para que exista el límite, ambos deben coincidir: $2k = 5$, de donde $k = \dfrac{5}{2} = 2{,}5$. Con ese valor, $f(2) = 2k = 5$ coincide con el límite y las tres condiciones se cumplen.
+
+## Ejemplos resueltos
+
+**Ejemplo 1 (sustitución directa).** $\lim_{x \to 2} (3x^2 - 4x + 1)$. Como el polinomio es continuo, sustituimos: $3 \cdot 4 - 4 \cdot 2 + 1 = 12 - 8 + 1 = 5$. Respuesta: $5$.
+
+**Ejemplo 2 (factorización).** $\lim_{x \to -1} \dfrac{x^2 - 1}{x + 1}$. Al sustituir: $\dfrac{0}{0}$. Factorizamos: $x^2 - 1 = (x - 1)(x + 1)$. Cancelando el factor $(x + 1)$ queda $x - 1$, y con $x \to -1$: $-2$. Respuesta: $-2$.
+
+**Ejemplo 3 (racionalización).** $\lim_{x \to 0} \dfrac{\sqrt{4 + x} - 2}{x}$. Sustitución: $\dfrac{0}{0}$. Multiplicamos por el conjugado $\sqrt{4 + x} + 2$:
+
+$$\frac{\sqrt{4 + x} - 2}{x} \cdot \frac{\sqrt{4 + x} + 2}{\sqrt{4 + x} + 2} = \frac{(4 + x) - 4}{x(\sqrt{4 + x} + 2)} = \frac{x}{x(\sqrt{4 + x} + 2)} = \frac{1}{\sqrt{4 + x} + 2}.$$
+
+Con $x \to 0$: $\dfrac{1}{2 + 2} = \dfrac{1}{4}$. Respuesta: $\dfrac{1}{4}$.
+
+**Ejemplo 4 (límite al infinito).** $\lim_{x \to \infty} \dfrac{5x^3 - 2x}{4x^3 + x^2}$. Grados iguales ($3$ y $3$): dividimos arriba y abajo por $x^3$:
+
+$$\frac{5 - \frac{2}{x^2}}{4 + \frac{1}{x}} \to \frac{5 - 0}{4 + 0} = \frac{5}{4}.$$
+
+Respuesta: $\dfrac{5}{4}$.
+
+**Ejemplo 5 (límite notable).** $\lim_{x \to 0} \dfrac{\text{sen}\,3x}{x} = 3 \cdot \lim_{x \to 0} \dfrac{\text{sen}\,3x}{3x} = 3 \cdot 1 = 3$. Respuesta: $3$.
+
+**Ejemplo 6 (número $e$).** $\lim_{x \to \infty} \left( 1 + \dfrac{1}{x} \right)^{2x} = \left[ \left( 1 + \dfrac{1}{x} \right)^x \right]^2 = e^2$. Respuesta: $e^2$.
+
+**Ejemplo 7 (continuidad).** Analiza $f(x) = \dfrac{x - 1}{x^2 - 1}$. El denominador se anula en $x = 1$ y $x = -1$ (porque $x^2 - 1 = (x - 1)(x + 1)$). Para $x \neq 1$, la función se simplifica a $\dfrac{1}{x + 1}$. En $x = 1$: el límite es $\dfrac{1}{2}$, pero $f(1)$ no existe: discontinuidad **evitable** en $x = 1$. En $x = -1$: al acercarse, el denominador tiende a cero y la fracción crece sin límite: discontinuidad **infinita** en $x = -1$ (asíntota vertical).
+
+**Ejemplo 8 (aplicación, física).** La posición de un móvil (en metros, a los $t$ segundos) es $s(t) = 20t - 5t^2$. La velocidad promedio entre los instantes $t$ y $t + h$ (con $h$ un intervalo pequeño de tiempo) es el cociente incremental $\dfrac{s(t + h) - s(t)}{h}$. La velocidad instantánea es el límite cuando $h \to 0$. En $t = 2$: primero $s(2) = 20 \cdot 2 - 5 \cdot 4 = 20$, y $s(2 + h) = 20(2 + h) - 5(2 + h)^2 = 40 + 20h - 20 - 20h - 5h^2 = 20 - 5h^2$. El cociente es $\dfrac{(20 - 5h^2) - 20}{h} = \dfrac{-5h^2}{h} = -5h$, y su límite cuando $h \to 0$ es $0$. Velocidad instantánea en $t = 2$: $0$ m/s. Tiene sentido: $s(t)$ es una parábola con vértice en $t = 2$, el instante en que el móvil alcanza su punto más alto y se detiene un instante.
+
+**Ejemplo 9 (demostración épsilon-delta).** Probar que $\lim_{x \to 1} (3x) = 3$. Dado $\varepsilon > 0$, buscamos $\delta$ tal que $0 < |x - 1| < \delta$ implique $|3x - 3| < \varepsilon$. Como $|3x - 3| = 3|x - 1|$, basta que $3|x - 1| < \varepsilon$, es decir, $|x - 1| < \dfrac{\varepsilon}{3}$. Tomamos $\delta = \dfrac{\varepsilon}{3}$ y la cadena cierra: $|3x - 3| = 3|x - 1| < 3\delta = \varepsilon$.
+
+## Errores comunes
+
+- **Sustituir y quedarse con la indeterminación.** Si al sustituir aparece $\dfrac{0}{0}$, eso no es el resultado: la sustitución no decidió nada y hay que transformar la expresión (factorizar, racionalizar o aplicar L'Hôpital).
+- **Concluir que no hay límite porque $f(a)$ no existe.** Falso. El ejemplo inicial, $\dfrac{x^2 - 1}{x - 1}$, no existe en $x = 1$ y su límite es $2$. El límite mira los alrededores, no el punto.
+- **Cancelar factores sin exigir $x \neq a$.** La cancelación $\dfrac{(x-3)(x+3)}{x-3} = x+3$ es válida solo porque en el límite $x \neq 3$. Olvidar esa salvedad lleva a confusiones conceptuales (aunque el número final suela salir bien).
+- **Aplicar L'Hôpital sin verificar la forma.** Si el cociente no es $\dfrac{0}{0}$ ni $\dfrac{\infty}{\infty}$, la regla da resultados falsos. Ejemplo: $\lim_{x \to 1} \dfrac{x + 1}{x + 2} = \dfrac{2}{3}$; derivar arriba y abajo daría $1$, incorrecto.
+- **Creer que $1^{\infty} = 1$.** La forma $1^{\infty}$ es indeterminada: puede dar $e$, $e^2$ o divergir. Nunca se responde $1$ sin análisis.
+- **No comparar los límites laterales.** En funciones por partes o con valor absoluto, el límite existe solo si ambos laterales coinciden.
+- **Tratar $\infty$ como un número.** No valen operaciones como $\infty - \infty = 0$ o $\dfrac{\infty}{\infty} = 1$: son formas indeterminadas que exigen técnica.
+- **Olvidar el signo al infinito.** En $\lim_{x \to -\infty}$ o en asíntotas verticales, el signo de $\pm\infty$ depende de los signos de los términos dominantes; hay que examinarlo, no adivinarlo.
+- **Confundir "continua" con "el límite existe".** La continuidad exige además que el valor en el punto exista y coincida con el límite.
+- **Sacar raíces sin cuidado.** $\sqrt{x^2} = |x|$, no $x$: cuando $x \to -\infty$, $\sqrt{x^2}$ se comporta como $-x$. Este descuido cambia los signos al infinito.
+
+## Ejercicios propuestos (con respuestas)
+
+1. $\lim_{x \to 2} (3x^2 - 4x + 1)$.
+2. $\lim_{x \to -1} \dfrac{x^2 - 1}{x + 1}$.
+3. $\lim_{x \to 0} \dfrac{\sqrt{4 + x} - 2}{x}$.
+4. $\lim_{x \to \infty} \dfrac{2x^2 + 3x}{5x^2 - 1}$.
+5. $\lim_{x \to 0} \dfrac{\text{sen}\,3x}{x}$.
+6. $\lim_{x \to \infty} \left( 1 + \dfrac{1}{x} \right)^{2x}$.
+7. Analiza la continuidad de $f(x) = \dfrac{x - 1}{x^2 - 1}$.
+8. Demuestra con épsilon-delta que $\lim_{x \to 1} (3x) = 3$.
+
+**Respuestas.** 1) $5$ (sustitución directa). 2) $-2$ (factoriza y cancela $x + 1$). 3) $\dfrac{1}{4}$ (racionaliza con el conjugado). 4) $\dfrac{2}{5}$ (grados iguales: cociente de coeficientes principales). 5) $3$ (reescribe como $3 \cdot \dfrac{\text{sen}\,3x}{3x}$). 6) $e^2$ (potencia del límite notable de $e$). 7) Discontinuidad evitable en $x = 1$ (límite $\dfrac{1}{2}$) e infinita en $x = -1$. 8) Dado $\varepsilon > 0$, toma $\delta = \dfrac{\varepsilon}{3}$: si $0 < |x - 1| < \delta$, entonces $|3x - 3| = 3|x - 1| < 3\delta = \varepsilon$.
 
 ## Resumen
-- El límite describe la aproximación, no el valor en el punto; los laterales deben coincidir.
-- La sustitución directa es el primer intento; las indeterminaciones requieren factorizar, racionalizar o L'Hôpital.
-- Al infinito, manda el grado mayor; las asíntotas describen el comportamiento extremo.
-- La continuidad exige valor, límite e igualdad; el valor intermedio conecta continuidad con existencia de soluciones.
+
+- El límite $\lim_{x \to a} f(x) = L$ describe el valor al que se acercan las salidas $f(x)$ cuando la entrada $x$ se acerca a $a$; mira el comportamiento **alrededor** de $a$, no el valor en $a$.
+- La notación se lee pieza por pieza: $\lim$ ("límite"), $x \to a$ ("equis tiende a a"), $a^{+}$ y $a^{-}$ (derecha e izquierda), $\infty$ (crecer sin límite), $\varepsilon$ (margen en la salida) y $\delta$ (margen en la entrada).
+- La definición épsilon-delta formaliza la idea: para cada reto $\varepsilon > 0$ existe una respuesta $\delta > 0$; el épsilon es el reto y el delta la respuesta.
+- El límite bilateral existe si y solo si los laterales existen y coinciden; los saltos y las funciones por partes se analizan con laterales.
+- La sustitución directa es el primer intento; las indeterminaciones ($\frac{0}{0}$, $\frac{\infty}{\infty}$, $1^\infty$, etc.) exigen factorizar, racionalizar, buscar común denominador, dividir por la potencia dominante, usar límites notables o L'Hôpital.
+- Al infinito manda el grado mayor en cocientes de polinomios; las asíntotas horizontales y verticales describen el comportamiento extremo del gráfico.
+- Los límites notables ($\frac{\text{sen}\,x}{x} \to 1$, $\frac{1 - \cos x}{x^2} \to \frac{1}{2}$, $\frac{e^x - 1}{x} \to 1$, $(1 + \frac{1}{n})^n \to e$) se usan reescribiendo la expresión para que aparezca la forma exacta.
+- La continuidad exige valor en el punto, límite existente e igualdad entre ambos; las discontinuidades son evitables, de salto o infinitas, y el teorema del valor intermedio garantiza raíces en intervalos donde la función continua cambia de signo.
 - El número $e$ nace como límite y gobierna el crecimiento continuo.
 `,
 
@@ -1186,240 +1401,786 @@ $$\lim_{t\to\infty}\left[-\frac{2}{\sqrt{x}}\right]_1^t = \lim_{t\to\infty}\left
 `,
 
   "series": String.raw`
+## ¿Qué es una serie?
+
+Imagina que tienes una lista infinita de números y quieres **sumarlos todos**. Eso, dicho de la forma más simple posible, es una serie: la suma de infinitos términos.
+
+Ejemplo concreto: pensemos en la suma
+
+$$1 + \frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \frac{1}{16} + \cdots$$
+
+Cada término es la mitad del anterior. ¿Cuánto da esta suma infinita? Es natural sospechar que se acerca a $2$: si sumas los primeros términos obtienes $1$, luego $1.5$, luego $1.75$, luego $1.875$... cada vez te acercas más a $2$ sin pasarte. Diremos que esta serie **converge** a $2$.
+
+Pero cuidado: no toda suma infinita da un número. La suma
+
+$$1 + 1 + 1 + 1 + 1 + \cdots$$
+
+crece sin límite, y la suma
+
+$$1 - 1 + 1 - 1 + 1 - \cdots$$
+
+no se estabiliza nunca: da $1$, luego $0$, luego $1$, luego $0$... Estas series **divergen**.
+
+La palabra clave es **converger**: una serie converge cuando sus sumas parciales (las sumas de los primeros términos) se acercan a un número fijo llamado la **suma de la serie**. Si no lo hacen, la serie **diverge**. A lo largo de toda esta guía, "analizar una serie" significará decidir si converge o diverge y, cuando sea posible, calcular su suma.
+
+¿Para qué sirve todo esto? Las series son la herramienta con la que las calculadoras evalúan funciones como el seno o el exponencial, con la que se estudian ondas y señales (series de Fourier) y con la que se aproximan soluciones de ecuaciones. Son el puente entre lo finito y lo infinito.
+
+## Cómo leer la notación
+
+La notación de series es compacta y al principio asusta, pero cada símbolo tiene un significado concreto. Veámoslo pieza por pieza.
+
+**El símbolo de suma $\sum$.** Es la letra griega *sigma* mayúscula, que indica "suma". Viene con tres adornos:
+
+- **Debajo** (o al costado) se escribe el índice y su valor inicial. En $\sum_{n=1}^{\infty}$ el índice es la letra $n$, que empieza valiendo $1$.
+- **Encima** se escribe el valor final. El símbolo $\infty$ (infinito) indica que la suma no termina: se suman infinitos términos.
+- **A la derecha** se escribe la fórmula que define cada término.
+
+**El término general $a_n$.** Se lee "a sub ene". Es la fórmula que da el término número $n$ de la lista. Por ejemplo, si $a_n = \dfrac{1}{n^2}$, entonces:
+
+- $a_1 = \dfrac{1}{1^2} = 1$
+- $a_2 = \dfrac{1}{2^2} = \dfrac{1}{4}$
+- $a_3 = \dfrac{1}{3^2} = \dfrac{1}{9}$
+
+y así sucesivamente. Reemplazar $n$ por números concretos es la operación más importante para leer series: si no entiendes una serie, calcula sus tres primeros términos a mano.
+
+**La expresión completa.** La escritura
+
+$$\sum_{n=1}^{\infty} a_n$$
+
+se lee: "la suma desde $n$ igual a $1$ hasta infinito de $a_n$". Su significado es la suma infinita
+
+$$a_1 + a_2 + a_3 + a_4 + \cdots$$
+
+Los puntos suspensivos $\cdots$ significan "y así sigue, sin terminar".
+
+**Índices que empiezan en cero.** Algunas series empiezan en $n = 0$:
+
+$$\sum_{n=0}^{\infty} a_n = a_0 + a_1 + a_2 + \cdots$$
+
+Es solo un cambio de etiqueta: no cambia nada esencial. Aprenderás a reconocerlo con las series geométricas y de Taylor.
+
+**El límite $\lim$.** Se lee "límite". La expresión $\lim_{n \to \infty} a_n = L$ significa "cuando $n$ crece sin límite, el número $a_n$ se acerca al número $L$". La flecha $\to$ se lee "tiende a". Por ejemplo, $\lim_{n\to\infty} \dfrac{1}{n} = 0$: cuando $n$ es enorme, $1/n$ es diminuto, cada vez más cerca de $0$.
+
+**El valor absoluto $|r|$.** Las barras $| \ |$ significan "valor absoluto": la distancia del número al cero, ignorando el signo. Así, $|3| = 3$, $|-3| = 3$, $|-0.5| = 0.5$. La condición $|r| < 1$ significa "el número $r$ está estrictamente entre $-1$ y $1$". La condición $|r| \geq 1$ significa "$r$ es $1$, mayor que $1$, $-1$ o menor que $-1$". El símbolo $\geq$ se lee "mayor o igual que", $<$ "menor que", $\leq$ "menor o igual que".
+
+**Factorial $n!$.** Se lee "ene factorial". Es el producto de todos los enteros desde $1$ hasta $n$: $5! = 5 \cdot 4 \cdot 3 \cdot 2 \cdot 1 = 120$. Por convención, $0! = 1$. El factorial crece más rápido que cualquier potencia: por eso aparece en las series de Taylor.
+
+**Fracciones y potencias.** La potencia $n^p$ es $n$ multiplicado por sí mismo $p$ veces. Por ejemplo $n^2 = n \cdot n$, y $n^{1/2} = \sqrt{n}$ (la raíz cuadrada de $n$). La escritura $\sqrt[n]{|a_n|}$ es la raíz enésima, el número que elevado a la $n$ da $|a_n|$.
+
 ## Sucesiones y convergencia
-Una **sucesión** $\{a_n\}$ es una lista infinita ordenada. Converge a $L$ si sus términos se acercan a $L$:
+
+**Qué es una sucesión.** Una **sucesión** $\{a_n\}$ (las llaves indican "el conjunto de todos los $a_n$") es una lista infinita y ordenada de números:
+
+$$a_1, a_2, a_3, a_4, \ldots$$
+
+Piensa en ella como una fila de personas: cada posición $n$ tiene un ocupante $a_n$. Ejemplos:
+
+- $\left\{\dfrac{1}{n}\right\}$ es la lista $1, \frac{1}{2}, \frac{1}{3}, \frac{1}{4}, \ldots$: cada vez más pequeña.
+- $\left\{n^2\right\}$ es la lista $1, 4, 9, 16, 25, \ldots$: crece sin freno.
+- $\left\{(-1)^n\right\}$ es la lista $-1, 1, -1, 1, \ldots$: salta para siempre entre dos valores.
+
+**Convergencia de una sucesión.** Una sucesión converge a un número $L$ (la "ele") si sus términos se acercan a $L$ tanto como queramos, quedándose cerca. Se escribe
+
 $$\lim_{n\to\infty} a_n = L$$
 
-**Criterios y ejemplos:**
-- $\dfrac{1}{n} \to 0$; $n^2 \to \infty$; $\left(1 + \dfrac{1}{n}\right)^n \to e$.
-- Una sucesión **monótona y acotada** siempre converge.
-- Para cocientes de polinomios, manda el grado mayor.
+y se lee "el límite de $a_n$ cuando $n$ tiende a infinito es $L$". Si no existe tal número, la sucesión **diverge**. Divergir puede significar crecer sin límite (como $n^2$, que tiende a $\infty$), oscilar sin parar (como $(-1)^n$) o cualquier comportamiento sin un destino fijo.
 
-Una **serie** es la suma de los términos de una sucesión:
+**Ejemplos que hay que memorizar.** Son los cimientos de todo lo que viene:
+
+- $\dfrac{1}{n} \to 0$: los inversos de números grandes se van a cero.
+- $n^2 \to \infty$: las potencias crecen sin límite.
+- $\left(1 + \dfrac{1}{n}\right)^n \to e$: el número $e \approx 2.71828$, la constante de Euler, nace exactamente de este límite. Aparecerá en todas las series exponenciales.
+
+**Cocientes de polinomios: manda el grado mayor.** Si $a_n$ es un cociente de polinomios en $n$, su límite lo decide el término de mayor grado (el mayor exponente de $n$). Por ejemplo:
+
+$$\lim_{n\to\infty} \frac{3n^2 + n}{2n^2 + 5} = \frac{3}{2}$$
+
+porque arriba y abajo el mayor grado es $n^2$, y quedan los coeficientes $3$ y $2$. En cambio,
+
+$$\lim_{n\to\infty} \frac{5n + 1}{n^2 - 3} = 0$$
+
+porque abajo el grado es mayor (el denominador crece mucho más rápido). Y si el grado de arriba es mayor, el límite es infinito (la sucesión diverge a $\infty$). Regla práctica: mira solo los términos de mayor grado, el resto es irrelevante cuando $n$ es gigante.
+
+**Monótona y acotada: un teorema que da convergencia gratis.** Una sucesión es **monótona** si siempre va en una sola dirección (siempre sube o siempre baja), y es **acotada** si todos sus términos quedan entre dos números fijos. El teorema dice: *toda sucesión monótona y acotada converge*. No te dice a qué valor, solo que converge. Es un resultado de existencia: si una fila infinita de números sube (o baja) sin saltarse una barrera, tiene que acercarse a algún límite. Es la garantía matemática de que "no puede crecer para siempre sin llegar a ninguna parte".
+
+**De sucesiones a series.** Una serie no es más que intentar sumar los términos de una sucesión. Si tienes la sucesión $\{a_n\}$, la serie asociada es
+
 $$\sum_{n=1}^{\infty} a_n = a_1 + a_2 + a_3 + \cdots$$
-La serie converge si la sucesión de **sumas parciales** $S_N = \sum_{n=1}^N a_n$ converge.
 
-## Condición necesaria y series básicas
-**Condición necesaria:** si $\sum a_n$ converge, entonces $a_n \to 0$. El recíproco es **falso**: la serie armónica $\sum \frac{1}{n}$ diverge aunque $1/n \to 0$.
+Para decidir si esa suma infinita tiene sentido, definimos las **sumas parciales** $S_N$: la suma de solo los primeros $N$ términos,
 
-**Serie geométrica:**
-$$\sum_{n=0}^{\infty} ar^n = \frac{a}{1 - r} \quad \text{si } |r| < 1; \text{ diverge si } |r| \geq 1$$
+$$S_N = \sum_{n=1}^{N} a_n = a_1 + a_2 + \cdots + a_N$$
 
-**Serie telescópica:** $\sum \dfrac{1}{n(n+1)} = 1$, porque $\dfrac{1}{n(n+1)} = \dfrac{1}{n} - \dfrac{1}{n+1}$ y los términos se cancelan.
+Observa que aquí la suma termina en $N$, un número finito: por eso $S_N$ siempre se puede calcular. Por ejemplo, para la serie de $1/2^n$: $S_1 = \frac{1}{2}$, $S_2 = \frac{3}{4}$, $S_3 = \frac{7}{8}$, $S_4 = \frac{15}{16}$, y se ve que $S_N \to 1$.
 
-**Serie p:** $\sum \dfrac{1}{n^p}$ converge si $p > 1$, diverge si $p \leq 1$.
+**Definición central.** La serie $\sum a_n$ **converge** si la sucesión de sumas parciales $S_N$ converge; en ese caso la suma de la serie es ese límite. Si las sumas parciales no convergen, la serie **diverge**. Toda la teoría de series es una colección de trucos para decidir esto sin tener que sumar infinitos términos.
 
-## Criterios de convergencia
-1. **Comparación:** si $0 \leq a_n \leq b_n$ y $\sum b_n$ converge, $\sum a_n$ converge.
-2. **Comparación al límite:** compara con una serie p o geométrica conocida.
-3. **Razón (D'Alembert):** $L = \lim\left|\dfrac{a_{n+1}}{a_n}\right|$: converge si $L < 1$, diverge si $L > 1$, no decide si $L = 1$.
-4. **Raíz (Cauchy):** $L = \lim \sqrt[n]{|a_n|}$ con la misma regla.
-5. **Integral:** si $f$ es positiva, continua y decreciente con $f(n) = a_n$, la serie y la integral $\int_1^\infty f$ convergen o divergen juntas.
-6. **Series alternantes (Leibniz):** si $a_n$ decrece a $0$, $\sum (-1)^n a_n$ converge.
+## Series geométricas y p
 
-**Ejemplo con razón.** $\sum \dfrac{x^n}{n!}$: $\left|\dfrac{a_{n+1}}{a_n}\right| = \dfrac{|x|}{n+1} \to 0 < 1$: converge para todo $x$.
+Hay dos familias de series que actúan como *patrón de referencia*: casi todos los demás problemas se resuelven comparando contra una de ellas. Conviene dominarlas por completo.
+
+**La serie geométrica.** En una serie geométrica cada término se obtiene multiplicando el anterior por un número fijo $r$, llamado **razón** (de "razón común", el factor que se repite). Su forma general es
+
+$$\sum_{n=0}^{\infty} a\, r^n = a + ar + ar^2 + ar^3 + \cdots$$
+
+donde $a$ es el **primer término** (el valor en $n = 0$) y $r$ es la razón. Si escribes los primeros términos, $a r^1 = ar$, $a r^2 = a \cdot r \cdot r$, y así: cada término multiplica al anterior por $r$.
+
+La fórmula mágica, que debes memorizar, es:
+
+$$\sum_{n=0}^{\infty} a\,r^n = \frac{a}{1 - r} \quad \text{si } |r| < 1; \quad \text{diverge si } |r| \geq 1$$
+
+En palabras: la serie geométrica converge exactamente cuando la razón está estrictamente entre $-1$ y $1$, y su suma es el primer término dividido por $1$ menos la razón.
+
+¿Por qué $|r| < 1$? Porque si $r = \frac{1}{2}$, las potencias $r^n$ se encogen a cero y la suma se acumula hacia un límite. Si $r = 2$, cada término duplica el anterior y la suma explota. Si $r = 1$, sumas $a + a + a + \cdots$ infinitamente: diverge. Si $r = -1$, la suma oscila $a - a + a - a + \cdots$ y tampoco converge.
+
+Ejemplo: $\sum_{n=0}^{\infty} \left(\frac{1}{2}\right)^n = \frac{1}{1 - 1/2} = 2$. Aquí $a = 1$ (porque el término en $n=0$ es $r^0 = 1$) y $r = 1/2$.
+
+**Cuidado con el punto de partida.** La fórmula de arriba vale cuando la suma empieza en $n = 0$. Si tu serie empieza en $n = 1$ o en $n = 3$, saca el primer término como factor común: por ejemplo,
+
+$$\sum_{n=1}^{\infty} r^n = r + r^2 + r^3 + \cdots = r\left(1 + r + r^2 + \cdots\right) = \frac{r}{1 - r}$$
+
+porque $r$ multiplica a la serie geométrica estándar. Verificar siempre "cuál es el primer término" es la forma de no equivocarse.
+
+**La serie p.** La serie p (se llama así por la letra del exponente) es
+
+$$\sum_{n=1}^{\infty} \frac{1}{n^p} = \frac{1}{1^p} + \frac{1}{2^p} + \frac{1}{3^p} + \cdots$$
+
+El criterio p, que se demuestra con integrales, dice:
+
+$$\text{converge si } p > 1; \quad \text{diverge si } p \leq 1$$
+
+Casos célebres:
+
+- $p = 1$: la **serie armónica** $\sum \frac{1}{n} = 1 + \frac{1}{2} + \frac{1}{3} + \cdots$ **diverge**, aunque sus términos tiendan a cero. Es el ejemplo clásico de que "los términos se van a cero" no basta. Diverge muy despacio: para superar la suma $20$ necesitas unos $400$ millones de términos.
+- $p = 2$: $\sum \frac{1}{n^2}$ converge. Su suma exacta, demostrada por Euler, es $\dfrac{\pi^2}{6} \approx 1.6449$, un resultado hermoso que conecta la suma con el círculo.
+
+**La serie telescópica.** Aunque no es una "familia p", es la tercera serie exacta que conviene conocer. Se llama telescópica porque sus términos se pliegan unos sobre otros, como un telescopio viejo. El ejemplo patrón es
+
+$$\sum_{n=1}^{\infty} \frac{1}{n(n+1)}$$
+
+El truco es la **descomposición en fracciones parciales**: buscamos dos fracciones más simples cuya suma sea el término original. Aquí
+
+$$\frac{1}{n(n+1)} = \frac{1}{n} - \frac{1}{n+1}$$
+
+(compruébalo haciendo denominador común). Entonces la suma parcial $N$-ésima es
+
+$$S_N = \left(1 - \frac{1}{2}\right) + \left(\frac{1}{2} - \frac{1}{3}\right) + \left(\frac{1}{3} - \frac{1}{4}\right) + \cdots + \left(\frac{1}{N} - \frac{1}{N+1}\right)$$
+
+Casi todo se cancela en cadena: cada $-\frac{1}{k}$ se elimina con el $+\frac{1}{k}$ siguiente. Sobreviven solo el primer $1$ y el último $-\frac{1}{N+1}$. Por tanto $S_N = 1 - \frac{1}{N+1}$, y al tender $N$ a infinito, la serie suma exactamente $1$.
+
+**Resumen de referencia.** Geométrica: converge si $|r| < 1$, suma $\frac{a}{1-r}$. Serie p: converge si $p > 1$. Telescópica: se colapsa a una resta de extremos. Con estas tres en la mano ya puedes analizar muchísimas series por comparación.
+
+## Criterios de convergencia explicados uno a uno
+
+Un **criterio** es una regla que, aplicada a una serie, responde "converge", "diverge" o "no me preguntes a mí" (no concluye). Ningún criterio lo resuelve todo: la habilidad está en elegir bien. Los presentamos uno a uno, con su lógica, cuándo usarlo y sus puntos ciegos.
+
+**Condición necesaria: el test del término.** Si $\sum a_n$ converge, entonces obligatoriamente sus términos se van a cero: $\lim a_n = 0$. Es una *condición necesaria*, no suficiente. Su uso práctico es el **test de divergencia**: si calculas $\lim a_n$ y no da $0$ (o no existe), la serie **diverge**, sin más análisis. Ejemplo: $\sum \frac{n}{n+1}$ tiene término general que tiende a $1$, no a cero: diverge. Pero si $a_n \to 0$, el test no dice nada: la armónica $\sum \frac{1}{n}$ tiene términos que tienden a cero y aun así diverge. Es el error número uno de los principiantes: confundir "necesario" con "suficiente".
+
+**1. Criterio de comparación.** Idea: si los términos de mi serie son más pequeños que los de una serie que converge, la mía también converge; si son más grandes que los de una que diverge, la mía también diverge. Formalmente: si $0 \leq a_n \leq b_n$ para todo $n$ (desde algún punto) y $\sum b_n$ converge, entonces $\sum a_n$ converge. La desigualdad $0 \leq a_n \leq b_n$ se lee "a sub ene está entre cero y b sub ene": exige términos positivos y comparables. Ejemplo: $\sum \frac{1}{n^2 + 1}$ converge porque $\frac{1}{n^2 + 1} \leq \frac{1}{n^2}$ (denominador más grande, fracción más chica) y $\sum \frac{1}{n^2}$ converge (serie p con $p = 2$). ¿Con quién comparo? Casi siempre con una serie p o una geométrica.
+
+**2. Criterio de comparación al límite.** A veces las desigualdades directas son incómodas. Entonces comparamos "en el infinito": calculamos
+
+$$L = \lim_{n\to\infty} \frac{a_n}{b_n}$$
+
+con $a_n, b_n > 0$. Si ese límite $L$ es un número **positivo y finito** (ni $0$ ni $\infty$), entonces ambas series **convergen o divergen juntas**: se comportan igual porque sus términos son "proporcionales" cuando $n$ es grande. La elección de $b_n$ viene de quedarse solo con el término dominante de $a_n$. Ejemplo: para $\sum \frac{n^2 + 3}{2n^4 - n}$, el término dominante es $\frac{n^2}{2n^4} = \frac{1}{2n^2}$; comparo con $b_n = \frac{1}{n^2}$. El límite del cociente da $\frac{1}{2} > 0$, y como $\sum \frac{1}{n^2}$ converge, la original converge.
+
+**3. Criterio de la razón (D'Alembert).** Pensado para series con factoriales, potencias y productos: cosas que se multiplican, no que se suman. Formamos el cociente de dos términos consecutivos (con valor absoluto para ignorar signos):
+
+$$L = \lim_{n\to\infty} \left|\frac{a_{n+1}}{a_n}\right|$$
+
+Regla: si $L < 1$, la serie **converge** (incluso absolutamente); si $L > 1$, **diverge**; si $L = 1$, **no decide** y hay que usar otro criterio. La intuición: si cada término es "una fracción fija" del anterior con fracción menor que $1$, la serie se comporta como una geométrica convergente. Ejemplo: para $\sum \frac{3^n}{n!}$,
+
+$$\left|\frac{a_{n+1}}{a_n}\right| = \frac{3^{n+1}/(n+1)!}{3^n/n!} = \frac{3}{n+1} \to 0 < 1$$
+
+converge. Nota: el cociente de factoriales se simplifica porque $(n+1)! = (n+1)\cdot n!$.
+
+**4. Criterio de la raíz (Cauchy).** Mismo veredicto, otra herramienta: útil cuando el término general está elevado a la $n$. Calculamos
+
+$$L = \lim_{n\to\infty} \sqrt[n]{|a_n|}$$
+
+La raíz enésima "deshace" la potencia enésima. Regla idéntica: $L < 1$ converge, $L > 1$ diverge, $L = 1$ no decide. Ejemplo: $\sum \left(\frac{n}{2n+1}\right)^n$ tiene $\sqrt[n]{|a_n|} = \frac{n}{2n+1} \to \frac{1}{2} < 1$: converge.
+
+**5. Criterio de la integral.** Conecta series con integrales impropias. Requisitos: existe una función $f$ **positiva, continua y decreciente** con $f(n) = a_n$ (la función que al evaluarla en enteros reproduce la serie). Entonces la serie $\sum a_n$ y la integral impropia $\int_1^{\infty} f(x)\,dx$ **convergen o divergen juntas**. La intuición es geométrica: los términos de la serie son las áreas de rectángulos que encajan entre el área bajo la curva y el área de rectángulos desplazados, así que una se dispara si y solo si la otra lo hace. Es el criterio natural para la serie p: $\int_1^\infty x^{-p}\,dx$ converge exactamente si $p > 1$. Úsalo cuando puedas integrar $f$ fácilmente, típicamente cuando $a_n$ involucra $\ln n$ o potencias.
+
+**6. Criterio de series alternantes (Leibniz).** Una serie **alternante** es aquella cuyos términos cambian de signo en cada paso, como $\sum (-1)^n a_n$ o $\sum (-1)^{n+1} a_n$, con $a_n > 0$. El factor $(-1)^n$ vale $1$ si $n$ es par y $-1$ si $n$ es impar: por eso alterna. El criterio de Leibniz dice: si $a_n$ **decrece** (cada término positivo es más chico que el anterior) y $a_n \to 0$, entonces la serie alternante **converge**. La intuición: las sumas parciales van oscilando alrededor del límite con saltos cada vez más pequeños, y se estabilizan. Además da una cota de error gratuita: la diferencia entre la suma exacta y la suma parcial $S_N$ es **menor o igual que el primer término omitido** $a_{N+1}$. Ejemplo: $\sum \frac{(-1)^{n+1}}{n} = 1 - \frac{1}{2} + \frac{1}{3} - \frac{1}{4} + \cdots$ converge, porque $1/n$ decrece a $0$. Su suma es $\ln 2$, el logaritmo natural de $2$.
+
+**Cómo elegir criterio (hoja de ruta práctica).**
+
+1. ¿$a_n \not\to 0$? Entonces diverge (test del término). Si $a_n \to 0$, sigue.
+2. ¿Es una geométrica, una p, una telescópica o una alternante obvia? Aplica su regla directa.
+3. ¿Hay factoriales o potencias enésimas? Razón (y raíz si todo está elevado a la $n$).
+4. ¿Se parece a una serie p salvo por términos menores? Comparación o comparación al límite.
+5. ¿Puedes integrar el término general? Criterio de la integral.
 
 ## Convergencia absoluta y condicional
-$\sum a_n$ es **absolutamente convergente** si $\sum |a_n|$ converge. Si converge pero no absolutamente, es **condicionalmente convergente**.
 
-**Teorema:** convergencia absoluta implica convergencia. El recíproco no vale.
+Hasta ahora hemos tratado series de términos positivos o alternantes. Ahora refinamos: hay dos maneras de converger.
 
-**Ejemplo clave:** $\sum \dfrac{(-1)^n}{n}$ converge (Leibniz) pero $\sum \dfrac{1}{n}$ diverge: es condicionalmente convergente. Reordenar sus términos puede cambiar la suma (teorema de Riemann).
+**Convergencia absoluta.** Una serie $\sum a_n$ es **absolutamente convergente** si la serie de sus valores absolutos converge:
+
+$$\sum_{n=1}^{\infty} |a_n| \quad \text{converge}$$
+
+Es decir: quitamos todos los signos, ponemos todos los términos positivos, y esa serie de puros positivos converge.
+
+**Convergencia condicional.** Una serie es **condicionalmente convergente** si converge, pero su serie de valores absolutos diverge. La convergencia "sobrevive" solo gracias al juego de signos: los positivos y negativos se compensan entre sí.
+
+**El teorema clave:** si $\sum |a_n|$ converge, entonces $\sum a_n$ converge. Convergencia absoluta **implica** convergencia. La prueba es elegante: como $0 \leq a_n + |a_n| \leq 2|a_n|$, la serie de $a_n + |a_n|$ converge por comparación, y restando la serie convergente de $|a_n|$ queda $a_n$. El recíproco **no vale**: hay series convergentes que no son absolutamente convergentes.
+
+**El ejemplo que hay que dominar:** la **serie armónica alternante**
+
+$$\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n} = 1 - \frac{1}{2} + \frac{1}{3} - \frac{1}{4} + \cdots$$
+
+Converge por Leibniz (vale $\ln 2$), pero su versión en valor absoluto es la armónica $\sum \frac{1}{n}$, que diverge. Por lo tanto es **condicionalmente convergente**.
+
+**Por qué importa la distinción: el teorema de Riemann.** Las series absolutamente convergentes se comportan como sumas finitas: puedes reordenar sus términos en cualquier orden y la suma no cambia. Las condicionalmente convergentes son frágiles: el teorema de reordenación de Riemann dice que, reordenando sus términos de forma astuta, puedes hacer que la serie sume **cualquier número que quieras**, o incluso que diverja. La suma infinita condicional depende del orden de los sumandos, algo que en las sumas finitas jamás ocurre. Es una de las sorpresas más profundas del análisis.
+
+**Cómo clasificar en la práctica.** Si la serie es de términos positivos, convergencia y convergencia absoluta son lo mismo. Si hay signos mezclados, primero prueba la absoluta (con comparación o razón, que suelen trabajar con $|a_n|$ directamente); si la absoluta converge, listo. Si no, prueba si al menos la serie original converge (típicamente por Leibniz): en ese caso es condicional.
 
 ## Series de potencias
-Una serie de potencias es una función definida por una serie:
-$$\sum_{n=0}^{\infty} c_n x^n$$
-Tiene un **radio de convergencia** $R$: converge absolutamente si $|x| < R$ y diverge si $|x| > R$. En $|x| = R$ se analiza caso a caso. Se calcula con la razón: $R = \lim\left|\dfrac{c_n}{c_{n+1}}\right|$.
 
-**Ejemplos:** $\sum x^n$ tiene $R = 1$; $\sum \dfrac{x^n}{n!}$ tiene $R = \infty$; $\sum n!x^n$ tiene $R = 0$.
+**Qué es.** Una **serie de potencias** es una serie cuyos términos contienen potencias de una variable $x$, con coeficientes $c_n$ (números que acompañan a cada potencia):
 
-## Series de Taylor y McLaurin
-Toda función suave se aproxima por su **serie de Taylor** alrededor de $a$:
+$$\sum_{n=0}^{\infty} c_n x^n = c_0 + c_1 x + c_2 x^2 + c_3 x^3 + \cdots$$
+
+Cada $x$ que elijas convierte esto en una serie numérica normal, que puede converger o no. Por eso una serie de potencias es una **función definida por una serie**: para cada $x$ permitido, la suma da un valor $f(x)$.
+
+**Radio de convergencia.** Lo sorprendente es que el conjunto de $x$ donde converge es siempre un intervalo centrado en el origen: existe un número $R \geq 0$ (posiblemente infinito), llamado **radio de convergencia**, tal que la serie converge absolutamente si $|x| < R$ y diverge si $|x| > R$. En los extremos exactos $|x| = R$ no hay regla general: hay que sustituir cada extremo y analizar la serie numérica resultante caso por caso.
+
+**Cómo se calcula.** Con el criterio de la razón aplicado a los coeficientes:
+
+$$R = \lim_{n\to\infty} \left|\frac{c_n}{c_{n+1}}\right|$$
+
+(el cociente de coeficientes consecutivos, sin la $x$). Si el límite es $\infty$, la serie converge para todo $x$ real ($R = \infty$); si es $0$, solo converge en $x = 0$ ($R = 0$).
+
+**Ejemplos de referencia:**
+
+- $\sum_{n=0}^{\infty} x^n$: aquí $c_n = 1$ para todo $n$, así que $R = \lim \left|\frac{1}{1}\right| = 1$. Converge si $|x| < 1$, y su suma es la geométrica $\frac{1}{1-x}$. En $x = 1$ diverge, en $x = -1$ oscila: los extremos fallan.
+- $\sum_{n=0}^{\infty} \frac{x^n}{n!}$: $R = \lim \frac{(n+1)!}{n!} = \lim (n+1) = \infty$. Converge **para todo** $x$. Veremos que esta serie es $e^x$.
+- $\sum_{n=0}^{\infty} n!\, x^n$: $R = \lim \frac{n!}{(n+1)!} = \lim \frac{1}{n+1} = 0$. Solo sirve en $x = 0$. Los factoriales crecen tan rápido que nada de $x$ distinto de cero los doma.
+
+**Derivación e integración término a término.** Dentro del intervalo de convergencia, una serie de potencias se comporta como un polinomio infinito: se puede **derivar e integrar término a término**, y la serie resultante tiene el mismo radio de convergencia. Esto permite resolver ecuaciones diferenciales suponiendo una solución en serie, y genera nuevas series a partir de conocidas.
+
+## Taylor y McLaurin
+
+**La idea.** Un polinomio de grado bajo solo puede acercarse a una función en puntos cercanos a un centro. Si permitimos polinomios "de grado infinito", es decir, series de potencias, podemos representar funciones suaves **exactamente** (al menos dentro de un intervalo). La **serie de Taylor** de una función $f$ alrededor del punto $a$ es
+
 $$f(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!}(x - a)^n$$
-Si $a = 0$ se llama serie de **McLaurin**. Series clave:
-$$e^x = 1 + x + \frac{x^2}{2!} + \frac{x^3}{3!} + \cdots$$
-$$\text{sen}\,x = x - \frac{x^3}{3!} + \frac{x^5}{5!} - \cdots$$
-$$\cos x = 1 - \frac{x^2}{2!} + \frac{x^4}{4!} - \cdots$$
-$$\frac{1}{1-x} = 1 + x + x^2 + \cdots \quad (|x| < 1)$$
 
-La serie de Taylor es la base de las calculadoras y de la aproximación numérica.
+Léela pieza por pieza: $f^{(n)}(a)$ es la **derivada enésima** de $f$ evaluada en $a$ (la derivada aplicada $n$ veces; $f^{(0)}$ es la propia $f$); $n!$ es el factorial; $(x-a)^n$ es la potencia del desplazamiento desde el centro $a$. El término $n$-ésimo mide "cómo de curva" es la función en el orden $n$, ponderado por el factorial. Cuando el centro es $a = 0$, la serie se llama **serie de McLaurin** (caso especial, pero el más usado).
 
-## Series de Fourier (introducción)
-Las series de **Fourier** descomponen funciones **periódicas** en senos y cosenos:
-$$f(x) = \frac{a_0}{2} + \sum_{n=1}^{\infty}\left(a_n\cos\frac{n\pi x}{L} + b_n\,\text{sen}\,\frac{n\pi x}{L}\right)$$
-Los coeficientes miden cuánto aporta cada frecuencia. Una onda cuadrada usa solo armónicos impares. Es la herramienta del procesamiento de señales.
+**Las cuatro series que debes conocer de memoria:**
 
-## Ejemplos resueltos: seis casos explicados
-**Ejemplo 1 (práctica, geométrica).** Suma $\displaystyle\sum_{n=0}^{\infty} 4\left(\frac{1}{2}\right)^n$.
-- Geométrica con $a = 4$, $r = 1/2$.
-- $S = \dfrac{4}{1 - 1/2} = 8$.
+$$e^x = 1 + x + \frac{x^2}{2!} + \frac{x^3}{3!} + \frac{x^4}{4!} + \cdots \quad \text{(válida para todo } x \text{)}$$
 
-**Ejemplo 2 (práctica, telescópica).** Calcula $\displaystyle\sum_{n=1}^{\infty}\frac{1}{n(n+1)}$.
-- Descompón: $\dfrac{1}{n} - \dfrac{1}{n+1}$.
-- Las sumas parciales son $1 - \dfrac{1}{N+1} \to 1$.
+$$\operatorname{sen} x = x - \frac{x^3}{3!} + \frac{x^5}{5!} - \frac{x^7}{7!} + \cdots \quad \text{(todo } x \text{)}$$
 
-**Ejemplo 3 (práctica, criterio de la razón).** ¿Converge $\displaystyle\sum \frac{3^n}{n!}$?
-- $\left|\dfrac{a_{n+1}}{a_n}\right| = \dfrac{3}{n+1} \to 0 < 1$.
-- Converge (de hecho, suma $e^3$).
+$$\cos x = 1 - \frac{x^2}{2!} + \frac{x^4}{4!} - \frac{x^6}{6!} + \cdots \quad \text{(todo } x \text{)}$$
 
-**Ejemplo 4 (práctica, alternante).** Analiza $\displaystyle\sum \frac{(-1)^n}{\sqrt{n}}$.
-- $1/\sqrt{n}$ decrece a 0; por Leibniz converge.
-- No absolutamente: $\sum n^{-1/2}$ diverge (p = 1/2).
+$$\frac{1}{1-x} = 1 + x + x^2 + x^3 + \cdots \quad \text{(solo si } |x| < 1 \text{)}$$
 
-**Ejemplo 5 (aplicación, aproximación).** Aproxima $e^{0.1}$ con tres términos de Taylor y estima el error.
-- $e^{0.1} \approx 1 + 0.1 + 0.005 = 1.105$.
-- Valor real: $1.10517\ldots$; el error es menor que $10^{-4}$.
+Fíjate en los patrones: el seno solo tiene potencias impares y signos alternados; el coseno solo pares, alternados. La última es la geométrica disfrazada: coincide con $\sum x^n$.
 
-**Ejemplo 6 (aplicación, paradoja de Zenón).** Una persona recorre la mitad del camino restante en cada paso. ¿Llega?
-- Distancia total: $\sum \dfrac{1}{2^n} = 1$.
-- La serie converge: en modelo matemático, sí llega (en tiempo finito).
+**Para qué sirve.** Si $x$ es pequeño, las primeras potencias de $x$ se encogen muy rápido y los primeros términos de la serie ya dan una excelente aproximación. Así es como una calculadora calcula $\text{sen}(0.3)$: no dibuja un triángulo, suma $0.3 - \frac{0.3^3}{6} + \frac{0.3^5}{120}$ y corta. La **estimación del error** es obligatoria: si cortas en el término $N$-ésimo, el error cometido está controlado por el término siguiente (en las alternantes, directamente el error es menor que el primer término omitido). Aproximar sin acotar el error es el error de novato por excelencia.
 
-## Contextos donde se aplica
-- **Matemática:** cálculo de funciones, aproximaciones, ecuaciones diferenciales por series.
-- **Física:** series de Fourier en ondas y calor; desarrollos multipolares.
-- **Ingeniería:** procesamiento de señales, comunicaciones, control.
-- **Computación:** evaluación de funciones en calculadoras, análisis de algoritmos.
-- **Finanzas:** anualidades infinitas, modelos de valoración.
+## Introducción a Fourier
 
-## Errores comunes y cómo evitarlos
-- **Concluir convergencia porque $a_n \to 0$.** Es solo una condición necesaria; la armónica diverge.
-- **Usar la razón cuando $L = 1$.** No decide; cambia de criterio.
-- **Confundir convergencia con convergencia absoluta.** La condicional depende del orden.
-- **Olvidar el radio de convergencia.** Una serie de potencias solo vale dentro de su intervalo.
-- **Truncar Taylor sin estimar el error.** Siempre reporta una cota o el término siguiente.
+**El problema.** Las series de Taylor representan funciones suaves alrededor de un punto. Pero muchas funciones importantes del mundo real son **periódicas**: se repiten a intervalos regulares. Una onda de sonido, la corriente alterna, el latido del corazón. Para ellas, los bloques de construcción naturales no son potencias $x^n$, sino **senos y cosenos** de frecuencias crecientes.
 
-## Ejercicios propuestos
-1. ¿Converge $\displaystyle\sum \frac{1}{n^2 + 1}$?
+**La idea.** Una función periódica (de período $2L$, es decir, que se repite cada tramo de longitud $2L$) se puede escribir como superposición de ondas:
+
+$$f(x) = \frac{a_0}{2} + \sum_{n=1}^{\infty}\left(a_n\cos\frac{n\pi x}{L} + b_n\,\operatorname{sen}\frac{n\pi x}{L}\right)$$
+
+Los números $a_0, a_1, a_2, \ldots$ y $b_1, b_2, \ldots$ son los **coeficientes de Fourier**, y se calculan con integrales que miden cuánto se parece la función a cada onda individual: cada coeficiente mide "cuánto aporta esa frecuencia". El término $\frac{a_0}{2}$ es el **nivel medio** de la función (la constante alrededor de la cual oscila). Los términos con $n$ grande corresponden a oscilaciones cada vez más rápidas.
+
+**Un ejemplo clásico.** La onda cuadrada (una señal que salta entre $+1$ y $-1$ alternando tramos) se escribe solo con armónicos impares:
+
+$$\frac{4}{\pi}\left(\operatorname{sen} x + \frac{\operatorname{sen} 3x}{3} + \frac{\operatorname{sen} 5x}{5} + \cdots\right)$$
+
+Con más términos, la aproximación se afila, salvo un salto persistente en las esquinas (el fenómeno de Gibbs). La serie de Fourier es la base matemática del **procesamiento de señales**: el MP3 de tu música, la compresión de imágenes, los ecualizadores y la resonancia magnética funcionan descomponiendo y recombinando frecuencias con estas ideas. Aplicaciones históricas: Fourier la inventó para estudiar la difusión del calor en placas.
+
+## Ejemplos resueltos
+
+Cada ejemplo muestra no solo el resultado, sino la cadena de razonamiento.
+
+**Ejemplo 1 (geométrica).** Suma $\displaystyle\sum_{n=0}^{\infty} 4\left(\frac{1}{2}\right)^n$.
+
+- **Identificación.** Es geométrica: primer término $a = 4$ (el valor en $n=0$), razón $r = \frac{1}{2}$.
+- **Verificación.** $|r| = \frac{1}{2} < 1$: converge.
+- **Fórmula.** $S = \dfrac{a}{1-r} = \dfrac{4}{1 - 1/2} = \dfrac{4}{1/2} = 8$.
+
+**Ejemplo 2 (telescópica).** Calcula $\displaystyle\sum_{n=1}^{\infty}\frac{1}{n(n+1)}$.
+
+- **Descomposición.** $\dfrac{1}{n(n+1)} = \dfrac{1}{n} - \dfrac{1}{n+1}$.
+- **Suma parcial.** $S_N = \left(1 - \frac{1}{2}\right) + \left(\frac{1}{2} - \frac{1}{3}\right) + \cdots + \left(\frac{1}{N} - \frac{1}{N+1}\right) = 1 - \frac{1}{N+1}$.
+- **Límite.** $S_N \to 1$. La serie suma $1$.
+
+**Ejemplo 3 (razón).** ¿Converge $\displaystyle\sum_{n=1}^{\infty} \frac{3^n}{n!}$?
+
+- **Armado del cociente.** $\left|\dfrac{a_{n+1}}{a_n}\right| = \dfrac{3^{n+1}}{(n+1)!} \cdot \dfrac{n!}{3^n} = \dfrac{3}{n+1}$.
+- **Límite.** $\dfrac{3}{n+1} \to 0 < 1$.
+- **Veredicto.** Converge (absolutamente). De hecho su suma es $e^3 - 1$, relacionada con la serie de $e^x$.
+
+**Ejemplo 4 (alternante).** Analiza $\displaystyle\sum_{n=1}^{\infty} \frac{(-1)^n}{\sqrt{n}}$.
+
+- **Leibniz.** Los términos positivos $\frac{1}{\sqrt{n}}$ decrecen y tienden a $0$: la alternante **converge**.
+- **¿Absolutamente?** $\sum \frac{1}{\sqrt{n}} = \sum n^{-1/2}$ es una serie p con $p = \frac{1}{2} \leq 1$: **diverge**.
+- **Conclusión.** Convergencia **condicional**.
+
+**Ejemplo 5 (Taylor aplicado).** Aproxima $e^{0.1}$ con tres términos y estima el error.
+
+- **Serie.** $e^x = 1 + x + \frac{x^2}{2} + \frac{x^3}{6} + \cdots$. Con $x = 0.1$: $e^{0.1} \approx 1 + 0.1 + \frac{0.01}{2} = 1.105$.
+- **Error.** El siguiente término es $\frac{(0.1)^3}{6} = \frac{0.001}{6} \approx 1.7 \times 10^{-4}$. Como la cola es menor que eso, el error es menor que $10^{-4}$.
+- **Comparación.** Valor real $1.10517\ldots$: efectivamente el error es diminuto.
+
+**Ejemplo 6 (Zenón, aplicación conceptual).** Una persona recorre en cada paso la mitad del camino que le queda. ¿Llega a la meta?
+
+- **Modelo.** La distancia total recorrida es $\frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \cdots = \sum_{n=1}^{\infty} \frac{1}{2^n}$.
+- **Cálculo.** Es la geométrica con $r = \frac{1}{2}$ empezando en $n=1$: suma $\frac{1/2}{1 - 1/2} = 1$.
+- **Conclusión.** La suma de infinitos tramos es finita: en el modelo matemático, sí llega (y en tiempo finito, si cada paso toma la mitad de tiempo). La paradoja de Zenón se disuelve al entender que infinitos sumandos pueden tener suma finita.
+
+## Errores comunes
+
+- **Concluir convergencia porque $a_n \to 0$.** Es solo una condición necesaria. La armónica $\sum \frac{1}{n}$ tiene términos que tienden a cero y diverge. Si $a_n \to 0$, hay que seguir analizando; si $a_n \not\to 0$, sí puedes concluir divergencia.
+- **Usar la razón cuando $L = 1$.** El criterio de la razón no decide en $L = 1$: ni converge ni diverge garantizado. Hay que cambiar de criterio (comparación, integral). Ejemplo: la armónica y la serie de $1/n^2$ dan ambas $L = 1$, y una diverge mientras la otra converge.
+- **Confundir convergencia con convergencia absoluta.** Son propiedades distintas. La armónica alternante converge, pero su serie de valores absolutos diverge: es condicional. La convergencia condicional depende del orden de los términos.
+- **Olvidar el radio de convergencia.** Una serie de potencias solo vale dentro de su intervalo: escribir $\frac{1}{1-x} = 1 + x + x^2 + \cdots$ y luego evaluar en $x = 2$ es inválido (daría $\frac{1}{-1} = -1$ contra una serie que explota).
+- **Truncar Taylor sin estimar el error.** Aproximar sin cota de error no es aproximar. Siempre reporta una cota (por ejemplo, el primer término omitido en series alternantes) o no sabrás cuántos decimales son confiables.
+- **Desalinear el índice de la geométrica.** Aplicar $\frac{a}{1-r}$ con un primer término equivocado (olvidando que la fórmula estándar empieza en $n=0$) es el error aritmético más frecuente. Verifica siempre cuál es el término con $n=0$.
+- **Comparar contra la serie equivocada.** Comparar con $\sum \frac{1}{n}$ cuando la serie dominante es $\sum \frac{1}{n^2}$ (o al revés) invierte los veredictos. Identifica el término dominante antes de comparar.
+
+## Ejercicios propuestos (con respuestas)
+
+1. ¿Converge $\displaystyle\sum_{n=1}^{\infty} \frac{1}{n^2 + 1}$?
 2. Suma $\displaystyle\sum_{n=1}^{\infty} 2\left(\frac{2}{3}\right)^n$.
-3. Aplica la razón a $\displaystyle\sum \frac{n!}{10^n}$.
-4. Analiza $\displaystyle\sum \frac{(-1)^n}{n^2}$ (absoluta o condicional).
-5. Halla el radio de convergencia de $\displaystyle\sum \frac{x^n}{n\,3^n}$.
-6. Escribe los cuatro primeros términos de Taylor de $\cos x$ en $0$.
-7. $\sum 1/n^{1.1}$: ¿converge?
-8. Aproxima $\text{sen}(0.2)$ con dos términos y estima el error.
+3. Aplica el criterio de la razón a $\displaystyle\sum_{n=1}^{\infty} \frac{n!}{10^n}$.
+4. Analiza $\displaystyle\sum_{n=1}^{\infty} \frac{(-1)^n}{n^2}$: ¿convergencia absoluta o condicional?
+5. Halla el radio de convergencia de $\displaystyle\sum_{n=1}^{\infty} \frac{x^n}{n\,3^n}$.
+6. Escribe los cuatro primeros términos de la serie de Taylor de $\cos x$ alrededor de $0$.
+7. $\displaystyle\sum_{n=1}^{\infty} \frac{1}{n^{1.1}}$: ¿converge?
+8. Aproxima $\operatorname{sen}(0.2)$ con dos términos y estima el error.
 
-**Respuestas:** 1) Converge (comparación con $n^{-2}$). 2) $4$. 3) Diverge ($L = \infty$). 4) Absolutamente (p = 2). 5) $R = 3$. 6) $1 - x^2/2 + x^4/24 - x^6/720$. 7) Converge (p > 1). 8) $0.2$; error menor que $0.2^3/6 \approx 0.0013$.
+**Respuestas.**
+
+1. **Converge.** Por comparación: $\frac{1}{n^2 + 1} \leq \frac{1}{n^2}$ y la serie p con $p = 2$ converge.
+2. **Suma $4$.** Geométrica con $a = 2 \cdot \frac{2}{3} = \frac{4}{3}$ (primer término, en $n=1$) y $r = \frac{2}{3}$: $S = \frac{4/3}{1 - 2/3} = 4$.
+3. **Diverge.** $\left|\frac{a_{n+1}}{a_n}\right| = \frac{n+1}{10} \to \infty > 1$.
+4. **Absolutamente convergente.** $\sum \frac{1}{n^2}$ converge (p = 2), luego la alternante converge absolutamente.
+5. **$R = 3$.** $c_n = \frac{1}{n\,3^n}$; $R = \lim \left|\frac{c_n}{c_{n+1}}\right| = \lim \frac{(n+1)3^{n+1}}{n\,3^n} = 3$.
+6. **$1 - \dfrac{x^2}{2!} + \dfrac{x^4}{4!} - \dfrac{x^6}{6!}$**, es decir $1 - \frac{x^2}{2} + \frac{x^4}{24} - \frac{x^6}{720}$.
+7. **Converge.** Serie p con $p = 1.1 > 1$.
+8. **$\operatorname{sen}(0.2) \approx 0.2$**, con error menor que $\frac{0.2^3}{6} \approx 0.0013$ (el término cúbico omitido).
 
 ## Resumen
-- La serie converge si sus sumas parciales convergen; $a_n \to 0$ es necesario, no suficiente.
-- Geométrica y p son las series de referencia; los criterios comparan contra ellas.
-- Razón y raíz deciden salvo $L = 1$; la integral conecta con integrales impropias; Leibniz resuelve alternantes.
-- Absoluta implica convergente; la condicional es frágil al reordenar.
-- Taylor y Fourier representan funciones como series: la base del cálculo numérico y de las señales.
+
+- **La serie converge si sus sumas parciales convergen**; $a_n \to 0$ es condición necesaria pero no suficiente (la armónica diverge).
+- **Series de referencia:** la geométrica converge si $|r| < 1$ con suma $\frac{a}{1-r}$; la serie p converge si $p > 1$; la telescópica se colapsa por cancelación.
+- **Criterios:** comparación y comparación al límite se apoyan en las de referencia; razón y raíz deciden salvo en $L = 1$; la integral conecta series con integrales impropias; Leibniz resuelve las alternantes.
+- **Absoluta implica convergente**; la condicional es frágil: reordenar puede cambiar su suma (Riemann).
+- **Series de potencias:** convergen en un intervalo $|x| < R$; se derivan e integran término a término.
+- **Taylor y Fourier representan funciones como series:** Taylor con potencias alrededor de un punto (cálculo numérico), Fourier con senos y cosenos para funciones periódicas (señales y ondas).
 `,
 
 
   "calc-vectorial": String.raw`
-## Campos vectoriales
-Un **campo vectorial** asigna un vector a cada punto: $\vec{F}(x,y) = \langle P(x,y), Q(x,y) \rangle$. Ejemplos: campos de velocidad de fluidos, campos gravitatorios, campos eléctricos.
+## ¿Qué es un campo vectorial?
 
-**Conceptos asociados:**
-- **Divergencia:** $\nabla \cdot \vec{F} = \dfrac{\partial P}{\partial x} + \dfrac{\partial Q}{\partial y}$: mide la tendencia a "emanar" de un punto (fuente o sumidero).
-- **Rotacional:** $\nabla \times \vec{F} = \dfrac{\partial Q}{\partial x} - \dfrac{\partial P}{\partial y}$ (en el plano): mide la circulación local.
+Hasta ahora estudiaste funciones que reciben un número y devuelven un número, como $f(x) = x^2$, o que reciben dos números y devuelven uno, como $f(x,y) = x^2 + y^2$ (la altura de un punto del terreno). En el cálculo vectorial damos un paso más: estudiamos funciones que reciben un **punto** del plano o del espacio y devuelven **un vector**, es decir, una flecha con dirección y magnitud.
 
-Si $\nabla \cdot \vec{F} = 0$, el campo es **incompresible**; si $\nabla \times \vec{F} = \vec{0}$, es **irrotacional** (conservativo en dominios simples).
+Para entender la idea, piensa en un mapa del viento en el pronóstico del tiempo. En cada punto del mapa (cada punto es un par de coordenadas $(x,y)$) el mapa dibuja una **flecha**: la dirección de la flecha indica hacia dónde sopla el viento en ese punto, y su largo indica la velocidad. Esa colección de flechas —una por punto— es un **campo vectorial**. Otros ejemplos de la vida real:
+
+- El campo de velocidades del agua en un río: en cada punto, una flecha que dice hacia dónde y con qué rapidez se mueve el agua.
+- El campo gravitatorio de la Tierra: en cada punto del espacio, una flecha que apunta hacia el centro de la Tierra y cuya longitud dice la fuerza con que atrae a una masa.
+- El campo eléctrico de una carga: en cada punto, una flecha que apunta alejándose de la carga (si es positiva) y que se acorta al alejarse.
+- El campo magnético de un imán, visible con limaduras de hierro: las limaduras se alinean siguiendo las flechas del campo.
+
+Antes de seguir, recordemos qué es un vector. Un vector en el plano es un par ordenado de números: $\vec{v} = \langle a, b \rangle$. Los corchetes angulares $\langle\ \rangle$ son solo una forma de escribir el vector que evita confundirlo con el punto $(a,b)$; también se escribe $\vec{v} = a\,\hat{i} + b\,\hat{j}$, donde $\hat{i}$ y $\hat{j}$ son los **vectores unitarios** (de largo 1) que apuntan en la dirección de los ejes $x$ e $y$ respectivamente. El primer número, $a$, es la componente en $x$; el segundo, $b$, la componente en $y$. En el espacio usamos tres componentes: $\vec{v} = \langle a, b, c \rangle = a\,\hat{i} + b\,\hat{j} + c\,\hat{k}$. El **largo** o magnitud del vector se escribe $|\vec{v}|$ y se calcula con Pitágoras: $|\langle a,b \rangle| = \sqrt{a^2 + b^2}$.
+
+Un **campo vectorial** es entonces una regla que a cada punto del plano le asigna un vector. En el plano se escribe
+
+$$\vec{F}(x,y) = \langle P(x,y),\, Q(x,y) \rangle$$
+
+y en el espacio
+
+$$\vec{F}(x,y,z) = \langle P(x,y,z),\, Q(x,y,z),\, R(x,y,z) \rangle$$
+
+Aquí, cada símbolo tiene un papel concreto:
+
+- $\vec{F}$ es el campo. La flechita encima de la $F$ es la señal de que el resultado de $\vec{F}$ es un **vector**, no un número. Sin la flechita, $F$, normalmente se reserva para funciones escalares (que devuelven un número).
+- $P$ y $Q$ (y $R$ en el espacio) son funciones ordinarias de dos (o tres) variables: son las **componentes** del campo. Por ejemplo, en $\vec{F}(x,y) = \langle -y, x \rangle$ las componentes son $P(x,y) = -y$ y $Q(x,y) = x$.
+- La notación $\langle a, b \rangle$ significa: "el vector cuya primera componente es $a$ y cuya segunda componente es $b$".
+
+Veamos dos campos clásicos del plano para fijar la idea. El campo $\vec{F}(x,y) = \langle x, y \rangle$ es el **campo radial**: en cada punto la flecha apunta directamente hacia afuera del origen, y su largo es la distancia al origen. Si pones el dedo en el punto $(2,0)$, el campo vale $\langle 2, 0 \rangle$: una flecha que apunta a la derecha, de largo 2. En el punto $(0,-3)$ vale $\langle 0, -3 \rangle$: flecha hacia abajo, de largo 3. Es exactamente el patrón que dibujarías si el origen fuera un manantial del que brota agua en todas direcciones.
+
+El campo $\vec{F}(x,y) = \langle -y, x \rangle$ es el **campo de rotación**. En el punto $(1,0)$ vale $\langle 0, 1 \rangle$: una flecha que apunta hacia arriba. En $(0,1)$ vale $\langle -1, 0 \rangle$: flecha hacia la izquierda. En $(-1,0)$ vale $\langle 0,-1 \rangle$: hacia abajo. ¿Notas el patrón? Las flechas van girando alrededor del origen, siempre tangentes a los círculos centrados en él, como el agua de un remolino. Además, mientras más lejos del origen, más largas son las flechas.
+
+Estos dos ejemplos anticipan las dos preguntas fundamentales del cálculo vectorial: dado un campo, ¿tiende a **emanar** de los puntos (como un manantial) o a **absorber** hacia ellos (como un desagüe)? ¿tiende a **girar** alrededor de los puntos (como un remolino) o no? La primera pregunta la responde la **divergencia** y la segunda el **rotacional**, que veremos en detalle más adelante.
+
+Una observación importante: no confundas campo vectorial con función escalar. La temperatura de una habitación es un **campo escalar**: a cada punto le corresponde un número (los grados). El viento en esa misma habitación es un **campo vectorial**: a cada punto le corresponde una flecha. El cálculo vectorial estudia los segundos y cómo se relacionan con los primeros.
+
+## Cómo leer la notación
+
+El cálculo vectorial tiene fama de difícil, pero la mayor parte de la dificultad está en los símbolos. Vamos a leerlos uno por uno, con calma. Todos aparecerán una y otra vez.
+
+**Producto punto.** El **producto punto** (o producto escalar) entre dos vectores $\vec{u} = \langle u_1, u_2 \rangle$ y $\vec{v} = \langle v_1, v_2 \rangle$ es un **número**, definido así:
+
+$$\vec{u} \cdot \vec{v} = u_1 v_1 + u_2 v_2$$
+
+Multiplicas componente con componente y sumas. Por ejemplo, $\langle 3, 4 \rangle \cdot \langle 2, 2 \rangle = 3\cdot 2 + 4\cdot 2 = 6 + 8 = 14$. ¿Qué significa geométricamente? Mide **cuánto se alinean** los dos vectores: si apuntan en la misma dirección, el producto punto es grande y positivo; si son perpendiculares, vale cero; si apuntan en direcciones opuestas, es negativo. La interpretación física más importante para nosotros es el **trabajo**: si una fuerza $\vec{F}$ empuja un objeto que se desplaza según el vector $\vec{d}$, el trabajo realizado es $\vec{F} \cdot \vec{d}$. Si empujas perpendicular al movimiento, no haces trabajo (el producto punto vale cero). En el espacio, la fórmula agrega la tercera componente: $\vec{u} \cdot \vec{v} = u_1v_1 + u_2v_2 + u_3v_3$.
+
+**Producto cruz.** El **producto cruz** solo existe en el espacio (tres componentes). Se escribe $\vec{u} \times \vec{v}$ y su resultado es un **vector** perpendicular a ambos. Su magnitud es $|\vec{u} \times \vec{v}| = |\vec{u}|\,|\vec{v}|\,\text{sen}\,\theta$, donde $\theta$ es el ángulo entre ambos; esa magnitud es exactamente el área del paralelogramo que forman los dos vectores. La fórmula completa, si $\vec{u} = \langle u_1, u_2, u_3 \rangle$ y $\vec{v} = \langle v_1, v_2, v_3 \rangle$, es
+
+$$\vec{u} \times \vec{v} = \langle u_2 v_3 - u_3 v_2,\; u_3 v_1 - u_1 v_3,\; u_1 v_2 - u_2 v_1 \rangle$$
+
+Por ejemplo, $\hat{i} \times \hat{j} = \hat{k}$, $\hat{j} \times \hat{k} = \hat{i}$ y $\hat{k} \times \hat{i} = \hat{j}$. El sentido del vector resultante se decide con la **regla de la mano derecha**: si apuntas los dedos de la mano derecha en la dirección del primer vector y los cierras hacia el segundo, el pulgar indica la dirección del producto cruz. La usaremos para orientar superficies.
+
+**Derivadas parciales y el gradiente.** Cuando una función depende de varias variables, la derivada respecto de una de ellas (tratando a las demás como si fueran constantes) se escribe con la "d redondeada": $\partial$. Por ejemplo, para $f(x,y) = x^2 y + y^3$, la parcial respecto de $x$ es $\dfrac{\partial f}{\partial x} = 2xy$ (la $y$ se trata como constante), y la respecto de $y$ es $\dfrac{\partial f}{\partial y} = x^2 + 3y^2$ (ahora la $x$ es la constante). A veces las escribimos compactamente como $f_x$ y $f_y$.
+
+El **gradiente** de una función escalar $f$ es el vector formado por todas sus derivadas parciales:
+
+$$\nabla f = \left\langle \frac{\partial f}{\partial x},\; \frac{\partial f}{\partial y} \right\rangle \quad \text{en el plano}, \qquad \nabla f = \left\langle \frac{\partial f}{\partial x},\; \frac{\partial f}{\partial y},\; \frac{\partial f}{\partial z} \right\rangle \quad \text{en el espacio}$$
+
+El gradiente apunta en la dirección en que $f$ crece más rápido (piensa en una montaña: el gradiente de la altura es la flecha de máxima pendiente), y su longitud es la rapidez de ese crecimiento.
+
+**El operador nabla.** El símbolo $\nabla$ se lee "nabla" (o "del") y representa un operador: una "receta de derivación" con forma de vector:
+
+$$\nabla = \left\langle \frac{\partial}{\partial x},\; \frac{\partial}{\partial y} \right\rangle$$
+
+No es un vector de números, sino de instrucciones: "deriva respecto de $x$", "deriva respecto de $y$". Con ese operador se construyen las tres operaciones estrella del curso:
+
+- Aplicado a una función escalar, produce el gradiente: $\nabla f$ (un vector).
+- Aplicado a un campo vectorial con **punto**, produce la divergencia: $\nabla \cdot \vec{F}$ (un número).
+- Aplicado a un campo vectorial con **cruz**, produce el rotacional: $\nabla \times \vec{F}$ (un vector en el espacio, un número en el plano).
+
+La intuición: "nabla" es como un vector de derivadas, y podemos usarlo como si fuera un vector común: multiplicarlo "punto" o "cruz" por un campo.
+
+**Curvas parametrizadas.** Para recorrer una curva, describimos sus puntos con un parámetro $t$, que puedes pensar como el tiempo. Escribimos
+
+$$\vec{r}(t) = \langle x(t),\, y(t) \rangle$$
+
+que significa: en el instante $t$, estamos en el punto de coordenadas $(x(t), y(t))$. Por ejemplo, $\vec{r}(t) = \langle t, t^2 \rangle$ recorre la parábola $y = x^2$: en $t = 0$ estamos en $(0,0)$, en $t = 1$ en $(1,1)$, en $t = 2$ en $(2,4)$. La **derivada** $\vec{r}'(t) = \langle x'(t), y'(t) \rangle$ se calcula componente a componente y es el vector velocidad: apunta en la dirección del movimiento (tangente a la curva) y su largo es la rapidez. Para $\vec{r}(t) = \langle t, t^2 \rangle$, la velocidad es $\vec{r}'(t) = \langle 1, 2t \rangle$.
+
+**Símbolos de integral.** Distintos contextos usan distintos símbolos de integral:
+
+- $\int_C$: integral a lo largo de una curva $C$ (integral de línea).
+- $\oint_C$: la misma, pero para una curva **cerrada** (empieza y termina en el mismo punto); se llama circulación cuando integra un campo.
+- $\iint_D$: integral doble sobre una región plana $D$ (área o acumulación en el plano).
+- $\iint_S$: integral sobre una superficie $S$ (flujo).
+- $\iiint_V$: integral triple sobre un volumen $V$.
+
+**Los "d" que acompañan.** En estas integrales aparecen piezas como $d\vec{r}$, $ds$, $dA$, $dV$ y $dS$, y conviene leerlas como "trocitos infinitamente pequeños":
+
+- $d\vec{r} = \vec{r}'(t)\,dt$ es un **desplazamiento infinitesimal**: un trocito de curva, con dirección. Es el análogo vectorial del $dx$ de siempre.
+- $ds = |\vec{r}'(t)|\,dt$ es un trocito de **longitud de arco**: lo mismo, pero sin dirección (solo el largo).
+- $dA$ es un trocito de **área** en el plano; $dV$, un trocito de **volumen**; $dS$, un trocito de **área sobre una superficie**.
+
+Con esto ya podemos leer expresiones completas. Por ejemplo,
+
+$$\int_C \vec{F} \cdot d\vec{r}$$
+
+se lee: "a lo largo de la curva $C$, suma los productos punto del campo $\vec{F}$ con cada trocito dirigido de la curva". Y
+
+$$\iint_S \vec{F} \cdot \vec{n}\,dS$$
+
+se lee: "sobre la superficie $S$, suma los productos punto del campo con el vector normal unitario $\vec{n}$ en cada trocito de superficie". Un último símbolo: $\vec{n}$ (o $\hat{n}$) es el **vector normal unitario**, es decir, la flecha de largo 1 perpendicular a la superficie, que indica hacia qué lado mira la superficie. En un disco horizontal que mira hacia arriba, $\vec{n} = \langle 0, 0, 1 \rangle$.
+
+## Divergencia y rotacional
+
+Dado un campo vectorial, las dos preguntas naturales son: ¿el campo "brota" de los puntos o "se hunde" en ellos? y ¿el campo "gira" alrededor de los puntos o no? La **divergencia** responde la primera; el **rotacional**, la segunda. Son las dos herramientas de diagnóstico de un campo.
+
+**Divergencia.** En el plano, para $\vec{F} = \langle P, Q \rangle$, la divergencia es el número
+
+$$\nabla \cdot \vec{F} = \frac{\partial P}{\partial x} + \frac{\partial Q}{\partial y}$$
+
+Es decir: derivada de la primera componente respecto de $x$, más derivada de la segunda componente respecto de $y$. En el espacio se agrega la tercera:
+
+$$\nabla \cdot \vec{F} = \frac{\partial P}{\partial x} + \frac{\partial Q}{\partial y} + \frac{\partial R}{\partial z}$$
+
+**Qué mide.** La mejor analogía es un fluido. Imagina que $\vec{F}$ es el campo de velocidades de un gas o un líquido. Coloca una cajita transparente diminuta alrededor de un punto y mira cuánto fluido sale por sus paredes menos cuánto entra. Si sale más de lo que entra, en ese punto hay una **fuente** (un manantial que inyecta fluido): la divergencia es positiva. Si entra más de lo que sale, hay un **sumidero** (un desagüe): la divergencia es negativa. Si entra exactamente lo que sale, el fluido ni se crea ni se destruye ahí: la divergencia es cero. La divergencia mide, por unidad de volumen, cuánto campo se **genera** en el punto.
+
+- $\nabla \cdot \vec{F} > 0$: fuente en ese punto.
+- $\nabla \cdot \vec{F} < 0$: sumidero.
+- $\nabla \cdot \vec{F} = 0$: ni fuente ni sumidero; el campo se llama **incompresible** (el fluido no se comprime ni se expande).
+
+**Ejemplo.** Para $\vec{F}(x,y) = \langle x^2 y,\; y^2 x \rangle$, las componentes son $P = x^2y$ y $Q = y^2x$. Entonces $\dfrac{\partial P}{\partial x} = 2xy$ y $\dfrac{\partial Q}{\partial y} = 2xy$, y la divergencia es $2xy + 2xy = 4xy$. En el punto $(1,1)$ vale $4$: hay fuente. En el punto $(1,-1)$ vale $-4$: hay sumidero. El mismo campo se comporta distinto en distintos lugares: eso es lo valioso de la divergencia, que es una función de la posición, no un número fijo.
+
+**Rotacional.** En el plano, el rotacional es el número
+
+$$\nabla \times \vec{F} = \frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y}$$
+
+Es decir: derivada de la segunda componente respecto de $x$, menos derivada de la primera respecto de $y$ (¡atención al orden!). En el espacio el rotacional es un **vector**:
+
+$$\nabla \times \vec{F} = \left\langle \frac{\partial R}{\partial y} - \frac{\partial Q}{\partial z},\;\; \frac{\partial P}{\partial z} - \frac{\partial R}{\partial x},\;\; \frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} \right\rangle$$
+
+Hay un truco para recordar la fórmula: es como calcular el "producto cruz" del operador $\nabla = \langle \partial_x, \partial_y, \partial_z \rangle$ con $\vec{F} = \langle P, Q, R \rangle$. Observa el patrón: cada componente tiene la forma "derivada de una componente respecto de una variable, menos derivada de otra componente respecto de la otra variable". Nota que, en el plano, la "versión en 2D" es simplemente la tercera componente de la fórmula espacial.
+
+**Qué mide.** La analogía ahora es una **ruedita de paletas** (como un molinito de papel) colocada dentro del fluido. Si el fluido pasa a distintas velocidades por un lado y por el otro, la ruedita gira; si el fluido la empuja igual de ambos lados, no gira. El rotacional mide la **tendencia local a girar**: cuánto gira la ruedita en cada punto.
+
+- $\nabla \times \vec{F} > 0$ (en el plano): giro en sentido antihorario (contrario a las agujas del reloj).
+- $\nabla \times \vec{F} < 0$: giro horario.
+- $\nabla \times \vec{F} = 0$ (o $\vec{0}$ en el espacio): el campo es **irrotacional**: no produce giro local.
+
+**Ejemplo.** El campo de rotación $\vec{F} = \langle -y, x \rangle$ tiene $P = -y$, $Q = x$, así que $\dfrac{\partial Q}{\partial x} = 1$ y $\dfrac{\partial P}{\partial y} = -1$. Su rotacional es $1 - (-1) = 2$: positivo en todas partes, lo que confirma que una ruedita de paletas giraría antihorario en cualquier punto. En cambio, el campo radial $\vec{F} = \langle x, y \rangle$ tiene $P = x$, $Q = y$, con $\dfrac{\partial Q}{\partial x} = 0$ y $\dfrac{\partial P}{\partial y} = 0$: rotacional cero. Un manantial que brota en todas direcciones no hace girar a la ruedita; un remolino sí.
+
+Un detalle para no confundirse: en el espacio, la divergencia es un número pero el rotacional es un vector. ¿Por qué vector? Porque en el espacio hay muchos ejes posibles de giro: el vector rotacional indica la dirección del **eje** alrededor del cual gira el fluido (por la regla de la mano derecha), y su longitud indica la intensidad del giro.
+
+Los campos con divergencia cero aparecen en fluidos incompresibles (agua, en buena aproximación) y en el campo magnético (no hay "cargas magnéticas" que sean fuentes). Los campos con rotacional cero aparecen, como veremos, en la gravitación y la electrostática, y están ligados a la idea de **energía potencial**.
 
 ## Integrales de línea
-La integral de línea acumula un campo a lo largo de una curva:
-$$\int_C \vec{F} \cdot d\vec{r} = \int_a^b \vec{F}(\vec{r}(t)) \cdot \vec{r}'(t)\,dt$$
 
-Interpretación física: **trabajo** realizado por el campo al mover una partícula por $C$.
+Hasta ahora las integrales recorrían el eje $x$ (de $a$ a $b$) o una región plana. Una **integral de línea** recorre una **curva**: sumamos algo a lo largo de un camino. La motivación física es el trabajo.
 
-**Ejemplo.** $\vec{F} = \langle y, x \rangle$ a lo largo de $\vec{r}(t) = \langle t, t^2 \rangle$, $t \in [0,1]$: $\int_0^1 (t^2 + t \cdot 2t)\,dt = \int_0^1 3t^2\,dt = 1$.
+**El problema del trabajo.** Una fuerza constante que desplaza un objeto en línea recta hace un trabajo $\vec{F} \cdot \vec{d}$ (producto punto, ya lo vimos). Pero en la realidad la fuerza suele **cambiar de punto a punto** (la gravedad de un planeta es distinta según la altura) y el camino suele ser **curvo**. La estrategia es la de siempre en cálculo: partimos el camino en trocitos tan pequeños que en cada uno la fuerza sea casi constante y el trozo casi recto; en cada trocito el trabajo es aproximadamente $\vec{F} \cdot \vec{r}'(t)\,dt$; sumamos todo y tomamos el límite. El resultado es la integral de línea:
 
-También existe la integral de línea respecto a longitud de arco: $\int_C f\,ds$, usada para masa de alambres.
+$$\int_C \vec{F} \cdot d\vec{r} = \int_a^b \vec{F}\big(\vec{r}(t)\big) \cdot \vec{r}'(t)\,dt$$
 
-## Campos conservativos y potencial
-$\vec{F}$ es **conservativo** si $\vec{F} = \nabla f$ para una función potencial $f$. Entonces:
-$$\int_C \vec{F} \cdot d\vec{r} = f(\vec{r}(b)) - f(\vec{r}(a))$$
-Es decir, el trabajo **no depende del camino**, solo de los extremos.
+**Cómo leer la fórmula, pieza por pieza.** Supongamos que la curva $C$ se recorre con la parametrización $\vec{r}(t)$ desde $t = a$ hasta $t = b$.
 
-**Criterio:** si $\vec{F}$ está definido en un dominio **simplemente conexo** y $\nabla \times \vec{F} = \vec{0}$, entonces es conservativo. En dominios con agujeros, el rotacional cero no basta: el campo $\langle -y, x \rangle/(x^2+y^2)$ tiene rotacional cero pero su integral sobre el círculo es $2\pi$.
+- $\vec{r}(t) = \langle x(t), y(t) \rangle$: la posición sobre la curva en el instante $t$.
+- $\vec{F}(\vec{r}(t))$: el campo **evaluado en el punto de la curva**. Aquí está el paso más olvidado: hay que sustituir $x$ por $x(t)$ e $y$ por $y(t)$ en las componentes del campo.
+- $\vec{r}'(t) = \langle x'(t), y'(t) \rangle$: el vector velocidad, tangente a la curva. La longitud de cada trocito es $|\vec{r}'(t)|\,dt$, y su dirección la da $\vec{r}'(t)$.
+- El producto punto $\vec{F} \cdot \vec{r}'$: es la **componente del campo en la dirección del movimiento**, multiplicada por la rapidez. Solo la parte del campo que empuja **a lo largo del camino** hace trabajo; la parte perpendicular no contribuye. Eso es exactamente lo que selecciona el producto punto.
+- El resultado es un número: el trabajo total realizado por el campo al mover una partícula por $C$.
+
+Cuando la curva es **cerrada** (vuelve al punto de partida), la integral se escribe con un circulito, $\oint_C \vec{F} \cdot d\vec{r}$, y el resultado se llama **circulación** del campo alrededor de $C$: cuánto "empuja" el campo en promedio a lo largo del circuito.
+
+**Ejemplo resuelto.** Calculemos el trabajo de $\vec{F} = \langle y, x \rangle$ a lo largo de la parábola $\vec{r}(t) = \langle t, t^2 \rangle$ desde $t = 0$ hasta $t = 1$ (es decir, de $(0,0)$ a $(1,1)$).
+
+1. Velocidad: $\vec{r}'(t) = \langle 1, 2t \rangle$.
+2. Campo sobre la curva: en el punto $(t, t^2)$ el campo vale $\vec{F}(t, t^2) = \langle t^2, t \rangle$ (sustituimos $x = t$, $y = t^2$).
+3. Producto punto: $\langle t^2, t \rangle \cdot \langle 1, 2t \rangle = t^2 \cdot 1 + t \cdot 2t = t^2 + 2t^2 = 3t^2$.
+4. Integral: $\int_0^1 3t^2\,dt = \left[ t^3 \right]_0^1 = 1$.
+
+El trabajo es $1$ (en las unidades que sean). Probemos ahora el **mismo campo entre los mismos puntos** pero por el camino recto $\vec{r}(t) = \langle t, t \rangle$, $0 \le t \le 1$: la velocidad es $\langle 1, 1 \rangle$, el campo sobre el camino es $\langle t, t \rangle$, el producto punto da $t + t = 2t$, y la integral $\int_0^1 2t\,dt = 1$. ¡El mismo resultado! No es casualidad: este campo es conservativo, y el trabajo solo depende de los extremos. Lo veremos en la próxima sección.
+
+**La integral de línea de un campo escalar.** Existe otra integral de línea, que no integra un campo vectorial sino una función ordinaria, y que usa la longitud de arco:
+
+$$\int_C f\,ds = \int_a^b f\big(\vec{r}(t)\big)\,|\vec{r}'(t)|\,dt$$
+
+Fíjate en las dos diferencias con la anterior: no hay producto punto, y aparece el **largo** de la velocidad, $|\vec{r}'(t)|$, no el vector. Sirve para sumar cantidades repartidas a lo largo de un hilo: si $f$ es la densidad de un alambre (masa por unidad de longitud), la integral da la **masa total del alambre**; si $f = 1$, da simplemente su **longitud**.
+
+**La dirección importa.** Recorrer la curva al revés (de $t = b$ a $t = a$) cambia el signo de $\vec{r}'$ y por tanto el signo de la integral vectorial: $\int_{-C} \vec{F} \cdot d\vec{r} = -\int_C \vec{F} \cdot d\vec{r}$. Físicamente: bajar la montaña es lo contrario de subirla. En cambio, la integral escalar $\int_C f\,ds$ no cambia de signo, porque $|\vec{r}'|$ es positivo en cualquier dirección: la masa del alambre es la misma lo mires desde donde lo mires.
+
+## Campos conservativos y función potencial
+
+Algunos campos tienen una propiedad mágica: el trabajo entre dos puntos **no depende del camino**. En el ejemplo anterior, $\vec{F} = \langle y, x \rangle$ dio trabajo $1$ tanto por la parábola como por la recta. Estos campos se llaman **conservativos** y son los más importantes en física.
+
+**Definición.** Un campo $\vec{F}$ es **conservativo** si existe una función escalar $f$ (la **función potencial**) tal que
+
+$$\vec{F} = \nabla f$$
+
+es decir, el campo es el gradiente de $f$. En componentes: $P = f_x$ y $Q = f_y$ (en el espacio, también $R = f_z$). La palabra "potencial" viene de la física: piensa en la **energía potencial**. La gravedad cerca de la superficie terrestre se describe con un potencial $f(x,y) = mgy$ (masa por gravedad por altura), y el campo gravitatorio es su gradiente $\nabla f = \langle 0, mg \rangle$: una fuerza constante hacia abajo. La energía eléctrica de un circuito también es un potencial: la palabra "voltaje" es sinónimo de diferencia de potencial.
+
+**El teorema fundamental de las integrales de línea.** Si $\vec{F} = \nabla f$ y $C$ es una curva que va del punto $A = \vec{r}(a)$ al punto $B = \vec{r}(b)$, entonces
+
+$$\int_C \vec{F} \cdot d\vec{r} = f(B) - f(A)$$
+
+El trabajo es la **diferencia de potencial** entre los extremos, exactamente como la integral de una derivada es la diferencia de la antiderivada ($\int_a^b f'(x)\,dx = f(b) - f(a)$). Esta es la primera de una cadena de "teoremas fundamentales" que recorrerá todo el curso. Dos consecuencias inmediatas:
+
+- El trabajo **no depende del camino**: cualquier curva entre $A$ y $B$ da lo mismo.
+- Sobre una curva **cerrada**, el trabajo es cero: $\oint_C \vec{F} \cdot d\vec{r} = f(A) - f(A) = 0$. Subes y bajas la misma montaña: el balance neto es cero.
+
+**¿Cómo saber si un campo es conservativo sin encontrar el potencial?** En un dominio **simplemente conexo** (en una sola pieza y **sin agujeros**), la respuesta es simple:
+
+$$\vec{F}\ \text{conservativo} \iff \nabla \times \vec{F} = \vec{0}$$
+
+En el plano el rotacional es $Q_x - P_y$, así que la condición es $Q_x = P_y$ (la derivada de la segunda componente respecto de $x$ igual a la de la primera respecto de $y$). La condición "sin agujeros" es esencial, y el ejemplo clásico lo demuestra: el campo
+
+$$\vec{F}(x,y) = \left\langle \frac{-y}{x^2 + y^2},\; \frac{x}{x^2 + y^2} \right\rangle$$
+
+tiene rotacional cero (puedes comprobarlo derivando: ambas parciales cruzadas coinciden), pero su circulación alrededor del círculo unitario es $2\pi$, no cero. ¿Qué pasó? El campo está definido en el plano **sin el origen** (allí el denominador se anula), y ese dominio tiene un agujero: el punto $(0,0)$. El campo da vueltas alrededor del agujero, como un remolino alrededor de un desagüe, y aunque localmente no "gira", globalmente sí lo hace. Moraleja: rotacional cero **más** dominio sin agujeros garantiza conservativo.
+
+**Cómo encontrar el potencial, paso a paso.** Supongamos $\vec{F} = \langle 2x, 2y \rangle$ y busquemos $f$ con $\nabla f = \vec{F}$.
+
+1. La primera componente nos da $f_x = 2x$. Integramos respecto de $x$ tratando a $y$ como constante: $f = x^2 + g(y)$. La "constante" de integración no puede ser una constante fija, sino una función $g(y)$, porque al derivar respecto de $x$ cualquier función que solo dependa de $y$ desaparece.
+2. Ahora usamos la segunda componente: $f_y = 2y$. Derivamos nuestra $f$: $f_y = 0 + g'(y)$. Igualando: $g'(y) = 2y$, de donde $g(y) = y^2 + C$ (ahora sí, $C$ es una constante común y corriente).
+3. El potencial es $f(x,y) = x^2 + y^2 + C$. La constante $C$ es irrelevante para los cálculos, porque al hacer $f(B) - f(A)$ se cancela; suele escribirse $C$ o simplemente omitirse.
+
+**Ejemplo de uso.** Calculemos el trabajo de $\vec{F} = \langle 2x, 2y \rangle$ de $(0,0)$ a $(1,1)$ por cualquier camino. Con el potencial $f = x^2 + y^2$: trabajo $= f(1,1) - f(0,0) = (1 + 1) - (0 + 0) = 2$. Compara con el campo $\langle y, x \rangle$ de antes, que dio $1$: su potencial es $f = xy$, y en efecto $f(1,1) - f(0,0) = 1$.
+
+**Analogía física para recordar.** Subir una montaña: el trabajo de la gravedad solo depende de la diferencia de altura entre el punto de partida y el de llegada, no de si subiste por el sendero recto o por el sinuoso. La altura es el potencial; la fuerza gravitatoria es su gradiente; la montaña, el campo conservativo. Un campo no conservativo sería como un tobogán de agua con remolinos: el trabajo sí dependería de la ruta.
 
 ## Teorema de Green
-Para una curva cerrada $C$ que limita una región $D$:
-$$\oint_C (P\,dx + Q\,dy) = \iint_D \left(\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y}\right)dA$$
 
-Convierte una integral de línea en una doble (o al revés). Es útil cuando la curva es complicada pero la región es simple.
+El teorema de Green es el eslabón que conecta las integrales de línea con las integrales dobles. Es, en el plano, el análogo del teorema fundamental del cálculo: relaciona lo que pasa en el **interior** de una región con lo que pasa en su **borde**.
 
-**Ejemplo.** Área encerrada por una curva: $A = \dfrac{1}{2}\oint_C (x\,dy - y\,dx)$.
+**Enunciado.** Sea $C$ una curva cerrada, simple (no se corta a sí misma) y orientada **positivamente** (en sentido antihorario, de modo que al recorrerla la región queda a tu izquierda). Sea $D$ la región que encierra. Entonces:
+
+$$\oint_C (P\,dx + Q\,dy) = \iint_D \left( \frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} \right) dA$$
+
+**Qué significa la notación $P\,dx + Q\,dy$.** Es la forma clásica (que viene de la física) de escribir la integral de línea del campo $\vec{F} = \langle P, Q \rangle$: si la curva se parametriza con $\vec{r}(t) = \langle x(t), y(t) \rangle$, entonces $dx = x'(t)\,dt$ y $dy = y'(t)\,dt$, y la integral $\oint_C (P\,dx + Q\,dy)$ es exactamente $\oint_C \vec{F} \cdot d\vec{r} = \oint_C (P\,x' + Q\,y')\,dt$. Se lee: "integral de $P$ respecto de $x$ más $Q$ respecto de $y$ a lo largo de $C$".
+
+**Qué dice el teorema, en palabras.** La circulación del campo alrededor del borde es igual a la **suma de los rotacionales de todo el interior**. El integrando $\dfrac{\partial Q}{\partial x} - \dfrac{\partial P}{\partial y}$ es precisamente el rotacional del campo $\langle P, Q \rangle$ en el plano. Cada punto del interior contribuye con su tendencia local a girar, y el resultado neto es lo que se siente al dar toda la vuelta por el borde. Es la misma idea del teorema fundamental: la acumulación de los "cambios pequeños" en el interior iguala el "cambio total" en la frontera.
+
+**Cuándo conviene usarlo.** Cuando la curva es complicada (una frontera rara) pero la región interior es simple (un disco, un rectángulo), cambiamos la integral de línea por una doble, casi siempre más fácil. O al revés: cuando la integral doble del rotacional es horrible, quizá el borde sea simple. Green es un **intercambiador de dificultad**.
+
+**La fórmula del área.** Un uso ingenioso: elegimos $P = -\frac{1}{2}y$ y $Q = \frac{1}{2}x$. Entonces el rotacional es $\frac{1}{2} - \left(-\frac{1}{2}\right) = 1$, y el teorema dice
+
+$$\oint_C \frac{1}{2}(x\,dy - y\,dx) = \iint_D 1\,dA = \text{área de } D$$
+
+de donde sale la famosa fórmula del área encerrada por una curva:
+
+$$A = \frac{1}{2}\oint_C (x\,dy - y\,dx)$$
+
+**Ejemplo resuelto.** Calculemos $\oint_C (x\,dy - y\,dx)$ sobre el círculo unitario. Aquí $P = -y$ y $Q = x$, así que el rotacional es $\dfrac{\partial Q}{\partial x} - \dfrac{\partial P}{\partial y} = 1 - (-1) = 2$. Por Green:
+
+$$\oint_C (x\,dy - y\,dx) = \iint_D 2\,dA = 2 \cdot (\text{área del disco unitario}) = 2\pi$$
+
+Nota que $2\pi$ es el **doble** del área $\pi$: por eso la fórmula del área lleva el factor $\frac{1}{2}$. Podríamos haber parametrizado el círculo con $\vec{r}(t) = \langle \cos t, \sin t \rangle$ y haber calculado la integral de línea directamente, pero Green lo resolvió sin parametrizar nada.
+
+**Ejemplo con la elipse.** Hallemos el área de la elipse $\dfrac{x^2}{a^2} + \dfrac{y^2}{b^2} = 1$ con la fórmula del área. Parametrizamos con $\vec{r}(t) = \langle a\cos t, b\sin t \rangle$, $0 \le t \le 2\pi$ (comprueba que satisface la ecuación de la elipse dividiendo). Entonces $x\,dy - y\,dx = (a\cos t)(b\cos t)\,dt - (b\sin t)(-a\sin t)\,dt = ab(\cos^2 t + \sin^2 t)\,dt = ab\,dt$, y el área es
+
+$$A = \frac{1}{2}\int_0^{2\pi} ab\,dt = \frac{1}{2}\cdot ab \cdot 2\pi = \pi ab$$
+
+El área del círculo ($a = b = R$) es el caso particular $\pi R^2$.
 
 ## Integrales de superficie y flujo
-Una superficie parametrizada $\vec{r}(u, v)$ tiene vector normal $\vec{n} = \vec{r}_u \times \vec{r}_v$. El **flujo** de $\vec{F}$ a través de $S$:
-$$\iint_S \vec{F} \cdot \vec{n}\,dS$$
-Mide cuánto campo atraviesa la superficie: caudal, flujo eléctrico, flujo magnético.
 
-**Ejemplo.** En una esfera de radio $R$, el flujo del campo radial $\vec{F} = \langle x, y, z \rangle$ es $4\pi R^3$.
+Así como las integrales de línea acumulan sobre curvas, las **integrales de superficie** acumulan sobre superficies: sábanas curvas en el espacio, como una esfera, un cono o el techo de una carpa. La pregunta física que responden es el **flujo**: ¿cuánto campo atraviesa la superficie?
 
-## Teorema de Stokes
+**Parametrizar una superficie.** Una superficie necesita **dos** parámetros (como la latitud y la longitud para ubicar un punto en la Tierra), que llamaremos $u$ y $v$. La superficie se describe con una función vectorial de dos variables:
+
+$$\vec{r}(u,v) = \langle x(u,v),\, y(u,v),\, z(u,v) \rangle$$
+
+Por ejemplo, un disco horizontal de radio $1$ a altura $z = 1$ se parametriza con $\vec{r}(u,v) = \langle u\cos v, u\sin v, 1 \rangle$ con $0 \le u \le 1$ y $0 \le v \le 2\pi$. Aquí $u$ es la distancia al centro y $v$ el ángulo.
+
+**El vector normal.** Derivamos $\vec{r}$ respecto de cada parámetro (derivando componente a componente):
+
+$$\vec{r}_u = \left\langle \frac{\partial x}{\partial u}, \frac{\partial y}{\partial u}, \frac{\partial z}{\partial u} \right\rangle, \qquad \vec{r}_v = \left\langle \frac{\partial x}{\partial v}, \frac{\partial y}{\partial v}, \frac{\partial z}{\partial v} \right\rangle$$
+
+Geométricamente, $\vec{r}_u$ es el vector tangente a la superficie en la dirección en que crece $u$ (con $v$ fijo), y $\vec{r}_v$ lo mismo para $v$. Ambos son tangentes a la superficie, así que su **producto cruz** es perpendicular a los dos y por tanto **normal** a la superficie:
+
+$$\vec{n} = \vec{r}_u \times \vec{r}_v$$
+
+Además, la magnitud $|\vec{r}_u \times \vec{r}_v|$ es el área del paralelogramo infinitesimal que forman los dos vectores tangentes: es el **trocito de área** de la superficie, el $dS$. El vector **normal unitario** (de largo 1) se obtiene dividiendo: $\hat{n} = \vec{n}/|\vec{n}|$.
+
+**Definición de flujo.** El flujo del campo $\vec{F}$ a través de la superficie $S$ es
+
+$$\iint_S \vec{F} \cdot \vec{n}\,dS = \iint_D \vec{F}\big(\vec{r}(u,v)\big) \cdot \big(\vec{r}_u \times \vec{r}_v\big)\,du\,dv$$
+
+donde $D$ es la región de los parámetros $(u,v)$. La lectura es directa: en cada trocito de superficie tomamos la **componente normal** del campo (el producto punto con $\vec{n}$ selecciona solo la parte del campo que atraviesa la superficie) y la sumamos. Un campo que corre **paralelo** a la superficie (como el viento que resbala sobre una pared) no la atraviesa: su flujo es cero, porque el producto punto con la normal es cero. Físicamente, si $\vec{F}$ es la velocidad de un fluido, el flujo es el **caudal**: la cantidad de fluido que cruza la superficie por unidad de tiempo. En electromagnetismo, el flujo del campo eléctrico es la base de la ley de Gauss.
+
+**Orientación.** Toda superficie tiene dos lados, y el signo del flujo depende del lado que elijamos: $\vec{n}$ puede apuntar hacia un lado o hacia el otro (multiplicar $\vec{n}$ por $-1$ cambia el signo del flujo). Para superficies cerradas (como una esfera) la convención es usar la normal **exterior** (que apunta hacia afuera). Un flujo neto positivo significa que, en total, el campo sale de la región encerrada.
+
+**Ejemplo resuelto 1.** Flujo de $\vec{F} = \langle 0, 0, z \rangle$ a través del disco $z = 1$, $x^2 + y^2 \le 1$, orientado hacia arriba. La normal unitaria hacia arriba es simplemente $\hat{n} = \langle 0, 0, 1 \rangle$ (el disco es horizontal). El producto punto es $\vec{F} \cdot \hat{n} = \langle 0, 0, z \rangle \cdot \langle 0, 0, 1 \rangle = z$, y sobre el disco $z = 1$, así que el integrando vale $1$ en toda la superficie. El flujo es $1 \times (\text{área del disco}) = \pi$. Ni siquiera hizo falta parametrizar: el campo es constante y normal en todo el disco.
+
+**Ejemplo resuelto 2.** Flujo del campo radial $\vec{F} = \langle x, y, z \rangle$ a través de la esfera de radio $R$ centrada en el origen, con normal exterior. En un punto $\langle x, y, z \rangle$ de la esfera, la distancia al centro es $R$, y la normal exterior unitaria es $\hat{n} = \dfrac{1}{R}\langle x, y, z \rangle$ (el vector posición, normalizado). Entonces
+
+$$\vec{F} \cdot \hat{n} = \langle x,y,z \rangle \cdot \frac{1}{R}\langle x,y,z \rangle = \frac{x^2 + y^2 + z^2}{R} = \frac{R^2}{R} = R$$
+
+El integrando es constante, así que el flujo es $R$ por el área de la esfera:
+
+$$\iint_S \vec{F} \cdot \hat{n}\,dS = R \cdot 4\pi R^2 = 4\pi R^3$$
+
+En la sección de Gauss reencontraremos este resultado por otro camino, y el hecho de que ambos coincidan no será casualidad.
+
+**Área de una superficie.** Si integramos $f = 1$ con la fórmula escalar, obtenemos el área de la superficie: $\text{Área}(S) = \iint_D |\vec{r}_u \times \vec{r}_v|\,du\,dv$. Es la versión en 3D de "longitud de arco con $f = 1$".
+
+## Teoremas de Stokes y Gauss
+
+Cierran el curso dos teoremas que generalizan a Green al espacio. Son el puente entre lo local (derivadas: rotacional y divergencia) y lo global (integrales sobre curvas, superficies y volúmenes). Los tres teoremas —Green, Stokes y Gauss— son, en el fondo, el mismo teorema fundamental del cálculo con distintos disfraces.
+
+**Teorema de Stokes.** Sea $S$ una superficie orientada (con normal unitaria $\vec{n}$) cuyo borde es la curva cerrada $C$. La orientación de $C$ debe ser **compatible** con la de $S$ por la regla de la mano derecha: si el pulgar apunta según $\vec{n}$, los dedos cerrados indican el sentido en que se recorre $C$. Entonces:
+
 $$\oint_C \vec{F} \cdot d\vec{r} = \iint_S (\nabla \times \vec{F}) \cdot \vec{n}\,dS$$
-La circulación alrededor de una curva cerrada iguala el flujo del rotacional a través de toda superficie que la tenga como borde. Generaliza Green al espacio.
 
-## Teorema de Gauss (divergencia)
-Para una superficie cerrada $S$ que encierra el volumen $V$:
+**Qué dice.** La **circulación** del campo alrededor del borde de la superficie es igual al **flujo del rotacional** a través de la superficie. Cada trocito de superficie contribuye con su giro local (rotacional), y la suma de todos los giros es exactamente el empuje neto que se siente al recorrer el borde. Es Green en el espacio: si $S$ es una región plana del plano $xy$ con normal $\langle 0,0,1 \rangle$, Stokes se reduce a Green. Una consecuencia muy usada: si el campo es irrotacional ($\nabla \times \vec{F} = \vec{0}$) en un dominio sin agujeros, la circulación es cero en cualquier curva cerrada, y el campo es conservativo —lo que ya sabíamos, pero ahora desde el punto de vista de Stokes—.
+
+**Ejemplo resuelto.** Verifiquemos Stokes para $\vec{F} = \langle -y, x, 0 \rangle$ con $S$ el disco unitario del plano $xy$, orientado hacia arriba ($\vec{n} = \langle 0,0,1 \rangle$), y $C$ su borde: el círculo unitario recorrido antihorario.
+
+- Lado del flujo: el rotacional es $\nabla \times \vec{F} = \langle 0 - 0,\, 0 - 0,\, 1 - (-1) \rangle = \langle 0, 0, 2 \rangle$. El producto punto con la normal es $2$, constante, así que $\iint_S (\nabla \times \vec{F}) \cdot \vec{n}\,dS = 2 \cdot (\text{área del disco}) = 2\pi$.
+- Lado de la circulación: parametrizamos el borde con $\vec{r}(t) = \langle \cos t, \sin t, 0 \rangle$, $0 \le t \le 2\pi$. Entonces $\vec{r}'(t) = \langle -\sin t, \cos t, 0 \rangle$ y $\vec{F}(\vec{r}(t)) = \langle -\sin t, \cos t, 0 \rangle$. El producto punto da $\sin^2 t + \cos^2 t = 1$, y $\oint_C \vec{F} \cdot d\vec{r} = \int_0^{2\pi} 1\,dt = 2\pi$.
+
+Ambos lados dan $2\pi$: el teorema se cumple.
+
+**Teorema de Gauss (de la divergencia).** Sea $S$ una superficie **cerrada** que encierra el volumen $V$, con normal exterior $\vec{n}$. Entonces:
+
 $$\iint_S \vec{F} \cdot \vec{n}\,dS = \iiint_V \nabla \cdot \vec{F}\,dV$$
-El flujo neto a través de la frontera iguala la integral de la divergencia dentro. Es la forma matemática de la conservación: lo que sale menos lo que entra es lo que se genera dentro.
 
-**Ejemplo.** $\vec{F} = \langle x^2, y^2, z^2 \rangle$ en el cubo $[0,1]^3$: $\nabla\cdot\vec{F} = 2(x+y+z)$; la integral vale $2 \cdot 3 \cdot \frac{1}{2} = 3$.
+**Qué dice.** El **flujo neto** del campo a través de la frontera es igual a la **integral de la divergencia en todo el interior**. Es la formulación matemática exacta de un principio de conservación: lo que sale por la frontera menos lo que entra es exactamente lo que se **genera** en el interior. Si la divergencia es cero (campo incompresible, sin fuentes ni sumideros), el flujo neto por cualquier superficie cerrada es cero: todo lo que entra por un lado sale por otro. Esta es la ley de Gauss del electromagnetismo: el flujo eléctrico a través de una superficie cerrada es proporcional a la carga encerrada.
 
-## Ejemplos resueltos: seis casos explicados
-**Ejemplo 1 (práctica, divergencia y rotacional).** $\vec{F} = \langle x^2y, y^2x \rangle$.
-- $\nabla \cdot \vec{F} = 2xy + 2xy = 4xy$.
-- $\nabla \times \vec{F} = 2y x - x^2$; espera: $\partial_x(y^2x) = y^2$, $\partial_y(x^2y) = x^2$; rotacional $= y^2 - x^2$.
+**Ejemplo resuelto 1.** Flujo de $\vec{F} = \langle x^2, y^2, z^2 \rangle$ a través del cubo $[0,1]^3$ (el cubo de lado 1 con una esquina en el origen). Calcularlo cara por cara es largo (seis caras); con Gauss es inmediato. La divergencia es $\nabla \cdot \vec{F} = 2x + 2y + 2z = 2(x + y + z)$, y el flujo es
 
-**Ejemplo 2 (aplicación, trabajo).** Trabajo de $\vec{F} = \langle 3, 4 \rangle$ a lo largo de la recta de $(0,0)$ a $(2, 2)$.
-- Campo constante: $W = \vec{F} \cdot \vec{d} = \langle 3,4 \rangle \cdot \langle 2,2 \rangle = 14$.
-- Correcto por ser conservativo.
+$$\iiint_V 2(x+y+z)\,dV = 2\left( \int_0^1\!\!\int_0^1\!\!\int_0^1 x\,dx\,dy\,dz + \int_0^1\!\!\int_0^1\!\!\int_0^1 y\,dx\,dy\,dz + \int_0^1\!\!\int_0^1\!\!\int_0^1 z\,dx\,dy\,dz \right)$$
 
-**Ejemplo 3 (aplicación, potencial).** Halla el potencial de $\vec{F} = \langle 2x, 2y \rangle$.
-- $f_x = 2x \Rightarrow f = x^2 + g(y)$.
-- $f_y = g'(y) = 2y \Rightarrow g = y^2 + C$.
-- $f = x^2 + y^2$; el trabajo entre dos puntos es la diferencia de potencial.
+Cada una de las tres integrales vale $\frac{1}{2}$ (por simetría: en un cubo de lado 1, el promedio de $x$, de $y$ y de $z$ es $\frac{1}{2}$), así que el flujo es $2 \cdot 3 \cdot \frac{1}{2} = 3$.
 
-**Ejemplo 4 (práctica, Green).** $\oint_C (x\,dy - y\,dx)$ sobre el círculo unitario.
-- Green: $\iint_D (1 - (-1))\,dA = 2 \cdot \pi = 2\pi$.
-- De hecho, $2\pi$ es el doble del área: coincide con $\frac{1}{2}\oint$.
+**Ejemplo resuelto 2.** Reencontremos el flujo del campo radial por la esfera, esta vez con Gauss. Para $\vec{F} = \langle x, y, z \rangle$, la divergencia es $1 + 1 + 1 = 3$, constante. Entonces el flujo por la esfera de radio $R$ es
 
-**Ejemplo 5 (aplicación, flujo).** Flujo de $\vec{F} = \langle 0, 0, z \rangle$ a través del disco $z = 1$, $x^2 + y^2 \leq 1$, orientado hacia arriba.
-- $\vec{n} = \langle 0,0,1 \rangle$; $\vec{F} \cdot \vec{n} = z = 1$ en el disco.
-- Flujo $= \pi \cdot 1 = \pi$.
+$$\iint_S \vec{F} \cdot \vec{n}\,dS = \iiint_V 3\,dV = 3 \cdot \frac{4}{3}\pi R^3 = 4\pi R^3$$
 
-**Ejemplo 6 (aplicación, Gauss).** Verifica Gauss para $\vec{F} = \langle x, y, z \rangle$ en la esfera de radio $R$.
-- $\nabla \cdot \vec{F} = 3$; integral de volumen $= 3 \cdot \frac{4}{3}\pi R^3 = 4\pi R^3$.
-- El flujo directo daba el mismo valor: verificado.
+exactamente el resultado que habíamos obtenido integrando directamente. La coincidencia de los dos caminos es la esencia del teorema.
 
-## Contextos donde se aplica
-- **Física:** electromagnetismo (leyes de Gauss y Faraday en forma integral), fluidos, gravitación.
-- **Ingeniería:** aerodinámica, transferencia de calor, mecánica de medios continuos.
-- **Meteorología:** campos de viento y divergencia; predicción de tormentas.
-- **Computación gráfica:** campos de normales, iluminación, simulación de fluidos.
-- **Matemática:** puente hacia geometría diferencial y análisis vectorial.
+**La familia de teoremas fundamentales.** Ya puedes ver el patrón general:
 
-## Errores comunes y cómo evitarlos
-- **Confundir flujo con circulación.** Flujo atraviesa la superficie; circulación recorre la curva.
-- **Aplicar Green sin curva cerrada y orientada.** La orientación positiva es antihoraria.
-- **Suponer conservativo con rotacional cero sin revisar el dominio.** Hacen falta dominios simplemente conexos.
-- **Olvidar el vector normal unitario.** El flujo usa la componente normal; normaliza si hace falta.
-- **Mezclar los signos de orientación.** La normal y la orientación de la curva deben ser coherentes (regla de la mano derecha).
+- Teorema fundamental del cálculo: $\int_a^b f'(x)\,dx = f(b) - f(a)$: la integral de la **derivada** en el interior es la **diferencia** en la frontera (los dos puntos extremos).
+- Green: la integral del **rotacional** en una región es la **circulación** en su borde.
+- Stokes: la integral del **rotacional** en una superficie es la **circulación** en su borde.
+- Gauss: la integral de la **divergencia** en un volumen es el **flujo** en su borde.
 
-## Ejercicios propuestos
-1. Halla divergencia y rotacional de $\vec{F} = \langle xy, yz \rangle$.
-2. Calcula el trabajo de $\vec{F} = \langle y, x \rangle$ de $(0,0)$ a $(1,1)$ por la parábola $y = x^2$.
-3. ¿Es conservativo $\vec{F} = \langle 2xy, x^2 \rangle$? Halla su potencial.
-4. Aplica Green a $\oint_C (x\,dy)$ sobre el cuadrado unitario.
-5. Flujo de $\vec{F} = \langle x, y, z \rangle$ por la superficie del cubo $[0,1]^3$.
+Todos dicen lo mismo con distintas palabras: **la suma de los cambios infinitesimales del interior se manifiesta como el efecto neto en la frontera**. Si entiendes uno, entiendes los cuatro.
+
+## Ejemplos resueltos
+
+Aquí resolvemos seis casos típicos con todo el detalle, para que veas el método completo en cada tema.
+
+**Ejemplo 1 (divergencia y rotacional).** Para $\vec{F}(x,y) = \langle x^2y,\; y^2x \rangle$, las componentes son $P = x^2y$ y $Q = y^2x$. Divergencia: $\nabla \cdot \vec{F} = P_x + Q_y = 2xy + 2xy = 4xy$. Rotacional (en el plano): $\nabla \times \vec{F} = Q_x - P_y = y^2 - x^2$. Interpretación: en $(1,0)$, la divergencia es $0$ y el rotacional $-1$ (giro horario); en $(1,1)$, divergencia $4$ (fuente) y rotacional $0$ (sin giro). Cada punto tiene su diagnóstico.
+
+**Ejemplo 2 (trabajo de un campo constante).** Calculemos el trabajo de $\vec{F} = \langle 3, 4 \rangle$ desde $(0,0)$ hasta $(2,2)$ por la recta $\vec{r}(t) = \langle 2t, 2t \rangle$, $0 \le t \le 1$. La velocidad es $\vec{r}'(t) = \langle 2, 2 \rangle$, el campo es constante, y el producto punto es $\langle 3,4 \rangle \cdot \langle 2,2 \rangle = 6 + 8 = 14$. La integral es $\int_0^1 14\,dt = 14$. Para un campo constante y un camino recto, el trabajo es simplemente $\vec{F} \cdot \vec{d}$, con $\vec{d} = \langle 2,2 \rangle$ el desplazamiento total: $3\cdot 2 + 4\cdot 2 = 14$. Coincide.
+
+**Ejemplo 3 (hallar el potencial).** Para $\vec{F} = \langle 2x, 2y \rangle$: de $f_x = 2x$ integramos y obtenemos $f = x^2 + g(y)$. De $f_y = g'(y) = 2y$ obtenemos $g(y) = y^2 + C$. Potencial: $f = x^2 + y^2$ (la constante se omite). El trabajo entre dos puntos cualesquiera es la diferencia de potencial: de $(0,0)$ a $(1,1)$ vale $f(1,1) - f(0,0) = 2 - 0 = 2$, por cualquier camino.
+
+**Ejemplo 4 (Green).** Para $\oint_C (x\,dy - y\,dx)$ sobre el círculo unitario, tenemos $P = -y$, $Q = x$, y el rotacional $Q_x - P_y = 1 - (-1) = 2$. Por Green: $\oint_C (x\,dy - y\,dx) = \iint_D 2\,dA = 2 \cdot \pi \cdot 1^2 = 2\pi$. Además, como $2\pi = 2 \cdot \pi$, el resultado es el doble del área, tal como predice la fórmula $A = \frac{1}{2}\oint_C (x\,dy - y\,dx)$.
+
+**Ejemplo 5 (flujo por un disco).** Flujo de $\vec{F} = \langle 0, 0, z \rangle$ a través del disco $z = 1$, $x^2 + y^2 \le 1$, orientado hacia arriba. Normal unitaria: $\vec{n} = \langle 0, 0, 1 \rangle$. Producto punto: $\vec{F} \cdot \vec{n} = \langle 0,0,z \rangle \cdot \langle 0,0,1 \rangle = z$. Sobre el disco, $z = 1$, así que el integrando es $1$ en toda la superficie y el flujo es $1 \cdot \pi = \pi$.
+
+**Ejemplo 6 (Gauss, verificación doble).** Para $\vec{F} = \langle x, y, z \rangle$ y la esfera de radio $R$: divergencia $\nabla \cdot \vec{F} = 3$. Por Gauss, el flujo es $\iiint_V 3\,dV = 3 \cdot \frac{4}{3}\pi R^3 = 4\pi R^3$. Por integración directa (sección de flujo), habíamos obtenido el mismo valor $4\pi R^3$: el teorema queda verificado. Este ejemplo es la ley de Gauss electrostática en miniatura: el flujo solo depende de la "carga" total (aquí, de la divergencia integrada) y no de la forma de la superficie.
+
+## Errores comunes
+
+- **Confundir flujo con circulación.** El flujo atraviesa una **superficie** (usa producto punto con la normal); la circulación recorre una **curva** (usa producto punto con la tangente). Si te preguntan "¿cuánto campo sale de la esfera?", piensa flujo y Gauss; si te preguntan "¿cuánto empuja alrededor del circuito?", piensa circulación y Stokes o Green.
+- **Aplicar Green a una curva abierta o mal orientada.** Green exige curva **cerrada**, simple, recorrida en sentido **antihorario**. Si la curva es abierta, no hay región que encerrar; si recorres al revés, el resultado cambia de signo. Antes de aplicar Green, dibuja la curva y verifica la orientación.
+- **Deducir conservativo solo del rotacional cero.** Falta la hipótesis del dominio: debe ser **simplemente conexo** (sin agujeros). El campo $\langle -y, x \rangle/(x^2 + y^2)$ tiene rotacional cero pero circulación $2\pi$ alrededor del agujero en el origen. Si hay agujeros, el rotacional cero no basta.
+- **Olvidar sustituir la parametrización en el campo.** En $\int_C \vec{F} \cdot d\vec{r}$ hay que evaluar $\vec{F}$ **en los puntos de la curva**: $\vec{F}(\vec{r}(t))$, es decir, reemplazar $x$ por $x(t)$ e $y$ por $y(t)$. Dejar el campo en variables "sueltas" e integrar es el error más frecuente de todos.
+- **Confundir la integral vectorial con la escalar.** En $\int_C \vec{F} \cdot d\vec{r}$ va el **vector** velocidad $\vec{r}'(t)$ con producto punto; en $\int_C f\,ds$ va su **longitud** $|\vec{r}'(t)|$. La primera depende de la orientación (cambia de signo al invertir la curva); la segunda no.
+- **Olvidar la normal o su orientación en el flujo.** El flujo usa la componente **normal**; si parametrizas con $\vec{r}(u,v)$, la normal es $\vec{r}_u \times \vec{r}_v$, y si pides la normal unitaria debes dividir por su magnitud. En superficies cerradas usa la normal exterior; el signo de la respuesta depende de ello.
+- **Mezclar los signos entre la normal y la curva.** En Stokes, la orientación de la curva y la de la normal deben ser compatibles por la **regla de la mano derecha**. Cambiar una sin la otra introduce un signo menos.
+- **Tratar el rotacional en el espacio como un número.** En 3D el rotacional es un **vector** (eje y magnitud del giro); solo en el plano es un número. Al verificar Stokes en el espacio, el flujo del rotacional usa el producto punto con la normal.
+- **Olvidar que divergencia y rotacional son funciones.** No son constantes: son nuevas funciones de la posición. Pedir "la divergencia de $\vec{F}$ en el punto $P$" significa evaluar la función divergencia en $P$, como en el ejemplo $\nabla \cdot \langle x^2y, y^2x \rangle = 4xy$, que en $(1,-1)$ vale $-4$.
+
+## Ejercicios propuestos (con respuestas)
+
+1. Halla divergencia y rotacional de $\vec{F} = \langle xy,\, yz,\, 0 \rangle$ (en el espacio).
+2. Calcula el trabajo de $\vec{F} = \langle y, x \rangle$ de $(0,0)$ a $(1,1)$ a lo largo de la parábola $y = x^2$.
+3. ¿Es conservativo $\vec{F} = \langle 2xy,\, x^2 \rangle$? Si lo es, halla su potencial.
+4. Aplica el teorema de Green para calcular $\oint_C x\,dy$ sobre el cuadrado unitario $[0,1] \times [0,1]$, recorrido antihorario.
+5. Halla el flujo de $\vec{F} = \langle x, y, z \rangle$ a través de la superficie del cubo $[0,1]^3$ usando Gauss.
 6. Verifica Stokes para $\vec{F} = \langle -y, x, 0 \rangle$ sobre el disco unitario del plano $xy$.
-7. Trabajo de $\vec{F} = \langle e^x, 1 \rangle$ de $(0,0)$ a $(1,1)$ por la recta $y = x$.
-8. Divergencia de $\vec{F} = \langle x^3, y^3, z^3 \rangle$ en el origen.
+7. Calcula el trabajo de $\vec{F} = \langle e^x, 1 \rangle$ de $(0,0)$ a $(1,1)$ a lo largo de la recta $y = x$.
+8. Calcula la divergencia de $\vec{F} = \langle x^3, y^3, z^3 \rangle$ en el origen.
 
-**Respuestas:** 1) $\nabla\cdot\vec{F} = y + z$; rotacional $= \langle -y, 0, -x \rangle$ (en 3D). 2) $1$. 3) Sí: $f = x^2y$. 4) $1$ (área del cuadrado). 5) $3$. 6) Ambos lados dan $2\pi$; espera: circulación $2\pi$, y el flujo del rotacional también. 7) $e - 1$. 8) $0$.
+**Respuestas.**
+
+1. Divergencia: $y + z + 0 = y + z$. Rotacional: $\langle R_y - Q_z,\; P_z - R_x,\; Q_x - P_y \rangle = \langle 0 - y,\; 0 - 0,\; 0 - x \rangle = \langle -y,\, 0,\, -x \rangle$.
+2. Con $\vec{r}(t) = \langle t, t^2 \rangle$: $\int_0^1 (t^2 + t \cdot 2t)\,dt = \int_0^1 3t^2\,dt = 1$. (Es el ejemplo de la sección de integrales de línea.)
+3. Sí. Condición: $Q_x = 2x = P_y$, y el dominio es todo el plano (simplemente conexo). Potencial: de $f_x = 2xy$ sale $f = x^2y + g(y)$; de $f_y = x^2 + g'(y) = x^2$ sale $g$ constante; luego $f = x^2y$.
+4. $P = 0$, $Q = x$; el rotacional es $Q_x - P_y = 1 - 0 = 1$. Por Green: $\oint_C x\,dy = \iint_D 1\,dA = 1$ (el área del cuadrado unitario).
+5. $\nabla \cdot \vec{F} = 1 + 1 + 1 = 3$; el flujo es $\iiint_V 3\,dV = 3 \cdot 1 = 3$ (volumen del cubo: 1).
+6. Rotacional: $\langle 0, 0, 2 \rangle$; flujo por el disco: $2 \cdot \pi = 2\pi$. Circulación por el borde $\vec{r}(t) = \langle \cos t, \sin t, 0 \rangle$: $\int_0^{2\pi} 1\,dt = 2\pi$. Ambos lados coinciden.
+7. Potencial: $f = e^x + y$; el trabajo es $f(1,1) - f(0,0) = (e + 1) - (1 + 0) = e$. (Directo: $\int_0^1 (e^t + 1)\,dt = (e - 1) + 1 = e$.)
+8. $\nabla \cdot \vec{F} = 3x^2 + 3y^2 + 3z^2$; en el origen $(0,0,0)$ vale $0$.
 
 ## Resumen
-- Los campos vectoriales se describen con divergencia y rotacional.
-- La integral de línea mide trabajo o circulación; en campos conservativos es diferencia de potencial.
-- Green conecta línea y área; Stokes, circulación y flujo del rotacional; Gauss, flujo y divergencia.
-- Los teoremas integrales son generalizaciones del teorema fundamental del cálculo.
-- El dominio importa: rotacional cero no garantiza potencial si hay agujeros.
+
+- Un **campo vectorial** asigna una flecha a cada punto: $\vec{F}(x,y) = \langle P, Q \rangle$ en el plano, $\langle P, Q, R \rangle$ en el espacio. Modela velocidades de fluidos, fuerzas gravitatorias, campos eléctricos y magnéticos.
+- La **divergencia** $\nabla \cdot \vec{F} = P_x + Q_y$ (más $R_z$ en el espacio) mide fuentes y sumideros: positiva donde el campo emana, negativa donde se absorbe, cero si es incompresible.
+- El **rotacional** mide la tendencia local a girar: $Q_x - P_y$ en el plano (un número), un vector en el espacio. Cero significa irrotacional.
+- La **integral de línea** $\int_C \vec{F} \cdot d\vec{r} = \int_a^b \vec{F}(\vec{r}(t)) \cdot \vec{r}'(t)\,dt$ acumula la componente tangencial del campo a lo largo de una curva: es el trabajo. La versión escalar $\int_C f\,ds$ usa la longitud de arco.
+- Un campo es **conservativo** si $\vec{F} = \nabla f$ para un potencial $f$; entonces el trabajo es $f(B) - f(A)$: no depende del camino y es cero en curvas cerradas. Rotacional cero en un dominio simplemente conexo garantiza conservativo.
+- El **teorema de Green** cambia una integral de línea cerrada por una doble sobre la región encerrada; de él sale la fórmula del área $A = \frac{1}{2}\oint_C (x\,dy - y\,dx)$.
+- El **flujo** $\iint_S \vec{F} \cdot \vec{n}\,dS$ mide cuánto campo atraviesa una superficie; la normal viene de $\vec{r}_u \times \vec{r}_v$.
+- **Stokes** conecta la circulación en el borde de una superficie con el flujo de su rotacional; **Gauss** conecta el flujo por una superficie cerrada con la integral de la divergencia en el volumen encerrado. Ambos generalizan a Green.
+- Green, Stokes y Gauss son versiones del teorema fundamental del cálculo: lo que se acumula en el interior se manifiesta en la frontera.
+- El dominio importa: un rotacional cero no garantiza potencial si la región tiene agujeros.
 `,
 
   "edo": String.raw`
@@ -1968,126 +2729,337 @@ Modelo: $T = 25 + 55e^{-kt}$. De $65 = 25 + 55e^{-5k}$: $e^{-5k} = \dfrac{40}{55
 
   "edp": String.raw`
 ## ¿Qué es una ecuación en derivadas parciales?
-Una **EDP** relaciona una función de varias variables con sus derivadas parciales. Aparecen cuando el fenómeno depende del espacio **y** del tiempo: calor, ondas, potencial eléctrico, difusión.
 
-**Ejemplo.** La ecuación del calor en una dimensión:
-$$\frac{\partial u}{\partial t} = k\frac{\partial^2 u}{\partial x^2}$$
-La temperatura $u(x,t)$ cambia en el tiempo según su curvatura espacial.
+Hasta ahora, en los cursos de cálculo trabajaste con funciones de una sola variable: una regla como $f(x) = x^2$ recibe un número $x$ y devuelve otro número $f(x)$. Su derivada, $f'(x)$, mide cuánto cambia la salida cuando la entrada cambia un poco. Esa maquinaria describe fenómenos que dependen de **una sola cantidad**: la posición depende del tiempo, el costo depende del número de unidades.
 
-Resolver una EDP requiere **condiciones iniciales** (estado en $t = 0$) y **condiciones de frontera** (qué pasa en los bordes).
+Pero la mayoría de los fenómenos físicos dependen de **varias cantidades a la vez**. Piensa en una barra de metal que se calienta por un extremo: la temperatura no es la misma en todos los puntos de la barra, y además cambia con el paso del tiempo. Si $x$ mide la posición a lo largo de la barra y $t$ mide el tiempo, la temperatura es una función de **dos variables**, y se escribe $u(x,t)$. La escritura $u(x,t)$ se lee "u de equis, te" y significa: el valor de la magnitud $u$ en la posición $x$ y en el instante $t$. Entran dos datos y sale un número.
+
+Cuando una función depende de dos o más variables, ya no alcanza con una sola derivada. Necesitamos saber cómo cambia $u$ cuando movemos $x$ (dejando $t$ quieto) y cómo cambia cuando movemos $t$ (dejando $x$ quieto). Cada una de esas derivadas "parciales" se escribe con una letra $d$ redondeada, llamada **d** redonda o símbolo de derivada parcial:
+
+$$\frac{\partial u}{\partial x}, \qquad \frac{\partial u}{\partial t}$$
+
+El símbolo $\partial$ (se pronuncia "d redonda" o "parcial") indica que derivamos **respecto de una variable tratando a las demás como si fueran números fijos**. Por ejemplo, si $u(x,t) = x^2 + t^3$, entonces $\dfrac{\partial u}{\partial x} = 2x$ (la $t^3$ se trata como constante y su derivada es cero) y $\dfrac{\partial u}{\partial t} = 3t^2$ (ahora la $x^2$ es la constante).
+
+Una **ecuación en derivadas parciales**, abreviada **EDP**, es una ecuación en la que la incógnita es una función de varias variables y en la que aparecen sus derivadas parciales. No buscamos un número, como en $3x + 5 = 11$, sino una **función completa**. La ecuación más famosa de todas, la **ecuación del calor** en una dimensión, es
+
+$$\frac{\partial u}{\partial t} = k\,\frac{\partial^2 u}{\partial x^2}$$
+
+donde $u(x,t)$ es la temperatura, $t$ es el tiempo, $x$ la posición y $k$ es una constante positiva del material (la **difusividad térmica**: qué tan rápido conduce el calor ese material). En palabras, la ecuación dice: "la rapidez con que sube o baja la temperatura en un punto es proporcional a cuánto se curva el perfil de temperaturas alrededor de ese punto". Si el punto está más caliente que sus vecinos, se enfría; si está más frío, se calienta.
+
+¿Por qué aparecen estas ecuaciones en todas partes? Porque casi todos los fenómenos que involucran **espacio y tiempo** (o dos coordenadas espaciales) se describen relacionando cambios parciales: el calor que fluye por una barra, las ondas en una cuerda o en el aire, el potencial eléctrico en una región, la difusión de una sustancia en un líquido, la deformación de una membrana. Las EDP son el idioma matemático de la física continua.
+
+**La diferencia clave con las EDO.** Una ecuación diferencial ordinaria (EDO) como $y'(t) = -2y(t)$ tiene una sola variable independiente (el tiempo) y su solución general incluye constantes arbitrarias que se fijan con valores iniciales, como $y(0) = 5$. Una EDP tiene **dos o más variables independientes** y, en consecuencia, las condiciones que fijan su solución son mucho más ricas:
+
+- Las **condiciones iniciales** describen el estado del sistema en el instante inicial, por ejemplo $u(x,0) = f(x)$: "en el momento $t = 0$, la temperatura en cada punto $x$ viene dada por la función $f(x)$".
+- Las **condiciones de frontera** (también llamadas condiciones de contorno o de borde) describen qué ocurre en los extremos del dominio espacial en **todo** instante, por ejemplo $u(0,t) = 0$: "el extremo izquierdo se mantiene a temperatura cero en todo momento".
+
+Resolver una EDP significa encontrar la función $u$ que cumple la ecuación y además satisface todas las condiciones dadas. A lo largo de esta guía verás que cada tipo de EDP tiene su propio "temperamento", y que hay métodos clásicos (separación de variables, series de Fourier, diferencias finitas) para domarlas.
+
+## Cómo leer la notación
+
+Antes de resolver nada, hay que aprender a leer las fórmulas. Una EDP escrita en el pizarrón parece un bosque de símbolos; cada uno tiene un papel fijo. Vamos símbolo por símbolo.
+
+**La función incógnita: $u(x,t)$.** La letra $u$ es el nombre de la función incógnita (podría ser $T$ de temperatura, $P$ de presión, $V$ de voltaje; se elige $u$ por convención). Las letras dentro del paréntesis son sus **variables independientes**: en este curso serán casi siempre $x$ (posición) y $t$ (tiempo), o $x$ e $y$ (dos coordenadas espaciales). Escribir $u(x,t)$ no es multiplicar: es "el valor de $u$ en el punto $x$ al tiempo $t$". Si $u$ es la temperatura, $u(3, 10)$ es la temperatura en el punto $x = 3$ a los $t = 10$ segundos.
+
+**La derivada parcial respecto de una variable: $\dfrac{\partial u}{\partial t}$.** Se lee "derivada parcial de u respecto de te" y es la razón de cambio de $u$ cuando **solo** $t$ se mueve y todo lo demás permanece fijo. Es el análogo exacto de la derivada ordinaria, pero con una regla adicional: al derivar respecto de $t$, las demás letras se congelan. Para $u(x,t) = x^2t + \text{sen}\,t$ se tiene $\dfrac{\partial u}{\partial t} = x^2 + \cos t$, porque $x^2$ se comporta como una constante. La forma compacta de escribirla es $u_t$: el subíndice indica la variable respecto de la cual se deriva. Así, $u_x$ significa $\dfrac{\partial u}{\partial x}$ y $u_t$ significa $\dfrac{\partial u}{\partial t}$.
+
+**La derivada parcial segunda: $\dfrac{\partial^2 u}{\partial x^2}$.** Es la derivada parcial de la derivada parcial: primero derivamos $u$ respecto de $x$ y al resultado lo volvemos a derivar respecto de $x$. Se escribe en compacto $u_{xx}$. Mide la **curvatura** del perfil de $u$ en la dirección $x$: si $u_{xx} > 0$ la gráfica se abre hacia arriba (como una taza) y si $u_{xx} < 0$ se abre hacia abajo (como una montaña). No confundas $u_{xx}$ con $(u_x)^2$: la primera es la segunda derivada; la segunda, el cuadrado de la primera derivada. Son objetos completamente distintos. También existe la **derivada mixta** $u_{xy}$: derivar primero respecto de $x$ y luego respecto de $y$ (en casi todas las funciones de interés, $u_{xy} = u_{yx}$, no importa el orden).
+
+**El laplaciano: $\Delta u$ o $\nabla^2 u$.** La letra griega mayúscula delta, $\Delta$, se lee "delta" y en este contexto significa **laplaciano**: la suma de las segundas derivadas en todas las direcciones espaciales. En dos dimensiones,
+
+$$\Delta u = \nabla^2 u = \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} = u_{xx} + u_{yy}$$
+
+El símbolo $\nabla$ (se lee "nabla") es el operador gradiente, un vector formado por todas las derivadas parciales primeras; $\nabla^2 = \nabla \cdot \nabla$ es una forma compacta de recordar que se suman las segundas derivadas. El laplaciano es el personaje central de las EDP de equilibrio: mide cuánto se aparta el valor de $u$ en un punto del promedio de sus vecinos. Un punto con laplaciano cero está "en paz" con su entorno; un punto con laplaciano positivo es un valle rodeado de valores mayores.
+
+**Las condiciones como igualdades, no como productos.** La escritura $u(0,t) = 0$ **no** significa "u por cero por te igual a cero". Significa: "cuando $x = 0$, la función vale $0$, para todo tiempo $t$". Es una restricción sobre los valores de la función en el borde izquierdo. Del mismo modo, $u(x,0) = f(x)$ dice: "cuando $t = 0$, la función coincide con la función dada $f$". En general, una **condición de frontera** es una regla que la solución debe cumplir en el borde del dominio espacial (en $x = 0$ y en $x = L$, si la región va de $0$ a $L$), y una **condición inicial** es la regla que debe cumplir en el borde temporal $t = 0$. La distinción importa mucho: mezclarlas es uno de los errores clásicos.
+
+**Las constantes físicas: $k$ y $c$.** En la ecuación del calor aparece $k$, un número positivo fijo (difusividad). En la ecuación de onda aparece $c$, la velocidad de propagación de la onda. Son datos del problema, no incógnitas. Saber leerlas en contexto evita confusiones: la misma letra $c$ que en otra guía era una constante de integración aquí es la velocidad del sonido en el medio.
+
+**Las funciones arbitrarias: $F$ y $G$.** En la solución de la onda aparece $F(x - ct)$, donde $F$ es una **función cualquiera**, no una fórmula fija. $F(x - ct)$ se lee "F de equis menos ce te": a $F$ se le aplica al número $x - ct$. Si $F(z) = z^2$, entonces $F(x - ct) = (x - ct)^2$. La idea es que cualquier perfil $F$, desplazado hacia la derecha con velocidad $c$, es una onda que viaja. Veremos esto con detalle en la sección de la ecuación de onda.
+
+**Resumen de lectura.** $u_t = k\,u_{xx}$ se lee en voz alta: "la derivada parcial de u respecto del tiempo es k veces la segunda derivada parcial de u respecto de x". Cuando puedas traducir cada ecuación a esa frase, la mitad del trabajo de entender una EDP ya está hecho. La otra mitad es saber qué significa geométrica o físicamente cada término, y eso es lo que cubren las próximas secciones.
 
 ## Clasificación de las EDP de segundo orden
-Para $A u_{xx} + B u_{xy} + C u_{yy} + \cdots = 0$ se clasifica según el discriminante $\Delta = B^2 - 4AC$:
 
-- **Elíptica** ($\Delta < 0$): problemas de equilibrio. Ejemplo: Laplace.
-- **Parabólica** ($\Delta = 0$): difusión y evolución. Ejemplo: calor.
-- **Hiperbólica** ($\Delta > 0$): propagación de ondas. Ejemplo: onda.
+Las EDP más importantes de la física son de **segundo orden**: la derivada más alta que aparece es una segunda derivada. Su forma general (lineal, en dos variables) es
 
-Cada tipo tiene comportamiento y métodos propios: las elípticas son "suaves", las parabólicas se alisan con el tiempo, las hiperbólicas transportan señales sin difuminarse.
+$$A\,u_{xx} + B\,u_{xy} + C\,u_{yy} + D\,u_x + E\,u_y + F\,u = G$$
+
+donde $A, B, C, D, E, F, G$ son funciones conocidas de $(x, y)$ (o constantes). No hay que memorizarla entera: lo esencial es que los tres términos con segundas derivadas — los que tienen coeficientes $A$, $B$ y $C$ — deciden el carácter de la ecuación. El número
+
+$$\Delta = B^2 - 4AC$$
+
+se llama **discriminante** y separa a las EDP en tres familias, con comportamientos radicalmente distintos.
+
+**Elíptica ($\Delta < 0$).** Cuando $B^2 - 4AC$ es negativo, la ecuación es **elíptica**. El nombre viene de la geometría: la ecuación de una elipse, $\dfrac{x^2}{a^2} + \dfrac{y^2}{b^2} = 1$, tiene dos términos cuadráticos con el mismo signo. Una EDP elíptica describe **equilibrio**: estados estacionarios que no dependen del tiempo, como la temperatura final de una placa, el potencial eléctrico de cargas en reposo o la forma de una membrana en reposo. Sus soluciones son suaves y "armoniosas": no hay propagación, no hay evolución, solo una fotografía final del sistema. El prototipo es la ecuación de Laplace, $u_{xx} + u_{yy} = 0$, donde $A = 1$, $B = 0$, $C = 1$ y $\Delta = 0^2 - 4\cdot 1 \cdot 1 = -4 < 0$.
+
+**Parabólica ($\Delta = 0$).** Si el discriminante es cero, la ecuación es **parabólica**. El nombre evoca la parábola $y = x^2$: una dirección es cuadrática y la otra lineal. Las EDP parabólicas describen **difusión y evolución en una sola dirección del tiempo**: el calor que se reparte, la tinta que se diluye, el precio que se suaviza en los modelos financieros. Su firma es la ecuación del calor, $u_t = k\,u_{xx}$; reescrita como $k\,u_{xx} - u_t = 0$, los coeficientes de las segundas derivadas son $A = k$, $B = 0$, $C = 0$ (no hay $u_{tt}$ ni $u_{yy}$), así que $\Delta = 0$. El tiempo fluye hacia adelante y el pasado no se recupera: la ecuación es **irreversible**.
+
+**Hiperbólica ($\Delta > 0$).** Si el discriminante es positivo, la ecuación es **hiperbólica**. El nombre viene de la hipérbola $\dfrac{x^2}{a^2} - \dfrac{y^2}{b^2} = 1$, con términos cuadráticos de signos opuestos. Las EDP hiperbólicas describen **propagación de ondas**: una perturbación viaja a velocidad finita sin deformarse, como el sonido, la luz o una onda en una cuerda. El prototipo es la ecuación de onda, $u_{tt} = c^2 u_{xx}$, con $A = -c^2$... espera, mejor lo reescribimos: $u_{tt} - c^2 u_{xx} = 0$, con $A = -c^2$, $B = 0$, $C = 1$, y $\Delta = 0 - 4(-c^2)(1) = 4c^2 > 0$. El signo negativo entre las segundas derivadas es la huella digital de la onda.
+
+**Una regla práctica de lectura.** Mira la ecuación e identifica sus dos segundas derivadas principales: si ambas van **con el mismo signo** (sumándose), es elíptica (equilibrio); si falta una de ellas y hay una primera derivada temporal, es parabólica (difusión); si van **con signos opuestos**, es hiperbólica (ondas).
+
+**¿Por qué importa la clasificación?** Porque no es una etiqueta decorativa: cada familia tiene propiedades matemáticas distintas y exige métodos distintos. Las elípticas se resuelven con condiciones de frontera en todo el borde y producen soluciones suaves en todo el interior; las parabólicas necesitan una condición inicial y producen soluciones que se alisan con el tiempo; las hiperbólicas necesitan dos condiciones iniciales (posición y velocidad iniciales) y transportan información a velocidad finita. Confundir el tipo de ecuación es como aplicar las reglas del fútbol a un partido de tenis: nada funciona.
+
+Un último ejemplo de clasificación con números. Para $u_{xx} + 4u_{xy} + 4u_{yy} = 0$: $A = 1$, $B = 4$, $C = 4$, y $\Delta = 4^2 - 4\cdot 1 \cdot 4 = 16 - 16 = 0$: parabólica. Para $u_{xx} - 3u_{xy} + 2u_{yy} = 0$: $\Delta = 9 - 4\cdot 1 \cdot 2 = 1 > 0$: hiperbólica. Para $u_{xx} + 2u_{xy} + 3u_{yy} = 0$: $\Delta = 4 - 12 = -8 < 0$: elíptica.
 
 ## Ecuación de Laplace y de Poisson
-**Laplace:** $\nabla^2 u = 0$ (por ejemplo, $u_{xx} + u_{yy} = 0$): estados estacionarios sin fuentes. Sus soluciones son **armónicas**: no tienen máximos ni mínimos interiores (principio del máximo).
 
-**Poisson:** $\nabla^2 u = f$: equilibrio con fuentes (cargas, calor).
+**La ecuación de Laplace** es la EDP más simple y una de las más profundas:
 
-**Propiedades:** la solución en un dominio queda determinada por los valores en la frontera (problema de Dirichlet) o por sus derivadas normales (Neumann). Usadas en electrostática, flujo de fluidos y elasticidad.
+$$\Delta u = 0, \qquad \text{es decir,} \qquad \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} = 0$$
+
+¿Qué dice? Que en cada punto, la suma de las curvaturas en las dos direcciones es cero: si la gráfica se curva hacia arriba en la dirección $x$, debe curvarse hacia abajo en la dirección $y$ para compensar. En lenguaje físico: **estado de equilibrio sin fuentes**. Es la temperatura final de una placa calentada en los bordes, el potencial eléctrico en una región sin cargas, la altura de una membrana tensa y en reposo.
+
+Las soluciones de la ecuación de Laplace se llaman **funciones armónicas**, y tienen propiedades sorprendentes:
+
+- **Propiedad del valor medio:** el valor de $u$ en cualquier punto es exactamente el promedio de sus valores sobre cualquier círculo centrado en ese punto. Por eso las superficies armónicas parecen "autoniveladas".
+- **Principio del máximo:** una función armónica no puede tener máximos ni mínimos en el interior del dominio; sus valores extremos se alcanzan siempre **en la frontera**. Si los bordes de la placa están a temperaturas entre $0°$ y $100°$, ninguna temperatura interior puede salirse de ese rango.
+- **Determinación por la frontera:** basta conocer los valores en todo el borde para que la solución interior quede completamente determinada (y única). Toda la información entra por la frontera.
+
+**La ecuación de Poisson** agrega una fuente:
+
+$$\Delta u = f, \qquad \text{es decir,} \qquad u_{xx} + u_{yy} = f(x,y)$$
+
+Aquí $f(x,y)$ es una función conocida que representa la **densidad de fuentes**: cargas eléctricas (en electrostática, $f$ es la densidad de carga), fuentes de calor internas, o masa en un problema gravitatorio. Cuando $f = 0$ se recupera Laplace: Poisson es Laplace "con enchufes".
+
+**Cómo se fijan las condiciones de frontera.** Hay dos formas clásicas:
+
+- **Condición de Dirichlet:** se fija el **valor** de $u$ en el borde. Ejemplo: $u(0,y) = 0$, $u(L,y) = 100$ (los lados de la placa están a esas temperaturas).
+- **Condición de Neumann:** se fija la **derivada normal** $\dfrac{\partial u}{\partial n}$ en el borde, es decir, cuánto varía $u$ al salir de la región perpendicularmente al borde. Ejemplo: $\dfrac{\partial u}{\partial n} = 0$ en el borde significa "borde aislado": ningún flujo atraviesa la frontera.
+
+La primera describe bordes a temperatura (o voltaje) conocida; la segunda, bordes con flujo conocido. El símbolo $n$ (ene) denota la dirección normal (perpendicular) al borde, apuntando hacia afuera.
+
+**Un ejemplo mínimo pero completo.** En una dimensión, la ecuación de Laplace es simplemente $u_{xx} = 0$, cuyas soluciones son las rectas $u(x) = ax + b$ (integrando dos veces). Si pedimos $u(0) = 0$ y $u(L) = 100$, obtenemos $b = 0$ y $aL = 100$, es decir, $u(x) = \dfrac{100}{L}x$: el perfil de temperatura de equilibrio de una barra con extremos a $0°$ y $100°$ es una línea recta. Este es el caso más importante de una idea general: **en ausencia de fuentes, el equilibrio reparte las cosas de manera lineal** entre los valores de la frontera.
+
+**Verificación práctica.** Para saber si una función es armónica se calculan las dos segundas derivadas y se suman. Para $u = x^2 - y^2$: $u_{xx} = 2$ y $u_{yy} = -2$, y la suma es $0$: es armónica. Para $u = x^2 + y^2$: $u_{xx} = 2$ y $u_{yy} = 2$, la suma es $4$: **no** es armónica (satisface una Poisson con $f = 4$).
 
 ## Ecuación del calor
-$$\frac{\partial u}{\partial t} = k\frac{\partial^2 u}{\partial x^2}$$
 
-Describe difusión: barras, placas, disipación. Propiedades:
-- La temperatura tiende a uniformizarse con el tiempo.
-- La solución es infinítamente suave para $t > 0$ (suavizado).
-- **Principio del máximo:** la temperatura máxima se alcanza en la frontera o en el instante inicial.
+La ecuación del calor en una dimensión es
 
-**Condición de frontera de Dirichlet:** $u(0, t) = u(L, t) = 0$ (extremos a temperatura fija).
+$$\frac{\partial u}{\partial t} = k\,\frac{\partial^2 u}{\partial x^2}, \qquad k > 0$$
+
+donde $u(x,t)$ es la temperatura (o la concentración, o la cantidad que se difunde) y $k$ es la constante de difusión del material. **Leamos cada lado por separado.**
+
+- El lado izquierdo, $u_t = \dfrac{\partial u}{\partial t}$, es la rapidez con que cambia la temperatura en un punto fijo $x$: positiva si se calienta, negativa si se enfría.
+- El lado derecho, $k\,u_{xx}$, mira la **curvatura espacial** del perfil de temperaturas. En un valle del perfil (el punto está más frío que sus vecinos), $u_{xx} > 0$ y por tanto $u_t > 0$: el punto se calienta. En una cima (más caliente que los vecinos), $u_{xx} < 0$ y el punto se enfría. La ecuación dice: **el calor fluye de donde sobra hacia donde falta, y la velocidad del flujo es proporcional a la curvatura**.
+
+**El suavizado.** La propiedad más famosa del calor: por irregular que sea la condición inicial $f(x)$ (aunque tenga picos, esquinas o saltos), para cualquier $t > 0$ la solución es **infinitamente suave** (derivable todas las veces que quieras). El calor borra los detalles finos: las irregularidades de alta frecuencia mueren primero. Es como mirar una fotografía que se va desenfocando: las texturas finas desaparecen, quedan las formas gruesas.
+
+**Principio del máximo.** La temperatura máxima de todo el proceso se alcanza **o bien en el instante inicial o bien en la frontera**; nunca aparece espontáneamente un nuevo máximo en el interior. Si los extremos de la barra están a $0°$ y la barra comienza a $100°$, ninguna parte de la barra superará jamás los $100°$.
+
+**Irreversibilidad.** La ecuación del calor tiene una flecha del tiempo. La ecuación con $t$ cambiado por $-t$ (el "calor hacia atrás") no es la misma ecuación y sus soluciones se vuelven inestables: los detalles reaparecen de la nada. El calor disipa; no se concentra solo.
+
+**Las condiciones típicas.** Para una barra de longitud $L$ se piden:
+
+- Condición inicial: $u(x, 0) = f(x)$, el perfil de temperatura en el momento inicial.
+- Condiciones de frontera. Las dos más comunes son Dirichlet, $u(0,t) = u(L,t) = 0$ (los extremos se mantienen a temperatura cero, conectados a un baño frío), y Neumann, $u_x(0,t) = u_x(L,t) = 0$ (extremos aislados: el flujo de calor a través del borde es nulo).
+
+**Comportamiento a largo plazo.** Con extremos mantenidos a cero, toda la barra termina a temperatura cero: $u(x,t) \to 0$ cuando $t \to \infty$. Con extremos aislados, la temperatura se uniformiza al **promedio** de la condición inicial (la energía se conserva pero se reparte). Con extremos a temperaturas distintas, la solución tiende al perfil lineal que vimos en la sección de Laplace: el estado estacionario del calor resuelve $u_{xx} = 0$.
+
+**Un ejemplo que se verifica a mano.** La función $u(x,t) = e^{-t}\text{sen}\,x$ satisface $u_t = u_{xx}$ (caso $k = 1$): el lado izquierdo es $-e^{-t}\text{sen}\,x$, y el derecho, derivando dos veces el seno, también es $-e^{-t}\text{sen}\,x$. La temperatura decae multiplicada por $e^{-t}$ manteniendo la forma sinusoidal. Observa la estructura típica: el seno espacial (que se anula en los extremos de $[0,\pi]$) y la exponencial temporal decreciente.
 
 ## Ecuación de onda
-$$\frac{\partial^2 u}{\partial t^2} = c^2\frac{\partial^2 u}{\partial x^2}$$
 
-Describe vibraciones: cuerdas, membranas, sonido, luz. La constante $c$ es la velocidad de propagación.
+La ecuación de onda en una dimensión es
 
-**Solución de D'Alembert:** $u(x,t) = F(x - ct) + G(x + ct)$: dos ondas viajeras, una hacia la derecha y otra hacia la izquierda. Las ondas no se difuminan: conservan su forma.
+$$\frac{\partial^2 u}{\partial t^2} = c^2\,\frac{\partial^2 u}{\partial x^2}$$
 
-## Separación de variables
-Método central para EDP lineales en dominios simples:
-1. Supón $u(x,t) = X(x)T(t)$.
-2. Sustituye y separa: cada lado depende de una sola variable, así que ambos son constantes.
-3. Resuelve dos EDO.
-4. Aplica frontera (determina modos) e inicial (combinación de modos).
+donde $u(x,t)$ es el desplazamiento de una cuerda vibrante (o la presión en el aire, o el campo eléctrico de la luz) y $c$ es la **velocidad de propagación** de la onda en ese medio. **Cada símbolo, en palabras:** el lado izquierdo es la **aceleración** de cada punto de la cuerda (segunda derivada respecto del tiempo); el lado derecho es $c^2$ veces la **curvatura espacial** de la cuerda. La ecuación dice: cuanto más curvada esté la cuerda en un punto, más fuerte es la fuerza que lo acelera hacia el equilibrio. Es la ley de Newton para un medio elástico: curvatura produce aceleración.
 
-**Ejemplo (calor con extremos en cero).**
-- $X'' + \lambda X = 0$, $X(0) = X(L) = 0 \Rightarrow X_n = \text{sen}\dfrac{n\pi x}{L}$.
-- $T' = -k\lambda T \Rightarrow T_n = e^{-k(n\pi/L)^2 t}$.
-- Solución: $u(x,t) = \sum b_n \,\text{sen}\dfrac{n\pi x}{L} e^{-k(n\pi/L)^2 t}$.
+**La solución de D'Alembert.** Toda solución de la ecuación de onda se puede escribir como la suma de dos ondas viajeras:
 
-## Condiciones de frontera y series de Fourier
-Los coeficientes $b_n$ se determinan con la **condición inicial** $u(x,0) = f(x)$:
-$$b_n = \frac{2}{L}\int_0^L f(x)\,\text{sen}\frac{n\pi x}{L}\,dx$$
+$$u(x,t) = F(x - ct) + G(x + ct)$$
 
-Los modos son los armónicos de una cuerda; las frecuencias altas decaen más rápido en el calor ($e^{-n^2}$) y se conservan en la onda. Esta conexión con Fourier es una de las grandes uniones de la matemática.
+donde $F$ y $G$ son funciones arbitrarias (determinadas por las condiciones iniciales). ¿Por qué funciona? Verifiquemos solo $F(x - ct)$: por la regla de la cadena, $u_{xx} = F''(x - ct)$ y $u_t = -c\,F'(x - ct)$, luego $u_{tt} = c^2 F''(x - ct) = c^2 u_{xx}$. Exacto.
 
-## Método de diferencias finitas
-Para EDP sin solución analítica se discretiza el dominio:
-$$u_{xx} \approx \frac{u_{i+1} - 2u_i + u_{i-1}}{h^2}$$
+**Qué significa $F(x - ct)$.** Fija un punto de la forma de la onda, por ejemplo la cresta que cumple $x - ct = 3$. Esa condición se reescribe $x = 3 + ct$: la cresta se mueve **hacia la derecha** con velocidad $c$, porque su posición crece con el tiempo. Por eso $F(x - ct)$ es una onda que viaja a la derecha conservando su forma, y $G(x + ct)$ viaja a la izquierda. La solución general es la superposición de una que va para allá y otra que viene para acá.
 
-Se construye un sistema de ecuaciones (o se avanza en el tiempo) con computadora. Requiere **estabilidad**: en el calor, $k\Delta t/\Delta x^2 \leq 1/2$; en la onda, se cumple la condición CFL $c\Delta t \leq \Delta x$.
+**Contraste con el calor.** El calor disipa y suaviza; la onda **no se difumina**: una perturbación viaja íntegra, a velocidad finita $c$, y (en la cuerda ideal) no pierde energía. Las señales llegan con su forma intacta. Además la ecuación de onda es **reversible en el tiempo**: si $u(x,t)$ es solución, también lo es $u(x,-t)$. Esa es la diferencia esencial entre parabólica e hiperbólica.
 
-## Ejemplos resueltos: seis casos explicados
-**Ejemplo 1 (aplicación, estado estacionario).** Una barra con extremos a $0°$ y $100°$, sin fuentes: halla $u(x)$.
-- $u_{xx} = 0 \Rightarrow u = ax + b$.
-- $u(0) = 0$, $u(L) = 100 \Rightarrow u = 100x/L$ (perfil lineal).
+**Las condiciones.** La ecuación tiene segunda derivada temporal, así que necesita **dos condiciones iniciales**: la forma inicial $u(x,0) = f(x)$ y la velocidad inicial $u_t(x,0) = g(x)$. (Piensa en una cuerda de guitarra: hay que saber dónde se la desplazó y con qué velocidad se la soltó.) Más las condiciones de frontera: para una cuerda fija en los extremos, $u(0,t) = u(L,t) = 0$ (los extremos nunca se mueven).
 
-**Ejemplo 2 (aplicación, calor).** Barra de longitud $\pi$ con $k = 1$, extremos a 0 y $u(x,0) = \text{sen}\,x$.
-- Modo único: $u = \text{sen}\,x \cdot e^{-t}$.
-- La temperatura decae exponencialmente sin cambiar de forma.
+**Ejemplo con verificación.** La función $u(x,t) = \text{sen}\,x\,\cos t$ satisface $u_{tt} = u_{xx}$ (caso $c = 1$): $u_{tt} = -\text{sen}\,x\cos t$ y $u_{xx} = -\text{sen}\,x\cos t$. Describe una cuerda de longitud $\pi$ fija en los extremos, que vibra en su **modo fundamental**: todos los puntos oscilan arriba y abajo al mismo ritmo, sin atenuarse, con forma espacial $\text{sen}\,x$ y oscilación temporal $\cos t$. El periodo de la oscilación es $2\pi$ segundos. Compara con el ejemplo del calor: misma forma espacial, pero allí la amplitud moría con $e^{-t}$ y aquí oscila eternamente.
 
-**Ejemplo 3 (aplicación, onda).** Cuerda de longitud $\pi$ con extremos fijos y $u(x,0) = \text{sen}\,x$, $u_t(x,0) = 0$.
-- Modo fundamental: $u = \text{sen}\,x\cos t$.
-- Vibra con periodo $2\pi$ sin atenuarse.
+## Separación de variables paso a paso
 
-**Ejemplo 4 (práctica, clasificación).** Clasifica $u_{xx} + 4u_{xy} + 4u_{yy} = 0$.
-- $\Delta = 16 - 16 = 0$: parabólica.
+**Separación de variables** es el método central para resolver EDP lineales en regiones simples (una barra, un rectángulo, un disco). La idea es atrevida y elegantísima: **suponer que la solución es el producto de una función que solo depende de $x$ por otra que solo depende de $t$**:
 
-**Ejemplo 5 (práctica, Laplace).** Verifica que $u = x^2 - y^2$ es armónica.
-- $u_{xx} = 2$, $u_{yy} = -2$; suma $= 0$. Correcto.
+$$u(x,t) = X(x)\,T(t)$$
 
-**Ejemplo 6 (aplicación, estabilidad).** Calor con $k = 1$, $\Delta x = 0.1$. ¿Cuál es el máximo $\Delta t$ estable?
-- $k\Delta t/\Delta x^2 \leq 1/2 \Rightarrow \Delta t \leq 0.5 \cdot 0.01 = 0.005$.
-- Con paso mayor, la simulación explota.
+Aquí $X(x)$ (X mayúscula de equis) es la parte espacial y $T(t)$ la parte temporal. Si el universo es amable, la solución completa resulta ser una suma de estos productos. Veámoslo completo con el ejemplo que ilumina todo lo demás: **la ecuación del calor en una barra de longitud $L$ con extremos a temperatura cero**.
 
-## Contextos donde se aplica
-- **Física:** conducción de calor, ondas, electromagnetismo, mecánica de fluidos, cuántica.
-- **Ingeniería:** diseño térmico, acústica, aerodinámica, simulación estructural.
-- **Finanzas:** ecuación de Black-Scholes (parabólica).
-- **Biología:** difusión de sustancias, propagación de señales nerviosas.
-- **Computación:** simulación numérica de clima, fluidos y materiales.
+**Paso 1. Sustituir.** Insertamos $u = X(x)T(t)$ en $u_t = k\,u_{xx}$. Como al derivar respecto de $t$ la parte $X(x)$ es constante, $u_t = X(x)\,T'(t)$; y como al derivar dos veces respecto de $x$ la parte $T(t)$ es constante, $u_{xx} = X''(x)\,T(t)$. La ecuación queda
 
-## Errores comunes y cómo evitarlos
-- **Confundir condiciones iniciales con de frontera.** Una es el estado en $t = 0$; las otras, el comportamiento en los bordes.
-- **Aplicar separación de variables a EDP no lineales.** El método exige linealidad.
-- **Ignorar la estabilidad numérica.** Un paso de tiempo grande arruina la simulación.
-- **Olvidar la convergencia de la serie.** Las series de Fourier deben converger a la solución.
-- **Mezclar los tipos de EDP.** Cada tipo tiene propiedades cualitativas distintas.
+$$X(x)\,T'(t) = k\,X''(x)\,T(t)$$
 
-## Ejercicios propuestos
+**Paso 2. Separar.** Dividimos ambos lados por $k\,X(x)\,T(t)$ (suponiendo que no se anula):
+
+$$\frac{T'(t)}{k\,T(t)} = \frac{X''(x)}{X(x)}$$
+
+**Paso 3. El argumento clave.** Mira la igualdad: el lado izquierdo depende **solo** de $t$ y el lado derecho depende **solo** de $x$. Si cambiamos $x$ manteniendo $t$ fijo, el lado izquierdo no cambia, así que el derecho tampoco: la expresión de la derecha es constante. Si cambiamos $t$ manteniendo $x$ fijo, el lado derecho no cambia, así que el izquierdo tampoco: la de la izquierda es constante. Como son iguales, **ambas son la misma constante**, que por tradición se escribe $-\lambda$ (lambda, letra griega):
+
+$$\frac{X''(x)}{X(x)} = \frac{T'(t)}{k\,T(t)} = -\lambda$$
+
+De una sola EDP han nacido dos **EDO** (ecuaciones diferenciales ordinarias), mucho más fáciles.
+
+**Paso 4. El problema espacial.** Reescribimos: $X''(x) + \lambda X(x) = 0$, junto con las condiciones de frontera, que se heredan: como $u(0,t) = X(0)T(t) = 0$ para todo $t$, debe ser $X(0) = 0$; igualmente $X(L) = 0$. Ahora hay que analizar qué valores de $\lambda$ permiten soluciones no triviales:
+
+- Si $\lambda < 0$, digamos $\lambda = -s^2$, la solución general es $X = A\cosh(sx) + B\,\text{senh}(sx)$; con $X(0) = 0$ queda $A = 0$, y con $X(L) = 0$ queda $B\,\text{senh}(sL) = 0$, que obliga $B = 0$: solo la solución trivial. Descartado.
+- Si $\lambda = 0$, la solución es la recta $X = Ax + B$; las dos condiciones fuerzan $A = B = 0$. Descartado.
+- Si $\lambda > 0$, digamos $\lambda = s^2$, la solución es $X = A\cos(sx) + B\,\text{sen}(sx)$. La condición $X(0) = 0$ elimina el coseno ($A = 0$). La condición $X(L) = 0$ exige $B\,\text{sen}(sL) = 0$; para que $B \neq 0$ debe ser $\text{sen}(sL) = 0$, es decir, $sL = n\pi$ con $n = 1, 2, 3, \ldots$ Por lo tanto los valores permitidos son
+
+$$\lambda_n = \left(\frac{n\pi}{L}\right)^2, \qquad X_n(x) = \text{sen}\left(\frac{n\pi x}{L}\right)$$
+
+Estos números $\lambda_n$ se llaman **valores propios** (eigenvalores) y las funciones $X_n$, **funciones propias**. Cada $n$ produce un **modo** de vibración o de difusión: $n = 1$ es el modo fundamental (media onda de seno), $n = 2$ tiene un nodo en el medio, y así.
+
+**Paso 5. El problema temporal.** Para cada $\lambda_n$, la ecuación $T'(t) = -k\lambda_n T(t)$ tiene por solución la exponencial decreciente
+
+$$T_n(t) = e^{-k\lambda_n t} = e^{-k(n\pi/L)^2 t}$$
+
+(Es la EDO clásica $y' = ay$ con $a = -k\lambda_n$, cuya solución es $y = e^{at}$.)
+
+**Paso 6. Superposición.** Cada producto $X_n(x)T_n(t)$ es una solución. Como la ecuación es **lineal** (la incógnita y sus derivadas aparecen sumadas, sin productos ni potencias), cualquier combinación de soluciones también lo es. La solución general es la serie
+
+$$u(x,t) = \sum_{n=1}^{\infty} b_n\,\text{sen}\left(\frac{n\pi x}{L}\right)e^{-k(n\pi/L)^2 t}$$
+
+donde los coeficientes $b_n$ quedan libres. El símbolo $\sum_{n=1}^{\infty}$ se lee "suma desde n igual a 1 hasta infinito": sumamos infinitos términos, uno por cada modo.
+
+**Paso 7. La condición inicial elige los $b_n$.** Falta imponer $u(x,0) = f(x)$. Haciendo $t = 0$ en la serie (todas las exponenciales valen $1$):
+
+$$f(x) = \sum_{n=1}^{\infty} b_n\,\text{sen}\left(\frac{n\pi x}{L}\right)$$
+
+Los coeficientes se calculan con la fórmula de la próxima sección. Si $f(x) = \text{sen}\left(\dfrac{n\pi x}{L}\right)$ ya es un modo puro, entonces ese $b_n$ vale $1$ y todos los demás $0$, y la serie se reduce a un solo término: por eso el ejemplo $u(x,0) = \text{sen}\,x$ en la barra $[0,\pi]$ da $u = \text{sen}\,x\,e^{-t}$. La separación de variables convierte una EDP en dos EDO y una serie infinita: es la navaja suiza de este tema.
+
+## Condiciones de frontera y Fourier
+
+El paso 7 anterior plantea una pregunta central: ¿cualquier función $f(x)$ se puede escribir como suma de senos? La respuesta, dada por **Fourier** a comienzos del siglo XIX, es sí, y es una de las uniones más fecundas de toda la matemática: las **series de Fourier** descomponen una función en ondas puras.
+
+**La idea de Fourier.** Los senos $\text{sen}\left(\dfrac{n\pi x}{L}\right)$ con $n = 1, 2, 3, \ldots$ forman una "base": cualquier perfil de temperatura razonable se expresa como combinación de ellos, igual que cualquier vector del plano se expresa con dos flechas base. Cada coeficiente $b_n$ mide "cuánto del modo $n$ contiene la función $f$".
+
+**La ortogonalidad (la llave del cálculo).** El hecho técnico que permite despejar los coeficientes es que los senos de frecuencias distintas son **ortogonales**: su producto integrado sobre la barra se anula,
+
+$$\int_0^L \text{sen}\left(\frac{n\pi x}{L}\right)\text{sen}\left(\frac{m\pi x}{L}\right)dx = 0 \quad \text{si } n \neq m, \qquad \text{y vale } \frac{L}{2} \text{ si } n = m$$
+
+**Cómo se obtiene la fórmula.** Multiplicamos la serie $f(x) = \sum b_n\,\text{sen}\left(\dfrac{n\pi x}{L}\right)$ por $\text{sen}\left(\dfrac{m\pi x}{L}\right)$ e integramos de $0$ a $L$. Gracias a la ortogonalidad, de los infinitos términos del lado derecho sobrevive únicamente el de $n = m$, que aporta $b_m \cdot \dfrac{L}{2}$. Despejando:
+
+$$b_n = \frac{2}{L}\int_0^L f(x)\,\text{sen}\left(\frac{n\pi x}{L}\right)dx$$
+
+Esta es **la** fórmula de los coeficientes de la condición inicial. El símbolo $\int_0^L$ es la integral definida de $0$ a $L$: el área con signo bajo la curva.
+
+**Ejemplo calculado completo.** Supón una barra de longitud $L$ con extremos a cero y temperatura inicial uniforme $f(x) = 1$ (toda la barra a $1°$). Entonces
+
+$$b_n = \frac{2}{L}\int_0^L 1\cdot\text{sen}\left(\frac{n\pi x}{L}\right)dx = \frac{2}{n\pi}\left(1 - \cos(n\pi)\right)$$
+
+Como $\cos(n\pi) = 1$ si $n$ es par y $-1$ si $n$ es impar, resulta $b_n = 0$ para $n$ par y $b_n = \dfrac{4}{n\pi}$ para $n$ impar. La solución es
+
+$$u(x,t) = \frac{4}{\pi}\text{sen}\left(\frac{\pi x}{L}\right)e^{-k\pi^2 t/L^2} + \frac{4}{3\pi}\text{sen}\left(\frac{3\pi x}{L}\right)e^{-9k\pi^2 t/L^2} + \cdots$$
+
+**La moraleja física escondida en las exponenciales.** Fíjate en el factor temporal del modo $n$: $e^{-k(n\pi/L)^2 t}$ decae tanto más rápido cuanto mayor es $n$ (el exponente crece como $n^2$). Las frecuencias altas —los detalles finos, las esquinas— mueren casi de inmediato; las bajas sobreviven. Ahí está el suavizado del calor hecho fórmula. En la ecuación de onda, en cambio, cada modo oscila con $\cos\left(\dfrac{n\pi ct}{L}\right)$ **sin decaer**: todas las frecuencias conviven para siempre. Los modos de Fourier son los armónicos de una cuerda de guitarra.
+
+**Dirichlet y Neumann eligen la familia.** Con extremos a cero (Dirichlet) se usan **senos**, porque cada seno se anula en $x = 0$ y en $x = L$. Con extremos aislados (Neumann, $u_x = 0$ en los bordes) se usan **cosenos**, porque sus derivadas se anulan en los bordes. La condición de frontera decide el alfabeto con el que se escribe la solución; la condición inicial decide los coeficientes.
+
+## Diferencias finitas (idea)
+
+Muchas EDP no admiten soluciones con fórmulas (dominios irregulares, coeficientes variables, no linealidades). Entonces se recurre a la computadora, y el método más simple se llama **diferencias finitas**. La idea es volver al concepto de derivada: una derivada es un límite de cocientes de diferencias; si en lugar del límite usamos diferencias pequeñas pero finitas, la EDP se convierte en un sistema de ecuaciones algebraicas.
+
+**La rejilla.** Se cubre el dominio con una malla: posiciones $x_i = i\,\Delta x$ separadas un paso $\Delta x$ (hache de espacio), y tiempos $t_n = n\,\Delta t$ separados un paso $\Delta t$ (paso de tiempo). La notación $u_i^n$ significa "el valor aproximado de $u$ en la posición $x_i$ y el tiempo $t_n$": el subíndice indica posición, el superíndice indica tiempo (no es una potencia).
+
+**La aproximación de las derivadas.** La segunda derivada se aproxima con la **diferencia central**:
+
+$$u_{xx} \approx \frac{u_{i+1} - 2u_i + u_{i-1}}{h^2}, \qquad h = \Delta x$$
+
+¿De dónde sale? De la definición de derivada como límite: la fórmula combina el valor en el punto, en el vecino de la derecha y en el vecino de la izquierda, de modo que para funciones suaves el error sea proporcional a $h^2$ (muy pequeño). La primera derivada temporal se aproxima con la **diferencia progresiva**:
+
+$$u_t \approx \frac{u_i^{n+1} - u_i^{n}}{\Delta t}$$
+
+**El esquema explícito del calor.** Sustituyendo ambas en $u_t = k u_{xx}$ y despejando el valor del futuro:
+
+$$u_i^{n+1} = u_i^{n} + \frac{k\,\Delta t}{h^2}\left(u_{i+1}^{n} - 2u_i^{n} + u_{i-1}^{n}\right)$$
+
+Cada nuevo valor se calcula a partir de los tres valores del instante anterior: el método avanza en el tiempo paso a paso, como un reloj. Con la condición inicial $u(x,0) = f(x)$ se llena la fila $n = 0$ y de allí se propagan todas las demás.
+
+**La estabilidad: la trampa que espera a los incautos.** El método anterior solo funciona si el paso de tiempo es suficientemente pequeño. Para el calor explícito, la condición de **estabilidad** es
+
+$$\frac{k\,\Delta t}{h^2} \leq \frac{1}{2}$$
+
+Si se viola, los errores de redondeo se amplifican en cada paso y la simulación "explota" en valores sin sentido, cada vez más grandes. **Ejemplo numérico:** con $k = 1$ y $h = 0.1$ se tiene $h^2 = 0.01$, así que $\Delta t \leq 0.5 \cdot 0.01 = 0.005$: hay que avanzar el tiempo en pasos menores que cinco milésimas. Con $k = 2$ y $h = 0.05$: $\Delta t \leq \dfrac{0.5 \cdot 0.0025}{2} = 0.000625$. Reducir $h$ a la mitad obliga a reducir $\Delta t$ a la cuarta parte: por eso las simulaciones finas son costosas.
+
+**La condición CFL para la onda.** En la ecuación de onda el esquema explícito exige que en un paso de tiempo la onda numérica no viaje más de una celda:
+
+$$c\,\Delta t \leq \Delta x$$
+
+Se llama condición **CFL** (por Courant, Friedrichs y Lewy): la información no puede avanzar más rápido que la rejilla. Con $c = 3$ y $\Delta x = 0.3$: $\Delta t \leq 0.1$.
+
+Las diferencias finitas no dan una fórmula sino una tabla de números, pero con la estabilidad respetada producen aproximaciones que convergen a la solución verdadera cuando la rejilla se refina. Es la puerta de entrada a la simulación computacional del clima, los fluidos y los materiales.
+
+## Ejemplos resueltos
+
+**Ejemplo 1 (estado estacionario de una barra).** Una barra de longitud $L$ tiene el extremo izquierdo a $0°$ y el derecho a $100°$, sin fuentes internas. Halla la temperatura de equilibrio. El equilibrio resuelve la ecuación de Laplace unidimensional $u_{xx} = 0$. Integrando dos veces: $u(x) = ax + b$. La condición $u(0) = 0$ da $b = 0$; la condición $u(L) = 100$ da $aL = 100$, es decir, $a = 100/L$. Resultado: $u(x) = \dfrac{100}{L}x$, un perfil lineal entre los dos extremos. No depende de la conductividad del material: en equilibrio, el material solo decide cuánto tarda en llegar, no la forma final.
+
+**Ejemplo 2 (calor con un solo modo).** Barra de longitud $\pi$ con $k = 1$, extremos a cero y condición inicial $u(x,0) = \text{sen}\,x$. Como la condición inicial es exactamente el modo $n = 1$ (aquí $L = \pi$, así que el modo es $\text{sen}\left(\dfrac{1\pi x}{\pi}\right) = \text{sen}\,x$), la solución es $u(x,t) = \text{sen}\,x \cdot e^{-t}$. Verificación: $u_t = -\text{sen}\,x\,e^{-t}$ y $u_{xx} = -\text{sen}\,x\,e^{-t}$: se cumple. La temperatura decae exponencialmente sin cambiar de forma: solo cambia la altura de la curva.
+
+**Ejemplo 3 (onda, modo fundamental).** Cuerda de longitud $\pi$ con extremos fijos, posición inicial $u(x,0) = \text{sen}\,x$ y velocidad inicial nula $u_t(x,0) = 0$. La solución es $u(x,t) = \text{sen}\,x\cos t$. Verificación: $u_{tt} = -\text{sen}\,x\cos t$ y $u_{xx} = -\text{sen}\,x\cos t$: cumple $u_{tt} = u_{xx}$ (aquí $c = 1$). La cuerda oscila con periodo $2\pi$ y nunca se detiene ni se atenúa: la energía se conserva.
+
+**Ejemplo 4 (clasificación).** Clasifica $u_{xx} + 4u_{xy} + 4u_{yy} = 0$. Identificamos $A = 1$, $B = 4$, $C = 4$ y calculamos el discriminante $\Delta = B^2 - 4AC = 16 - 16 = 0$. Parabólica.
+
+**Ejemplo 5 (verificación de armónica).** Verifica que $u = x^2 - y^2$ es armónica. $u_{xx} = 2$ (derivando dos veces respecto de $x$, con $y$ fija) y $u_{yy} = -2$. Suma: $0$. Es armónica.
+
+**Ejemplo 6 (Poisson con frontera).** Resuelve $u_{xx} = 2$ con $u(0) = 0$ y $u(1) = 5$. Integrando una vez: $u_x = 2x + A$; integrando otra: $u = x^2 + Ax + B$. De $u(0) = 0$ sale $B = 0$; de $u(1) = 5$ sale $1 + A = 5$, es decir, $A = 4$. Resultado: $u = x^2 + 4x$. Comprobación: $u_{xx} = 2$ y los valores en la frontera son los pedidos.
+
+**Ejemplo 7 (estabilidad numérica).** En el esquema explícito del calor con $k = 1$ y $\Delta x = 0.1$, ¿cuál es el mayor paso de tiempo estable? La condición es $\dfrac{k\,\Delta t}{\Delta x^2} \leq \dfrac{1}{2}$, es decir, $\dfrac{\Delta t}{0.01} \leq \dfrac{1}{2}$, de donde $\Delta t \leq 0.005$. Con un paso mayor, los errores crecen sin control y la simulación deja de tener sentido.
+
+**Ejemplo 8 (coeficientes de Fourier).** Para la barra $[0,L]$ con extremos a cero y $f(x) = 1$, calcula $b_1$. Aplicamos la fórmula: $b_1 = \dfrac{2}{L}\int_0^L \text{sen}\left(\dfrac{\pi x}{L}\right)dx = \dfrac{2}{L}\cdot\dfrac{L}{\pi}\left[-\cos\left(\dfrac{\pi x}{L}\right)\right]_0^L = \dfrac{2}{\pi}(1 - (-1)) = \dfrac{4}{\pi}$. El modo fundamental entra con amplitud $4/\pi \approx 1.27$.
+
+## Errores comunes
+
+- **Confundir condiciones iniciales con condiciones de frontera.** Las iniciales describen el estado en $t = 0$ para todos los puntos $x$; las de frontera describen los bordes $x = 0$ y $x = L$ para todos los tiempos $t$. Una EDP de evolución necesita ambas, cada una en su lugar.
+- **Leer $u(0,t) = 0$ como un producto.** No es "u por cero por t": es la restricción de que la función vale cero cuando $x = 0$, en todo instante. Confundirlo con un producto lleva a cuentas absurdas.
+- **Derivar parcialmente olvidando congelar la otra variable.** Al calcular $u_x$ de $x^2t + t^2$ hay que tratar a $t$ como constante: el resultado es $2xt$, no $2xt + 2t$. En una derivada parcial, solo se mueve la variable indicada por el denominador.
+- **Confundir $u_{xx}$ con $(u_x)^2$.** El subíndice $xx$ significa segunda derivada; no es un cuadrado. Para $u = x^3$, $u_{xx} = 6x$, mientras que $(u_x)^2 = (3x^2)^2 = 9x^4$.
+- **Aplicar separación de variables a EDP no lineales.** El método exige linealidad: la superposición de soluciones debe volver a ser solución. Si aparece $u^2$, $u\,u_x$ o $\text{sen}(u)$, el producto $X(x)T(t)$ no descompone la ecuación y el método falla.
+- **Olvidar la condición de estabilidad en diferencias finitas.** Un $\Delta t$ demasiado grande arruina la simulación: los números crecen hasta el infinito sin representar la física. Siempre hay que verificar $\dfrac{k\Delta t}{\Delta x^2} \leq \dfrac{1}{2}$ (calor) o $c\,\Delta t \leq \Delta x$ (onda).
+- **Mezclar los tipos de EDP.** Elíptica, parabólica e hiperbólica tienen propiedades cualitativas opuestas (equilibrio, suavizado, propagación). Clasificar primero evita esperar que una onda se difumine o que el calor oscile.
+- **Creer que la onda se atenúa como el calor.** La onda conserva su forma y su energía; el calor disipa. Las frecuencias altas sobreviven en la onda y mueren en el calor.
+- **Olvidar que la serie de Fourier debe converger.** La suma infinita de modos representa la condición inicial solo bajo hipótesis razonables sobre $f$; para funciones con saltos, la serie converge a los valores medios de los saltos.
+- **Olvidar el factor $c^2$.** En la onda, la velocidad es $c$ pero el coeficiente es $c^2$; en $u_{tt} = 4u_{xx}$ la velocidad de propagación es $2$, no $4$. Y al escribir las soluciones modales, la frecuencia temporal es $n\pi c/L$, con la $c$ incluida.
+
+## Ejercicios propuestos (con respuestas)
+
 1. Clasifica $u_{xx} - u_{yy} = 0$.
-2. Verifica que $u = e^{-t}\text{sen}\,x$ satisface el calor $u_t = u_{xx}$.
-3. Verifica que $u = \text{sen}\,x\,\text{sen}\,t$ no es solución de $u_{tt} = u_{xx}$ (compruébalo).
-4. Halla el estado estacionario de la barra con extremos $20°$ y $80°$.
-5. ¿Cuál es la condición de estabilidad para el calor con $\Delta x = 0.05$, $k = 2$?
-6. Escribe los dos primeros modos del calor en $[0, \pi]$.
-7. Si $u(x,0) = 3\,\text{sen}\,2x$, halla $u(x,t)$ para el calor ($k = 1$).
-8. ¿Por qué las ondas no se suavizan como el calor?
+2. Clasifica $u_{xx} + 2u_{xy} + 3u_{yy} = 0$.
+3. Verifica que $u = e^{-t}\text{sen}\,x$ satisface $u_t = u_{xx}$.
+4. Verifica que $u = x^2 + t$ **no** satisface $u_{tt} = u_{xx}$.
+5. Halla el estado estacionario de una barra con extremos a $20°$ y $80°$.
+6. Resuelve $u_{xx} = 2$ con $u(0) = 0$ y $u(1) = 5$.
+7. Calor con $k = 1$ en $[0,\pi]$ y $u(x,0) = 3\,\text{sen}\,2x$: halla $u(x,t)$.
+8. Onda con $c = 1$, $u(x,0) = \text{sen}\,x$ y $u_t(x,0) = 0$: halla $u(x,t)$.
+9. Escribe los dos primeros modos del calor en $[0,\pi]$ con extremos a cero.
+10. ¿Cuál es el máximo $\Delta t$ estable para el calor explícito con $k = 2$ y $\Delta x = 0.05$?
 
-**Respuestas:** 1) Hiperbólica. 2) $u_t = -e^{-t}\text{sen}\,x = u_{xx}$. 3) $u_{tt} = -\text{sen}\,x\,\text{sen}\,t \neq u_{xx} = -\text{sen}\,x\,\text{sen}\,t$... nota: sí coincide en este caso; verifica con otra función. 4) $u = 20 + 60x/L$. 5) $\Delta t \leq 0.5 \cdot 0.0025/2 \approx 0.000625$. 6) $\text{sen}\,x\,e^{-t}$ y $\text{sen}\,2x\,e^{-4t}$. 7) $u = 3\,\text{sen}\,2x\,e^{-4t}$. 8) La ecuación de onda conserva energía; el calor disipa.
+**Respuestas.**
+
+1. Hiperbólica: $A = 1$, $B = 0$, $C = -1$, y $\Delta = 0 - 4(1)(-1) = 4 > 0$.
+2. Elíptica: $\Delta = 4 - 12 = -8 < 0$.
+3. $u_t = -e^{-t}\text{sen}\,x$ y $u_{xx} = -e^{-t}\text{sen}\,x$: se cumple.
+4. $u_{tt} = 0$ pero $u_{xx} = 2$: no es solución.
+5. $u(x) = 20 + \dfrac{60}{L}x$ (recta que une $20$ en $x = 0$ con $80$ en $x = L$).
+6. $u = x^2 + 4x$.
+7. $u(x,t) = 3\,e^{-4t}\,\text{sen}\,2x$ (el modo $n = 2$ decae con $e^{-4t}$).
+8. $u(x,t) = \text{sen}\,x\cos t$.
+9. $\text{sen}\,x\,e^{-t}$ y $\text{sen}\,2x\,e^{-4t}$.
+10. $\Delta t \leq \dfrac{0.5 \cdot 0.0025}{2} = 0.000625$.
 
 ## Resumen
-- Las EDP modelan fenómenos de espacio y tiempo; necesitan condiciones iniciales y de frontera.
-- Elípticas (equilibrio), parabólicas (difusión) e hiperbólicas (ondas) tienen comportamientos distintos.
-- Laplace describe estados estacionarios; calor, suavizado; onda, propagación.
-- Separación de variables reduce la EDP a EDO y usa series de Fourier para la condición inicial.
-- Las diferencias finitas resuelven numéricamente, respetando la estabilidad.
+
+- Una EDP relaciona una función de varias variables, como $u(x,t)$, con sus derivadas parciales; a diferencia de una EDO, necesita condiciones iniciales y condiciones de frontera.
+- La notación: $u_t$ y $u_x$ son derivadas parciales; $u_{xx}$ es la segunda derivada; $\Delta u = u_{xx} + u_{yy}$ es el laplaciano; $u(0,t) = 0$ es una condición, no un producto.
+- El discriminante $\Delta = B^2 - 4AC$ clasifica las EDP de segundo orden: elípticas (equilibrio, Laplace), parabólicas (difusión, calor) e hiperbólicas (ondas, D'Alembert).
+- Laplace ($\Delta u = 0$) describe estados estacionarios armónicos, con principio del máximo; Poisson ($\Delta u = f$) agrega fuentes; Dirichlet fija valores en la frontera y Neumann fija derivadas normales.
+- El calor $u_t = k u_{xx}$ suaviza, es irreversible y tiende al equilibrio; la onda $u_{tt} = c^2 u_{xx}$ propaga señales sin deformarlas y conserva energía.
+- La separación de variables supone $u = X(x)T(t)$, convierte la EDP en dos EDO, produce los modos $\text{sen}\left(\dfrac{n\pi x}{L}\right)e^{-k(n\pi/L)^2 t}$ y deja los coeficientes a la serie de Fourier de la condición inicial, con $b_n = \dfrac{2}{L}\int_0^L f(x)\,\text{sen}\left(\dfrac{n\pi x}{L}\right)dx$.
+- Las diferencias finitas discretizan las derivadas para resolver numéricamente; exigen respetar la estabilidad: $\dfrac{k\Delta t}{\Delta x^2} \leq \dfrac{1}{2}$ en el calor y $c\,\Delta t \leq \Delta x$ en la onda.
 `,
 
 };

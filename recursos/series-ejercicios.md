@@ -1,157 +1,164 @@
-# Sucesiones y series infinitas · Ejercicios
-
-Área: Cálculo · Nivel: Univ 2 · Descripción: Criterios de convergencia, Taylor, potencias y Fourier.
+# Sucesiones y series infinitas · 50 ejercicios
 
 ## Formulario
 
-### Límites de sucesiones
+**Notación.** $\sum_{n=1}^{\infty} a_n$ significa "suma de los términos $a_1 + a_2 + a_3 + \cdots$ sin terminar". $a_n$ es el término general; $S_N = \sum_{n=1}^{N} a_n$ es la suma parcial de los primeros $N$ términos. $\lim_{n\to\infty}$ se lee "límite cuando $n$ tiende a infinito"; $|r|$ es el valor absoluto; $n! = n(n-1)\cdots 2\cdot 1$; $n^p$ es la potencia $p$-ésima; $\sqrt[n]{x}$ es la raíz enésima.
 
-$$a_n \to L \iff \forall \varepsilon > 0 \; \exists N : n > N \Rightarrow |a_n - L| < \varepsilon$$
+**Convergencia.** La serie converge si $S_N$ tiende a un número finito; si no, diverge. Condición necesaria: si $\sum a_n$ converge, entonces $a_n \to 0$ (el recíproco es falso: la armónica diverge).
 
-- Cociente de polinomios: manda el grado mayor.
-- $\displaystyle\lim_{n\to\infty}\left(1 + \frac{k}{n}\right)^n = e^{k}$.
-- $\displaystyle\lim_{n\to\infty} n^{1/n} = 1$, $\displaystyle\lim_{n\to\infty}\frac{b^n}{n!} = 0$ para todo $b$.
-- Monótona y acotada $\Rightarrow$ convergente.
+| Serie | Condición de convergencia | Suma o veredicto |
+|---|---|---|
+| Geométrica $\sum_{n=0}^{\infty} a r^n$ | $\mid r \mid < 1$ converge; $\mid r \mid \geq 1$ diverge | $\dfrac{a}{1-r}$ |
+| Serie p $\sum \dfrac{1}{n^p}$ | $p > 1$ converge; $p \leq 1$ diverge | $p=2$: $\dfrac{\pi^2}{6}$ |
+| Telescópica $\sum \dfrac{1}{n(n+1)}$ | converge | $1$ |
 
-### Series básicas
+**Criterios.** Sean $a_n, b_n > 0$.
 
-$$\sum_{n=0}^{\infty} a r^n = \frac{a}{1-r} \quad (|r| < 1)$$
+| Criterio | Regla | Úsalo cuando |
+|---|---|---|
+| Comparación | $a_n \leq b_n$ y $\sum b_n$ converge $\Rightarrow$ $\sum a_n$ converge | tu serie es "menor" que una conocida |
+| Comparación al límite | $L = \lim \dfrac{a_n}{b_n}$ con $0 < L < \infty$: convergen o divergen juntas | tu serie se parece a una p |
+| Razón | $L = \lim \left\mid \dfrac{a_{n+1}}{a_n} \right\mid$: $L<1$ converge, $L>1$ diverge, $L=1$ no decide | hay factoriales o potencias |
+| Raíz | $L = \lim \sqrt[n]{\mid a_n \mid}$: misma regla | todo está elevado a la $n$ |
+| Integral | serie e $\int_1^{\infty} f(x)\,dx$ convergen o divergen juntas | $f$ positiva, continua y decreciente |
+| Leibniz (alternantes) | $a_n$ decrece a $0$ $\Rightarrow$ $\sum (-1)^n a_n$ converge | signos alternados |
 
-$$\sum_{n=1}^{\infty}\frac{1}{n^p} \; \text{converge} \iff p > 1$$
+**Absoluta y condicional.** Absoluta: $\sum \mid a_n \mid$ converge (implica convergencia). Condicional: converge pero $\sum \mid a_n \mid$ diverge. Ejemplo: $\sum \frac{(-1)^{n+1}}{n} = \ln 2$ es condicional.
 
-$$\sum_{n=1}^{\infty}\frac{1}{n(n+1)} = 1, \qquad \sum_{n=1}^{\infty}\frac{1}{n^2} = \frac{\pi^2}{6}$$
+**Series de potencias.** $\sum c_n x^n$ tiene radio $R = \lim \left\mid \dfrac{c_n}{c_{n+1}} \right\mid$: converge absolutamente si $\mid x \mid < R$.
 
-### Criterios de convergencia
-
-- **Razón:** $L = \displaystyle\lim\left|\frac{a_{n+1}}{a_n}\right|$; converge si $L < 1$, diverge si $L > 1$.
-- **Raíz:** $L = \displaystyle\lim \sqrt[n]{|a_n|}$; misma regla.
-- **Comparación:** $0 \leq a_n \leq b_n$; si $\sum b_n$ converge, $\sum a_n$ converge.
-- **Comparación al límite:** $a_n/b_n \to c \in (0, \infty)$ $\Rightarrow$ mismo carácter.
-- **Integral:** $\sum a_n$ y $\int_1^\infty f$ comparten carácter si $f(n) = a_n$, positiva y decreciente.
-- **Leibniz:** si $a_n \downarrow 0$, entonces $\sum (-1)^n a_n$ converge.
-
-### Series de potencias
-
-$$\sum_{n=0}^{\infty} c_n x^n, \qquad R = \lim\left|\frac{c_n}{c_{n+1}}\right|$$
-
-Converge absolutamente en $|x| < R$ y diverge en $|x| > R$; en $|x| = R$ se analiza aparte.
-
-### Taylor y McLaurin
-
-$$f(x) = \sum_{n=0}^{\infty}\frac{f^{(n)}(a)}{n!}(x-a)^n, \qquad f(x) = \sum_{n=0}^{\infty}\frac{f^{(n)}(0)}{n!}x^n$$
-
-$$e^x = \sum_{n=0}^{\infty}\frac{x^n}{n!}, \qquad \operatorname{sen} x = \sum_{n=0}^{\infty}\frac{(-1)^n x^{2n+1}}{(2n+1)!}, \qquad \cos x = \sum_{n=0}^{\infty}\frac{(-1)^n x^{2n}}{(2n)!}$$
-
-$$\frac{1}{1-x} = \sum_{n=0}^{\infty} x^n \; (|x|<1), \qquad \ln(1+x) = \sum_{n=1}^{\infty}\frac{(-1)^{n+1}}{n}x^n \; (-1 < x \leq 1)$$
-
-### Fourier
-
-$$f(x) = \frac{a_0}{2} + \sum_{n=1}^{\infty}\left(a_n\cos\frac{n\pi x}{L} + b_n\operatorname{sen}\frac{n\pi x}{L}\right)$$
+**Taylor.** $e^x = \sum \frac{x^n}{n!}$; $\operatorname{sen} x = \sum \frac{(-1)^n x^{2n+1}}{(2n+1)!}$; $\cos x = \sum \frac{(-1)^n x^{2n}}{(2n)!}$; $\frac{1}{1-x} = \sum x^n$ si $\mid x \mid < 1$.
 
 ## Ejercicios (50)
 
-1. $\displaystyle\lim_{n\to\infty}\frac{3n+1}{2n-5}$.
-2. $\displaystyle\lim_{n\to\infty}\frac{n^2+1}{2n^2-n}$.
-3. $\displaystyle\lim_{n\to\infty}\left(\sqrt{n+1}-\sqrt{n}\right)$.
-4. $\displaystyle\lim_{n\to\infty}\left(1+\frac{2}{n}\right)^n$.
-5. $\displaystyle\lim_{n\to\infty}\left(1-\frac{1}{n}\right)^n$.
-6. $\displaystyle\lim_{n\to\infty} n^{1/n}$.
-7. $\displaystyle\lim_{n\to\infty}\frac{2^n}{n!}$.
-8. $\displaystyle\lim_{n\to\infty}\frac{n!}{n^n}$.
-9. $\displaystyle\lim_{n\to\infty}\frac{(-1)^n}{n}$.
-10. $\displaystyle\lim_{n\to\infty}\frac{\cos n}{n}$.
-11. $\displaystyle\sum_{n=1}^{\infty}\frac{3}{4^n}$.
-12. $\displaystyle\sum_{n=0}^{\infty}2\left(-\frac{1}{3}\right)^n$.
-13. $\displaystyle\sum_{n=1}^{\infty}\frac{1}{n(n+2)}$.
-14. $\displaystyle\sum_{n=2}^{\infty}\frac{1}{n^2-1}$.
-15. $\displaystyle\sum_{n=1}^{\infty}\left[\left(\frac{1}{2}\right)^n+\left(\frac{1}{3}\right)^n\right]$.
-16. $\displaystyle\sum_{n=1}^{\infty}\left(\frac{1}{n+1}-\frac{1}{n+2}\right)$.
-17. $\displaystyle\sum_{n=1}^{\infty}\frac{1}{n^2}$.
-18. $\displaystyle\sum_{n=1}^{\infty}\frac{1}{\sqrt{n}}$.
-19. $\displaystyle\sum_{n=1}^{\infty}\frac{1}{n^2+1}$.
-20. $\displaystyle\sum_{n=1}^{\infty}\frac{n}{n^2+1}$.
-21. $\displaystyle\sum_{n=1}^{\infty}\frac{2^n}{n!}$ (razón).
-22. $\displaystyle\sum_{n=1}^{\infty}\frac{n!}{3^n}$ (razón).
-23. $\displaystyle\sum_{n=1}^{\infty}\left(\frac{n}{2n+1}\right)^n$ (raíz).
-24. $\displaystyle\sum_{n=1}^{\infty}\left(1-\frac{1}{n}\right)^{n^2}$ (raíz).
-25. $\displaystyle\sum_{n=2}^{\infty}\frac{1}{n\ln n}$ (integral).
-26. $\displaystyle\sum_{n=2}^{\infty}\frac{1}{n(\ln n)^2}$ (integral).
-27. $\displaystyle\sum_{n=1}^{\infty}\frac{3^n}{n^n}$ (raíz).
-28. $\displaystyle\sum_{n=1}^{\infty}\left(\frac{n}{n+1}\right)^{n^2}$ (raíz).
-29. $\displaystyle\sum_{n=1}^{\infty}\frac{1}{2n-1}$.
-30. $\displaystyle\sum_{n=1}^{\infty}\frac{2n+1}{3n+2}$.
-31. $\displaystyle\sum_{n=1}^{\infty}\frac{(-1)^n}{n}$ (absoluta o condicional).
-32. $\displaystyle\sum_{n=1}^{\infty}\frac{(-1)^n}{n^2}$ (absoluta o condicional).
-33. $\displaystyle\sum_{n=1}^{\infty}\frac{(-1)^{n+1}}{\sqrt{n}}$ (absoluta o condicional).
-34. $\displaystyle\sum_{n=1}^{\infty}\frac{(-1)^n n}{n^2+1}$ (absoluta o condicional).
-35. $\displaystyle\sum_{n=0}^{\infty}\frac{(-1)^n}{2n+1}$.
-36. $\displaystyle\sum_{n=1}^{\infty}\frac{(-1)^n n}{2n+1}$.
-37. Radio de convergencia de $\displaystyle\sum_{n=1}^{\infty}\frac{x^n}{n}$.
-38. Radio de convergencia de $\displaystyle\sum_{n=0}^{\infty}\frac{x^n}{n!}$.
-39. Radio de convergencia de $\displaystyle\sum_{n=0}^{\infty} n!\,x^n$.
-40. Radio de convergencia de $\displaystyle\sum_{n=1}^{\infty}\frac{(x-2)^n}{3^n}$.
-41. Radio de convergencia de $\displaystyle\sum_{n=1}^{\infty} n^3 x^n$.
-42. Radio de convergencia de $\displaystyle\sum_{n=1}^{\infty}\frac{x^n}{n\,3^n}$.
-43. Escribe la serie de McLaurin de $e^x$.
-44. Escribe los cuatro primeros términos de McLaurin de $\cos x$.
-45. Escribe la serie de McLaurin de $\dfrac{1}{1-x}$ y su intervalo.
-46. Escribe la serie de McLaurin de $\ln(1+x)$.
-47. Escribe la serie de McLaurin de $\operatorname{sen} x$.
-48. Escribe la serie de Taylor de $e^x$ centrada en $x = 1$.
-49. ¿Qué tipo de serie descompone funciones periódicas en senos y cosenos?
-50. Halla el valor de $\displaystyle\sum_{n=1}^{\infty}\frac{1}{n^2}$.
+**1–7 · Límites de sucesiones**
+
+1. $\lim_{n\to\infty} \dfrac{3n+1}{n+2}$
+2. $\lim_{n\to\infty} \dfrac{n^2+1}{2n^3-3}$
+3. $\lim_{n\to\infty} \dfrac{2n^2-5}{n^2+n}$
+4. $\lim_{n\to\infty} \left(1 + \dfrac{1}{n}\right)^n$
+5. $\lim_{n\to\infty} \dfrac{5^n+1}{5^n}$
+6. $\lim_{n\to\infty} \dfrac{\operatorname{sen} n}{n}$
+7. $\lim_{n\to\infty} \dfrac{(-1)^n}{n}$
+
+**8–14 · Series geométricas** (si convergen, halla la suma)
+
+8. $\sum_{n=0}^{\infty} \left(\frac{3}{4}\right)^n$
+9. $\sum_{n=0}^{\infty} 2\left(-\frac{1}{2}\right)^n$
+10. $\sum_{n=1}^{\infty} \left(\frac{1}{2}\right)^n$
+11. $\sum_{n=0}^{\infty} \left(\frac{5}{4}\right)^n$
+12. $\sum_{n=0}^{\infty} (-1)^n$
+13. $\sum_{n=0}^{\infty} 7\left(\frac{1}{3}\right)^n$
+14. $\sum_{n=0}^{\infty} \frac{3^n}{4^{n+1}}$
+
+**15–17 · Series telescópicas**
+
+15. $\sum_{n=1}^{\infty} \frac{1}{n(n+1)}$
+16. $\sum_{n=1}^{\infty} \frac{1}{n(n+2)}$
+17. $\sum_{n=1}^{\infty} \ln\left(1 + \frac{1}{n}\right)$
+
+**18–21 · Series p**
+
+18. $\sum_{n=1}^{\infty} \frac{1}{n^2}$
+19. $\sum_{n=1}^{\infty} \frac{1}{n^{0.9}}$
+20. $\sum_{n=1}^{\infty} n^{-3/2}$
+21. $\sum_{n=1}^{\infty} \frac{1}{\sqrt[3]{n}}$
+
+**22–28 · Comparación y comparación al límite**
+
+22. $\sum_{n=1}^{\infty} \frac{1}{n^2+1}$
+23. $\sum_{n=1}^{\infty} \frac{1}{n+\sqrt{n}}$
+24. $\sum_{n=1}^{\infty} \frac{\operatorname{sen}^2 n}{n^2}$
+25. $\sum_{n=1}^{\infty} \frac{n}{n^3+1}$
+26. $\sum_{n=1}^{\infty} \frac{n+1}{n^3+5}$
+27. $\sum_{n=1}^{\infty} \frac{1}{\sqrt{n^2+1}}$
+28. $\sum_{n=1}^{\infty} \frac{n^2+2}{n^4-n}$
+
+**29–36 · Criterios de la razón y de la raíz**
+
+29. $\sum_{n=1}^{\infty} \frac{n}{3^n}$
+30. $\sum_{n=1}^{\infty} \frac{5^n}{n!}$
+31. $\sum_{n=1}^{\infty} \frac{n!}{10^n}$
+32. $\sum_{n=1}^{\infty} \frac{n^n}{n!}$
+33. $\sum_{n=1}^{\infty} \frac{(-3)^n}{n!}$
+34. $\sum_{n=1}^{\infty} \frac{n^2}{2^n}$
+35. $\sum_{n=1}^{\infty} \left(\frac{n}{n+1}\right)^{n^2}$
+36. $\sum_{n=1}^{\infty} \left(1 + \frac{1}{n}\right)^{n^2}$
+
+**37–39 · Criterio de la integral**
+
+37. $\sum_{n=2}^{\infty} \frac{1}{n \ln n}$
+38. $\sum_{n=2}^{\infty} \frac{1}{n (\ln n)^2}$
+39. $\sum_{n=1}^{\infty} \frac{n}{n^2+1}$
+
+**40–46 · Series alternantes y convergencia absoluta/condicional**
+
+40. $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n}$
+41. $\sum_{n=1}^{\infty} \frac{(-1)^n}{\sqrt{n}}$
+42. $\sum_{n=1}^{\infty} (-1)^n \frac{n}{n+1}$
+43. $\sum_{n=1}^{\infty} \frac{(-1)^n}{n^2}$
+44. $\sum_{n=1}^{\infty} \frac{(-1)^n}{n^3}$
+45. $\sum_{n=2}^{\infty} \frac{(-1)^n}{\ln n}$
+46. $\sum_{n=1}^{\infty} \frac{\cos(n\pi)}{n}$
+
+**47–50 · Radio de convergencia**
+
+47. $\sum_{n=0}^{\infty} \frac{x^n}{n!}$
+48. $\sum_{n=1}^{\infty} n\, x^n$
+49. $\sum_{n=0}^{\infty} \frac{(x-1)^n}{2^n}$
+50. $\sum_{n=1}^{\infty} \frac{1}{n\,2^n}$ (analiza convergencia y, si puedes, su suma)
 
 ## Solucionario · resultados
 
 <div class="results">
-<div class="r"><b>01</b> $\dfrac{3}{2}$</div>
-<div class="r"><b>02</b> $\dfrac{1}{2}$</div>
-<div class="r"><b>03</b> $0$</div>
-<div class="r"><b>04</b> $e^{2}$</div>
-<div class="r"><b>05</b> $e^{-1}$</div>
-<div class="r"><b>06</b> $1$</div>
+<div class="r"><b>01</b> $3$</div>
+<div class="r"><b>02</b> $0$</div>
+<div class="r"><b>03</b> $2$</div>
+<div class="r"><b>04</b> $e$</div>
+<div class="r"><b>05</b> $1$</div>
+<div class="r"><b>06</b> $0$</div>
 <div class="r"><b>07</b> $0$</div>
-<div class="r"><b>08</b> $0$</div>
-<div class="r"><b>09</b> $0$</div>
-<div class="r"><b>10</b> $0$</div>
-<div class="r"><b>11</b> converge a $1$</div>
-<div class="r"><b>12</b> converge a $\dfrac{3}{2}$</div>
-<div class="r"><b>13</b> converge a $\dfrac{3}{4}$</div>
-<div class="r"><b>14</b> converge a $\dfrac{3}{4}$</div>
-<div class="r"><b>15</b> converge a $\dfrac{3}{2}$</div>
-<div class="r"><b>16</b> converge a $\dfrac{1}{2}$</div>
-<div class="r"><b>17</b> converge a $\dfrac{\pi^2}{6}$</div>
-<div class="r"><b>18</b> diverge ($p = 1/2$)</div>
-<div class="r"><b>19</b> converge (comparación)</div>
-<div class="r"><b>20</b> diverge (comparación con armónica)</div>
-<div class="r"><b>21</b> converge a $e^2$</div>
-<div class="r"><b>22</b> diverge ($L = \infty$)</div>
-<div class="r"><b>23</b> converge ($L = 1/2$)</div>
-<div class="r"><b>24</b> converge ($L = e^{-1}$)</div>
-<div class="r"><b>25</b> diverge (integral)</div>
-<div class="r"><b>26</b> converge (integral)</div>
-<div class="r"><b>27</b> converge ($L = 0$)</div>
-<div class="r"><b>28</b> converge ($L = e^{-1}$)</div>
-<div class="r"><b>29</b> diverge</div>
-<div class="r"><b>30</b> diverge ($a_n \to 2/3 \neq 0$)</div>
-<div class="r"><b>31</b> condicional ($\ln 2$)</div>
-<div class="r"><b>32</b> absoluta ($\pi^2/12$)</div>
-<div class="r"><b>33</b> condicional</div>
-<div class="r"><b>34</b> condicional</div>
-<div class="r"><b>35</b> condicional ($\pi/4$)</div>
-<div class="r"><b>36</b> diverge ($a_n \not\to 0$)</div>
-<div class="r"><b>37</b> $R = 1$</div>
-<div class="r"><b>38</b> $R = \infty$</div>
-<div class="r"><b>39</b> $R = 0$</div>
-<div class="r"><b>40</b> $R = 3$</div>
-<div class="r"><b>41</b> $R = 1$</div>
-<div class="r"><b>42</b> $R = 3$</div>
-<div class="r"><b>43</b> $\displaystyle\sum_{n=0}^{\infty}\frac{x^n}{n!}$</div>
-<div class="r"><b>44</b> $1 - \dfrac{x^2}{2} + \dfrac{x^4}{24} - \dfrac{x^6}{720}$</div>
-<div class="r"><b>45</b> $\displaystyle\sum_{n=0}^{\infty}x^n$, $|x| < 1$</div>
-<div class="r"><b>46</b> $\displaystyle\sum_{n=1}^{\infty}\frac{(-1)^{n+1}}{n}x^n$</div>
-<div class="r"><b>47</b> $\displaystyle\sum_{n=0}^{\infty}\frac{(-1)^n x^{2n+1}}{(2n+1)!}$</div>
-<div class="r"><b>48</b> $e\displaystyle\sum_{n=0}^{\infty}\frac{(x-1)^n}{n!}$</div>
-<div class="r"><b>49</b> serie de Fourier</div>
-<div class="r"><b>50</b> $\dfrac{\pi^2}{6}$</div>
+<div class="r"><b>08</b> Converge, suma $4$</div>
+<div class="r"><b>09</b> Converge, suma $\frac{4}{3}$</div>
+<div class="r"><b>10</b> Converge, suma $1$</div>
+<div class="r"><b>11</b> Diverge ($r = \frac{5}{4} > 1$)</div>
+<div class="r"><b>12</b> Diverge (oscila: $1, 0, 1, 0, \ldots$)</div>
+<div class="r"><b>13</b> Converge, suma $\frac{21}{2}$</div>
+<div class="r"><b>14</b> Converge, suma $1$</div>
+<div class="r"><b>15</b> Converge, suma $1$</div>
+<div class="r"><b>16</b> Converge, suma $\frac{3}{4}$</div>
+<div class="r"><b>17</b> Diverge (parciales $\ln(N+1) \to \infty$)</div>
+<div class="r"><b>18</b> Converge (p $= 2 > 1$), suma $\frac{\pi^2}{6}$</div>
+<div class="r"><b>19</b> Diverge (p $= 0.9 \leq 1$)</div>
+<div class="r"><b>20</b> Converge (p $= \frac{3}{2} > 1$)</div>
+<div class="r"><b>21</b> Diverge (p $= \frac{1}{3} \leq 1$)</div>
+<div class="r"><b>22</b> Converge ($\leq \frac{1}{n^2}$)</div>
+<div class="r"><b>23</b> Diverge ($\geq \frac{1}{2n}$)</div>
+<div class="r"><b>24</b> Converge ($\leq \frac{1}{n^2}$)</div>
+<div class="r"><b>25</b> Converge (comp. límite con $\frac{1}{n^2}$, $L = 1$)</div>
+<div class="r"><b>26</b> Converge (comp. límite con $\frac{1}{n^2}$, $L = 1$)</div>
+<div class="r"><b>27</b> Diverge (comp. límite con $\frac{1}{n}$, $L = 1$)</div>
+<div class="r"><b>28</b> Converge (dominante $\frac{1}{n^2}$)</div>
+<div class="r"><b>29</b> Converge (razón: $L = \frac{1}{3} < 1$)</div>
+<div class="r"><b>30</b> Converge (razón: $L = 0 < 1$)</div>
+<div class="r"><b>31</b> Diverge (razón: $L = \infty > 1$)</div>
+<div class="r"><b>32</b> Diverge (razón: $L = e > 1$)</div>
+<div class="r"><b>33</b> Converge absolutamente (razón: $L = 0 < 1$)</div>
+<div class="r"><b>34</b> Converge (razón: $L = \frac{1}{2} < 1$)</div>
+<div class="r"><b>35</b> Converge (raíz: $L = \frac{1}{e} < 1$)</div>
+<div class="r"><b>36</b> Diverge (raíz: $L = e > 1$)</div>
+<div class="r"><b>37</b> Diverge (integral: $\ln \ln x \to \infty$)</div>
+<div class="r"><b>38</b> Converge (integral: $-\frac{1}{\ln x}$ acotada)</div>
+<div class="r"><b>39</b> Diverge (integral: $\frac{1}{2}\ln(x^2+1) \to \infty$)</div>
+<div class="r"><b>40</b> Converge condicionalmente, suma $\ln 2$</div>
+<div class="r"><b>41</b> Converge condicionalmente</div>
+<div class="r"><b>42</b> Diverge (término $\not\to 0$)</div>
+<div class="r"><b>43</b> Converge absolutamente (p $= 2$)</div>
+<div class="r"><b>44</b> Converge absolutamente (p $= 3$)</div>
+<div class="r"><b>45</b> Converge condicionalmente (Leibniz; $\sum \frac{1}{\ln n}$ diverge)</div>
+<div class="r"><b>46</b> Converge condicionalmente ($\cos(n\pi) = (-1)^n$)</div>
+<div class="r"><b>47</b> $R = \infty$ (converge para todo $x$)</div>
+<div class="r"><b>48</b> $R = 1$</div>
+<div class="r"><b>49</b> $R = 2$ (centro en $x = 1$)</div>
+<div class="r"><b>50</b> Converge, suma $\ln 2$ ($-\ln(1-x)$ en $x = \frac{1}{2}$)</div>
 </div>

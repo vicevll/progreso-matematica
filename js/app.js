@@ -281,14 +281,14 @@
         {
           titulo: "Guía simple",
           descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "8 páginas · PDF",
+          meta: "7 páginas · PDF",
           archivo: "recursos/series-simple.pdf",
           fuente: "recursos/series-simple.md"
         },
         {
           titulo: "50 ejercicios",
           descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "8 páginas · PDF",
+          meta: "6 páginas · PDF",
           archivo: "recursos/series-ejercicios.pdf",
           fuente: "recursos/series-ejercicios.md"
         }
@@ -301,7 +301,7 @@
         {
           titulo: "Guía simple",
           descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "7 páginas · PDF",
+          meta: "8 páginas · PDF",
           archivo: "recursos/calc-vectorial-simple.pdf",
           fuente: "recursos/calc-vectorial-simple.md"
         },
@@ -341,7 +341,7 @@
         {
           titulo: "Guía simple",
           descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "7 páginas · PDF",
+          meta: "8 páginas · PDF",
           archivo: "recursos/edp-simple.pdf",
           fuente: "recursos/edp-simple.md"
         },
@@ -421,14 +421,14 @@
         {
           titulo: "Guía simple",
           descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "8 páginas · PDF",
+          meta: "6 páginas · PDF",
           archivo: "recursos/variables-aleatorias-simple.pdf",
           fuente: "recursos/variables-aleatorias-simple.md"
         },
         {
           titulo: "50 ejercicios",
           descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "7 páginas · PDF",
+          meta: "6 páginas · PDF",
           archivo: "recursos/variables-aleatorias-ejercicios.pdf",
           fuente: "recursos/variables-aleatorias-ejercicios.md"
         }
@@ -461,14 +461,14 @@
         {
           titulo: "Guía simple",
           descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "8 páginas · PDF",
+          meta: "6 páginas · PDF",
           archivo: "recursos/estadistica-matematica-simple.pdf",
           fuente: "recursos/estadistica-matematica-simple.md"
         },
         {
           titulo: "50 ejercicios",
           descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "7 páginas · PDF",
+          meta: "6 páginas · PDF",
           archivo: "recursos/estadistica-matematica-ejercicios.pdf",
           fuente: "recursos/estadistica-matematica-ejercicios.md"
         }
@@ -488,7 +488,7 @@
         {
           titulo: "50 ejercicios",
           descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "6 páginas · PDF",
+          meta: "7 páginas · PDF",
           archivo: "recursos/procesos-estocasticos-ejercicios.pdf",
           fuente: "recursos/procesos-estocasticos-ejercicios.md"
         }
@@ -501,7 +501,7 @@
         {
           titulo: "Guía simple",
           descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "9 páginas · PDF",
+          meta: "8 páginas · PDF",
           archivo: "recursos/series-tiempo-simple.pdf",
           fuente: "recursos/series-tiempo-simple.md"
         },
@@ -521,14 +521,14 @@
         {
           titulo: "Guía simple",
           descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "8 páginas · PDF",
+          meta: "5 páginas · PDF",
           archivo: "recursos/bayesiana-simple.pdf",
           fuente: "recursos/bayesiana-simple.md"
         },
         {
           titulo: "50 ejercicios",
           descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "7 páginas · PDF",
+          meta: "6 páginas · PDF",
           archivo: "recursos/bayesiana-ejercicios.pdf",
           fuente: "recursos/bayesiana-ejercicios.md"
         }
@@ -541,7 +541,7 @@
         {
           titulo: "Guía simple",
           descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "7 páginas · PDF",
+          meta: "8 páginas · PDF",
           archivo: "recursos/decision-simple.pdf",
           fuente: "recursos/decision-simple.md"
         },

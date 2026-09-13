@@ -1,56 +1,83 @@
-# Límites y continuidad · práctica
+# Límites y continuidad · 50 ejercicios
+
+Práctica completa de límites: sustitución directa, factorización, racionalización, límites al infinito, límites notables y continuidad.
 
 ## Formulario
 
 ### Definición de límite
+
 $$\lim_{x\to c} f(x)=L \iff \forall \varepsilon>0\ \exists \delta>0:\ 0<|x-c|<\delta \Rightarrow |f(x)-L|<\varepsilon$$
 
+Símbolo por símbolo: $f(x)$ es la salida de la función $f$ para la entrada $x$; $x\to c$ se lee "equis tiende a ce" (la entrada se acerca a $c$); $L$ es el valor al que se acercan las salidas; $\varepsilon$ (épsilon) es el margen de error permitido en la salida; $\delta$ (delta) es el margen buscado en la entrada; $\forall$ se lee "para todo"; $\exists$ se lee "existe"; $|x-c|$ es la distancia entre $x$ y $c$; $0<|x-c|$ exige $x\neq c$ (el punto mismo nunca se usa); $\Rightarrow$ se lee "implica"; $\iff$ se lee "si y solo si".
+
 ### Límites laterales
+
 $$\lim_{x\to c} f(x)=L \iff \lim_{x\to c^-} f(x)=\lim_{x\to c^+} f(x)=L$$
 
+$x\to c^-$ significa acercarse con valores menores que $c$ (por la izquierda); $x\to c^+$, con valores mayores (por la derecha). El límite bilateral existe solo si ambos laterales existen y coinciden.
+
 ### Álgebra de límites
+
 $$\lim(f\pm g)=L\pm M,\qquad \lim(fg)=L\cdot M,\qquad \lim\frac{f}{g}=\frac{L}{M}\ (M\neq0)$$
 
+El límite reparte sobre sumas, restas y productos; en el cociente se exige que el límite del denominador no sea cero, porque dividir entre cero no está permitido.
+
 ### Sustitución directa
-Si $f$ es continua en $c$, entonces $\lim_{x\to c}f(x)=f(c)$.
+
+Si $f$ es continua en $c$, entonces $\lim_{x\to c}f(x)=f(c)$: se reemplaza $x$ por $c$ y se evalúa.
 
 ### Formas indeterminadas
+
 $$\frac{0}{0},\quad \frac{\infty}{\infty},\quad 0\cdot\infty,\quad \infty-\infty,\quad 1^\infty,\quad 0^0,\quad \infty^0$$
 
+Una forma indeterminada es la que queda al sustituir y que **no decide** el resultado. $1^\infty$ no vale $1$ automáticamente: puede dar $e$, $e^2$ o divergir.
+
 ### Técnicas
-1. Factorización: $\dfrac{x^2-a^2}{x-a}=x+a$.
-2. Racionalización: multiplicar por el conjugado.
-3. Común denominador para $\infty-\infty$.
-4. División por la potencia dominante.
-5. L'Hôpital: $\lim\dfrac{f}{g}=\lim\dfrac{f'}{g'}$ si hay $\frac{0}{0}$ o $\frac{\infty}{\infty}$.
+
+1. Factorización: $\dfrac{x^2-a^2}{x-a}=x+a$ (cancelar el factor común, válido porque $x\neq a$ en el límite).
+2. Racionalización: multiplicar por el conjugado, usando $(a-b)(a+b)=a^2-b^2$.
+3. Común denominador para $\infty-\infty$ con fracciones.
+4. División por la potencia dominante para $\frac{\infty}{\infty}$.
+5. L'Hôpital: $\lim\dfrac{f}{g}=\lim\dfrac{f'}{g'}$ si hay $\frac{0}{0}$ o $\frac{\infty}{\infty}$, derivando numerador y denominador por separado.
 
 ### Límites al infinito (cociente de polinomios)
+
+El grado de un polinomio es su mayor exponente de $x$. La escritura $x\to\infty$ se lee "equis tiende a infinito": la variable crece sin límite. Tres casos:
+
 1. $\deg P<\deg Q$: límite $0$.
 2. $\deg P=\deg Q$: cociente de coeficientes líderes.
-3. $\deg P>\deg Q$: límite $\pm\infty$.
+3. $\deg P>\deg Q$: límite $\pm\infty$ según los signos.
 
 ### Límites notables
+
 $$\lim_{x\to0}\frac{\text{sen}\,x}{x}=1,\qquad \lim_{x\to0}\frac{1-\cos x}{x^2}=\frac12$$
 $$\lim_{x\to0}\frac{e^x-1}{x}=1,\qquad \lim_{n\to\infty}\left(1+\frac1n\right)^n=e$$
 
+$\text{sen}\,x$ es el seno y $\cos x$ el coseno (ángulos en radianes); $e\approx 2{,}71828$ es el número de Euler. Para usarlos se reescribe la expresión hasta que aparezca la forma exacta.
+
 ### Asíntotas
+
 1. Vertical en $x=c$ si algún límite lateral es $\pm\infty$.
 2. Horizontal $y=L$ si $\lim_{x\to\pm\infty}f(x)=L$.
 
 ### Continuidad
+
 $f$ es continua en $c$ si $f(c)$ existe, $\lim_{x\to c}f(x)$ existe y ambos coinciden.
 
 ### Tipos de discontinuidad
-1. Evitable: el límite existe pero no coincide con $f(c)$.
+
+1. Evitable: el límite existe pero no coincide con $f(c)$ (o $f(c)$ no existe).
 2. De salto: laterales finitos y distintos.
-3. Infinita: algún lateral es $\pm\infty$.
+3. Infinita: algún lateral es $\pm\infty$ (asíntota vertical).
 
 ### Teorema del valor intermedio
+
 Si $f$ es continua en $[a,b]$ y $k$ está entre $f(a)$ y $f(b)$, existe $c\in(a,b)$ con $f(c)=k$.
 
 ## Ejercicios (50)
 
 ### Sustitución directa
+
 1. $\lim_{x\to2}(x^2+3x-1)$.
 2. $\lim_{x\to-2}(2x^3-x+4)$.
 3. $\lim_{x\to0}\dfrac{3x-1}{x+2}$.
@@ -61,6 +88,7 @@ Si $f$ es continua en $[a,b]$ y $k$ está entre $f(a)$ y $f(b)$, existe $c\in(a,
 8. $\lim_{x\to0}\dfrac{x^2-2x+5}{2x+1}$.
 
 ### Factorización
+
 9. $\lim_{x\to3}\dfrac{x^2-9}{x-3}$.
 10. $\lim_{x\to-1}\dfrac{x^2-1}{x+1}$.
 11. $\lim_{x\to2}\dfrac{x^2-5x+6}{x-2}$.
@@ -74,6 +102,7 @@ Si $f$ es continua en $[a,b]$ y $k$ está entre $f(a)$ y $f(b)$, existe $c\in(a,
 19. $\lim_{x\to3}\dfrac{x^2-2x-3}{x^2-9}$.
 
 ### Racionalización
+
 20. $\lim_{x\to0}\dfrac{\sqrt{x+1}-1}{x}$.
 21. $\lim_{x\to4}\dfrac{\sqrt{x}-2}{x-4}$.
 22. $\lim_{x\to0}\dfrac{\sqrt{4+x}-2}{x}$.
@@ -85,6 +114,7 @@ Si $f$ es continua en $[a,b]$ y $k$ está entre $f(a)$ y $f(b)$, existe $c\in(a,
 28. $\lim_{x\to2}\dfrac{\sqrt{x+2}-2}{x-2}$.
 
 ### Límites al infinito
+
 29. $\lim_{x\to\infty}\dfrac{2x^2+3x}{5x^2-1}$.
 30. $\lim_{x\to\infty}\dfrac{5x^3-2x}{4x^3+x^2}$.
 31. $\lim_{x\to\infty}\dfrac{3x+1}{x^2+2x}$.
@@ -97,6 +127,7 @@ Si $f$ es continua en $[a,b]$ y $k$ está entre $f(a)$ y $f(b)$, existe $c\in(a,
 38. $\lim_{x\to\infty}\dfrac{\text{sen}\,x}{x}$.
 
 ### Límites notables
+
 39. $\lim_{x\to0}\dfrac{\text{sen}\,3x}{x}$.
 40. $\lim_{x\to0}\dfrac{\text{sen}\,5x}{2x}$.
 41. $\lim_{x\to0}\dfrac{1-\cos x}{x}$.
@@ -106,6 +137,7 @@ Si $f$ es continua en $[a,b]$ y $k$ está entre $f(a)$ y $f(b)$, existe $c\in(a,
 45. $\lim_{x\to0}\dfrac{e^x-1}{x}$.
 
 ### Continuidad
+
 46. Halla $k$ para que $f(x)=\begin{cases}x^2+1 & x<2\\ kx & x\geq2\end{cases}$ sea continua.
 47. Analiza la continuidad de $f(x)=\dfrac{x-1}{x^2-1}$.
 48. ¿Es continua $f(x)=\dfrac{x^2-4}{x-2}$ en $x=2$?
@@ -113,6 +145,7 @@ Si $f$ es continua en $[a,b]$ y $k$ está entre $f(a)$ y $f(b)$, existe $c\in(a,
 50. Indica el tipo de discontinuidad de $f(x)=\dfrac{1}{x-3}$.
 
 ## Solucionario · resultados
+
 <div class="results">
 <div class="r"><b>01</b> $9$</div>
 <div class="r"><b>02</b> $-10$</div>

@@ -1,6 +1,6 @@
-# Teoría de la decisión · ejercicios
+# Teoría de la decisión · 50 ejercicios
 
-Área: **Probabilidad y estadística** · Nivel: **Univ 4–5** · Utilidad, riesgo y decisión óptima.
+Área: **Probabilidad y estadística** · Nivel: **Univ 4–5** · Utilidad esperada, aversión al riesgo, VEIP/VIM, criterios clásicos, pérdida de Bayes y árboles.
 
 ## Formulario
 
@@ -30,16 +30,24 @@ $$
 \text{VEIP} \geq \text{VIM} \geq 0.
 $$
 
-**Riesgo y pérdida de Bayes**
+**Riesgo y estimadores de Bayes**
 
 $$
 R(\theta, \delta) = E\!\left[L(\theta, \delta(X)) \mid \theta\right].
 $$
 
-**Criterios de decisión**
+- Pérdida cuadrática $(\theta - a)^2$: estima la **media** posterior.
+- Pérdida absoluta $\lvert \theta - a \rvert$: estima la **mediana** posterior.
+- Pérdida $0$-$1$: estima la **moda** posterior.
+
+**Criterios de decisión (con ganancias $u(a,s)$)**
 
 $$
-\text{Maximin}: \max_a \min_s u(a,s), \qquad \text{Minimax}: \min_a \max_s L(a,s).
+\text{Maximin}: \max_a \min_s u(a,s), \qquad \text{Maximax}: \max_a \max_s u(a,s).
+$$
+
+$$
+\text{Laplace}: \max_a \frac{1}{\lvert S \rvert} \sum_{s \in S} u(a,s).
 $$
 
 $$
@@ -50,17 +58,14 @@ $$
 r(a,s) = \max_{a'} u(a',s) - u(a,s), \qquad \text{Savage}: \min_a \max_s r(a,s).
 $$
 
-**Estimadores de Bayes según la pérdida**
-
-1. Pérdida cuadrática $(\theta - a)^2$: media posterior.
-2. Pérdida absoluta $|\theta - a|$: mediana posterior.
-3. Pérdida $0$-$1$: moda posterior.
+Con **pérdidas** $L(a,s)$: $\text{Minimax}: \min_a \max_s L(a,s)$.
 
 **Árboles de decisión**
 
-1. Nodo de azar: $V = \sum_i P_i\,V_i$.
+1. Nodo de azar: $V = \sum_i P_i V_i$.
 2. Nodo de decisión: $V = \max_i V_i$.
-3. Se resuelve por inducción hacia atrás.
+3. Se resuelve por inducción hacia atrás (de las hojas a la raíz).
+4. Punto de indiferencia: igualar $EU(a_1) = EU(a_2)$ y despejar.
 
 ## Ejercicios (50)
 
@@ -68,12 +73,12 @@ $$
 
 1. Apuesta $50/50$ entre ganar $100$ y perder $40$. Halla la utilidad esperada de un decisor neutral al riesgo.
 2. Un boleto cuesta $5$ y da un premio de $500$ con probabilidad $0.01$. Halla la utilidad esperada de comprarlo.
-3. Acción $A$ paga $200$ seguro; acción $B$ paga $600$ con probabilidad $0.3$ y $0$ con $0.7$. Compara sus utilidades esperadas.
+3. La acción $A$ paga $200$ seguro; la acción $B$ paga $600$ con probabilidad $0.3$ y $0$ con probabilidad $0.7$. Compara sus utilidades esperadas y decide.
 4. Con un dado justo, el pago es el resultado. Halla el valor esperado del pago.
 5. Con un dado justo, el pago es el cuadrado del resultado. Halla el valor esperado del pago.
 6. Dos estados equiprobables; $a_1: (50,10)$, $a_2: (20,20)$. Halla $EU(a_1)$ y $EU(a_2)$.
 7. Se gana $10$ con probabilidad $0.8$ y se pierden $30$ con probabilidad $0.2$. Halla la utilidad esperada.
-8. Inversión de $1000$: con probabilidad $0.6$ dobla y con $0.4$ pierde $500$. Halla la ganancia esperada.
+8. Una inversión de $1000$ dobla con probabilidad $0.6$ y pierde $500$ con probabilidad $0.4$. Halla la ganancia esperada.
 9. Estados con probabilidades $0.2, 0.5, 0.3$; pagos $(100, 50, 0)$. Halla la utilidad esperada.
 10. Un billete cuesta $2$ y da un premio de $1000$ con probabilidad $0.001$. Halla la utilidad esperada de comprarlo.
 11. Dos estados equiprobables; $a_1: (40,10)$, $a_2: (20,40)$. Halla $EU(a_1)$ y $EU(a_2)$.
@@ -93,7 +98,7 @@ $$
 22. Con los datos del ejercicio 21, halla el equivalente de certeza.
 23. Con los datos del ejercicio 21, halla la prima de riesgo.
 24. Un decisor neutral ($u(x) = x$) enfrenta una apuesta $50/50$ entre $100$ y $0$. Halla su equivalente de certeza.
-25. Riqueza $100$ y $u(x) = \sqrt{x}$; apuesta $50/50$ que pierde o gana $100$. ¿Conviene apostar?
+25. Riqueza $100$ y $u(x) = \sqrt{x}$; apuesta $50/50$ que gana o pierde $100$. ¿Conviene apostar?
 26. Con $u(x) = \sqrt{x}$, apuesta $50/50$ entre $25$ y $225$. Halla $EC$ y la prima de riesgo.
 
 ### Bloque C · VEIP y VIM
@@ -104,9 +109,9 @@ $$
 30. Estados con probabilidades $0.3$ y $0.7$; $a_1: (0,100)$, $a_2: (50,50)$. Halla la mejor utilidad esperada sin información.
 31. Con los datos del ejercicio 30, halla el VEIP.
 32. Tres estados equiprobables; $a_1: (30,30,30)$, $a_2: (90,0,0)$. Halla el VEIP.
-33. Si en el ejercicio 32 la información cuesta $12$, halla su valor neto.
+33. Si en el ejercicio 32 la información perfecta cuesta $12$, halla su valor neto.
 34. Estados con probabilidades $0.4$ y $0.6$; $a_1: (200,0)$, $a_2: (100,100)$. Halla el VEIP.
-35. Dos estados equiprobables; $a_1: (100,0)$, $a_2: (0,100)$. Halla el VEIP de la información perfecta.
+35. Dos estados equiprobables; $a_1: (100,0)$, $a_2: (0,100)$. Halla el VEIP.
 36. Con la matriz del ejercicio 35, una muestra acierta el estado con probabilidad $0.8$. Halla el VIM.
 
 ### Bloque D · Criterios de decisión
@@ -116,9 +121,9 @@ $$
 39. Con la matriz del ejercicio 37, aplica Hurwicz con $\alpha = 0.5$.
 40. Con la matriz del ejercicio 37, aplica Hurwicz con $\alpha = 0.2$.
 41. Pérdidas $a_1: (10,30)$, $a_2: (20,15)$. Aplica el criterio minimax.
-42. Matriz $a_1: (100,20)$, $a_2: (50,40)$. Aplica Savage y da el arrepentimiento máximo.
-43. Matriz $a_1: (40,80)$, $a_2: (100,10)$. Aplica Savage y da el arrepentimiento máximo.
-44. Tres estados equiprobables; $a_1: (10,20,30)$, $a_2: (40,0,10)$. Aplica el criterio de Laplace (valor esperado).
+42. Matriz $a_1: (100,20)$, $a_2: (50,40)$. Aplica Savage y da el arrepentimiento máximo de cada acción.
+43. Matriz $a_1: (40,80)$, $a_2: (100,10)$. Aplica Savage y da el arrepentimiento máximo de cada acción.
+44. Tres estados equiprobables; $a_1: (10,20,30)$, $a_2: (40,0,10)$. Aplica el criterio de Laplace.
 45. Matriz $a_1: (-5,10)$, $a_2: (0,8)$. Aplica el criterio maximin.
 46. Con la matriz del ejercicio 37, aplica Hurwicz con $\alpha = 0.8$.
 
@@ -127,14 +132,14 @@ $$
 47. Posterior $P(\theta=10)=0.2$, $P(\theta=20)=0.5$, $P(\theta=30)=0.3$. Con pérdida cuadrática, halla la estimación óptima.
 48. Con la posterior del ejercicio 47, con pérdida absoluta, halla la estimación óptima.
 49. Con la posterior del ejercicio 47, con pérdida $0$-$1$, halla la estimación óptima y el riesgo mínimo.
-50. Perforar petróleo: seco con $0.7$ (pérdida $1$M) y húmedo con $0.3$ (ganancia $5$M). Halla el VEIP y el valor neto si el test cuesta $0.1$M.
+50. Perforar petróleo: seco con $0.7$ (pérdida de $1$M) y húmedo con $0.3$ (ganancia de $5$M). Halla el VEIP y el valor neto si el test cuesta $0.1$M.
 
 ## Solucionario · resultados
 
 <div class="results">
 <div class="r"><b>01</b> $30$</div>
 <div class="r"><b>02</b> $0$</div>
-<div class="r"><b>03</b> $\max\{200,180\} = 200$</div>
+<div class="r"><b>03</b> $\max\{200,180\} = 200$; elige $A$</div>
 <div class="r"><b>04</b> $3.5$</div>
 <div class="r"><b>05</b> $\dfrac{91}{6} \approx 15.17$</div>
 <div class="r"><b>06</b> $EU(a_1)=30$; $EU(a_2)=20$</div>
@@ -156,7 +161,7 @@ $$
 <div class="r"><b>22</b> $100$</div>
 <div class="r"><b>23</b> $405$</div>
 <div class="r"><b>24</b> $50$</div>
-<div class="r"><b>25</b> No, $5\sqrt{2} \approx 7.07 < 10$</div>
+<div class="r"><b>25</b> No: $EU = 0.5\sqrt{200} \approx 7.07 < 10$</div>
 <div class="r"><b>26</b> $EC=100$; prima $=25$</div>
 <div class="r"><b>27</b> $60$</div>
 <div class="r"><b>28</b> $70$</div>

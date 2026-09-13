@@ -1,6 +1,10 @@
-# Ecuaciones en derivadas parciales · formulario y práctica
+# Ecuaciones en derivadas parciales · 50 ejercicios
 
 ## Formulario
+
+### Qué es una EDP y cómo leerla
+
+Una **EDP** es una ecuación cuya incógnita es una función de varias variables, como $u(x,t)$, y en la que aparecen **derivadas parciales**: $\dfrac{\partial u}{\partial t} = u_t$ deriva respecto de $t$ dejando $x$ fija; $\dfrac{\partial u}{\partial x} = u_x$ hace lo contrario. La escritura $u(0,t)=0$ es una **condición de frontera** (el borde $x=0$ vale $0$ en todo tiempo), no un producto; $u(x,0)=f(x)$ es la **condición inicial**. El laplaciano es $\Delta u=\nabla^2 u=u_{xx}+u_{yy}$, la suma de las segundas derivadas espaciales.
 
 ### Clasificación de EDP de segundo orden
 
@@ -12,10 +16,12 @@ $$A\,u_{xx}+B\,u_{xy}+C\,u_{yy}+\cdots=0,\qquad \Delta=B^2-4AC.$$
 
 ### Laplaciano y ecuaciones de equilibrio
 
-$$\nabla^2 u=u_{xx}+u_{yy}=0 \quad\text{(Laplace)},\qquad \nabla^2 u=f \quad\text{(Poisson)}.$$
+$$\nabla^2 u=u_{xx}+u_{yy}=0 \quad\text{(Laplace)},\qquad \nabla^2 u=f \quad\text{(Poisson, con fuente }f\text{)}.$$
 
 1. **Dirichlet:** se fija $u$ en la frontera.
 2. **Neumann:** se fija la derivada normal $\partial u/\partial n$ en la frontera.
+
+En una dimensión, $u_{xx}=0$ tiene por solución la recta $u=ax+b$: el equilibrio entre extremos fijos es lineal.
 
 ### Ecuación del calor
 
@@ -33,7 +39,7 @@ $$\frac{k\,\Delta t}{\Delta x^2}\le\frac{1}{2}.$$
 
 $$u_{tt}=c^2\,u_{xx},\qquad u(x,t)=F(x-ct)+G(x+ct).$$
 
-Condición CFL del esquema explícito:
+La solución de **D'Alembert** son dos ondas viajeras: $F$ hacia la derecha y $G$ hacia la izquierda, a velocidad $c$. Condición CFL del esquema explícito:
 
 $$c\,\Delta t\le\Delta x.$$
 
@@ -43,7 +49,7 @@ $$u(x,t)=X(x)\,T(t),\qquad X''+\lambda X=0,\qquad \lambda_n=\left(\frac{n\pi}{L}
 
 $$X_n(x)=\text{sen}\frac{n\pi x}{L},\qquad T_n(t)=e^{-k(n\pi/L)^2t}.$$
 
-Coeficientes de la condición inicial $u(x,0)=f(x)$:
+Coeficientes de la condición inicial $u(x,0)=f(x)$ (serie de Fourier):
 
 $$b_n=\frac{2}{L}\int_0^L f(x)\,\text{sen}\frac{n\pi x}{L}\,dx.$$
 
@@ -79,7 +85,7 @@ $$u_{xx}\approx\frac{u_{i+1}-2u_i+u_{i-1}}{h^2},\qquad u_t\approx\frac{u_i^{n+1}
 19. Resuelve $u_{xx}=0$ con $u(0)=0$ y $u(1)=5$.
 20. Resuelve $u_{xx}=0$ con $u(0)=10$ y $u(2)=30$.
 21. Verifica que $u=x^2$ resuelve $u_{xx}=2$.
-22. ¿Es armónica $u=\ln\sqrt{x^2+y^2}$ en $r>0$?
+22. ¿Es armónica $u=\ln\sqrt{x^2+y^2}$ para $r>0$?
 
 ### C. Ecuación del calor
 
@@ -90,10 +96,10 @@ $$u_{xx}\approx\frac{u_{i+1}-2u_i+u_{i-1}}{h^2},\qquad u_t\approx\frac{u_i^{n+1}
 27. Calor con $k=1$ y $u(x,0)=3\,\text{sen}\,2x$: halla $u(x,t)$.
 28. Calor con $k=1$ y $u(x,0)=5\,\text{sen}\,3x$: halla $u(x,t)$.
 29. Calor con $k=1$ y $u(x,0)=2\,\text{sen}\,x+\text{sen}\,2x$: halla $u(x,t)$.
-30. Calor con extremos nulos: ¿a qué tiende $u(x,t)$ cuando $t\to\infty$?
-31. ¿Suaviza el calor las irregularidades de la condición inicial?
-32. Máximo $\Delta t$ estable con $k=1$ y $\Delta x=0.1$.
-33. Máximo $\Delta t$ estable con $k=0.5$ y $\Delta x=0.1$.
+30. Calor con $k=1$ y $u(x,0)=\text{sen}\,x+\text{sen}\,3x$: halla $u(x,t)$.
+31. Calor con extremos nulos: ¿a qué tiende $u(x,t)$ cuando $t\to\infty$?
+32. ¿Suaviza el calor las irregularidades de la condición inicial?
+33. Máximo $\Delta t$ estable con $k=1$ y $\Delta x=0.1$.
 34. Máximo $\Delta t$ estable con $k=2$ y $\Delta x=0.05$.
 
 ### D. Ecuación de onda
@@ -106,19 +112,19 @@ $$u_{xx}\approx\frac{u_{i+1}-2u_i+u_{i-1}}{h^2},\qquad u_t\approx\frac{u_i^{n+1}
 40. Onda con $c=1$, $u(x,0)=0$ y $u_t(x,0)=\text{sen}\,x$: halla $u(x,t)$.
 41. ¿Se atenúan las ondas como se atenúa el calor?
 42. Con $c=3$ y $\Delta x=0.3$, ¿qué cota CFL cumple $\Delta t$?
+43. Con $c=2$ y $\Delta x=0.5$, ¿qué cota CFL cumple $\Delta t$?
+44. Onda con $c=2$, $u(x,0)=\text{sen}\,3x$ y $u_t(x,0)=0$: halla $u(x,t)$.
 
 ### E. Separación de variables y Fourier
 
-43. Modos espaciales del calor en $[0,L]$ con extremos nulos.
-44. Valores propios $\lambda_n$ del problema $X''+\lambda X=0$ con $X(0)=X(L)=0$.
-45. Factor temporal $T_n(t)$ del calor con $k$.
-46. Fórmula del coeficiente $b_n$ para $u(x,0)=f(x)$.
-47. Primer modo del calor en $[0,\pi]$ con $k=1$.
+45. Modos espaciales $X_n$ del calor en $[0,L]$ con extremos nulos.
+46. Valores propios $\lambda_n$ del problema $X''+\lambda X=0$ con $X(0)=X(L)=0$.
+47. Factor temporal $T_n(t)$ del calor con difusividad $k$.
+48. Fórmula del coeficiente $b_n$ para la condición inicial $u(x,0)=f(x)$.
 
 ### F. Diferencias finitas
 
-48. Aproximación central de $u_{xx}$.
-49. Aproximación progresiva de $u_t$.
+49. Aproximación central de $u_{xx}$ en la malla de paso $h$.
 50. Condición de estabilidad del esquema explícito del calor.
 
 ## Solucionario · resultados
@@ -143,35 +149,35 @@ $$u_{xx}\approx\frac{u_{i+1}-2u_i+u_{i-1}}{h^2},\qquad u_t\approx\frac{u_i^{n+1}
 <div class="r"><b>17</b> Sí, $\nabla^2u=0$</div>
 <div class="r"><b>18</b> Sí, $\nabla^2u=0$</div>
 <div class="r"><b>19</b> $u=5x$</div>
-<div class="r"><b>20</b> $u=10+10x$</div>
+<div class="r"><b>20</b> $u=10x+10$</div>
 <div class="r"><b>21</b> Sí, $u_{xx}=2$</div>
-<div class="r"><b>22</b> Sí, $\nabla^2u=0$</div>
-<div class="r"><b>23</b> Sí, $u_t=u_{xx}$</div>
-<div class="r"><b>24</b> Sí, $u_t=u_{xx}$</div>
-<div class="r"><b>25</b> Sí, $u_t=u_{xx}$</div>
-<div class="r"><b>26</b> $u=e^{-t}\text{sen}\,x$</div>
-<div class="r"><b>27</b> $u=3e^{-4t}\text{sen}\,2x$</div>
-<div class="r"><b>28</b> $u=5e^{-9t}\text{sen}\,3x$</div>
-<div class="r"><b>29</b> $u=2e^{-t}\text{sen}\,x+e^{-4t}\text{sen}\,2x$</div>
-<div class="r"><b>30</b> $u\to 0$</div>
-<div class="r"><b>31</b> Sí</div>
-<div class="r"><b>32</b> $\Delta t\le 0.005$</div>
-<div class="r"><b>33</b> $\Delta t\le 0.01$</div>
+<div class="r"><b>22</b> Sí, $\nabla^2u=0$ para $r>0$</div>
+<div class="r"><b>23</b> Sí, $u_t=u_{xx}=-e^{-t}\text{sen}\,x$</div>
+<div class="r"><b>24</b> Sí, $u_t=u_{xx}=-4e^{-4t}\text{sen}\,2x$</div>
+<div class="r"><b>25</b> Sí, $u_t=u_{xx}=-9e^{-9t}\text{sen}\,3x$</div>
+<div class="r"><b>26</b> $u=\text{sen}\,x\,e^{-t}$</div>
+<div class="r"><b>27</b> $u=3\,\text{sen}\,2x\,e^{-4t}$</div>
+<div class="r"><b>28</b> $u=5\,\text{sen}\,3x\,e^{-9t}$</div>
+<div class="r"><b>29</b> $u=2\,\text{sen}\,x\,e^{-t}+\text{sen}\,2x\,e^{-4t}$</div>
+<div class="r"><b>30</b> $u=\text{sen}\,x\,e^{-t}+\text{sen}\,3x\,e^{-9t}$</div>
+<div class="r"><b>31</b> $u\to 0$</div>
+<div class="r"><b>32</b> Sí, para todo $t>0$ la solución es infinitamente suave</div>
+<div class="r"><b>33</b> $\Delta t\le 0.005$</div>
 <div class="r"><b>34</b> $\Delta t\le 0.000625$</div>
-<div class="r"><b>35</b> Sí, $u_{tt}=u_{xx}$</div>
-<div class="r"><b>36</b> Sí, $u_{tt}=4u_{xx}$</div>
+<div class="r"><b>35</b> Sí, $u_{tt}=u_{xx}=-\text{sen}\,x\cos t$</div>
+<div class="r"><b>36</b> Sí, $u_{tt}=-4\,\text{sen}\,x\cos 2t=4u_{xx}$</div>
 <div class="r"><b>37</b> $F(x-ct)+G(x+ct)$</div>
 <div class="r"><b>38</b> $u=\text{sen}\,x\cos t$</div>
 <div class="r"><b>39</b> $u=\text{sen}\,x\cos 2t$</div>
 <div class="r"><b>40</b> $u=\text{sen}\,x\,\text{sen}\,t$</div>
-<div class="r"><b>41</b> No, conservan su forma</div>
+<div class="r"><b>41</b> No, conservan su forma y su energía</div>
 <div class="r"><b>42</b> $\Delta t\le 0.1$</div>
-<div class="r"><b>43</b> $X_n=\text{sen}\dfrac{n\pi x}{L}$</div>
-<div class="r"><b>44</b> $\lambda_n=\left(\dfrac{n\pi}{L}\right)^2$</div>
-<div class="r"><b>45</b> $T_n=e^{-k(n\pi/L)^2t}$</div>
-<div class="r"><b>46</b> $b_n=\dfrac{2}{L}\int_0^L f(x)\text{sen}\dfrac{n\pi x}{L}\,dx$</div>
-<div class="r"><b>47</b> $u=\text{sen}\,x\,e^{-t}$</div>
-<div class="r"><b>48</b> $\dfrac{u_{i+1}-2u_i+u_{i-1}}{h^2}$</div>
-<div class="r"><b>49</b> $\dfrac{u_i^{n+1}-u_i^{n}}{\Delta t}$</div>
+<div class="r"><b>43</b> $\Delta t\le 0.25$</div>
+<div class="r"><b>44</b> $u=\text{sen}\,3x\cos 6t$</div>
+<div class="r"><b>45</b> $X_n=\text{sen}\dfrac{n\pi x}{L}$</div>
+<div class="r"><b>46</b> $\lambda_n=\left(\dfrac{n\pi}{L}\right)^2$</div>
+<div class="r"><b>47</b> $T_n=e^{-k(n\pi/L)^2t}$</div>
+<div class="r"><b>48</b> $b_n=\dfrac{2}{L}\displaystyle\int_0^L f(x)\,\text{sen}\dfrac{n\pi x}{L}\,dx$</div>
+<div class="r"><b>49</b> $\dfrac{u_{i+1}-2u_i+u_{i-1}}{h^2}$</div>
 <div class="r"><b>50</b> $\dfrac{k\,\Delta t}{\Delta x^2}\le\dfrac{1}{2}$</div>
 </div>

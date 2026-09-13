@@ -1,168 +1,171 @@
 # Ecuaciones en derivadas parciales
 
-Las ecuaciones en derivadas parciales (EDP) describen cómo cambia una función de varias variables. Aparecen cuando el fenómeno depende del espacio **y** del tiempo: conducción de calor, vibración de cuerdas, potencial eléctrico, difusión de sustancias.
+Área: Cálculo · Nivel: Univ 2–3 · Descripción: Qué es una EDP, cómo leer la notación, clasificación, calor, onda, Laplace, separación de variables y diferencias finitas.
 
-## ¿Qué es una EDP y cuál es su orden?
+## ¿Qué es una EDP?
 
-Una EDP relaciona una función $u(x_1,\dots,x_n)$ con sus derivadas parciales:
+Una **ecuación en derivadas parciales (EDP)** es una ecuación cuya incógnita es una **función de varias variables**, en la que aparecen sus **derivadas parciales**. Mientras que una EDO como $y'(t) = -2y(t)$ busca una función $y(t)$ de una sola variable, una EDP busca una función como $u(x,t)$, que depende del espacio $x$ y del tiempo $t$ a la vez.
 
-$$F\left(x_1,\dots,x_n,\;u,\;\frac{\partial u}{\partial x_1},\dots,\frac{\partial^2 u}{\partial x_i\,\partial x_j},\dots\right)=0.$$
+La función incógnita $u(x,t)$ se lee "u de equis, te": es el valor de la magnitud $u$ (temperatura, desplazamiento, voltaje...) en la posición $x$ y el instante $t$. No es una multiplicación.
 
-1. El **orden** es el de la derivada parcial más alta que aparece.
-2. Es **lineal** si $u$ y todas sus derivadas aparecen a la primera potencia, sin productos entre ellas ni funciones no lineales de $u$.
+**¿Qué es una derivada parcial?** El símbolo $\dfrac{\partial u}{\partial x}$ se lee "derivada parcial de u respecto de x" y mide cómo cambia $u$ cuando **solo** $x$ se mueve, dejando a las demás variables fijas como números. La letra $\partial$ se llama "d redonda". Para $u(x,t) = x^2 + t^3$: $\dfrac{\partial u}{\partial x} = 2x$ (la $t^3$ se congela) y $\dfrac{\partial u}{\partial t} = 3t^2$ (ahora se congela la $x^2$).
 
-**Mini-ejemplo.** La ecuación del calor
+Las tres EDP clásicas:
 
-$$\frac{\partial u}{\partial t}=k\,\frac{\partial^2 u}{\partial x^2}$$
+$$\text{Calor (difusión):}\quad \frac{\partial u}{\partial t} = k\,\frac{\partial^2 u}{\partial x^2}, \qquad \text{Onda:}\quad \frac{\partial^2 u}{\partial t^2} = c^2\frac{\partial^2 u}{\partial x^2}, \qquad \text{Laplace:}\quad \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} = 0$$
 
-es de segundo orden y lineal: $u_t$ y $u_{xx}$ aparecen a la primera potencia. En cambio $u_t+u\,u_x=0$ es no lineal, porque contiene el producto $u\,u_x$.
+Para resolver una EDP se necesitan **condiciones iniciales**, como $u(x,0) = f(x)$ (estado en $t = 0$), y **condiciones de frontera**, como $u(0,t) = u(L,t) = 0$ (qué ocurre en los bordes, para todo tiempo). La escritura $u(0,t) = 0$ **no** es un producto: significa que en el extremo $x = 0$ la función vale cero en todo instante.
 
-Resolver una EDP exige **condiciones iniciales** (el estado en $t=0$) y **condiciones de frontera** (qué ocurre en los bordes del dominio).
+## Cómo leer la notación
+
+- $\dfrac{\partial u}{\partial t}$ = derivada parcial de $u$ respecto de $t$ (solo $t$ se mueve). Forma corta: $u_t$.
+- $u_x$, $u_{xx}$ = primera y segunda derivada parcial respecto de $x$. $u_{xx}$ mide la **curvatura** del perfil en la dirección $x$; no confundir con $(u_x)^2$.
+- $u_{xt}$ = derivada mixta: primero respecto de $x$, luego respecto de $t$.
+- $\Delta u = \nabla^2 u = u_{xx} + u_{yy}$ = el **laplaciano**: suma de las segundas derivadas espaciales. El símbolo $\nabla$ se lee "nabla"; $\Delta$ aquí no es "cambio", sino "laplaciano".
+- $k$ = difusividad térmica (constante positiva del material); $c$ = velocidad de propagación de la onda.
+- $u(x,0) = f(x)$ = condición inicial: en $t = 0$ la solución coincide con la función dada $f$.
+- $u(0,t) = 0$ = condición de frontera tipo **Dirichlet**: el borde se mantiene en valor cero. Si en cambio se fija la derivada normal, es tipo **Neumann** (por ejemplo borde aislado).
+- $F(x - ct)$ = una onda de forma arbitraria $F$ que viaja hacia la derecha con velocidad $c$; si su argumento es $x - ct$, la cresta que cumple $x - ct = \text{constante}$ avanza con velocidad $c$.
 
 ## Clasificación de las EDP de segundo orden
 
-Para una EDP lineal de segundo orden con dos variables,
+Una EDP lineal de segundo orden se escribe $A\,u_{xx} + B\,u_{xy} + C\,u_{yy} + \cdots = 0$. Su carácter lo decide el **discriminante**
 
-$$A\,u_{xx}+B\,u_{xy}+C\,u_{yy}+D\,u_x+E\,u_y+F\,u=G,$$
+$$\Delta = B^2 - 4AC$$
 
-el tipo lo decide el discriminante $\Delta=B^2-4AC$:
+- **Elíptica** ($\Delta < 0$): problemas de **equilibrio** (sin tiempo). Prototipo: Laplace. Soluciones suaves y armónicas.
+- **Parabólica** ($\Delta = 0$): **difusión y evolución** en el tiempo. Prototipo: el calor. Irreversible, suaviza.
+- **Hiperbólica** ($\Delta > 0$): **propagación de ondas** a velocidad finita. Prototipo: la onda. Conserva forma y energía.
 
-| Tipo | Discriminante | Prototipo | Comportamiento |
-| --- | --- | --- | --- |
-| Elíptica | $\Delta<0$ | Laplace, $\nabla^2 u=0$ | Equilibrio, soluciones suaves |
-| Parabólica | $\Delta=0$ | Calor, $u_t=k\,u_{xx}$ | Difusión, suavizado temporal |
-| Hiperbólica | $\Delta>0$ | Onda, $u_{tt}=c^2u_{xx}$ | Propagación sin difuminarse |
+Los nombres vienen de la geometría: una elipse tiene cuadrados con el mismo signo, una parábola uno solo, una hipérbola signos opuestos. Ejemplos: $u_{xx} + u_{yy} = 0$ es elíptica ($\Delta = -4$); $u_t - u_{xx} = 0$ es parabólica ($\Delta = 0$); $u_{tt} - u_{xx} = 0$ es hiperbólica ($\Delta = 4$). Para $u_{xx} + 4u_{xy} + 4u_{yy} = 0$: $\Delta = 16 - 16 = 0$, parabólica.
 
-**Mini-ejemplo.** $u_{xx}+4u_{xy}+4u_{yy}=0$ tiene $A=1$, $B=4$, $C=4$ y $\Delta=16-16=0$: es **parabólica**.
+## Ecuación de Laplace y Poisson
 
-## Ecuación de Laplace y de Poisson
+**Laplace:** $\Delta u = 0$, es decir, $u_{xx} + u_{yy} = 0$. Describe el **equilibrio sin fuentes**: temperatura final de una placa, potencial eléctrico sin cargas, membrana en reposo. Sus soluciones son **armónicas**: en cada punto el valor es el promedio de los vecinos, y por eso los máximos y mínimos solo se alcanzan en la frontera (**principio del máximo**). La solución queda determinada por la frontera.
 
-La ecuación de **Laplace** describe estados de equilibrio sin fuentes:
+**Poisson:** $\Delta u = f$. La función $f$ es la densidad de **fuentes** (cargas, calor interno). Si $f = 0$ se recupera Laplace.
 
-$$\nabla^2 u=\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}=0.$$
+Condiciones clásicas: **Dirichlet** fija el valor $u$ en el borde; **Neumann** fija la derivada normal $\dfrac{\partial u}{\partial n}$ (el flujo a través del borde).
 
-Sus soluciones se llaman **armónicas** y cumplen el principio del máximo: no tienen máximos ni mínimos interiores. La ecuación de **Poisson** incorpora fuentes:
-
-$$\nabla^2 u=f(x,y).$$
-
-La solución en un dominio queda determinada por los valores en la frontera (problema de **Dirichlet**) o por sus derivadas normales (problema de **Neumann**).
-
-**Mini-ejemplo.** $u(x,y)=x^2-y^2$ es armónica: $u_{xx}=2$, $u_{yy}=-2$ y $u_{xx}+u_{yy}=0$. En cambio $u=x^2+y^2$ no lo es, porque $\nabla^2 u=4$.
+En una dimensión, Laplace es $u_{xx} = 0$, cuya solución es la recta $u = ax + b$: el equilibrio entre dos extremos a temperatura fija es un perfil **lineal**.
 
 ## Ecuación del calor
 
-$$\frac{\partial u}{\partial t}=k\,\frac{\partial^2 u}{\partial x^2},\qquad k>0.$$
+$$u_t = k\,u_{xx}, \qquad k > 0$$
 
-Modela la difusión: barras, placas y disipación térmica. Propiedades:
+El lado izquierdo es la rapidez con que cambia la temperatura en un punto; el derecho, $k$ veces la curvatura del perfil. Si el punto está más caliente que sus vecinos (cima, $u_{xx} < 0$), se enfría; si está más frío (valle, $u_{xx} > 0$), se calienta: **el calor fluye de donde sobra hacia donde falta**.
 
-1. La temperatura tiende a uniformizarse con el tiempo.
-2. Para $t>0$ la solución es infinitamente suave (efecto suavizante).
-3. El máximo se alcanza en la frontera o en el instante inicial (principio del máximo).
+Propiedades: la solución se **suaviza** (para $t > 0$ es infinitamente derivable, por fea que sea la condición inicial); el máximo se alcanza al inicio o en la frontera (**principio del máximo**); el proceso es **irreversible**; y a largo plazo la temperatura tiende al equilibrio (a $0$ con extremos a cero, o al promedio con extremos aislados).
 
-Con extremos a temperatura fija, la frontera de **Dirichlet** es $u(0,t)=u(L,t)=0$.
+Con extremos a cero, $u(0,t) = u(L,t) = 0$, y condición inicial $u(x,0) = f(x)$, la solución por modos es
 
-**Mini-ejemplo.** $u(x,t)=e^{-t}\,\text{sen}\,x$ satisface $u_t=u_{xx}$ con $k=1$: en efecto, $u_t=-e^{-t}\,\text{sen}\,x=u_{xx}$.
+$$u(x,t) = \sum_{n=1}^{\infty} b_n\,\text{sen}\left(\frac{n\pi x}{L}\right)e^{-k(n\pi/L)^2 t}$$
+
+Cada modo decae con exponente proporcional a $n^2$: los detalles finos (n grande) mueren primero.
 
 ## Ecuación de onda
 
-$$\frac{\partial^2 u}{\partial t^2}=c^2\,\frac{\partial^2 u}{\partial x^2}.$$
+$$u_{tt} = c^2\,u_{xx}$$
 
-Describe vibraciones de cuerdas y membranas, y ondas de sonido o luz; $c$ es la velocidad de propagación. La **solución de D'Alembert**
+El lado izquierdo es la **aceleración** de cada punto; el derecho, $c^2$ por la **curvatura**. Curvatura produce aceleración: es la ley de Newton de una cuerda. La constante $c$ es la velocidad de la onda.
 
-$$u(x,t)=F(x-ct)+G(x+ct)$$
+**Solución de D'Alembert:**
 
-representa dos ondas viajeras, una hacia la derecha y otra hacia la izquierda, que conservan su forma.
+$$u(x,t) = F(x - ct) + G(x + ct)$$
 
-**Mini-ejemplo.** $u(x,t)=\text{sen}\,x\cos t$ satisface $u_{tt}=u_{xx}$, pues $u_{tt}=-\text{sen}\,x\cos t=u_{xx}$.
+dos ondas viajeras de forma arbitraria: $F$ hacia la derecha y $G$ hacia la izquierda, ambas a velocidad $c$. A diferencia del calor, las ondas **no se difuminan ni se atenúan**: conservan su forma y su energía. La ecuación es reversible en el tiempo.
 
-## Separación de variables y series de Fourier
+Al tener segunda derivada temporal necesita **dos condiciones iniciales**: forma $u(x,0) = f(x)$ y velocidad $u_t(x,0) = g(x)$. Con $f(x) = \text{sen}\,x$ y $g = 0$ (cuerda de longitud $\pi$, $c = 1$): $u = \text{sen}\,x\cos t$, una oscilación que nunca se detiene.
 
-Es el método central para EDP lineales en dominios simples:
+## Separación de variables
 
-1. Supón $u(x,t)=X(x)\,T(t)$.
-2. Sustituye en la EDP y separa: cada lado depende de una sola variable, luego ambos igualan una constante $-\lambda$.
-3. Resuelve las dos EDO resultantes.
-4. Aplica la frontera (fija los modos) y la condición inicial (combina los modos).
+Método para EDP **lineales** en regiones simples. Se supone que la solución es un producto
 
-Para el calor con extremos en cero:
+$$u(x,t) = X(x)\,T(t)$$
 
-$$X''+\lambda X=0,\qquad X(0)=X(L)=0\;\Rightarrow\;X_n(x)=\text{sen}\frac{n\pi x}{L},$$
+y se sustituye en la ecuación. Para el calor en $[0,L]$ con extremos a cero:
 
-$$T_n(t)=e^{-k(n\pi/L)^2t},\qquad u(x,t)=\sum_{n=1}^{\infty}b_n\,\text{sen}\frac{n\pi x}{L}\,e^{-k(n\pi/L)^2t}.$$
+1. Sustituir: $X\,T' = k\,X''\,T$.
+2. Separar: $\dfrac{T'}{kT} = \dfrac{X''}{X}$. El lado izquierdo solo depende de $t$ y el derecho solo de $x$; como son iguales, ambos son una **constante** $-\lambda$ (lambda).
+3. Espacial: $X'' + \lambda X = 0$ con $X(0) = X(L) = 0$. Solo hay soluciones no triviales para $\lambda_n = \left(\dfrac{n\pi}{L}\right)^2$, con funciones propias
 
-Los coeficientes $b_n$ los determina la condición inicial $u(x,0)=f(x)$:
+$$X_n(x) = \text{sen}\left(\frac{n\pi x}{L}\right), \qquad n = 1, 2, 3, \ldots$$
 
-$$b_n=\frac{2}{L}\int_0^L f(x)\,\text{sen}\frac{n\pi x}{L}\,dx.$$
+4. Temporal: $T' = -k\lambda_n T$ da $T_n(t) = e^{-k(n\pi/L)^2 t}$.
+5. Superponer (la ecuación es lineal): $u = \sum_{n=1}^{\infty} b_n\,X_n(x)\,T_n(t)$.
+6. Ajustar la condición inicial: $f(x) = \sum b_n\,\text{sen}\left(\dfrac{n\pi x}{L}\right)$.
 
-**Mini-ejemplo.** Con $L=\pi$, $k=1$ y $u(x,0)=\text{sen}\,x$ solo sobrevive el primer modo: $u(x,t)=\text{sen}\,x\,e^{-t}$.
+Los senos son **ortogonales**: $\int_0^L \text{sen}\left(\dfrac{n\pi x}{L}\right)\text{sen}\left(\dfrac{m\pi x}{L}\right)dx$ vale $0$ si $n \neq m$ y $L/2$ si $n = m$. Multiplicando la serie por un seno e integrando se despejan los coeficientes:
 
-## Diferencias finitas y estabilidad
+$$b_n = \frac{2}{L}\int_0^L f(x)\,\text{sen}\left(\frac{n\pi x}{L}\right)dx$$
 
-Cuando no hay solución analítica se **discretiza** el dominio. Las aproximaciones central y progresiva son:
+Esta es la conexión con las **series de Fourier**: la condición inicial se descompone en armónicos. Con extremos a cero se usan senos (Dirichlet); con extremos aislados, cosenos (Neumann).
 
-$$u_{xx}\approx\frac{u_{i+1}-2u_i+u_{i-1}}{h^2},\qquad u_t\approx\frac{u_i^{n+1}-u_i^{n}}{\Delta t}.$$
+## Diferencias finitas (idea)
 
-El esquema explícito del calor es **estable** solo si
+Si la EDP no se resuelve con fórmulas, se discretiza: posiciones $x_i = i\,\Delta x$ y tiempos $t_n = n\,\Delta t$. Se aproxima
 
-$$\frac{k\,\Delta t}{\Delta x^2}\le\frac{1}{2},$$
+$$u_{xx} \approx \frac{u_{i+1} - 2u_i + u_{i-1}}{h^2}, \qquad u_t \approx \frac{u_i^{n+1} - u_i^{n}}{\Delta t}$$
 
-mientras que la ecuación de onda cumple la condición CFL $c\,\Delta t\le\Delta x$. Violarlas hace que la simulación crezca sin control.
+y el calor se vuelve un esquema que avanza paso a paso. El peligro es la **estabilidad**:
 
-**Mini-ejemplo.** Para el calor con $k=1$ y $\Delta x=0.1$: $\Delta t\le\tfrac{1}{2}(0.1)^2=0.005$.
+$$\frac{k\,\Delta t}{\Delta x^2} \leq \frac{1}{2} \quad \text{(calor)}, \qquad c\,\Delta t \leq \Delta x \quad \text{(onda, condición CFL)}$$
+
+Si se viola, los errores crecen sin control y la simulación explota. Ejemplo: con $k = 1$ y $\Delta x = 0.1$, el paso máximo estable es $\Delta t = 0.005$.
 
 ## Ejercicios (20)
 
-### Nivel 1 · básico
+### Nivel 1
 
-1. Clasifica $u_{xx}+u_{yy}=0$.
-2. Clasifica $u_t=u_{xx}$.
-3. Clasifica $u_{tt}=u_{xx}$.
-4. ¿Cuál es el orden de $u_t=u_{xxxx}$?
-5. Verifica que $u(x,y)=x^2-y^2$ es armónica.
+1. Para $u(x,t) = x^2 + t^3$, calcula $\dfrac{\partial u}{\partial x}$.
+2. Para $u(x,t) = x^2 + t^3$, calcula $\dfrac{\partial u}{\partial t}$.
+3. Para $u(x,t) = \text{sen}(x + t)$, calcula $u_x$.
+4. Clasifica $u_{xx} + u_{yy} = 0$.
+5. Explica qué significa la condición $u(0,t) = 0$.
 
-### Nivel 2 · intermedio
+### Nivel 2
 
-6. Clasifica $u_{xx}+4u_{xy}+4u_{yy}=0$.
-7. Clasifica $u_{xx}-3u_{xy}+2u_{yy}=0$.
-8. Verifica que $u=e^{-t}\,\text{sen}\,x$ satisface $u_t=u_{xx}$.
-9. Verifica que $u=\text{sen}\,x\cos t$ satisface $u_{tt}=u_{xx}$.
-10. Resuelve $u_{xx}=0$ con $u(0)=0$ y $u(L)=100$.
+6. Clasifica $u_t - u_{xx} = 0$.
+7. Clasifica $u_{tt} - u_{xx} = 0$.
+8. Verifica que $u = x^2 - y^2$ es armónica (cumple Laplace).
+9. Resuelve $u_{xx} = 0$ con $u(0) = 0$ y $u(1) = 5$.
+10. Para $u = e^{-t}\,\text{sen}\,x$, calcula $u_t$ y $u_{xx}$ y compáralos.
 
-### Nivel 3 · avanzado
+### Nivel 3
 
-11. Clasifica $u_{xx}+2u_{xy}+3u_{yy}=0$.
-12. Resuelve $u_{xx}=0$ con $u(0)=20$ y $u(L)=80$.
-13. Resuelve el calor en $[0,\pi]$ con $k=1$ y $u(x,0)=\text{sen}\,x$.
-14. Resuelve el calor con $k=1$ y $u(x,0)=3\,\text{sen}\,2x$.
-15. Resuelve la onda en $[0,\pi]$ con $c=1$, $u(x,0)=\text{sen}\,x$ y $u_t(x,0)=0$.
+11. Resuelve $u_{xx} = 0$ con $u(0) = 10$ y $u(2) = 30$.
+12. Calor con $k = 1$ en $[0,\pi]$, extremos a cero y $u(x,0) = \text{sen}\,x$: halla $u(x,t)$.
+13. Calor con $k = 1$ en $[0,\pi]$, extremos a cero y $u(x,0) = 3\,\text{sen}\,2x$: halla $u(x,t)$.
+14. Onda con $c = 1$, $u(x,0) = \text{sen}\,x$ y $u_t(x,0) = 0$: halla $u(x,t)$.
+15. Clasifica $u_{xx} + 4u_{xy} + 4u_{yy} = 0$.
 
-### Nivel 4 · aplicado
+### Nivel 4
 
-16. Halla el máximo $\Delta t$ estable para el calor con $k=1$ y $\Delta x=0.1$.
-17. Halla el máximo $\Delta t$ estable para el calor con $k=2$ y $\Delta x=0.05$.
-18. Con $c=3$ y $\Delta x=0.3$, ¿qué condición CFL impone a $\Delta t$?
-19. Escribe los dos primeros modos del calor en $[0,\pi]$ con $k=1$.
-20. Si $u(x,0)=2\,\text{sen}\,3x$, halla $u(x,t)$ para el calor con $k=1$.
+16. ¿Cuál es el máximo $\Delta t$ estable para el calor explícito con $k = 1$ y $\Delta x = 0.1$?
+17. Verifica que $u = \text{sen}\,x\cos 2t$ satisface $u_{tt} = 4u_{xx}$.
+18. Escribe la forma general de D'Alembert para $u_{tt} = c^2u_{xx}$.
+19. ¿A qué tiende la solución del calor con extremos a cero cuando $t \to \infty$?
+20. Escribe la fórmula del coeficiente $b_n$ para la condición inicial $u(x,0) = f(x)$ en $[0,L]$.
 
 ## Respuestas
 
-1. Elíptica ($\Delta=-4<0$).
-2. Parabólica.
-3. Hiperbólica.
-4. Orden $4$.
-5. $u_{xx}=2$, $u_{yy}=-2$ y $u_{xx}+u_{yy}=0$: armónica.
-6. Parabólica ($\Delta=16-16=0$).
-7. Hiperbólica ($\Delta=9-8=1>0$).
-8. $u_t=-e^{-t}\,\text{sen}\,x=u_{xx}$.
-9. $u_{tt}=-\text{sen}\,x\cos t=u_{xx}$.
-10. $u(x)=\dfrac{100x}{L}$.
-11. Elíptica ($\Delta=4-12=-8<0$).
-12. $u(x)=20+\dfrac{60x}{L}$.
-13. $u(x,t)=\text{sen}\,x\,e^{-t}$.
-14. $u(x,t)=3\,\text{sen}\,2x\,e^{-4t}$.
-15. $u(x,t)=\text{sen}\,x\cos t$.
-16. $\Delta t\le 0.005$.
-17. $\Delta t\le 0.000625$.
-18. $\Delta t\le 0.1$.
-19. $\text{sen}\,x\,e^{-t}$ y $\text{sen}\,2x\,e^{-4t}$.
-20. $u(x,t)=2\,\text{sen}\,3x\,e^{-9t}$.
+1. $\dfrac{\partial u}{\partial x} = 2x$ (la $t^3$ se trata como constante).
+2. $\dfrac{\partial u}{\partial t} = 3t^2$ (ahora se congela la $x^2$).
+3. $u_x = \cos(x+t)$.
+4. Elíptica ($\Delta = 0 - 4 = -4 < 0$).
+5. Que el extremo $x = 0$ se mantiene en valor $0$ para todo tiempo $t$.
+6. Parabólica ($\Delta = 0$).
+7. Hiperbólica ($\Delta = 4 > 0$).
+8. $u_{xx} = 2$ y $u_{yy} = -2$; la suma es $0$: sí es armónica.
+9. $u = 5x$.
+10. $u_t = u_{xx} = -e^{-t}\text{sen}\,x$: satisface $u_t = u_{xx}$.
+11. $u = 10x + 10$.
+12. $u = \text{sen}\,x\,e^{-t}$.
+13. $u = 3\,\text{sen}\,2x\,e^{-4t}$.
+14. $u = \text{sen}\,x\cos t$.
+15. Parabólica ($\Delta = 16 - 16 = 0$).
+16. $\Delta t \leq 0.005$.
+17. $u_{tt} = -4\,\text{sen}\,x\cos 2t$ y $u_{xx} = -\text{sen}\,x\cos 2t$: se cumple.
+18. $u(x,t) = F(x-ct) + G(x+ct)$.
+19. A $0$: todo el calor se disipa hacia los bordes.
+20. $b_n = \dfrac{2}{L}\displaystyle\int_0^L f(x)\,\text{sen}\left(\dfrac{n\pi x}{L}\right)dx$.

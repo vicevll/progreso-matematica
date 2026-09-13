@@ -1,95 +1,73 @@
-# Sucesiones y series infinitas
+# Sucesiones y series · teoría esencial
 
-Área: Cálculo · Nivel: Univ 2 · Descripción: Criterios de convergencia, Taylor, potencias y Fourier.
+## Sucesiones
 
-## Sucesiones y convergencia
+Una **sucesión** $\{a_n\}$ es una lista infinita y ordenada de números: $a_1, a_2, a_3, \ldots$ El subíndice $n$ es la posición; $a_n$ es el valor en esa posición. Por ejemplo, si $a_n = \frac{1}{n}$, la lista es $1, \frac{1}{2}, \frac{1}{3}, \ldots$
 
-Una **sucesión** $\{a_n\}$ es una lista infinita ordenada de números. Decimos que converge a $L$ si sus términos se acercan a $L$ tanto como se quiera:
+Una sucesión **converge** a $L$ si sus términos se acercan a $L$ cuando $n$ crece. Se escribe $\lim_{n\to\infty} a_n = L$ (se lee: "el límite cuando $n$ tiende a infinito es $L$"). Si no hay tal número, la sucesión **diverge** (crece sin freno, oscila, etc.).
 
-$$\lim_{n\to\infty} a_n = L.$$
+**Reglas prácticas para límites:**
 
-Si no converge, la sucesión **diverge**. Un resultado central es que una sucesión **monótona y acotada** siempre converge: si siempre crece pero no rebasa una cota, debe acercarse a un límite.
+- $\frac{1}{n} \to 0$; más en general, $\frac{1}{n^p} \to 0$ para todo $p > 0$.
+- Cocientes de polinomios: manda el **grado mayor**. Solo mira el término dominante.
+- Una sucesión **monótona y acotada** siempre converge.
 
-Mini-ejemplos:
-
-1. $\dfrac{1}{n} \to 0$, porque tarde o temprano es menor que cualquier margen $\varepsilon > 0$.
-2. $\dfrac{3n^2 + 1}{2n^2 - n} \to \dfrac{3}{2}$: en un cociente de polinomios manda el grado mayor.
-3. $\left(1 + \dfrac{1}{n}\right)^n \to e$; de hecho $\left(1 + \dfrac{1}{n}\right)^{kn} \to e^{k}$.
-
-**Ejemplo resuelto.** $\displaystyle\lim_{n\to\infty}\frac{5n + 2}{n + 7} = \lim_{n\to\infty}\frac{5 + 2/n}{1 + 7/n} = 5$, dividiendo numerador y denominador entre $n$.
-
-## Series: definición y condición necesaria
+## Series
 
 Una **serie** es la suma de los términos de una sucesión:
 
 $$\sum_{n=1}^{\infty} a_n = a_1 + a_2 + a_3 + \cdots$$
 
-No sumamos infinitos términos de golpe: definimos las **sumas parciales** $S_N = \sum_{n=1}^{N} a_n$. La serie **converge** si la sucesión $\{S_N\}$ converge; su suma es ese límite.
+El símbolo $\sum$ (sigma) indica suma; debajo va el índice inicial ($n = 1$) y arriba el final ($\infty$: infinito, no termina). La serie **converge** si sus **sumas parciales** $S_N = a_1 + \cdots + a_N$ se acercan a un número fijo; ese número es la suma de la serie. Si no, **diverge**.
 
-**Condición necesaria.** Si $\sum a_n$ converge, entonces $a_n \to 0$. El recíproco es **falso**: la serie armónica $\sum \frac{1}{n}$ diverge aunque $\frac{1}{n} \to 0$. Esto se usa sobre todo para detectar divergencias rápidas.
+**Test del término (condición necesaria):** si $\sum a_n$ converge, entonces $a_n \to 0$. Si $a_n \not\to 0$, la serie **diverge**. Pero si $a_n \to 0$ no concluyes nada: la armónica diverge.
 
-**Serie geométrica.** Con razón $r$:
+## Series de referencia
 
-$$\sum_{n=0}^{\infty} a r^n = \frac{a}{1 - r} \quad \text{si } |r| < 1; \qquad \text{diverge si } |r| \geq 1.$$
+**Geométrica:** cada término se obtiene multiplicando el anterior por la **razón** $r$ (un número fijo). Primer término $a$.
 
-**Serie telescópica.** Si cada término es una diferencia, la suma se colapsa:
+$$\sum_{n=0}^{\infty} a r^n = \frac{a}{1-r} \quad \text{si } |r| < 1; \quad \text{diverge si } |r| \geq 1$$
 
-$$\sum_{n=1}^{\infty}\left(\frac{1}{n} - \frac{1}{n+1}\right) = 1.$$
+Aquí $|r|$ es el valor absoluto de $r$ (su distancia al cero). La fórmula vale empezando en $n = 0$; si empieza en $n = 1$, el primer término es $ar$.
 
-**Serie $p$.** La serie $\sum \dfrac{1}{n^p}$ converge si $p > 1$ y diverge si $p \leq 1$. Es la familia de referencia del curso.
+**Serie p:** $\sum \dfrac{1}{n^p}$ converge si $p > 1$ y diverge si $p \leq 1$. Casos: $p = 1$ es la **armónica** (diverge); $p = 2$ converge con suma $\frac{\pi^2}{6}$.
 
-Mini-ejemplo: $\displaystyle\sum_{n=0}^{\infty} 4\left(\frac{1}{2}\right)^n = \frac{4}{1 - 1/2} = 8$.
+**Telescópica:** sus términos se cancelan en cadena. Ejemplo: $\sum \frac{1}{n(n+1)} = 1$ porque $\frac{1}{n(n+1)} = \frac{1}{n} - \frac{1}{n+1}$.
 
 ## Criterios de convergencia
 
-Los criterios comparan la serie con una geométrica o una $p$ conocida, o miden la rapidez de decrecimiento.
+Un **criterio** es una regla que responde "converge", "diverge" o "no decide".
 
-1. **Comparación:** si $0 \leq a_n \leq b_n$ y $\sum b_n$ converge, entonces $\sum a_n$ converge; si $\sum a_n$ diverge y $a_n \geq b_n$, entonces $\sum b_n$ diverge.
-2. **Comparación al límite:** si $\lim \frac{a_n}{b_n} = c$ con $0 < c < \infty$, ambas series convergen o ambas divergen.
-3. **Razón (D'Alembert):** con $L = \lim\left|\dfrac{a_{n+1}}{a_n}\right|$, la serie converge si $L < 1$, diverge si $L > 1$ y el criterio **no decide** si $L = 1$.
-4. **Raíz (Cauchy):** con $L = \lim \sqrt[n]{|a_n|}$ se aplica la misma regla.
-5. **Integral:** si $f$ es positiva, continua y decreciente con $f(n) = a_n$, entonces $\sum a_n$ y $\int_1^\infty f(x)\,dx$ convergen o divergen **juntas**.
-6. **Series alternantes (Leibniz):** si $a_n$ decrece a $0$, entonces $\sum (-1)^n a_n$ converge.
-
-Mini-ejemplo (razón): para $\sum \dfrac{x^n}{n!}$ se tiene $\left|\dfrac{a_{n+1}}{a_n}\right| = \dfrac{|x|}{n+1} \to 0 < 1$: converge para todo $x$.
-
-Mini-ejemplo (integral): $\sum \dfrac{1}{n\ln n}$ diverge porque $\int_2^\infty \frac{dx}{x\ln x} = \ln(\ln x)\big|_2^\infty = \infty$.
+1. **Comparación.** Si $0 \leq a_n \leq b_n$ y $\sum b_n$ converge, entonces $\sum a_n$ converge. Compárate con una p o una geométrica.
+2. **Comparación al límite.** Si $L = \lim \frac{a_n}{b_n}$ es un número positivo y finito, ambas series convergen o divergen juntas. Elige $b_n$ como el término dominante de $a_n$.
+3. **Razón (D'Alembert).** $L = \lim \left|\frac{a_{n+1}}{a_n}\right|$: converge si $L < 1$, diverge si $L > 1$, no decide si $L = 1$. Ideal para factoriales y potencias.
+4. **Raíz (Cauchy).** $L = \lim \sqrt[n]{|a_n|}$, con la misma regla. Ideal cuando todo está elevado a la $n$.
+5. **Integral.** Si $f$ es positiva, continua y decreciente con $f(n) = a_n$, la serie y la integral $\int_1^\infty f(x)\,dx$ convergen o divergen juntas.
+6. **Alternantes (Leibniz).** Si $a_n > 0$ decrece y $a_n \to 0$, entonces $\sum (-1)^n a_n$ converge. Además, el error al cortar en $S_N$ es menor que el primer término omitido.
 
 ## Convergencia absoluta y condicional
 
-Una serie $\sum a_n$ es **absolutamente convergente** si $\sum |a_n|$ converge. Es **condicionalmente convergente** si $\sum a_n$ converge pero $\sum |a_n|$ diverge.
+$\sum a_n$ es **absolutamente convergente** si $\sum |a_n|$ converge. Si converge pero su versión en valor absoluto diverge, es **condicionalmente convergente**.
 
-**Teorema.** La convergencia absoluta implica la convergencia. El recíproco no es cierto.
+**Teorema:** convergencia absoluta implica convergencia. El recíproco es falso.
 
-**Ejemplo clave.** $\displaystyle\sum_{n=1}^{\infty}\frac{(-1)^n}{n}$ converge por Leibniz, pero $\sum \frac{1}{n}$ diverge: es condicionalmente convergente. Por el **teorema de Riemann**, reordenar sus términos puede alterar la suma, o incluso hacerla divergir.
-
-Mini-ejemplo: $\displaystyle\sum \frac{(-1)^n}{n^2}$ converge **absolutamente**, porque $\sum \frac{1}{n^2}$ converge ($p = 2 > 1$).
+**Ejemplo clave:** $\sum \frac{(-1)^{n+1}}{n} = 1 - \frac{1}{2} + \frac{1}{3} - \cdots$ converge (Leibniz, suma $\ln 2$), pero $\sum \frac{1}{n}$ diverge: es **condicionalmente convergente**. Las series condicionales son frágiles: reordenar sus términos puede cambiar la suma (teorema de Riemann).
 
 ## Series de potencias
 
-Una **serie de potencias** define una función mediante una serie:
+Una **serie de potencias** es una función definida por una serie: $\sum_{n=0}^{\infty} c_n x^n$. Tiene un **radio de convergencia** $R$: converge absolutamente si $|x| < R$ y diverge si $|x| > R$. En los extremos se analiza caso a caso. Se calcula con la razón:
 
-$$\sum_{n=0}^{\infty} c_n x^n.$$
+$$R = \lim_{n\to\infty} \left|\frac{c_n}{c_{n+1}}\right|$$
 
-Tiene un **radio de convergencia** $R$: la serie converge absolutamente si $|x| < R$ y diverge si $|x| > R$. En los extremos $x = \pm R$ se estudia caso por caso. Con el criterio de la razón,
+Ejemplos: $\sum x^n$ tiene $R = 1$; $\sum \frac{x^n}{n!}$ tiene $R = \infty$ (converge para todo $x$); $\sum n!\, x^n$ tiene $R = 0$.
 
-$$R = \lim_{n\to\infty}\left|\frac{c_n}{c_{n+1}}\right|.$$
+## Taylor y McLaurin
 
-Mini-ejemplos:
+La **serie de Taylor** de $f$ alrededor de $a$ es
 
-1. $\sum x^n$ tiene $R = 1$ (es la geométrica).
-2. $\sum \dfrac{x^n}{n!}$ tiene $R = \infty$: converge para todo $x$.
-3. $\sum n!\,x^n$ tiene $R = 0$: solo converge en $x = 0$.
+$$f(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!}(x-a)^n$$
 
-**Ejemplo resuelto.** Para $\sum \dfrac{x^n}{n\,3^n}$: $R = \lim \dfrac{(n+1)3^{n+1}}{n\,3^n} = 3$.
-
-## Series de Taylor y McLaurin
-
-Toda función suficientemente suave se aproxima por su **serie de Taylor** alrededor de $a$:
-
-$$f(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!}(x - a)^n.$$
-
-Si $a = 0$ se llama serie de **McLaurin**. Algunas series clave:
+donde $f^{(n)}(a)$ es la derivada enésima evaluada en $a$ y $n! = n(n-1)\cdots 2 \cdot 1$ es el factorial. Si $a = 0$ se llama **McLaurin**. Series clave:
 
 $$e^x = 1 + x + \frac{x^2}{2!} + \frac{x^3}{3!} + \cdots$$
 
@@ -97,92 +75,70 @@ $$\operatorname{sen} x = x - \frac{x^3}{3!} + \frac{x^5}{5!} - \cdots$$
 
 $$\cos x = 1 - \frac{x^2}{2!} + \frac{x^4}{4!} - \cdots$$
 
-$$\frac{1}{1-x} = 1 + x + x^2 + \cdots \quad (|x| < 1)$$
+Para $x$ pequeño, los primeros términos ya aproximan bien. **Siempre estima el error:** en series alternantes, el error es menor que el primer término omitido.
 
-**Ejemplo resuelto.** Aproximar $e^{0.1}$ con tres términos: $e^{0.1} \approx 1 + 0.1 + \frac{0.01}{2} = 1.105$. El valor real es $1.10517\ldots$; el error es menor que $10^{-4}$.
+## Errores comunes
 
-## Series de Fourier (introducción)
-
-Las series de **Fourier** descomponen una función **periódica** en una suma de senos y cosenos:
-
-$$f(x) = \frac{a_0}{2} + \sum_{n=1}^{\infty}\left(a_n\cos\frac{n\pi x}{L} + b_n\operatorname{sen}\frac{n\pi x}{L}\right).$$
-
-Los coeficientes miden cuánto aporta cada frecuencia:
-
-$$a_n = \frac{1}{L}\int_{-L}^{L} f(x)\cos\frac{n\pi x}{L}\,dx, \qquad b_n = \frac{1}{L}\int_{-L}^{L} f(x)\operatorname{sen}\frac{n\pi x}{L}\,dx.$$
-
-Mini-ejemplo: la serie de Fourier de una **onda cuadrada** usa solo armónicos **impares**, porque la función tiene simetría impar. Es la herramienta básica del procesamiento de señales.
-
-## Aplicaciones y errores comunes
-
-**Contextos donde se aplica:**
-
-- **Matemática:** representar funciones, aproximar y resolver ecuaciones diferenciales por series.
-- **Física:** series de Fourier en ondas, calor y desarrollos multipolares.
-- **Computación:** las calculadoras evalúan funciones con series de Taylor truncadas.
-- **Finanzas:** anualidades perpetuas, que son series geométricas infinitas.
-
-**Errores comunes y cómo evitarlos:**
-
-1. Concluir convergencia porque $a_n \to 0$: es solo condición necesaria (la armónica diverge).
-2. Usar la razón o la raíz cuando $L = 1$: el criterio no decide, hay que cambiar de método.
-3. Confundir convergencia con convergencia absoluta: la condicional depende del orden.
-4. Olvidar el radio de convergencia: una serie de potencias solo vale dentro de su intervalo.
-5. Truncar una serie de Taylor sin estimar el error: siempre reporta una cota o el término siguiente.
+- Concluir convergencia porque $a_n \to 0$ (la armónica diverge).
+- Usar la razón cuando $L = 1$ (no decide).
+- Olvidar que la geométrica estándar empieza en $n = 0$.
+- Confundir convergencia con convergencia absoluta.
+- Ignorar el radio de convergencia de una serie de potencias.
+- Truncar Taylor sin acotar el error.
 
 ## Ejercicios (20)
 
-### Nivel 1 (1–5)
+**Nivel 1 · Sucesiones y geométricas básicas**
 
-1. Calcula $\displaystyle\lim_{n\to\infty}\frac{4n+3}{2n-1}$.
-2. Calcula $\displaystyle\lim_{n\to\infty}\left(1+\frac{3}{n}\right)^n$.
-3. Suma $\displaystyle\sum_{n=0}^{\infty} 6\left(\frac{1}{4}\right)^n$.
-4. ¿Converge $\displaystyle\sum_{n=1}^{\infty}\frac{1}{n^{4}}$?
-5. Calcula $\displaystyle\lim_{n\to\infty}\frac{n^3-2n}{5n^3+n^2}$.
+1. Calcula $\lim_{n\to\infty} \dfrac{2n+3}{4n-5}$.
+2. Calcula $\lim_{n\to\infty} \left(\dfrac{1}{3}\right)^n$.
+3. Suma $\displaystyle\sum_{n=0}^{\infty} \left(\frac{1}{5}\right)^n$.
+4. Suma $\displaystyle\sum_{n=0}^{\infty} 3\left(\frac{2}{3}\right)^n$.
+5. ¿Converge $\displaystyle\sum_{n=0}^{\infty} \left(\frac{1}{10}\right)^n$? Si sí, ¿a qué valor?
 
-### Nivel 2 (6–10)
+**Nivel 2 · Series p, comparación y telescópicas**
 
-6. Suma $\displaystyle\sum_{n=1}^{\infty}\frac{1}{n(n+1)}$.
-7. Aplica el criterio de la razón a $\displaystyle\sum_{n=1}^{\infty}\frac{5^n}{n!}$.
-8. Aplica el criterio de la raíz a $\displaystyle\sum_{n=1}^{\infty}\left(\frac{n}{3n+1}\right)^n$.
-9. Analiza $\displaystyle\sum_{n=1}^{\infty}\frac{(-1)^n}{n}$ (absoluta o condicional).
-10. ¿Converge $\displaystyle\sum_{n=2}^{\infty}\frac{1}{n\ln n}$?
+6. ¿Converge $\displaystyle\sum_{n=1}^{\infty} \frac{1}{n^3}$?
+7. ¿Converge $\displaystyle\sum_{n=1}^{\infty} \frac{1}{\sqrt{n}}$?
+8. ¿Converge $\displaystyle\sum_{n=1}^{\infty} \frac{1}{n^2 + n}$? Usa comparación.
+9. Suma $\displaystyle\sum_{n=1}^{\infty} \frac{1}{n(n+1)}$.
+10. ¿Converge $\displaystyle\sum_{n=1}^{\infty} \frac{2n+1}{n^3 + 4}$? Usa comparación al límite.
 
-### Nivel 3 (11–15)
+**Nivel 3 · Criterios de razón, raíz y alternantes**
 
-11. Halla el radio de convergencia de $\displaystyle\sum_{n=1}^{\infty}\frac{x^n}{n\,4^n}$.
-12. Halla el radio de convergencia de $\displaystyle\sum_{n=0}^{\infty} n!\,x^n$.
-13. Escribe los cuatro primeros términos de McLaurin de $\cos x$.
-14. ¿Absoluta o condicional? $\displaystyle\sum_{n=1}^{\infty}\frac{(-1)^n}{n^2}$.
-15. ¿Converge $\displaystyle\sum_{n=1}^{\infty}\frac{n!}{5^n}$?
+11. ¿Converge $\displaystyle\sum_{n=1}^{\infty} \frac{n}{2^n}$? Usa la razón.
+12. ¿Converge $\displaystyle\sum_{n=1}^{\infty} \frac{2^n}{n!}$? Usa la razón.
+13. ¿Converge $\displaystyle\sum_{n=1}^{\infty} \frac{n!}{n^n}$? Usa la razón.
+14. ¿Converge $\displaystyle\sum_{n=1}^{\infty} \left(\frac{n}{2n+1}\right)^n$? Usa la raíz.
+15. ¿Converge $\displaystyle\sum_{n=1}^{\infty} \frac{(-1)^n}{\sqrt{n}}$? Usa Leibniz.
 
-### Nivel 4 (16–20)
+**Nivel 4 · Absoluta/condicional, radios y sumas exactas**
 
-16. Suma $\displaystyle\sum_{n=0}^{\infty}\frac{(-1)^n}{2^n}$.
-17. Halla el radio de convergencia de $\displaystyle\sum_{n=1}^{\infty}\frac{(x-1)^n}{n}$.
-18. Aproxima $e^{0.2}$ con tres términos de Taylor.
-19. Suma la serie de Gregory–Leibniz $\displaystyle\sum_{n=0}^{\infty}\frac{(-1)^n}{2n+1}$.
-20. ¿Qué armónicos usa la serie de Fourier de una onda cuadrada?
+16. Analiza $\displaystyle\sum_{n=1}^{\infty} \frac{(-1)^n}{n^2}$: ¿convergencia absoluta o condicional?
+17. Analiza $\displaystyle\sum_{n=1}^{\infty} \frac{(-1)^n}{n}$: ¿absoluta o condicional?
+18. Halla el radio de convergencia de $\displaystyle\sum_{n=0}^{\infty} \frac{x^n}{n!}$.
+19. Halla el radio de convergencia de $\displaystyle\sum_{n=1}^{\infty} n\, x^n$.
+20. Suma $\displaystyle\sum_{n=0}^{\infty} \frac{2^n + 3^n}{5^n}$.
 
 ## Respuestas
 
-1. $2$.
-2. $e^{3}$.
-3. $8$.
-4. Sí, converge ($p = 4 > 1$).
-5. $\dfrac{1}{5}$.
-6. $1$.
-7. $L = 0 < 1$: converge.
-8. $L = \dfrac{1}{3} < 1$: converge.
-9. Condicionalmente convergente (la armónica diverge).
-10. Diverge (criterio integral: $\ln(\ln x) \to \infty$).
-11. $R = 4$.
-12. $R = 0$.
-13. $1 - \dfrac{x^2}{2} + \dfrac{x^4}{24} - \dfrac{x^6}{720}$.
-14. Absolutamente convergente ($p = 2$).
-15. Diverge ($L = \infty$).
-16. $\dfrac{2}{3}$.
-17. $R = 1$.
-18. $1 + 0.2 + 0.02 = 1.22$; el valor real es $1.22140\ldots$.
-19. $\dfrac{\pi}{4}$.
-20. Solo los armónicos impares.
+1. $\frac{1}{2}$ (manda el grado 1: cociente de coeficientes).
+2. $0$ (geométrica con razón menor que 1 en módulo).
+3. $\frac{5}{4}$ (geométrica: $\frac{1}{1-1/5}$).
+4. $9$ (geométrica: $\frac{3}{1-2/3}$).
+5. Converge a $\frac{10}{9}$.
+6. Converge (serie p, $p = 3 > 1$).
+7. Diverge (serie p, $p = \frac{1}{2} \leq 1$).
+8. Converge: $\frac{1}{n^2+n} \leq \frac{1}{n^2}$ y la p con $p = 2$ converge.
+9. $1$ (telescópica: $\frac{1}{n} - \frac{1}{n+1}$ se cancela en cadena).
+10. Converge: se compara con $\frac{1}{n^2}$ y el cociente tiende a $2 > 0$.
+11. Converge: $\left|\frac{a_{n+1}}{a_n}\right| = \frac{n+1}{2n} \to \frac{1}{2} < 1$.
+12. Converge: $\left|\frac{a_{n+1}}{a_n}\right| = \frac{2}{n+1} \to 0 < 1$.
+13. Converge: $\left|\frac{a_{n+1}}{a_n}\right| = \left(\frac{n}{n+1}\right)^n \to \frac{1}{e} < 1$.
+14. Converge: $\sqrt[n]{|a_n|} = \frac{n}{2n+1} \to \frac{1}{2} < 1$.
+15. Converge: $\frac{1}{\sqrt{n}}$ decrece a $0$ (Leibniz).
+16. Absolutamente convergente: $\sum \frac{1}{n^2}$ converge.
+17. Condicionalmente convergente: converge por Leibniz pero $\sum \frac{1}{n}$ diverge.
+18. $R = \infty$ (converge para todo $x$).
+19. $R = 1$: $\left|\frac{c_n}{c_{n+1}}\right| = \frac{n}{n+1} \to 1$.
+20. $\frac{25}{6}$: suma de geométricas $\frac{1}{1-2/5} + \frac{1}{1-3/5} = \frac{5}{3} + \frac{5}{2}$.
