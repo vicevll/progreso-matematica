@@ -7,12 +7,15 @@
   <link rel="icon" type="image/png" href="favicon.png?v=1" />
   <link rel="apple-touch-icon" href="favicon.png?v=1" />
   <link rel="stylesheet" href="vendor/katex/katex.min.css" />
-  <link rel="stylesheet" href="css/styles.css?v=20260913-4" />
+  <link rel="stylesheet" href="css/styles.css?v=20260913-5" />
 </head>
 <body>
   <header class="topbar">
     <a class="brand" href="#/">Mi progreso en matemática</a>
-    <span class="topbar-tag" id="topbar-tag">27 temas · 5 áreas</span>
+    <div class="topbar-right">
+      <span class="topbar-tag" id="topbar-tag">27 temas · 5 áreas</span>
+      <div class="account" id="account"></div>
+    </div>
   </header>
 
   <main id="app"></main>
@@ -30,6 +33,11 @@
   <script src="vendor/katex/katex.min.js"></script>
   <script src="vendor/katex/auto-render.min.js"></script>
   <script src="js/md.js"></script>
-  <script src="js/app.js?v=20260913-4"></script>
+  <script src="vendor/supabase/supabase-js.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/account.js"></script>
+  <script src="js/app.js?v=20260913-5"></script>
 </body>
 </html>

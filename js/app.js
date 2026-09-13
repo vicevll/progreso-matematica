@@ -1,6 +1,4 @@
 (function () {
-  var STORAGE_KEY = "mate-progreso";
-  var LAST_KEY = "mate-ultimo";
   var app = document.getElementById("app");
   var revealObserver = null;
   var courseObserver = null;
@@ -556,32 +554,12 @@
     }
   };
 
-  function loadProgress() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-    } catch (e) {
-      return {};
-    }
-  }
-
-  function saveProgress() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
-  }
-
-  var progress = loadProgress();
-
   function isSectionDone(areaId, temaId, index) {
-    return progress[areaId + "/" + temaId + "#" + index] === true;
+    return window.ProgressStore.isSectionDone(areaId, temaId, index);
   }
 
   function toggleSection(areaId, temaId, index) {
-    var k = areaId + "/" + temaId + "#" + index;
-    if (progress[k]) {
-      delete progress[k];
-    } else {
-      progress[k] = true;
-    }
-    saveProgress();
+    window.ProgressStore.toggle(areaId, temaId, index);
   }
 
   function getSections(areaId, temaId) {
@@ -758,19 +736,11 @@
   }
 
   function loadLastVisited() {
-    try {
-      return JSON.parse(localStorage.getItem(LAST_KEY)) || null;
-    } catch (e) {
-      return null;
-    }
+    return window.ProgressStore.getLastVisited();
   }
 
   function saveLastVisited(areaId, temaId) {
-    try {
-      localStorage.setItem(LAST_KEY, JSON.stringify({ areaId: areaId, temaId: temaId }));
-    } catch (e) {
-      /* almacenamiento no disponible */
-    }
+    window.ProgressStore.setLastVisited(areaId, temaId);
   }
 
   /* ---------- Vistas ---------- */
@@ -1136,6 +1106,14 @@
     app.classList.remove("route-enter");
     void app.offsetWidth;
     app.classList.add("route-enter");
+  }
+
+  if (window.ProgressStore && typeof window.ProgressStore.onUpdate === "function") {
+    window.ProgressStore.onUpdate(function () {
+      var y = window.scrollY;
+      route();
+      window.scrollTo(0, y);
+    });
   }
 
   setupParallax();
