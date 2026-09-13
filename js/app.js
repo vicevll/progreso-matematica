@@ -1400,6 +1400,55 @@
 
   /* ---------- Vistas ---------- */
 
+  function flatGuides(areaId) {
+    var out = [];
+    CATALOGO.forEach(function (area) {
+      if (areaId && area.id !== areaId) return;
+      area.temas.forEach(function (tema) {
+        var pack = RECURSOS[area.id + "/" + tema.id];
+        if (!pack || !pack.items || pack.items.length < 2) return;
+        out.push({
+          areaId: area.id,
+          areaNombre: area.nombre,
+          temaId: tema.id,
+          temaNombre: tema.nombre,
+          nivel: tema.nivel,
+          simple: pack.items[0],
+          ejercicios: pack.items[1]
+        });
+      });
+    });
+    return out;
+  }
+
+  function randomGuide(areaId) {
+    var pool = flatGuides(areaId);
+    if (!pool.length) return null;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  function recoCardHtml(guide) {
+    if (!guide) return "";
+    return (
+      '<aside class="reco" id="reco">' +
+        '<div class="reco-head">' +
+          '<span class="reco-kicker">Guía recomendada</span>' +
+          '<button class="reco-shuffle" type="button" title="Ver otra recomendación">Ver otra ↻</button>' +
+        "</div>" +
+        '<a class="reco-title" href="#/curso/' + guide.areaId + "/" + guide.temaId + '">' + esc(guide.temaNombre) + "</a>" +
+        '<p class="reco-meta">' + esc(guide.areaNombre) + " · " + esc(guide.nivel) + "</p>" +
+        '<div class="reco-actions">' +
+          '<a class="reco-btn" href="' + guide.simple.archivo + '" download>Guía simple · 20 ejercicios</a>' +
+          '<a class="reco-btn" href="' + guide.ejercicios.archivo + '" download>Cuaderno · 50 ejercicios</a>' +
+        "</div>" +
+      "</aside>"
+    );
+  }
+
+  function renderRecomendacion(areaId) {
+    return recoCardHtml(randomGuide(areaId));
+  }
+
   function renderHome() {
     setWide(false);
     var g = globalStats();
@@ -1448,6 +1497,7 @@
         '<div class="home-note reveal"><span class="note-dot"></span><span>Elige un área para comenzar una nueva línea de estudio.</span></div>' +
         continueCard +
       "</section>" +
+      renderRecomendacion() +
       '<h2 class="section-title reveal">Áreas</h2>' +
       '<div class="area-grid">' + cards + "</div>";
 
@@ -1496,6 +1546,7 @@
           "<span>" + s.done + " de " + s.total + " secciones completadas</span>" +
         "</div>" +
       "</section>" +
+      renderRecomendacion(areaId) +
       '<div class="topic-list">' + topics + "</div>";
 
     clearCourseSpy();
@@ -1668,6 +1719,17 @@
       var index = parseInt(button.getAttribute("data-index"), 10);
       toggleSection(areaId, temaId, index);
       updateCourseUI(areaId, temaId, index, button);
+      return;
+    }
+
+    var shuffle = e.target.closest(".reco-shuffle");
+    if (shuffle) {
+      var box = document.getElementById("reco");
+      if (box) {
+        var hash = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
+        var ctxArea = hash[0] === "area" ? hash[1] : null;
+        box.outerHTML = recoCardHtml(randomGuide(ctxArea));
+      }
       return;
     }
 

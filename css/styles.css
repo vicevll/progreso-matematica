@@ -935,6 +935,96 @@ a {
   color: var(--accent-strong);
 }
 
+/* ---------- Recomendación variable ---------- */
+
+.reco {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0 0 28px;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--ok);
+  background: linear-gradient(120deg, rgba(114, 209, 155, 0.08), rgba(13, 16, 18, 0.92));
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.14);
+}
+
+.reco-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.reco-kicker {
+  color: var(--ok);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.reco-shuffle {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-faint);
+  cursor: pointer;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: color 0.2s ease;
+}
+
+.reco-shuffle:hover {
+  color: var(--accent-strong);
+}
+
+.reco-title {
+  color: var(--text);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+.reco-title:hover {
+  color: var(--accent-strong);
+}
+
+.reco-meta {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.74rem;
+}
+
+.reco-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.reco-btn {
+  display: inline-block;
+  padding: 7px 11px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  color: var(--accent-strong);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.reco-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
 @media (max-width: 980px) {
   .hero-simple {
     padding: 62px 0 50px;
