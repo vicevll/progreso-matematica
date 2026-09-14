@@ -20,6 +20,7 @@
       titulo: "Nuevo: tu perfil",
       texto: "Elige tu foto y un apodo. Tu correo ya no se muestra.",
       accion: "Probar",
+      requiereLogin: true,
       onProbar: function () {
         if (window.Profile) window.Profile.openEditor();
       }
@@ -88,6 +89,37 @@
     runAction(entry);
   }
 
+  function notifyError(message) {
+    var toast = document.createElement("aside");
+    toast.className = "update-banner update-error";
+    toast.innerHTML =
+      '<span class="update-kicker">No se pudo continuar</span>' +
+      "<p>" + message + "</p>";
+    document.body.appendChild(toast);
+    setTimeout(function () {
+      if (toast.parentNode) toast.parentNode.removeChild(toast);
+    }, 7000);
+  }
+
+  function tryProbar(entry) {
+    if (!entry.requiereLogin || isSignedIn()) {
+      runAction(entry);
+      return;
+    }
+    if (!(window.SB && window.SB.configured)) {
+      notifyError("Para probar esta novedad necesitas iniciar sesión con Google.");
+      return;
+    }
+    setPending(entry);
+    window.SB.signInWithGoogle().catch(function (err) {
+      clearPending();
+      notifyError(
+        "No se pudo iniciar sesión: " +
+          (err && err.message ? err.message : "error desconocido")
+      );
+    });
+  }
+
   function show(entry) {
     var banner = document.createElement("aside");
     banner.className = "update-banner";
@@ -107,15 +139,8 @@
     });
 
     banner.querySelector("#update-try").addEventListener("click", function () {
-      var needsLogin = entry.id === "perfil" && !isSignedIn();
-      if (needsLogin && window.SB && window.SB.configured) {
-        setPending(entry);
-        banner.parentNode.removeChild(banner);
-        window.SB.signInWithGoogle();
-        return;
-      }
       banner.parentNode.removeChild(banner);
-      runAction(entry);
+      tryProbar(entry);
     });
   }
 
@@ -128,7 +153,7 @@
     show(waiting[waiting.length - 1]);
   }
 
-  window.Novedades = { run: run, show: show, maybeRunPending: maybeRunPending };
+  window.Novedades = { run: run, show: show, maybeRunPending: maybeRunPending, notifyError: notifyError };
 
   if (window.ProgressStore) {
     window.ProgressStore.onChange(maybeRunPending);

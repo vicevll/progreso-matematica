@@ -36,10 +36,19 @@
     redirectTo: redirectTo,
     signInWithGoogle: function () {
       if (!client) return notConfigured();
-      return client.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: redirectTo() }
-      });
+      return client.auth
+        .signInWithOAuth({
+          provider: "google",
+          options: { redirectTo: redirectTo(), skipBrowserRedirect: true }
+        })
+        .then(function (res) {
+          if (res && res.error) throw res.error;
+          if (res && res.data && res.data.url) {
+            window.location.assign(res.data.url);
+            return;
+          }
+          throw new Error("No se pudo abrir el inicio de sesión de Google");
+        });
     },
     signOut: function () {
       if (!client) return notConfigured();

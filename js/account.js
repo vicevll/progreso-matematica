@@ -49,7 +49,13 @@
 
   document.addEventListener("click", function (e) {
     if (e.target.closest("#account-login")) {
-      window.SB.signInWithGoogle();
+      window.SB.signInWithGoogle().catch(function (err) {
+        if (window.Novedades && window.Novedades.notifyError) {
+          window.Novedades.notifyError(
+            "No se pudo iniciar sesión: " + (err && err.message ? err.message : "error desconocido")
+          );
+        }
+      });
       return;
     }
     if (e.target.closest("#account-logout")) {

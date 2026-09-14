@@ -1619,6 +1619,14 @@ a {
   gap: 8px;
 }
 
+.update-banner.update-error {
+  border-top: 2px solid var(--warn, #e8a13c);
+}
+
+.update-banner.update-error .update-kicker {
+  color: var(--warn, #e8a13c);
+}
+
 @media (max-width: 640px) {
   .update-banner {
     right: 16px;
