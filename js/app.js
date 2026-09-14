@@ -658,6 +658,25 @@
     }
   };
 
+  var TEMA_LOCKS = {
+    trigonometria: {
+      titulo: "Trigonometría está bloqueada",
+      texto: "Inicia sesión con Google para estudiar Trigonometría."
+    },
+    "numeros-reales-complejos": {
+      titulo: "Números reales y complejos está bloqueado",
+      texto: "Inicia sesión con Google para estudiar Números reales y complejos."
+    },
+    demostracion: {
+      titulo: "Métodos de demostración está bloqueado",
+      texto: "Inicia sesión con Google para estudiar Métodos de demostración."
+    },
+    polinomios: {
+      titulo: "Polinomios y ecuaciones está bloqueado",
+      texto: "Inicia sesión con Google para estudiar Polinomios y ecuaciones."
+    }
+  };
+
   function isSignedIn() {
     return !!(window.ProgressStore && window.ProgressStore.getUser());
   }
@@ -666,6 +685,13 @@
     var lock = AREA_LOCKS[areaId];
     if (!lock) return null;
     if (lock.tipo === "login" && isSignedIn()) return null;
+    return lock;
+  }
+
+  function temaLock(temaId) {
+    var lock = TEMA_LOCKS[temaId];
+    if (!lock) return null;
+    if (isSignedIn()) return null;
     return lock;
   }
 
@@ -693,9 +719,32 @@
     }
   }
 
-  function openModal(titulo, texto) {
+  function googleBtnHtml(dest, label) {
+    return (
+      '<button class="google-btn" type="button" data-dest="' + esc(dest) + '">' +
+        (window.GOOGLE_ICON || "") +
+        "<span>" + esc(label || "Entrar con Google") + "</span>" +
+      "</button>"
+    );
+  }
+
+  function openModal(titulo, texto, loginDest) {
     var existing = document.getElementById("modal-overlay");
     if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+
+    var footer;
+    if (loginDest) {
+      footer =
+        '<div class="update-actions modal-actions">' +
+          '<button class="btn" id="modal-back" type="button">Volver</button>' +
+          googleBtnHtml(loginDest, "Entrar con Google") +
+        "</div>";
+    } else {
+      footer =
+        '<div class="update-actions">' +
+          '<button class="btn primary" id="modal-close" type="button">Entendido</button>' +
+        "</div>";
+    }
 
     var overlay = document.createElement("div");
     overlay.id = "modal-overlay";
@@ -705,9 +754,7 @@
         '<span class="modal-kicker">Studappy</span>' +
         "<h3>" + esc(titulo) + "</h3>" +
         "<p>" + esc(texto) + "</p>" +
-        '<div class="update-actions">' +
-          '<button class="btn primary" id="modal-close" type="button">Entendido</button>' +
-        "</div>" +
+        footer +
       "</div>";
     document.body.appendChild(overlay);
 
@@ -717,8 +764,20 @@
     overlay.addEventListener("click", function (ev) {
       if (ev.target === overlay) cerrar();
     });
+
     var closeBtn = overlay.querySelector("#modal-close");
     if (closeBtn) closeBtn.addEventListener("click", cerrar);
+    var backBtn = overlay.querySelector("#modal-back");
+    if (backBtn) backBtn.addEventListener("click", cerrar);
+  }
+
+  function openLoginModal(titulo, texto, dest) {
+    openModal(
+      titulo,
+      (texto || "Esta sección está bloqueada: necesitas iniciar sesión con Google para acceder.") +
+        " No te preocupes: al volver te dejamos justo donde estabas.",
+      dest
+    );
   }
 
   function renderLocked(titulo, texto, cta) {
@@ -731,6 +790,15 @@
         (cta || "") +
       "</section>";
     setupReveal();
+  }
+
+  function lockedLoginCta(dest) {
+    return (
+      '<div class="locked-actions">' +
+        '<button class="btn locked-back" type="button">Volver</button>' +
+        googleBtnHtml(dest, "Entrar con Google") +
+      "</div>"
+    );
   }
 
   /* ---------- Vistas ---------- */
@@ -787,7 +855,7 @@
           '<span class="reco-kicker">Guía recomendada</span>' +
           '<p class="reco-meta">Inicia sesión para recibir recomendaciones de guías.</p>' +
           '<div class="reco-actions">' +
-            '<button class="reco-btn reco-login" type="button" data-dest="#/">Entrar con Google</button>' +
+            googleBtnHtml("#/", "Entrar con Google") +
           "</div>" +
         "</aside>"
       );
@@ -860,7 +928,7 @@
         greeting +
         '<div class="eyebrow reveal">MAPA DE ESTUDIO <span>01—0' + counts.areas + "</span></div>" +
         '<div class="hero-mark reveal"><img src="img/studappy.png" alt="Studappy" /></div>' +
-        '<p class="reveal">' + counts.areas + " áreas y " + counts.temas + " temas, de 10° grado a último año de universidad. Cada curso se completa sección por sección.</p>" +
+        '<p class="reveal hero-desc">Aprende matemáticas y mide tu avance en tiempo real.</p>' +
         '<div class="hero-progress reveal">' +
           '<div class="bar"><span style="width:' + pct + '%"></span></div>' +
           '<span class="label">' + g.done + " de " + g.total + " secciones · " + pct + "%</span>" +
@@ -887,11 +955,7 @@
         renderLocked(lock.titulo, lock.texto);
         return;
       }
-      renderLocked(
-        lock.titulo,
-        lock.texto,
-        '<button class="btn primary locked-login" type="button" data-dest="#/area/' + area.id + '">Entrar con Google</button>'
-      );
+      renderLocked(lock.titulo, lock.texto, lockedLoginCta("#/area/" + area.id));
       return;
     }
 
@@ -902,12 +966,17 @@
       var c = courseStats(area.id, tema.id);
       var cDone = c.total > 0 && c.done === c.total;
       var cPct = c.total ? Math.round((c.done / c.total) * 100) : 0;
+      var tLock = temaLock(tema.id);
+      var lockBadge = tLock ? '<span class="lock-badge" aria-hidden="true">🔒</span>' : "";
+      var lockAttrs = tLock ? ' data-lock-dest="#/curso/' + area.id + "/" + tema.id + '"' : "";
+      var cls = "topic-card reveal" + (cDone ? " done" : "") + (tLock ? " locked" : "");
       return (
-        '<a class="topic-card reveal' + (cDone ? " done" : "") + '" href="#/curso/' + area.id + "/" + tema.id + '" style="transition-delay:' + Math.min(i, 8) * 30 + 'ms">' +
+        '<a class="' + cls + '" href="#/curso/' + area.id + "/" + tema.id + '"' + lockAttrs + ' style="transition-delay:' + Math.min(i, 8) * 30 + 'ms">' +
           '<div class="topic-num">' + (cDone ? "✓" : i + 1) + "</div>" +
           '<div class="topic-body">' +
             "<h3>" + esc(tema.nombre) +
               '<span class="badge nivel">' + esc(tema.nivel) + "</span>" +
+              lockBadge +
             "</h3>" +
             "<p>" + esc(tema.descripcion) + "</p>" +
             '<div class="topic-progress">' +
@@ -966,7 +1035,10 @@
       } else {
         actions =
           '<div class="recurso-actions">' +
-            '<button class="recurso-btn recurso-login" type="button" data-dest="#/curso/' + areaId + "/" + temaId + '">🔒 Inicia sesión para descargar</button>' +
+            '<button class="google-btn recurso-login" type="button" data-dest="#/curso/' + areaId + "/" + temaId + '">' +
+              (window.GOOGLE_ICON || "") +
+              "<span>Inicia sesión para descargar</span>" +
+            "</button>" +
           "</div>";
       }
       return (
@@ -1014,11 +1086,13 @@
         renderLocked(lock.titulo, lock.texto);
         return;
       }
-      renderLocked(
-        lock.titulo,
-        lock.texto,
-        '<button class="btn primary locked-login" type="button" data-dest="#/curso/' + area.id + "/" + tema.id + '">Entrar con Google</button>'
-      );
+      renderLocked(lock.titulo, lock.texto, lockedLoginCta("#/curso/" + area.id + "/" + tema.id));
+      return;
+    }
+
+    var tLock = temaLock(tema.id);
+    if (tLock) {
+      renderLocked(tLock.titulo, tLock.texto, lockedLoginCta("#/curso/" + area.id + "/" + tema.id));
       return;
     }
 
@@ -1142,14 +1216,42 @@
       if (lock.tipo === "proximamente") {
         openModal(lock.titulo, lock.texto);
       } else {
-        loginToSee("#/area/" + lockId);
+        openLoginModal(lock.titulo, "Esta sección está bloqueada porque aún no has iniciado sesión.", "#/area/" + lockId);
       }
       return;
     }
 
-    var loginBtn = e.target.closest(".recurso-login, .reco-login, .locked-login");
-    if (loginBtn) {
-      loginToSee(loginBtn.getAttribute("data-dest") || "#/");
+    var lockedTema = e.target.closest(".topic-card.locked");
+    if (lockedTema) {
+      e.preventDefault();
+      var tDest = lockedTema.getAttribute("data-lock-dest") || "#/";
+      var temaIdLock = tDest.split("/").pop();
+      var tLock = TEMA_LOCKS[temaIdLock] || null;
+      if (!tLock || isSignedIn()) {
+        location.hash = tDest;
+        return;
+      }
+      openLoginModal(tLock.titulo, "Esta sección está bloqueada porque aún no has iniciado sesión.", tDest);
+      return;
+    }
+
+    var gBtn = e.target.closest(".google-btn[data-dest]");
+    if (gBtn) {
+      var overlayBox = gBtn.closest("#modal-overlay");
+      if (overlayBox && overlayBox.parentNode) overlayBox.parentNode.removeChild(overlayBox);
+      loginToSee(gBtn.getAttribute("data-dest") || "#/");
+      return;
+    }
+
+    var backBtn = e.target.closest(".locked-back, #modal-back");
+    if (backBtn) {
+      var overlayBox2 = backBtn.closest("#modal-overlay");
+      if (overlayBox2 && overlayBox2.parentNode) overlayBox2.parentNode.removeChild(overlayBox2);
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        location.hash = "#/";
+      }
       return;
     }
 

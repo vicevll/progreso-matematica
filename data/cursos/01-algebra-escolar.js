@@ -545,156 +545,141 @@ Una sucesión **monótona y acotada** siempre converge: es el teorema de converg
 
   "polinomios": String.raw`
 ## ¿Qué es un polinomio?
-Un polinomio es una expresión de la forma
-$$P(x) = a_n x^n + a_{n-1}x^{n-1} + \cdots + a_1 x + a_0$$
-donde los coeficientes $a_i$ son números y los exponentes son enteros no negativos. El mayor exponente con coeficiente no nulo es el **grado**, y $a_n$ es el **coeficiente líder**.
+Un **polinomio** es una suma de términos hechos de un número (llamado **coeficiente**) multiplicado por una letra (la **variable**) elevada a un exponente entero no negativo.
 
-Ejemplos: $P(x) = 3x^4 - 2x + 7$ (grado 4), $Q(x) = x^2 - 9$ (grado 2), $R(x) = 5$ (grado 0).
+$$P(x) = 3x^{2} - 2x + 5$$
 
-Los polinomios son la familia de funciones más manejable: se suman, multiplican, dividen y derivan con reglas simples. Casi cualquier función se aproxima con polinomios (series de Taylor), y por eso son la base del cálculo numérico.
+En este ejemplo hay tres términos: $3x^{2}$, $-2x$ y $5$. Los coeficientes son $3$, $-2$ y $5$. El **grado** es el mayor exponente de la variable: aquí es $2$. El término sin letra ($5$) es el **término constante**.
 
-## Operaciones con polinomios
-**Suma:** se agrupan términos semejantes: $(3x^2 + 2x - 1) + (x^2 - 5x + 4) = 4x^2 - 3x + 3$.
+**¿Para qué sirven?** Los polinomios son las funciones más sencillas de manejar: describen curvas, áreas y volúmenes, y con ellos se modelan costos, trayectorias y muchos otros problemas.
 
-**Multiplicación:** se distribuye cada término de uno por cada término del otro. El grado del producto es la suma de los grados:
-$$(x^2 + 1)(x - 3) = x^3 - 3x^2 + x - 3$$
+## Cómo leer la notación
+- $P(x)$ se lee "P de x" e indica que el valor de $P$ depende de $x$.
+- $x^{2}$ significa $x \cdot x$, y $x^{3}$ significa $x \cdot x \cdot x$.
+- $a_n$ es el **coeficiente líder**: el coeficiente del término de mayor exponente.
+- $P(2)$ significa "reemplaza $x$ por $2$ en la fórmula".
 
-**División:** como con los enteros, hay cociente y resto. El **algoritmo de la división**:
-$$P(x) = D(x) \cdot Q(x) + R(x)$$
-donde el grado de $R$ es menor que el grado de $D$. Si $R = 0$, $D$ divide a $P$.
+## Evaluar un polinomio (básico)
+Para evaluar solo hay que sustituir la variable por el número y hacer las operaciones.
 
-Ejemplo: dividir $x^3 - 2x^2 + 4x - 7$ entre $x - 1$ da cociente $x^2 - x + 3$ y resto $-4$, porque:
-$$x^3 - 2x^2 + 4x - 7 = (x - 1)(x^2 - x + 3) - 4$$
+**Ejemplo.** Si $P(x) = x^{2} + 3x - 1$, entonces:
 
-## División sintética: el método de Ruffini
-Para dividir entre un polinomio de la forma $x - c$, la **división sintética** es más rápida que la división larga:
+$$P(2) = 2^{2} + 3 \cdot 2 - 1 = 4 + 6 - 1 = 9$$
 
-1. Escribe los coeficientes en orden, incluidos los ceros.
+## Suma y resta de polinomios
+Se agrupan los **términos semejantes**: los que tienen la misma variable con el mismo exponente.
+
+**Ejemplo.**
+
+$$(2x^{2} + 3x - 1) + (x^{2} - 5x + 4) = (2x^{2} + x^{2}) + (3x - 5x) + (-1 + 4) = 3x^{2} - 2x + 3$$
+
+## Multiplicación de polinomios
+Se distribuye cada término del primero por todos los del segundo y luego se agrupan semejantes.
+
+**Ejemplo.**
+
+$$(x + 2)(x + 3) = x \cdot x + x \cdot 3 + 2 \cdot x + 2 \cdot 3 = x^{2} + 5x + 6$$
+
+**Cuadrado de binomio** (muy frecuente):
+
+$$(a + b)^{2} = a^{2} + 2ab + b^{2}$$
+
+## División y regla de Ruffini
+Dividir un polinomio entre $(x - c)$ es como dividir números: se obtiene un **cociente** y un **resto**.
+
+La **regla de Ruffini** lo hace rápido con una tabla de coeficientes:
+1. Escribe los coeficientes en orden (incluye un $0$ si falta un término).
 2. Baja el primer coeficiente.
-3. Multiplica por $c$ y suma al siguiente coeficiente.
-4. Repite hasta el final. El último número es el resto.
+3. Multiplica por $c$, suma al siguiente, y repite.
+4. El último número es el **resto**; los demás forman el **cociente**.
 
-Ejemplo: dividir $2x^3 - 5x^2 + 3x - 4$ entre $x - 2$:
-
-$$2 \xrightarrow{\ \times 2\ } 4 \xrightarrow{\ +(-5)\ } -1 \xrightarrow{\ \times 2\ } -2 \xrightarrow{\ +3\ } 1 \xrightarrow{\ \times 2\ } 2 \xrightarrow{\ +(-4)\ } -2$$
-
-Cociente: $2x^2 - x + 1$, resto: $-2$. Verificación: $P(2) = 16 - 20 + 6 - 4 = -2$, coincide con el resto (teorema del resto).
+**Ejemplo.** Dividir $2x^{3} - 5x^{2} + 3x - 4$ entre $(x - 2)$:
+- Coeficientes: $2$, $-5$, $3$, $-4$, con $c = 2$.
+- Bajamos $2$; $2 \cdot 2 = 4$ y $4 + (-5) = -1$.
+- $-1 \cdot 2 = -2$ y $-2 + 3 = 1$.
+- $1 \cdot 2 = 2$ y $2 + (-4) = -2$.
+- Resultado: cociente $2x^{2} - x + 1$, resto $-2$.
 
 ## Teorema del resto y teorema del factor
-**Teorema del resto.** El resto de dividir $P(x)$ entre $(x - c)$ es $P(c)$.
-
-Esto convierte una división en una simple evaluación. En el ejemplo anterior, el resto $-2$ se obtuvo evaluando $P(2)$.
+**Teorema del resto.** El resto de dividir $P(x)$ entre $(x - c)$ es simplemente $P(c)$: evalúa en vez de dividir.
 
 **Teorema del factor.** $(x - c)$ es factor de $P(x)$ si y solo si $P(c) = 0$.
 
-Esto significa que **encontrar raíces y factorizar son la misma tarea**: cada raíz $c$ corresponde al factor $(x - c)$.
+**Ejemplo.** Para $P(x) = x^{2} - 5x + 6$:
+- $P(2) = 4 - 10 + 6 = 0$, por lo tanto $(x - 2)$ es factor.
+- En efecto: $x^{2} - 5x + 6 = (x - 2)(x - 3)$.
 
-**Multiplicidad.** Una raíz $c$ tiene multiplicidad $m$ si $(x - c)^m$ divide a $P$ pero $(x - c)^{m+1}$ no. En $P(x) = (x-2)^3(x+1)$, la raíz $2$ tiene multiplicidad 3 y la raíz $-1$ tiene multiplicidad 1.
+## Factorización paso a paso
+Factorizar es escribir el polinomio como producto de factores simples. Orden sugerido:
 
-## Cómo encontrar raíces racionales
-Para un polinomio con coeficientes enteros, las raíces racionales posibles son de la forma
-$$\frac{p}{q}$$
-donde $p$ divide al término constante y $q$ divide al coeficiente líder. Esto da una lista finita de candidatos para probar.
+1. **Factor común.** $2x^{2} + 4x = 2x(x + 2)$.
+2. **Diferencia de cuadrados.** $x^{2} - 9 = (x + 3)(x - 3)$.
+3. **Trinomio de grado 2.** Busca dos números que sumen el coeficiente de $x$ y multipliquen el constante: $x^{2} - 5x + 6 = (x - 2)(x - 3)$.
+4. **Ruffini.** Si el grado es mayor, encuentra una raíz con el teorema del factor y baja el grado con Ruffini.
 
-**Ejemplo completo.** Factoriza $P(x) = x^3 - 6x^2 + 11x - 6$.
+## Raíces de un polinomio
+Las **raíces** (o ceros) son los valores de $x$ donde $P(x) = 0$. Cada raíz $c$ corresponde al factor $(x - c)$.
 
-1. Candidatos: $p$ divide $6$: $\pm 1, \pm 2, \pm 3, \pm 6$; $q$ divide $1$: $\pm 1$. Candidatos: $\pm 1, \pm 2, \pm 3, \pm 6$.
-2. Evaluar: $P(1) = 1 - 6 + 11 - 6 = 0$. Entonces $(x - 1)$ es factor.
-3. División sintética por $1$: coeficientes $1, -6, 11, -6$ dan cociente $x^2 - 5x + 6$.
-4. Factorizar el cociente: $x^2 - 5x + 6 = (x - 2)(x - 3)$.
-5. Resultado: $P(x) = (x - 1)(x - 2)(x - 3)$. Raíces: $1, 2, 3$.
+**Ejemplo.** Las raíces de $x^{2} - 5x + 6$ son $2$ y $3$, porque $P(2) = 0$ y $P(3) = 0$.
 
-## Teorema fundamental del álgebra
-El teorema fundamental del álgebra afirma: **todo polinomio de grado $n \geq 1$ con coeficientes complejos tiene al menos una raíz compleja**.
+## Relaciones de Vieta (avanzado)
+Para un polinomio de grado 2, $x^{2} + bx + c$, con raíces $r_1$ y $r_2$:
 
-Consecuencia inmediata: todo polinomio de grado $n$ se factoriza completamente en factores lineales sobre $\mathbb{C}$:
-$$P(z) = a_n (z - z_1)(z - z_2) \cdots (z - z_n)$$
-contando multiplicidades. Es decir, grado $n$ significa exactamente $n$ raíces complejas contando repeticiones.
+$$r_1 + r_2 = -b, \qquad r_1 \cdot r_2 = c$$
 
-**Raíces complejas conjugadas.** Si los coeficientes son reales y $z = a + bi$ es raíz, entonces $\bar{z} = a - bi$ también lo es. Por eso las raíces complejas no reales aparecen en pares, y todo polinomio real de grado impar tiene al menos una raíz real.
+Para grado 3, $x^{3} + bx^{2} + cx + d$, con raíces $r_1, r_2, r_3$:
 
-## Relaciones de Vieta
-Los coeficientes guardan una relación exacta con las raíces. Para $P(x) = x^2 + bx + c$ con raíces $r_1, r_2$:
-$$r_1 + r_2 = -b, \qquad r_1 r_2 = c$$
+$$r_1 + r_2 + r_3 = -b, \qquad r_1 r_2 + r_1 r_3 + r_2 r_3 = c, \qquad r_1 r_2 r_3 = -d$$
 
-Para $P(x) = x^3 + bx^2 + cx + d$ con raíces $r_1, r_2, r_3$:
-$$r_1 + r_2 + r_3 = -b$$
-$$r_1 r_2 + r_1 r_3 + r_2 r_3 = c$$
-$$r_1 r_2 r_3 = -d$$
+**Uso.** Sirve para construir polinomios con raíces dadas o para hallar una raíz conocidas las otras.
 
-En general, la suma de las raíces es $-a_{n-1}/a_n$ y el producto es $(-1)^n a_0/a_n$.
+**Ejemplo.** Un polinomio con raíces $3$ y $-2$ es $x^{2} - x - 6$, porque $3 + (-2) = 1$ (así que $b = -1$) y $3 \cdot (-2) = -6$ (así que $c = -6$).
 
-**Utilidad:** permite construir polinomios con raíces dadas, o hallar una raíz conocidas las otras, sin factorizar.
+## Ejemplos resueltos
+**Ejemplo 1 (evaluar).** Halla $P(-1)$ para $P(x) = 2x^{2} - 3x + 4$.
+- $P(-1) = 2(1) - 3(-1) + 4 = 2 + 3 + 4 = 9$.
 
-## Gráfica y comportamiento de los polinomios
-- El grado y el signo del coeficiente líder determinan el comportamiento en los extremos: un polinomio de grado par con líder positivo sube en ambos lados; grado impar con líder positivo baja a la izquierda y sube a la derecha.
-- Cada raíz real es una intersección con el eje $x$.
-- En raíces de multiplicidad impar la gráfica cruza el eje; en multiplicidad par lo toca y rebota.
-- Entre dos raíces reales consecutivas hay al menos un extremo local.
-- Un polinomio de grado $n$ tiene a lo más $n - 1$ extremos locales.
+**Ejemplo 2 (multiplicar).** Desarrolla $(x + 4)(x - 2)$.
+- $x^{2} - 2x + 4x - 8 = x^{2} + 2x - 8$.
 
-## Ejemplos resueltos: seis casos explicados
-**Ejemplo 1 (aplicación, optimización).** De una lámina de $30 \times 20$ cm se recortan cuadrados de lado $x$ en las esquinas y se dobla para formar una caja. Escribe el volumen y evalúa en $x = 5$.
-- Dimensiones: $(30 - 2x)$, $(20 - 2x)$ y altura $x$.
-- $V(x) = x(30 - 2x)(20 - 2x)$.
-- $V(5) = 5 \cdot 20 \cdot 10 = 1000$ cm$^3$.
+**Ejemplo 3 (Ruffini).** Divide $x^{3} - 6x^{2} + 11x - 6$ entre $(x - 1)$.
+- Coeficientes $1, -6, 11, -6$ con $c = 1$: bajamos $1$; $1 - 6 = -5$; $-5 + 11 = 6$; $6 - 6 = 0$.
+- Cociente $x^{2} - 5x + 6$, resto $0$.
 
-**Ejemplo 2 (práctica, división sintética).** Divide $2x^3 - 5x^2 + 3x - 4$ entre $x - 2$.
-- Coeficientes $2, -5, 3, -4$; bajando y operando: $2, -1, 1, -2$.
-- Cociente $2x^2 - x + 1$, resto $-2$.
+**Ejemplo 4 (factorizar).** Factoriza $x^{2} - x - 6$.
+- Buscamos dos números que sumen $-1$ y multipliquen $-6$: son $2$ y $-3$.
+- $x^{2} - x - 6 = (x + 2)(x - 3)$.
 
-**Ejemplo 3 (práctica, teorema del resto).** Halla el resto de dividir $x^4 - 3x + 5$ entre $x - 2$.
-- El resto es $P(2) = 2^4 - 3(2) + 5$.
-- $P(2) = 16 - 6 + 5 = 15$.
+**Ejemplo 5 (raíces).** Halla las raíces de $x^{2} - 4x + 3$.
+- Factorizamos: $(x - 1)(x - 3) = 0$.
+- Raíces: $x = 1$ y $x = 3$.
 
-**Ejemplo 4 (práctica, factorización completa).** Factoriza $x^3 - 4x^2 + x + 6$ sabiendo que $x = -1$ es raíz.
-- División sintética por $-1$: cociente $x^2 - 5x + 6$.
-- $x^2 - 5x + 6 = (x - 2)(x - 3)$.
-- $P(x) = (x + 1)(x - 2)(x - 3)$.
-
-**Ejemplo 5 (aplicación, Vieta).** Construye el polinomio mónico de grado 2 con raíces $3$ y $-5$.
-- Suma: $3 + (-5) = -2 = -b \Rightarrow b = 2$.
-- Producto: $3 \cdot (-5) = -15 = c$.
-- $P(x) = x^2 + 2x - 15$.
-
-**Ejemplo 6 (práctica, raíces complejas).** Resuelve $x^2 + 4 = 0$.
-- $x^2 = -4 \Rightarrow x = \pm\sqrt{-4} = \pm 2i$.
-- Las raíces complejas aparecen en pares conjugados: $2i$ y $-2i$.
-
-## Contextos donde se aplica
-- **Cálculo:** aproximar funciones con polinomios de Taylor; analizar máximos y mínimos.
-- **Ingeniería:** los sistemas de control usan polinomios característicos; sus raíces deciden la estabilidad.
-- **Economía:** funciones de costo y beneficio suelen modelarse con polinomios.
-- **Computación gráfica:** las curvas de Bézier son polinomios que definen formas suaves.
-- **Criptografía:** la aritmética de polinomios módulo primos es la base de esquemas modernos.
-
-## Errores comunes y cómo evitarlos
-- **Olvidar raíces complejas conjugadas.** Si aparece $2 + 3i$, también está $2 - 3i$.
+## Errores comunes
+- **Olvidar los términos con coeficiente cero** en Ruffini.
+- **Confundir $(a + b)^{2}$ con $a^{2} + b^{2}$.** Falta el doble producto $2ab$.
+- **Dividir entre una variable** (puedes perder la solución $x = 0$); factoriza en su lugar.
 - **Confundir el teorema del resto con el del factor.** El del resto da el valor $P(c)$; el del factor exige $P(c) = 0$.
-- **No probar todos los candidatos racionales.** Prueba sistemáticamente, con signos.
-- **Errores de signo en Ruffini.** Escribe todos los coeficientes, incluidos los ceros de términos faltantes.
-- **Suponer que raíz = factor simple.** La multiplicidad importa: $(x-2)^2$ son dos factores.
-- **Creer que grado impar garantiza raíces enteras.** Garantiza al menos una raíz real, no necesariamente racional.
+- **Errores de signo** al agrupar términos semejantes.
 
 ## Ejercicios propuestos
-1. Halla grado, coeficiente líder y término constante de $4x^5 - x^3 + 2x - 8$.
-2. Multiplica $(2x - 3)(x^2 + x - 1)$.
-3. Divide $x^3 + 4x^2 - 3x + 2$ entre $x + 2$ con división sintética.
-4. Usa el teorema del resto para hallar el resto de $x^4 - 3x + 5$ entre $x - 2$.
-5. Factoriza $x^3 - 4x^2 + x + 6$ sabiendo que $x = -1$ es raíz.
-6. Halla un polinomio mónico (líder 1) de grado 2 con raíces $3$ y $-5$.
-7. Si $P(x) = x^3 - 6x^2 + 11x - 6$, verifica las relaciones de Vieta.
-8. ¿Cuántas raíces complejas contando multiplicidad tiene $x^5 - 1$?
+1. Evalúa $P(x) = x^{2} - 2x + 3$ en $x = 4$.
+2. Suma $(3x^{2} - x + 2) + (x^{2} + 4x - 1)$.
+3. Multiplica $(x + 5)(x + 2)$.
+4. Desarrolla $(x - 3)^{2}$.
+5. Divide $x^{3} + 2x^{2} - 5x - 6$ entre $(x - 2)$ con Ruffini.
+6. ¿Es $x - 3$ factor de $x^{2} - x - 6$? Justifica con $P(3)$.
+7. Factoriza $x^{2} - 7x + 12$.
+8. Halla las raíces de $x^{2} - 9$.
 
-**Respuestas:** 1) Grado 5, líder 4, constante $-8$. 2) $2x^3 - x^2 - 5x + 3$. 3) Cociente $x^2 + 2x - 7$, resto 16. 4) $P(2) = 11$. 5) $(x+1)(x-2)(x-3)$. 6) $x^2 + 2x - 15$. 7) Suma $6$, pares $11$, producto $6$. 8) Cinco.
+**Respuestas:** 1) $11$. 2) $4x^{2} + 3x + 1$. 3) $x^{2} + 7x + 10$. 4) $x^{2} - 6x + 9$. 5) Cociente $x^{2} + 4x + 3$, resto $0$. 6) Sí, porque $P(3) = 9 - 3 - 6 = 0$. 7) $(x - 3)(x - 4)$. 8) $x = 3$ y $x = -3$.
 
 ## Resumen
-- Un polinomio es una suma de potencias con coeficientes enteros no negativos en los exponentes.
-- La división cumple $P = D Q + R$ con $\deg R < \deg D$.
-- Teorema del resto: el resto de dividir por $x - c$ es $P(c)$; teorema del factor: $P(c) = 0$ si y solo si $x - c$ es factor.
-- Las raíces racionales candidatas son $p/q$ con $p$ divisor del constante y $q$ del líder.
-- El teorema fundamental del álgebra garantiza $n$ raíces complejas contando multiplicidad.
-- Vieta relaciona coeficientes y raíces; es útil para construir y verificar.
+- Un polinomio es una suma de términos de la forma "número por potencia de $x$"; su grado es el mayor exponente.
+- Evaluar es sustituir; sumar es agrupar semejantes; multiplicar es distribuir.
+- Ruffini divide entre $(x - c)$ de forma rápida.
+- El teorema del resto dice que el resto es $P(c)$; el del factor dice que $P(c) = 0$ equivale a que $(x - c)$ sea factor.
+- Factorizar y hallar raíces son la misma tarea: cada raíz $c$ da el factor $(x - c)$.
+- Vieta relaciona suma y producto de raíces con los coeficientes.
 `,
 
   "demostracion": String.raw`

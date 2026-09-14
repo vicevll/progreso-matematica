@@ -33,7 +33,10 @@
 
     if (!user) {
       box.innerHTML =
-        '<button class="account-btn primary" id="account-login" type="button">Entrar con Google</button>';
+        '<button class="google-btn" id="account-login" type="button">' +
+          (window.GOOGLE_ICON || "") +
+          "<span>Entrar con Google</span>" +
+        "</button>";
       return;
     }
 
