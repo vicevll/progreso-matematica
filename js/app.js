@@ -944,19 +944,21 @@
     setupReveal();
   }
 
-  function renderArea(areaId) {
+  function renderArea(areaId, openProximamente) {
     setWide(false);
     var area = findArea(areaId);
     if (!area) return renderHome();
 
     var lock = areaLock(area.id);
     if (lock) {
-      if (lock.tipo === "proximamente") {
+      if (lock.tipo === "proximamente" && !openProximamente) {
         renderLocked(lock.titulo, lock.texto);
         return;
       }
-      renderLocked(lock.titulo, lock.texto, lockedLoginCta("#/area/" + area.id));
-      return;
+      if (lock.tipo === "login") {
+        renderLocked(lock.titulo, lock.texto, lockedLoginCta("#/area/" + area.id));
+        return;
+      }
     }
 
     var s = areaStats(area);
@@ -1073,7 +1075,7 @@
     );
   }
 
-  function renderCurso(areaId, temaId) {
+  function renderCurso(areaId, temaId, openProximamente) {
     setWide(true);
     var area = findArea(areaId);
     if (!area) return renderHome();
@@ -1082,12 +1084,14 @@
 
     var lock = areaLock(area.id);
     if (lock) {
-      if (lock.tipo === "proximamente") {
+      if (lock.tipo === "proximamente" && !openProximamente) {
         renderLocked(lock.titulo, lock.texto);
         return;
       }
-      renderLocked(lock.titulo, lock.texto, lockedLoginCta("#/curso/" + area.id + "/" + tema.id));
-      return;
+      if (lock.tipo === "login") {
+        renderLocked(lock.titulo, lock.texto, lockedLoginCta("#/curso/" + area.id + "/" + tema.id));
+        return;
+      }
     }
 
     var tLock = temaLock(tema.id);
@@ -1214,6 +1218,16 @@
         return;
       }
       if (lock.tipo === "proximamente") {
+        if (isSignedIn()) {
+          serverCanAccess(lockId, "").then(function (ok) {
+            if (ok) {
+              location.hash = "#/area/" + lockId;
+            } else {
+              openModal(lock.titulo, lock.texto);
+            }
+          });
+          return;
+        }
         openModal(lock.titulo, lock.texto);
       } else {
         openLoginModal(lock.titulo, "Esta sección está bloqueada porque aún no has iniciado sesión.", "#/area/" + lockId);
@@ -1290,14 +1304,95 @@
 
   var lastSignedIn = null;
 
+  function isProtectedArea(id) {
+    return id === "algebra-superior" || id === "calculo";
+  }
+
+  function isProtectedTema(id) {
+    return !!TEMA_LOCKS[id];
+  }
+
+  function serverCanAccess(areaId, temaId) {
+    if (!(window.SB && window.SB.configured && window.SB.client)) return Promise.resolve(true);
+    return window.SB.client
+      .rpc("tiene_acceso", { p_area: areaId, p_tema: temaId || "" })
+      .then(function (res) {
+        // Si la función aún no existe en Supabase, se usan las reglas locales
+        if (res && res.error) return true;
+        return !!res.data;
+      })
+      .catch(function () {
+        return true;
+      });
+  }
+
+  function renderAreaGuarded(areaId) {
+    var lock = areaLock(areaId);
+    if (!isProtectedArea(areaId)) {
+      renderArea(areaId);
+      return;
+    }
+    if (lock && lock.tipo === "proximamente") {
+      serverCanAccess(areaId, "").then(function (ok) {
+        if (ok) {
+          renderArea(areaId, true);
+        } else {
+          renderLocked(lock.titulo, lock.texto);
+        }
+      });
+      return;
+    }
+    if (lock) {
+      renderArea(areaId);
+      return;
+    }
+    serverCanAccess(areaId, "").then(function (ok) {
+      if (ok) {
+        renderArea(areaId, true);
+      } else {
+        renderLocked("Contenido restringido", "No tienes permiso para entrar a esta sección.");
+      }
+    });
+  }
+
+  function renderCursoGuarded(areaId, temaId) {
+    var lock = areaLock(areaId);
+    var tLock = temaLock(temaId);
+    if (!isProtectedArea(areaId) && !isProtectedTema(temaId)) {
+      renderCurso(areaId, temaId);
+      return;
+    }
+    if (lock && lock.tipo === "proximamente") {
+      serverCanAccess(areaId, temaId).then(function (ok) {
+        if (ok) {
+          renderCurso(areaId, temaId, true);
+        } else {
+          renderLocked(lock.titulo, lock.texto);
+        }
+      });
+      return;
+    }
+    if (lock || tLock) {
+      renderCurso(areaId, temaId);
+      return;
+    }
+    serverCanAccess(areaId, temaId).then(function (ok) {
+      if (ok) {
+        renderCurso(areaId, temaId, true);
+      } else {
+        renderLocked("Contenido restringido", "No tienes permiso para entrar a esta sección.");
+      }
+    });
+  }
+
   function route(animate) {
     var hash = location.hash.replace(/^#\/?/, "");
     var parts = hash.split("/").filter(Boolean);
 
     if (parts[0] === "area" && parts[1]) {
-      renderArea(parts[1]);
+      renderAreaGuarded(parts[1]);
     } else if (parts[0] === "curso" && parts[1] && parts[2]) {
-      renderCurso(parts[1], parts[2]);
+      renderCursoGuarded(parts[1], parts[2]);
     } else {
       renderHome();
     }
