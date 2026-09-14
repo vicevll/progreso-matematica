@@ -1288,7 +1288,9 @@
 
   /* ---------- Router ---------- */
 
-  function route() {
+  var lastSignedIn = null;
+
+  function route(animate) {
     var hash = location.hash.replace(/^#\/?/, "");
     var parts = hash.split("/").filter(Boolean);
 
@@ -1300,23 +1302,29 @@
       renderHome();
     }
     window.scrollTo(0, 0);
-    app.classList.remove("route-enter");
-    void app.offsetWidth;
-    app.classList.add("route-enter");
+    if (animate !== false) {
+      app.classList.remove("route-enter");
+      void app.offsetWidth;
+      app.classList.add("route-enter");
+    }
   }
 
   if (window.ProgressStore && typeof window.ProgressStore.onUpdate === "function") {
     window.ProgressStore.onUpdate(function () {
       var y = window.scrollY;
-      route();
+      route(false);
       window.scrollTo(0, y);
     });
   }
 
   if (window.ProgressStore && typeof window.ProgressStore.onChange === "function") {
     window.ProgressStore.onChange(function () {
+      var signed = isSignedIn();
+      var authChanged = signed !== lastSignedIn;
+      lastSignedIn = signed;
+      if (!authChanged) return;
       var y = window.scrollY;
-      route();
+      route(false);
       window.scrollTo(0, y);
     });
   }
@@ -1326,7 +1334,7 @@
       var hash = location.hash.replace(/^#\/?/, "");
       if (!hash) {
         var y = window.scrollY;
-        route();
+        route(false);
         window.scrollTo(0, y);
       }
     });
@@ -1336,4 +1344,5 @@
   updateTopbarTag();
   window.addEventListener("hashchange", route);
   route();
+  lastSignedIn = isSignedIn();
 })();

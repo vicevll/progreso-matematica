@@ -4,11 +4,11 @@
   var PENDING_KEY = "mate-perfil-pendiente";
   var COLORS = ["#3b5bdb", "#0f766e", "#b45309", "#be123c", "#6d28d9", "#0369a1", "#15803d", "#a21caf"];
 
-  var cache = loadJSON(CACHE_KEY, { uid: "", nickname: "", avatar: "" });
+  var cache = loadJSON(CACHE_KEY, { uid: "", nickname: "", avatar: "", auto: false });
   var listeners = [];
   var loadedFor = null;
   var modal = null;
-  var draft = { avatar: "" };
+  var draft = { avatar: "", auto: false };
 
   function loadJSON(key, fallback) {
     try {
@@ -53,6 +53,7 @@
   }
 
   function avatarUrl(user) {
+    if (cache.auto) return "";
     return cache.avatar || meta(user).avatar_url || meta(user).picture || "";
   }
 
@@ -102,7 +103,7 @@
     var user = currentUser();
     if (!user || !window.SB || !window.SB.configured) return Promise.resolve();
     if (cache.uid && cache.uid !== user.id) {
-      cache = { uid: user.id, nickname: "", avatar: "" };
+      cache = { uid: user.id, nickname: "", avatar: "", auto: false };
       saveJSON(CACHE_KEY, cache);
       emit();
     }
@@ -128,8 +129,11 @@
             cache.nickname = res.data.nickname;
             changed = true;
           }
-          if (res.data.avatar && res.data.avatar !== cache.avatar) {
-            cache.avatar = res.data.avatar;
+          var remoteAvatar = res.data.avatar;
+          if (remoteAvatar !== undefined && remoteAvatar !== null && String(remoteAvatar) !== String(cache.avatar)) {
+            var isAuto = remoteAvatar === "";
+            cache.auto = isAuto;
+            cache.avatar = isAuto ? "" : remoteAvatar;
             changed = true;
           }
           if (changed) {
@@ -163,7 +167,7 @@
         {
           user_id: user.id,
           nickname: cache.nickname || null,
-          avatar: cache.avatar || null,
+          avatar: cache.auto ? "" : (cache.avatar || null),
           updated_at: new Date().toISOString()
         },
         { onConflict: "user_id" }
@@ -182,10 +186,11 @@
     return Promise.resolve();
   }
 
-  function save(nickname, avatar) {
+  function save(nickname, avatar, auto) {
     var user = currentUser();
     cache.nickname = nickname || "";
     cache.avatar = avatar || "";
+    cache.auto = !!auto;
     cache.uid = user ? user.id : cache.uid;
     saveJSON(CACHE_KEY, cache);
     markSeen();
@@ -238,8 +243,9 @@
     var box = document.getElementById("profile-preview");
     if (!box) return;
     var user = currentUser();
-    if (draft.avatar) {
-      box.innerHTML = '<img class="avatar avatar-lg" src="' + esc(draft.avatar) + '" alt="" />';
+    var url = draft.auto ? "" : (draft.avatar || "");
+    if (url) {
+      box.innerHTML = '<img class="avatar avatar-lg" src="' + esc(url) + '" alt="" />';
     } else {
       box.innerHTML =
         '<span class="avatar avatar-lg avatar-auto" style="background:' + colorFor(user) + '">' +
@@ -266,6 +272,7 @@
     var user = currentUser();
     if (!user || modal) return;
     draft.avatar = avatarUrl(user);
+    draft.auto = !!cache.auto;
 
     var overlay = document.createElement("div");
     overlay.className = "profile-overlay";
@@ -302,20 +309,22 @@
       resizeImage(file, 256, function (dataUrl) {
         if (!dataUrl) return;
         draft.avatar = dataUrl;
+        draft.auto = false;
         renderPreview();
       });
     });
 
     overlay.querySelector("#profile-clear").addEventListener("click", function () {
       draft.avatar = "";
+      draft.auto = true;
       renderPreview();
       var nickname = (overlay.querySelector("#profile-nickname").value || "").trim().slice(0, 24);
-      save(nickname, "");
+      save(nickname, "", true);
     });
 
     overlay.querySelector("#profile-save").addEventListener("click", function () {
       var nickname = (overlay.querySelector("#profile-nickname").value || "").trim().slice(0, 24);
-      save(nickname, draft.avatar).then(closeEditor);
+      save(nickname, draft.avatar, !!draft.auto).then(closeEditor);
     });
 
     overlay.querySelector("#profile-later").addEventListener("click", function () {
