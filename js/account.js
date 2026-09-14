@@ -71,6 +71,20 @@
   window.ProgressStore.onChange(function () {
     render();
     if (window.ProgressStore.getUser()) {
+      var dest = null;
+      try {
+        dest = localStorage.getItem("mate-login-dest");
+      } catch (e) {
+        /* ignorar */
+      }
+      if (dest) {
+        try {
+          localStorage.removeItem("mate-login-dest");
+        } catch (e2) {
+          /* ignorar */
+        }
+        if (window.location.hash !== dest) window.location.hash = dest;
+      }
       window.Profile.load().then(function () {
         window.Profile.maybePrompt();
       });

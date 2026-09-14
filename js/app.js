@@ -643,6 +643,96 @@
     window.ProgressStore.setLastVisited(areaId, temaId);
   }
 
+  /* ---------- Bloqueos y acceso ---------- */
+
+  var AREA_LOCKS = {
+    "algebra-superior": {
+      tipo: "proximamente",
+      titulo: "Próximamente",
+      texto: "Álgebra superior estará disponible pronto. Te avisaremos cuando se abra para todos."
+    },
+    calculo: {
+      tipo: "login",
+      titulo: "Cálculo requiere tu cuenta",
+      texto: "Para entrar a Cálculo necesitas iniciar sesión con Google."
+    }
+  };
+
+  function isSignedIn() {
+    return !!(window.ProgressStore && window.ProgressStore.getUser());
+  }
+
+  function areaLock(areaId) {
+    var lock = AREA_LOCKS[areaId];
+    if (!lock) return null;
+    if (lock.tipo === "login" && isSignedIn()) return null;
+    return lock;
+  }
+
+  function loginToSee(dest) {
+    try {
+      localStorage.setItem("mate-login-dest", dest);
+    } catch (e) {
+      /* almacenamiento no disponible */
+    }
+    if (window.SB && window.SB.configured) {
+      window.SB.signInWithGoogle().catch(function (err) {
+        try {
+          localStorage.removeItem("mate-login-dest");
+        } catch (e2) {
+          /* ignorar */
+        }
+        if (window.Novedades && window.Novedades.notifyError) {
+          window.Novedades.notifyError(
+            "No se pudo iniciar sesión: " + (err && err.message ? err.message : "error desconocido")
+          );
+        }
+      });
+    } else if (window.Novedades && window.Novedades.notifyError) {
+      window.Novedades.notifyError("Inicia sesión con Google para continuar.");
+    }
+  }
+
+  function openModal(titulo, texto) {
+    var existing = document.getElementById("modal-overlay");
+    if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+
+    var overlay = document.createElement("div");
+    overlay.id = "modal-overlay";
+    overlay.className = "modal-overlay";
+    overlay.innerHTML =
+      '<div class="modal-box" role="dialog" aria-modal="true">' +
+        '<span class="modal-kicker">Studappy</span>' +
+        "<h3>" + esc(titulo) + "</h3>" +
+        "<p>" + esc(texto) + "</p>" +
+        '<div class="update-actions">' +
+          '<button class="btn primary" id="modal-close" type="button">Entendido</button>' +
+        "</div>" +
+      "</div>";
+    document.body.appendChild(overlay);
+
+    function cerrar() {
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    }
+    overlay.addEventListener("click", function (ev) {
+      if (ev.target === overlay) cerrar();
+    });
+    var closeBtn = overlay.querySelector("#modal-close");
+    if (closeBtn) closeBtn.addEventListener("click", cerrar);
+  }
+
+  function renderLocked(titulo, texto, cta) {
+    app.innerHTML =
+      '<nav class="breadcrumb"><a href="#/">Inicio</a></nav>' +
+      '<section class="locked-view">' +
+        '<div class="locked-icon" aria-hidden="true">🔒</div>' +
+        "<h1>" + esc(titulo) + "</h1>" +
+        "<p>" + esc(texto) + "</p>" +
+        (cta || "") +
+      "</section>";
+    setupReveal();
+  }
+
   /* ---------- Vistas ---------- */
 
   function flatGuides(areaId) {
@@ -691,6 +781,17 @@
   }
 
   function renderRecomendacion(areaId) {
+    if (!isSignedIn()) {
+      return (
+        '<aside class="reco reco-locked reveal">' +
+          '<span class="reco-kicker">Guía recomendada</span>' +
+          '<p class="reco-meta">Inicia sesión para recibir recomendaciones de guías.</p>' +
+          '<div class="reco-actions">' +
+            '<button class="reco-btn reco-login" type="button" data-dest="#/">Entrar con Google</button>' +
+          "</div>" +
+        "</aside>"
+      );
+    }
     return recoCardHtml(randomGuide(areaId));
   }
 
@@ -703,8 +804,18 @@
     var cards = CATALOGO.map(function (area, i) {
       var s = areaStats(area);
       var aPct = s.total ? Math.round((s.done / s.total) * 100) : 0;
+      var lock = areaLock(area.id);
+      var lockBadge = "";
+      var extraAttrs = "";
+      var cls = "area-card reveal";
+      if (lock) {
+        cls += " locked";
+        extraAttrs = ' data-lock="' + area.id + '"';
+        lockBadge = '<span class="lock-badge" aria-hidden="true">🔒</span>';
+      }
       return (
-        '<a class="area-card reveal" href="#/area/' + area.id + '" style="--area-color:' + area.color + ";transition-delay:" + (i % 8) * 35 + 'ms">' +
+        '<a class="' + cls + '" href="#/area/' + area.id + '"' + extraAttrs + ' style="--area-color:' + area.color + ";transition-delay:" + (i % 8) * 35 + 'ms">' +
+          lockBadge +
           "<h2>" + esc(area.nombre) + "</h2>" +
           "<p>" + esc(area.descripcion) + "</p>" +
           '<div class="area-meta">' +
@@ -747,7 +858,7 @@
     app.innerHTML =
       '<section class="hero-simple">' +
         greeting +
-        '<div class="eyebrow reveal">MAPA DE ESTUDIO <span>01—08</span></div>' +
+        '<div class="eyebrow reveal">MAPA DE ESTUDIO <span>01—0' + counts.areas + "</span></div>" +
         '<div class="hero-mark reveal"><img src="img/studappy.png" alt="Studappy" /></div>' +
         '<p class="reveal">' + counts.areas + " áreas y " + counts.temas + " temas, de 10° grado a último año de universidad. Cada curso se completa sección por sección.</p>" +
         '<div class="hero-progress reveal">' +
@@ -769,6 +880,20 @@
     setWide(false);
     var area = findArea(areaId);
     if (!area) return renderHome();
+
+    var lock = areaLock(area.id);
+    if (lock) {
+      if (lock.tipo === "proximamente") {
+        renderLocked(lock.titulo, lock.texto);
+        return;
+      }
+      renderLocked(
+        lock.titulo,
+        lock.texto,
+        '<button class="btn primary locked-login" type="button" data-dest="#/area/' + area.id + '">Entrar con Google</button>'
+      );
+      return;
+    }
 
     var s = areaStats(area);
     var pct = s.total ? Math.round((s.done / s.total) * 100) : 0;
@@ -826,26 +951,42 @@
     var pack = RECURSOS[areaId + "/" + temaId];
     if (!pack) return "";
 
+    var signed = isSignedIn();
+
     var cards = pack.items.map(function (item) {
+      var actions;
+      if (signed) {
+        actions =
+          '<div class="recurso-actions">' +
+            '<a class="recurso-btn" href="' + item.archivo + '" download>Descargar PDF</a>' +
+            (item.fuente
+              ? '<a class="recurso-link" href="' + item.fuente + '" download>Markdown</a>'
+              : "") +
+          "</div>";
+      } else {
+        actions =
+          '<div class="recurso-actions">' +
+            '<button class="recurso-btn recurso-login" type="button" data-dest="#/curso/' + areaId + "/" + temaId + '">🔒 Inicia sesión para descargar</button>' +
+          "</div>";
+      }
       return (
-        '<article class="recurso-card reveal">' +
-          '<span class="recurso-icon" aria-hidden="true">↓</span>' +
+        '<article class="recurso-card reveal' + (signed ? "" : " recurso-locked") + '">' +
+          '<span class="recurso-icon" aria-hidden="true">' + (signed ? "↓" : "🔒") + "</span>" +
           '<div class="recurso-body">' +
             '<div class="recurso-top">' +
               '<span class="recurso-titulo">' + esc(item.titulo) + "</span>" +
               '<span class="recurso-meta">' + esc(item.meta) + "</span>" +
             "</div>" +
             '<p class="recurso-desc">' + esc(item.descripcion) + "</p>" +
-            '<div class="recurso-actions">' +
-              '<a class="recurso-btn" href="' + item.archivo + '" download>Descargar PDF</a>' +
-              (item.fuente
-                ? '<a class="recurso-link" href="' + item.fuente + '" download>Markdown</a>'
-                : "") +
-            "</div>" +
+            actions +
           "</div>" +
         "</article>"
       );
     }).join("");
+
+    var nota = signed
+      ? ""
+      : '<p class="recurso-note">Las guías se descargan solo con tu cuenta. Inicia sesión con Google.</p>';
 
     return (
       '<section class="recursos" aria-label="Material descargable">' +
@@ -853,6 +994,7 @@
           '<span class="recursos-kicker">' + esc(pack.titulo) + "</span>" +
           "<h2>Guías para descargar</h2>" +
           "<p>" + esc(pack.descripcion) + "</p>" +
+          nota +
         "</header>" +
         '<div class="recurso-grid">' + cards + "</div>" +
       "</section>"
@@ -865,6 +1007,21 @@
     if (!area) return renderHome();
     var tema = findTema(area, temaId);
     if (!tema) return renderArea(areaId);
+
+    var lock = areaLock(area.id);
+    if (lock) {
+      if (lock.tipo === "proximamente") {
+        renderLocked(lock.titulo, lock.texto);
+        return;
+      }
+      renderLocked(
+        lock.titulo,
+        lock.texto,
+        '<button class="btn primary locked-login" type="button" data-dest="#/curso/' + area.id + "/" + tema.id + '">Entrar con Google</button>'
+      );
+      return;
+    }
+
     saveLastVisited(area.id, tema.id);
 
     var sections = getSections(area.id, tema.id);
@@ -973,6 +1130,29 @@
   /* ---------- Eventos globales ---------- */
 
   document.addEventListener("click", function (e) {
+    var locked = e.target.closest(".area-card.locked");
+    if (locked) {
+      e.preventDefault();
+      var lockId = locked.getAttribute("data-lock");
+      var lock = AREA_LOCKS[lockId] || null;
+      if (!lock || (lock.tipo === "login" && isSignedIn())) {
+        location.hash = "#/area/" + lockId;
+        return;
+      }
+      if (lock.tipo === "proximamente") {
+        openModal(lock.titulo, lock.texto);
+      } else {
+        loginToSee("#/area/" + lockId);
+      }
+      return;
+    }
+
+    var loginBtn = e.target.closest(".recurso-login, .reco-login, .locked-login");
+    if (loginBtn) {
+      loginToSee(loginBtn.getAttribute("data-dest") || "#/");
+      return;
+    }
+
     var button = e.target.closest(".section-toggle");
     if (button) {
       var areaId = button.getAttribute("data-area");
@@ -1025,6 +1205,14 @@
 
   if (window.ProgressStore && typeof window.ProgressStore.onUpdate === "function") {
     window.ProgressStore.onUpdate(function () {
+      var y = window.scrollY;
+      route();
+      window.scrollTo(0, y);
+    });
+  }
+
+  if (window.ProgressStore && typeof window.ProgressStore.onChange === "function") {
+    window.ProgressStore.onChange(function () {
       var y = window.scrollY;
       route();
       window.scrollTo(0, y);
