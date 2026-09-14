@@ -1313,16 +1313,18 @@
   }
 
   function serverCanAccess(areaId, temaId) {
-    if (!(window.SB && window.SB.configured && window.SB.client)) return Promise.resolve(true);
+    if (!(window.SB && window.SB.configured && window.SB.client)) {
+      return Promise.resolve({ activo: false, ok: true });
+    }
     return window.SB.client
       .rpc("tiene_acceso", { p_area: areaId, p_tema: temaId || "" })
       .then(function (res) {
         // Si la función aún no existe en Supabase, se usan las reglas locales
-        if (res && res.error) return true;
-        return !!res.data;
+        if (res && res.error) return { activo: false, ok: true };
+        return { activo: true, ok: !!res.data };
       })
       .catch(function () {
-        return true;
+        return { activo: false, ok: true };
       });
   }
 
@@ -1332,23 +1334,16 @@
       renderArea(areaId);
       return;
     }
-    if (lock && lock.tipo === "proximamente") {
-      serverCanAccess(areaId, "").then(function (ok) {
-        if (ok) {
-          renderArea(areaId, true);
-        } else {
-          renderLocked(lock.titulo, lock.texto);
-        }
-      });
-      return;
-    }
-    if (lock) {
-      renderArea(areaId);
-      return;
-    }
-    serverCanAccess(areaId, "").then(function (ok) {
-      if (ok) {
+    serverCanAccess(areaId, "").then(function (res) {
+      if (!res.activo) {
+        // Sin gate en Supabase: aplican las reglas locales
+        renderArea(areaId);
+        return;
+      }
+      if (res.ok) {
         renderArea(areaId, true);
+      } else if (lock) {
+        renderLocked(lock.titulo, lock.texto, lock.tipo === "login" ? lockedLoginCta("#/area/" + areaId) : "");
       } else {
         renderLocked("Contenido restringido", "No tienes permiso para entrar a esta sección.");
       }
@@ -1362,23 +1357,17 @@
       renderCurso(areaId, temaId);
       return;
     }
-    if (lock && lock.tipo === "proximamente") {
-      serverCanAccess(areaId, temaId).then(function (ok) {
-        if (ok) {
-          renderCurso(areaId, temaId, true);
-        } else {
-          renderLocked(lock.titulo, lock.texto);
-        }
-      });
-      return;
-    }
-    if (lock || tLock) {
-      renderCurso(areaId, temaId);
-      return;
-    }
-    serverCanAccess(areaId, temaId).then(function (ok) {
-      if (ok) {
+    serverCanAccess(areaId, temaId).then(function (res) {
+      if (!res.activo) {
+        renderCurso(areaId, temaId);
+        return;
+      }
+      if (res.ok) {
         renderCurso(areaId, temaId, true);
+      } else if (lock) {
+        renderLocked(lock.titulo, lock.texto, lock.tipo === "login" ? lockedLoginCta("#/curso/" + areaId + "/" + temaId) : "");
+      } else if (tLock) {
+        renderLocked(tLock.titulo, tLock.texto, lockedLoginCta("#/curso/" + areaId + "/" + temaId));
       } else {
         renderLocked("Contenido restringido", "No tienes permiso para entrar a esta sección.");
       }
