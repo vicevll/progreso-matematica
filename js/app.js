@@ -12,6 +12,66 @@
   };
 
   var RECURSOS = {
+    "algebra-escolar/operaciones-combinadas": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Operaciones combinadas.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/operaciones-combinadas-simple.pdf",
+          fuente: "recursos/operaciones-combinadas-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/operaciones-combinadas-ejercicios.pdf",
+          fuente: "recursos/operaciones-combinadas-ejercicios.md"
+        }
+      ]
+    },
+    "algebra-escolar/ecuaciones": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Ecuaciones.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "5 páginas · PDF",
+          archivo: "recursos/ecuaciones-simple.pdf",
+          fuente: "recursos/ecuaciones-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/ecuaciones-ejercicios.pdf",
+          fuente: "recursos/ecuaciones-ejercicios.md"
+        }
+      ]
+    },
+    "algebra-escolar/inecuaciones": {
+      titulo: "Material descargable",
+      descripcion: "Dos guías en PDF para acompañar el estudio de Inecuaciones.",
+      items: [
+        {
+          titulo: "Guía simple",
+          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
+          meta: "5 páginas · PDF",
+          archivo: "recursos/inecuaciones-simple.pdf",
+          fuente: "recursos/inecuaciones-simple.md"
+        },
+        {
+          titulo: "50 ejercicios",
+          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
+          meta: "6 páginas · PDF",
+          archivo: "recursos/inecuaciones-ejercicios.pdf",
+          fuente: "recursos/inecuaciones-ejercicios.md"
+        }
+      ]
+    },
     "algebra-escolar/algebra-elemental": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Álgebra elemental.",
@@ -159,14 +219,14 @@
         {
           titulo: "Guía simple",
           descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "8 páginas · PDF",
+          meta: "6 páginas · PDF",
           archivo: "recursos/trigonometria-simple.pdf",
           fuente: "recursos/trigonometria-simple.md"
         },
         {
           titulo: "50 ejercicios",
           descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "7 páginas · PDF",
+          meta: "5 páginas · PDF",
           archivo: "recursos/trigonometria-ejercicios.pdf",
           fuente: "recursos/trigonometria-ejercicios.md"
         }
@@ -389,166 +449,6 @@
           meta: "9 páginas · PDF",
           archivo: "recursos/algebra-lineal-ejercicios.pdf",
           fuente: "recursos/algebra-lineal-ejercicios.md"
-        }
-      ]
-    },
-    "probabilidad-estadistica/probabilidad": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Probabilidad.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "7 páginas · PDF",
-          archivo: "recursos/probabilidad-simple.pdf",
-          fuente: "recursos/probabilidad-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "6 páginas · PDF",
-          archivo: "recursos/probabilidad-ejercicios.pdf",
-          fuente: "recursos/probabilidad-ejercicios.md"
-        }
-      ]
-    },
-    "probabilidad-estadistica/variables-aleatorias": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Variables aleatorias y distribuciones.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "6 páginas · PDF",
-          archivo: "recursos/variables-aleatorias-simple.pdf",
-          fuente: "recursos/variables-aleatorias-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "6 páginas · PDF",
-          archivo: "recursos/variables-aleatorias-ejercicios.pdf",
-          fuente: "recursos/variables-aleatorias-ejercicios.md"
-        }
-      ]
-    },
-    "probabilidad-estadistica/estadistica": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Estadística descriptiva e inferencial.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "9 páginas · PDF",
-          archivo: "recursos/estadistica-simple.pdf",
-          fuente: "recursos/estadistica-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "7 páginas · PDF",
-          archivo: "recursos/estadistica-ejercicios.pdf",
-          fuente: "recursos/estadistica-ejercicios.md"
-        }
-      ]
-    },
-    "probabilidad-estadistica/estadistica-matematica": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Estadística matemática.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "6 páginas · PDF",
-          archivo: "recursos/estadistica-matematica-simple.pdf",
-          fuente: "recursos/estadistica-matematica-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "6 páginas · PDF",
-          archivo: "recursos/estadistica-matematica-ejercicios.pdf",
-          fuente: "recursos/estadistica-matematica-ejercicios.md"
-        }
-      ]
-    },
-    "probabilidad-estadistica/procesos-estocasticos": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Procesos estocásticos.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "8 páginas · PDF",
-          archivo: "recursos/procesos-estocasticos-simple.pdf",
-          fuente: "recursos/procesos-estocasticos-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "7 páginas · PDF",
-          archivo: "recursos/procesos-estocasticos-ejercicios.pdf",
-          fuente: "recursos/procesos-estocasticos-ejercicios.md"
-        }
-      ]
-    },
-    "probabilidad-estadistica/series-tiempo": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Series de tiempo.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "8 páginas · PDF",
-          archivo: "recursos/series-tiempo-simple.pdf",
-          fuente: "recursos/series-tiempo-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "7 páginas · PDF",
-          archivo: "recursos/series-tiempo-ejercicios.pdf",
-          fuente: "recursos/series-tiempo-ejercicios.md"
-        }
-      ]
-    },
-    "probabilidad-estadistica/bayesiana": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Inferencia bayesiana.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "5 páginas · PDF",
-          archivo: "recursos/bayesiana-simple.pdf",
-          fuente: "recursos/bayesiana-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "6 páginas · PDF",
-          archivo: "recursos/bayesiana-ejercicios.pdf",
-          fuente: "recursos/bayesiana-ejercicios.md"
-        }
-      ]
-    },
-    "probabilidad-estadistica/decision": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Teoría de la decisión.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "8 páginas · PDF",
-          archivo: "recursos/decision-simple.pdf",
-          fuente: "recursos/decision-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "7 páginas · PDF",
-          archivo: "recursos/decision-ejercicios.pdf",
-          fuente: "recursos/decision-ejercicios.md"
         }
       ]
     }
