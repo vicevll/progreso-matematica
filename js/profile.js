@@ -213,9 +213,18 @@
         canvas.height = height;
         canvas.getContext("2d").drawImage(image, 0, 0, width, height);
         try {
+          var webp = canvas.toDataURL("image/webp", 0.85);
+          if (webp && webp.indexOf("data:image/webp") === 0) {
+            cb(webp);
+            return;
+          }
           cb(canvas.toDataURL("image/jpeg", 0.85));
         } catch (e) {
-          cb(null);
+          try {
+            cb(canvas.toDataURL("image/jpeg", 0.85));
+          } catch (e2) {
+            cb(null);
+          }
         }
       };
       image.onerror = function () { cb(null); };
@@ -300,6 +309,8 @@
     overlay.querySelector("#profile-clear").addEventListener("click", function () {
       draft.avatar = "";
       renderPreview();
+      var nickname = (overlay.querySelector("#profile-nickname").value || "").trim().slice(0, 24);
+      save(nickname, "");
     });
 
     overlay.querySelector("#profile-save").addEventListener("click", function () {

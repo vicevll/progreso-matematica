@@ -38,6 +38,20 @@
     return Promise.reject(new Error("Supabase no configurado"));
   }
 
+  function notifyError(message) {
+    var toast = document.createElement("aside");
+    toast.className = "update-banner update-error";
+    toast.innerHTML =
+      '<span class="update-kicker">No se pudo continuar</span>' +
+      "<p>" + message + "</p>";
+    document.body.appendChild(toast);
+    setTimeout(function () {
+      if (toast.parentNode) toast.parentNode.removeChild(toast);
+    }, 7000);
+  }
+
+  window.Novedades = { notifyError: notifyError };
+
   window.SB = {
     configured: configured,
     client: client,
