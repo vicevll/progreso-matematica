@@ -66,6 +66,9 @@
       if (!client) return Promise.resolve(null);
       return client.auth.getSession().then(function (res) {
         return res && res.data ? res.data.session : null;
+      }).catch(function () {
+        // sesión corrupta o no disponible: se trata como sin sesión
+        return null;
       });
     },
     onChange: function (cb) {
@@ -80,4 +83,40 @@
       };
     }
   };
+
+  function detectOAuthReturn() {
+    if (!client || !/[?#].*(code=|access_token=)/.test(window.location.href)) return;
+    var tries = 0;
+    var timer = setInterval(function () {
+      tries++;
+      window.SB.getSession().then(function (session) {
+        if (session) {
+          clearInterval(timer);
+          return;
+        }
+        if (tries > 20) {
+          clearInterval(timer);
+          try {
+            // Limpia verificadores PKCE viejos que puedan romper el próximo intento
+            Object.keys(localStorage).forEach(function (k) {
+              if (k.indexOf("mate-auth") === 0 && k.indexOf("code-verifier") !== -1) {
+                localStorage.removeItem(k);
+              }
+            });
+            window.history.replaceState({}, "", window.location.pathname);
+          } catch (e) {
+            /* ignorar */
+          }
+          if (window.Novedades && window.Novedades.notifyError) {
+            window.Novedades.notifyError(
+              "No se pudo completar el inicio de sesión con Google. " +
+              "Vuelve a intentarlo o abre la página desde https://studappy.vercel.app/"
+            );
+          }
+        }
+      });
+    }, 500);
+  }
+
+  setTimeout(detectOAuthReturn, 400);
 })();

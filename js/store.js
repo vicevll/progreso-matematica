@@ -274,11 +274,16 @@
       emit();
       return;
     }
-    window.SB.getSession().then(function (current) {
-      session = current;
-      emit();
-      if (session) syncAll();
-    });
+    window.SB.getSession()
+      .then(function (current) {
+        session = current;
+        emit();
+        if (session) syncAll();
+      })
+      .catch(function () {
+        session = null;
+        emit();
+      });
     window.SB.onChange(function (next) {
       var wasSignedIn = !!session;
       session = next;
