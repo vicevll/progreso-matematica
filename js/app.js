@@ -119,36 +119,16 @@
         {
           titulo: "Guía simple",
           descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "7 páginas · PDF",
+          meta: "4 páginas · PDF",
           archivo: "recursos/sucesiones-sumatorias-simple.pdf",
           fuente: "recursos/sucesiones-sumatorias-simple.md"
         },
         {
           titulo: "50 ejercicios",
           descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "8 páginas · PDF",
+          meta: "5 páginas · PDF",
           archivo: "recursos/sucesiones-sumatorias-ejercicios.pdf",
           fuente: "recursos/sucesiones-sumatorias-ejercicios.md"
-        }
-      ]
-    },
-    "algebra-escolar/demostracion": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Métodos de demostración.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "6 páginas · PDF",
-          archivo: "recursos/demostracion-simple.pdf",
-          fuente: "recursos/demostracion-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "6 páginas · PDF",
-          archivo: "recursos/demostracion-ejercicios.pdf",
-          fuente: "recursos/demostracion-ejercicios.md"
         }
       ]
     },
@@ -309,26 +289,6 @@
           meta: "8 páginas · PDF",
           archivo: "recursos/edo-ejercicios.pdf",
           fuente: "recursos/edo-ejercicios.md"
-        }
-      ]
-    },
-    "calculo/edp": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Ecuaciones en derivadas parciales.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "8 páginas · PDF",
-          archivo: "recursos/edp-simple.pdf",
-          fuente: "recursos/edp-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "7 páginas · PDF",
-          archivo: "recursos/edp-ejercicios.pdf",
-          fuente: "recursos/edp-ejercicios.md"
         }
       ]
     },
@@ -587,9 +547,21 @@
       titulo: "Números reales y complejos está bloqueado",
       texto: "Inicia sesión con Google para estudiar Números reales y complejos."
     },
-    demostracion: {
-      titulo: "Métodos de demostración está bloqueado",
-      texto: "Inicia sesión con Google para estudiar Métodos de demostración."
+    "sucesiones-sumatorias": {
+      titulo: "Sucesiones y sumatorias está bloqueado",
+      texto: "Inicia sesión con Google para estudiar Sucesiones y sumatorias."
+    },
+    "algebra-elemental": {
+      titulo: "Álgebra elemental está bloqueada",
+      texto: "Inicia sesión con Google para estudiar Álgebra elemental."
+    },
+    inecuaciones: {
+      titulo: "Inecuaciones está bloqueado",
+      texto: "Inicia sesión con Google para estudiar Inecuaciones."
+    },
+    "exp-log": {
+      titulo: "Funciones exponenciales y logarítmicas está bloqueado",
+      texto: "Inicia sesión con Google para estudiar Funciones exponenciales y logarítmicas."
     }
   };
 

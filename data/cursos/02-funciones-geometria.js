@@ -4,9 +4,9 @@ window.CURSOS["funciones-geometria"] = {
 ## ¿Qué es una función?
 Una **función** es una regla que asigna a cada valor de entrada **exactamente un** valor de salida. Es el concepto central que describe cómo una cantidad depende de otra.
 
-La notación $f: A \to B$ indica que $f$ toma valores de $A$ (dominio) y produce valores en $B$ (codominio). Escribimos $y = f(x)$: $x$ es la variable independiente, $y$ la dependiente.
+La notación $f: A \to B$ indica que $f$ toma valores de $A$ y produce valores en $B$. Escribimos $y = f(x)$: $x$ es la variable independiente, $y$ la dependiente.
 
-Una función no es una fórmula: es la regla completa, incluidos dominio y codominio. $f(x) = x^2$ con dominio $\mathbb{R}$ y $f(x) = x^2$ con dominio $[0, \infty)$ son funciones distintas aunque compartan la fórmula.
+Una función no es solo una fórmula: también importa el conjunto donde está definida.
 
 La condición "exactamente un" es la clave: una recta vertical puede cortar la gráfica en un punto a lo sumo.
 
@@ -21,18 +21,6 @@ Una misma función admite cuatro representaciones, y saber pasar de una a otra e
 **Ejemplo.** Sea $f(x) = x^2 - 1$. Tabla: $f(-2) = 3$, $f(-1) = 0$, $f(0) = -1$, $f(1) = 0$, $f(2) = 3$. La gráfica es una parábola que abre hacia arriba con vértice en $(0, -1)$.
 
 Pasar de fórmula a gráfica es "dibujar la regla"; de gráfica a fórmula es modelar. Ambas direcciones se practican.
-
-## Dominio, codominio y rango
-El **dominio** es el conjunto de entradas permitidas; el **rango** (o imagen) es el conjunto de salidas realmente alcanzadas.
-
-Para hallar el dominio de una fórmula, identifica las operaciones prohibidas:
-- **División por cero:** en $f(x) = \frac{1}{x - 2}$, el dominio es $\mathbb{R} \setminus \{2\}$.
-- **Raíces pares de negativos:** en $f(x) = \sqrt{x - 3}$, el dominio es $[3, \infty)$.
-- **Logaritmos de no positivos:** en $f(x) = \ln(x + 1)$, el dominio es $(-1, \infty)$.
-
-Para el rango, despeja $x$ en función de $y$ y analiza qué valores de $y$ admiten solución, o usa la gráfica.
-
-**Ejemplo.** $f(x) = \sqrt{4 - x^2}$: el radicando debe ser no negativo, $-2 \leq x \leq 2$; el rango es $[0, 2]$ porque la raíz nunca es negativa y el máximo es $2$ en $x = 0$.
 
 ## La prueba de la recta vertical
 Una gráfica representa una función si y solo si **ninguna recta vertical la corta más de una vez**. Si una entrada $x$ tuviera dos salidas, la recta vertical en ese $x$ cortaría dos puntos.
@@ -49,28 +37,26 @@ Estas funciones son los ladrillos de todas las demás; conviene reconocerlas al 
 - **Cuadrática:** $f(x) = ax^2 + bx + c$; parábola; vértice en $x = -b/(2a)$.
 - **Cúbica:** $f(x) = x^3$; creciente en todo $\mathbb{R}$, con un punto de inflexión.
 - **Valor absoluto:** $f(x) = |x|$; forma de V con vértice en el origen.
-- **Raíz cuadrada:** $f(x) = \sqrt{x}$; creciente y cóncava, dominio $[0, \infty)$.
+- **Raíz cuadrada:** $f(x) = \sqrt{x}$; creciente y cóncava, definida para $x \geq 0$.
 - **Racional:** $f(x) = 1/x$; hipérbola con asíntotas en los ejes.
 - **Exponencial y logarítmica:** crecimiento rápido y su inversa (en otro curso).
 - **Por partes:** reglas distintas en intervalos distintos, como $f(x) = |x|$.
 
-:::fig func f=x^2 xmin=-4 xmax=4 label=y%20%3D%20x^2 caption=Cuadrática%3A%20parábola
+:::fig func f=x^2 xmin=-4 xmax=4 label=y%20%3D%20x%C2%B2 caption=Cuadrática%3A%20%24y%3Dx%5E2%24
 
-:::fig func f=x^3 xmin=-3 xmax=3 label=y%20%3D%20x^3 caption=Cúbica
+:::fig func f=x^3 xmin=-3 xmax=3 label=y%20%3D%20x%C2%B3 caption=Cúbica%3A%20%24y%3Dx%5E3%24
 
-:::fig func f=abs(x) xmin=-4 xmax=4 label=y%20%3D%20%7Cx%7C caption=Valor%20absoluto
+:::fig func f=abs(x) xmin=-4 xmax=4 label=y%20%3D%20%7Cx%7C caption=Valor%20absoluto%3A%20%24y%3D%7Cx%7C%24
 
-:::fig func f=sqrt(x) xmin=0 xmax=6 label=y%20%3D%20sqrt(x) caption=Raíz%20cuadrada
+:::fig func f=sqrt(x) xmin=0 xmax=6 label=y%20%3D%20%E2%88%9Ax caption=Raíz%20cuadrada%3A%20%24y%3D%5Csqrt%7Bx%7D%24
 
-:::fig func f=1/x xmin=-5 xmax=5 ymin=-5 ymax=5 label=y%20%3D%201%2Fx caption=Racional%201%2Fx
+:::fig func f=1/x xmin=-5 xmax=5 ymin=-5 ymax=5 label=y%20%3D%201%2Fx caption=Racional%3A%20%24y%3D%5Cfrac%7B1%7D%7Bx%7D%24
 
 ## Composición de funciones
 La **composición** aplica primero una función y luego otra:
 $$(f \circ g)(x) = f(g(x))$$
 
-El dominio de $f \circ g$ son los $x$ del dominio de $g$ tales que $g(x)$ está en el dominio de $f$.
-
-**Ejemplo.** $f(x) = \sqrt{x}$ y $g(x) = x - 3$. Entonces $(f \circ g)(x) = \sqrt{x - 3}$, con dominio $[3, \infty)$. En cambio $(g \circ f)(x) = \sqrt{x} - 3$, con dominio $[0, \infty)$. La composición no es conmutativa.
+**Ejemplo.** $f(x) = \sqrt{x}$ y $g(x) = x - 3$. Entonces $(f \circ g)(x) = \sqrt{x - 3}$. En cambio $(g \circ f)(x) = \sqrt{x} - 3$. La composición no es conmutativa.
 
 La composición es la operación que encadena procesos: convertir grados a radianes y luego calcular seno es $f \circ g$.
 
@@ -93,11 +79,11 @@ Existe solo si $f$ es **inyectiva** (un valor de salida por cada entrada). Gráf
 - $f^{-1}(x) = \dfrac{x - 3}{2}$.
 - Verificación: $f^{-1}(f(1)) = f^{-1}(5) = 1$. Correcto.
 
-A veces hay que **restringir el dominio** para lograr inyectividad: $f(x) = x^2$ no es inyectiva en $\mathbb{R}$, pero sí en $[0, \infty)$, donde su inversa es $\sqrt{x}$.
+A veces hay que **restringir el conjunto de entradas** para lograr inyectividad: $f(x) = x^2$ no es inyectiva en todo $\mathbb{R}$, pero sí en $[0, \infty)$, donde su inversa es $\sqrt{x}$.
 
 ## Inyectiva, sobreyectiva y biyectiva
 - **Inyectiva:** entradas distintas dan salidas distintas ($f(x_1) = f(x_2) \Rightarrow x_1 = x_2$). Pasa la prueba de la recta horizontal.
-- **Sobreyectiva:** todo elemento del codominio es alcanzado.
+- **Sobreyectiva:** todo valor posible de salida se alcanza.
 - **Biyectiva:** ambas cosas; entonces existe inversa $f^{-1}: B \to A$.
 
 **Ejemplo.** $f(x) = x^3$ con $f: \mathbb{R} \to \mathbb{R}$ es biyectiva y tiene inversa $f^{-1}(x) = \sqrt[3]{x}$. $f(x) = x^2$ con $f: \mathbb{R} \to \mathbb{R}$ no es inyectiva ni sobreyectiva.
@@ -111,9 +97,9 @@ Una función **cuadrática** tiene la forma $f(x) = ax^2 + bx + c$ con $a \neq 0
 - El eje de simetría es la recta vertical que pasa por el vértice.
 - Las raíces se calculan con la fórmula general $x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$.
 
-:::fig func f=x^2 xmin=-4 xmax=4 label=y%20%3D%20x^2 caption=Parábola%3A%20y%20%3D%20x^2
+:::fig func f=x^2 xmin=-4 xmax=4 label=y%20%3D%20x%C2%B2 caption=Parábola%3A%20%24y%3Dx%5E2%24
 
-:::fig func f=x^2-4*x+3 xmin=-2 xmax=6 label=y%20%3D%20x^2-4x%203 caption=Parábola%20con%20raíces%20en%201%20y%203
+:::fig func f=x^2-4*x+3 xmin=-2 xmax=6 label=y%20%3D%20x%C2%B2-4x%2B3 caption=Parábola%20con%20raíces%20en%201%20y%203%3A%20%24y%3Dx%5E2-4x%2B3%24
 
 **Ejemplo.** Para $f(x) = x^2 - 4x + 3$: el vértice está en $x = 2$ con $f(2) = -1$, y las raíces son $x = 1$ y $x = 3$.
 
@@ -124,9 +110,9 @@ La función **lineal** $f(x) = mx$ y la **afín** $f(x) = mx + b$ tienen como gr
 - $m$ es la **pendiente**: la inclinación de la recta.
 - $b$ es la **ordenada al origen**: el punto donde la recta corta el eje $y$.
 
-:::fig func f=x xmin=-5 xmax=5 label=y%20%3D%20x caption=Función%20lineal%3A%20y%20%3D%20x
+:::fig func f=x xmin=-5 xmax=5 label=y%20%3D%20x caption=Función%20lineal%3A%20%24y%3Dx%24
 
-:::fig func f=2*x+1 xmin=-5 xmax=5 label=y%20%3D%202x%20%2B%201 caption=Función%20afín%3A%20y%20%3D%202x%20%2B%201
+:::fig func f=2*x+1 xmin=-5 xmax=5 label=y%20%3D%202x%2B1 caption=Función%20afín%3A%20%24y%3D2x%2B1%24
 
 Si $m > 0$ la recta sube; si $m < 0$ baja; si $m = 0$ es horizontal.
 
@@ -140,29 +126,24 @@ Si $m > 0$ la recta sube; si $m < 0$ baja; si $m = 0$ es horizontal.
 ## Errores comunes y cómo evitarlos
 - **Confundir $f(x + 1)$ con $f(x) + 1$.** Lo primero desplaza la entrada; lo segundo, la salida.
 - **Confundir $f^{-1}(x)$ con $\frac{1}{f(x)}$.** La inversa deshace; el recíproco divide.
-- **Olvidar restringir el dominio de la inversa.** $x^2$ solo se invierte en un tramo.
-- **Dar el dominio sin excluir valores problemáticos.** Revisa denominadores, raíces y logaritmos.
 - **Suponer que toda función tiene inversa.** Sin inyectividad no hay inversa.
 - **Desplazar en la dirección equivocada.** $f(x - 3)$ se mueve a la derecha (el signo parece contradecir la intuición).
 
 ## Ejercicios propuestos
-1. Halla el dominio de $f(x) = \dfrac{\sqrt{x + 2}}{x - 1}$.
-2. Halla el rango de $f(x) = x^2 - 4x + 1$ (completa el cuadrado).
+1. Si $f(x) = 3x - 1$, calcula $f(2)$ y $f(-3)$.
+2. Halla el vértice de $f(x) = x^2 - 4x + 1$.
 3. Si $f(x) = 3x - 2$ y $g(x) = x^2$, calcula $(f \circ g)(2)$ y $(g \circ f)(2)$.
 4. Halla la inversa de $f(x) = \dfrac{x + 1}{x - 2}$.
-5. Determina si $f(x) = x^4 - x^2$ es par, impar o ninguna.
-6. Describe la gráfica de $g(x) = -2(x + 1)^2 + 5$ a partir de $x^2$.
-7. ¿Es inyectiva $f(x) = x^2 - 1$ en $[-3, 3]$? Si no, restringe el dominio.
+5. Si $f(x) = x^2 + 1$, calcula $f(0)$ y $f(-2)$.
+6. Halla el vértice de $g(x) = -2(x + 1)^2 + 5$.
+7. ¿Es inyectiva $f(x) = x^2 - 1$ en $[0, \infty)$?
 
-**Respuestas:** 1) $[-2, 1) \cup (1, \infty)$. 2) $[-3, \infty)$. 3) $(f \circ g)(2) = 10$; $(g \circ f)(2) = 16$. 4) $f^{-1}(x) = \dfrac{2x + 1}{x - 1}$. 5) Par. 6) Parábola invertida, estirada, vértice $(-1, 5)$. 7) No; en $[0, 3]$ sí.
+**Respuestas:** 1) $f(2) = 5$, $f(-3) = -10$. 2) $(2, -3)$. 3) $(f \circ g)(2) = 10$; $(g \circ f)(2) = 16$. 4) $f^{-1}(x) = \dfrac{2x + 1}{x - 1}$. 5) $f(0) = 1$, $f(-2) = 5$. 6) Vértice $(-1, 5)$. 7) Sí.
 
 ## Resumen
-- Función: una salida exacta por cada entrada; dominio, codominio y rango la definen.
-- Valor absoluto, divisiones, raíces pares y logaritmos restringen el dominio.
 - La recta vertical verifica si una gráfica es función; la horizontal, si es inyectiva.
-- Las transformaciones desplazan, estiran y reflejan la gráfica base.
 - La composición encadena funciones y no es conmutativa.
-- La inversa deshace a la función y requiere inyectividad, a veces restringiendo el dominio.
+- La inversa deshace a la función y requiere inyectividad.
 `,
 
   "exp-log": String.raw`
@@ -180,7 +161,7 @@ La función exponencial de base $a$ es
 $$f(x) = a^x, \qquad a > 0, \quad a \neq 1$$
 
 **Propiedades:**
-- Dominio $\mathbb{R}$; rango $(0, \infty)$: la exponencial **nunca es negativa ni cero**.
+- La exponencial **nunca es negativa ni cero**: se acerca a $0$ pero no lo alcanza.
 - Si $a > 1$, es creciente: $a^x \to \infty$ cuando $x \to \infty$, y $a^x \to 0$ cuando $x \to -\infty$.
 - Si $0 < a < 1$, es decreciente (decaimiento).
 - Pasa siempre por $(0, 1)$, porque $a^0 = 1$.
@@ -263,7 +244,7 @@ Ejemplo: $e^{2x} - 5e^x + 6 = 0$. Sea $u = e^x$: $u^2 - 5u + 6 = 0 \Rightarrow u
 - Exponencial: $x(x - 2) = 2^3 = 8$.
 - Cuadrática: $x^2 - 2x - 8 = 0 \Rightarrow (x - 4)(x + 2) = 0$.
 - Candidatos: $x = 4$ y $x = -2$.
-- Verifica: $x = 4$ da $\log_2 4 + \log_2 2 = 2 + 1 = 3$, válido. $x = -2$ no está en el dominio. Solución: $x = 4$.
+- Verifica: $x = 4$ da $\log_2 4 + \log_2 2 = 2 + 1 = 3$, válido. $x = -2$ no es válida porque el argumento debe ser positivo. Solución: $x = 4$.
 
 La verificación no es opcional: elevar y combinar logaritmos puede introducir soluciones extrañas.
 
@@ -284,11 +265,11 @@ Queda alrededor del 6.25%: cuatro vidas medias.
 
 La **exponencial** $f(x) = a^x$ con $a > 1$ crece muy rápido: pasa por $(0, 1)$ y el eje $x$ es una **asíntota** (la curva se acerca pero nunca lo toca).
 
-:::fig func f=2^x xmin=-3 xmax=5 label=y%20%3D%202^x caption=Exponencial%3A%20y%20%3D%202^x
+:::fig func f=2^x xmin=-3 xmax=5 label=y%20%3D%202%5Ex caption=Exponencial%3A%20%24y%3D2%5Ex%24
 
 El **logaritmo** $g(x) = \log_a x$ es la función inversa: pasa por $(1, 0)$, crece lentamente y tiene al eje $y$ como asíntota. Las gráficas de $a^x$ y $\log_a x$ son simétricas respecto a la recta $y = x$.
 
-:::fig func f=ln(x) xmin=0.2 xmax=6 label=y%20%3D%20ln(x) caption=Logaritmo%20natural%3A%20y%20%3D%20ln(x)
+:::fig func f=ln(x) xmin=0.2 xmax=6 label=y%20%3D%20ln%20x caption=Logaritmo%20natural%3A%20%24y%3D%5Cln%20x%24
 
 ## Contextos donde se aplica
 - **Finanzas:** interés compuesto, valor presente, inflación, crecimiento de inversiones.
@@ -299,7 +280,7 @@ El **logaritmo** $g(x) = \log_a x$ es la función inversa: pasa por $(1, 0)$, cr
 
 ## Errores comunes y cómo evitarlos
 - **$\log(x + y) = \log x + \log y$.** Falso; solo vale para productos.
-- **Olvidar el dominio.** Todo argumento del logaritmo debe ser positivo; rechaza soluciones negativas o cero.
+- **Olvidar el argumento positivo.** Todo argumento del logaritmo debe ser positivo; rechaza soluciones negativas o cero.
 - **Confundir $\ln$ con $\log$.** $\ln$ es base $e$; $\log$ sin base suele ser base 10 en ciencias y base $e$ en matemática avanzada. Fija la convención.
 - **Suponer que $e^x$ puede ser cero.** Nunca lo es; $e^x \to 0$ solo como límite.
 - **Aplicar $e^{\ln x} \neq x$ para $x$ negativo.** Para $x > 0$, $e^{\ln x} = x$ siempre.
@@ -323,7 +304,7 @@ El **logaritmo** $g(x) = \log_a x$ es la función inversa: pasa por $(1, 0)$, cr
 - El logaritmo es la inversa de la exponencial: $\log_a x = y \Leftrightarrow a^y = x$, con $x > 0$.
 - Propiedades: producto suma, cociente resta, potencia multiplica; NUNCA se aplican a sumas.
 - El cambio de base permite calcular cualquier logaritmo con $\ln$.
-- Ecuaciones exponenciales: igualar bases o aplicar logaritmo; logarítmicas: combinar y verificar dominio.
+- Ecuaciones exponenciales: igualar bases o aplicar logaritmo; logarítmicas: combinar y verificar que los argumentos queden positivos.
 - Los modelos exponenciales describen interés, poblaciones, decaimiento y escalas logarítmicas.
 `,
 
@@ -441,9 +422,9 @@ La ley de cosenos generaliza Pitágoras: si $C = 90°$, $\cos C = 0$ y queda $c^
 $$c^2 = 49 + 100 - 2 \cdot 7 \cdot 10 \cdot \frac{1}{2} = 79 \Rightarrow c \approx 8.89$$
 
 ## Gráficas de las funciones trigonométricas
-- $y = \text{sen}\,x$: dominio $\mathbb{R}$, rango $[-1, 1]$, periodo $2\pi$, cruza el origen.
+- $y = \text{sen}\,x$: periódica de periodo $2\pi$, con valores entre $-1$ y $1$; cruza el origen.
 - $y = \cos x$: igual, pero empieza en el máximo $(0, 1)$.
-- $y = \tan x$: periodo $\pi$, asíntotas verticales en $x = \pi/2 + k\pi$, rango $\mathbb{R}$.
+- $y = \tan x$: periodo $\pi$, con asíntotas verticales en $x = \pi/2 + k\pi$.
 
 **Forma general:** $y = A\,\text{sen}(B(x - C)) + D$.
 - $|A|$: **amplitud** (mitad de la distancia entre máximo y mínimo).
@@ -451,7 +432,7 @@ $$c^2 = 49 + 100 - 2 \cdot 7 \cdot 10 \cdot \frac{1}{2} = 79 \Rightarrow c \appr
 - $C$: **desfase** (desplazamiento horizontal).
 - $D$: desplazamiento vertical (línea media).
 
-**Ejemplo.** $y = 3\,\text{sen}(2x - \pi) + 1$: amplitud $3$, periodo $\pi$, desfase $\pi/2$ a la derecha, línea media $y = 1$. Rango: $[-2, 4]$.
+**Ejemplo.** $y = 3\,\text{sen}(2x - \pi) + 1$: amplitud $3$, periodo $\pi$, desfase $\pi/2$ a la derecha y línea media $y = 1$.
 
 ## Contextos donde se aplica
 - **Física:** movimiento armónico, ondas, péndulos, corriente alterna; sonido y luz como ondas sinusoidales.
@@ -476,9 +457,9 @@ $$c^2 = 49 + 100 - 2 \cdot 7 \cdot 10 \cdot \frac{1}{2} = 79 \Rightarrow c \appr
 5. Resuelve $2\cos^2\theta - 1 = 0$ en $[0, 2\pi)$.
 6. Un triángulo tiene $a = 5$, $A = 30°$, $B = 45°$. Halla $b$.
 7. Dos lados de $6$ y $8$ forman un ángulo de $120°$. Halla el tercer lado.
-8. Describe amplitud, periodo y rango de $y = -2\cos(3x) + 1$.
+8. Un triángulo rectángulo tiene catetos $3$ y $4$. Halla la hipotenusa y el seno del ángulo opuesto al cateto de $3$.
 
-**Respuestas:** 1) $5\pi/6$ y $225°$. 2) $\text{sen} = 4/5$, $\cos = -3/5$, $\tan = -4/3$. 3) Suma las fracciones con denominador común. 4) $(\sqrt{6} + \sqrt{2})/4$. 5) $\theta = \pi/4, 3\pi/4, 5\pi/4, 7\pi/4$. 6) $b = 5\sqrt{2}$. 7) $\sqrt{148} \approx 12.17$. 8) Amplitud 2, periodo $2\pi/3$, rango $[-1, 3]$.
+**Respuestas:** 1) $5\pi/6$ y $225°$. 2) $\text{sen} = 4/5$, $\cos = -3/5$, $\tan = -4/3$. 3) Suma las fracciones con denominador común. 4) $(\sqrt{6} + \sqrt{2})/4$. 5) $\theta = \pi/4, 3\pi/4, 5\pi/4, 7\pi/4$. 6) $b = 5\sqrt{2}$. 7) $\sqrt{148} \approx 12.17$. 8) Hipotenusa $5$; $\text{sen} = \dfrac{3}{5}$.
 
 ## Resumen
 - Las razones trigonométricas relacionan ángulos y lados; el círculo unitario las generaliza a todo ángulo.

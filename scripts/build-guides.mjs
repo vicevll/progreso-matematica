@@ -72,7 +72,7 @@ function figureBlock(line) {
   if (!match) return "";
   const params = parseParams(match[2]);
   params.theme = "light";
-  const caption = params.caption ? `<figcaption>${escapeHtml(params.caption)}</figcaption>` : "";
+  const caption = params.caption ? `<figcaption>${renderText(params.caption)}</figcaption>` : "";
   if (match[1] === "right-triangle") {
     return `<figure class="fig">${diagram.rightTriangle(params)}${caption}</figure>`;
   }
@@ -276,7 +276,9 @@ const guides = [
   ["trigonometria-simple", "Trigonometría"],
   ["trigonometria-ejercicios", "Trigonometría · 50 ejercicios"],
   ["funciones-simple", "Funciones"],
-  ["funciones-ejercicios", "Funciones · 50 ejercicios"]
+  ["funciones-ejercicios", "Funciones · 50 ejercicios"],
+  ["sucesiones-sumatorias-simple", "Sucesiones y sumatorias"],
+  ["sucesiones-sumatorias-ejercicios", "Sucesiones y sumatorias · 50 ejercicios"]
 ].filter(([name]) => !wanted || name === wanted);
 
 for (const [name, title] of guides) await buildGuide(name, title);

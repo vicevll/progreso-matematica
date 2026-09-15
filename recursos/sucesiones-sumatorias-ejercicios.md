@@ -36,15 +36,6 @@ $$\text{Telescópica: } \sum_{k=1}^{n}\big(u_k - u_{k+1}\big) = u_1 - u_{n+1}$$
 | $\sum_{k=1}^n (2k-1)$ | $n^2$ |
 | $\sum_{k=1}^n c$ | $nc$ |
 
-### Inducción matemática
-Para probar $P(n)$ para todo $n \geq n_0$:
-1. **Base:** verifica $P(n_0)$.
-2. **Hipótesis:** supón $P(k)$ verdadera.
-3. **Paso:** demuestra $P(k+1)$ usando la hipótesis.
-4. **Conclusión:** $P(n)$ vale para todo $n \geq n_0$.
-
-La **inducción fuerte** supone $P(j)$ verdadera para todos los $j \leq k$.
-
 ### Límites de sucesiones
 $$\lim_{n\to\infty} a_n = L \iff \forall \varepsilon > 0\ \exists N:\ n > N \Rightarrow |a_n - L| < \varepsilon$$
 - Si $|r| < 1$ entonces $r^n \to 0$.
@@ -84,11 +75,11 @@ $$\lim_{n\to\infty} a_n = L \iff \forall \varepsilon > 0\ \exists N:\ n > N \Rig
 25. Expresa $\displaystyle\sum_{k=1}^{n} (4k - 1)$ en función de $n$.
 26. Calcula $\displaystyle\sum_{k=1}^{50} (3k^2 + 1)$.
 27. Calcula $\displaystyle\sum_{k=0}^{\infty} \left(\frac{1}{3}\right)^k$.
-28. Prueba por inducción que $\displaystyle\sum_{k=1}^{n} (2k - 1) = n^2$.
-29. Prueba por inducción que $\displaystyle\sum_{k=1}^{n} 2^k = 2^{n+1} - 2$.
-30. Prueba que $n^2 + n$ es par para todo entero $n$ (divide en casos).
+28. Calcula $\displaystyle\lim_{n\to\infty} \frac{7n + 3}{2n + 1}$.
+29. Calcula $\displaystyle\lim_{n\to\infty} \frac{n}{n^2 + 1}$.
+30. Calcula $\displaystyle\sum_{k=1}^{5} 2^k$.
 
-### Nivel 4 · Inducción, recurrencias y límites (31–40)
+### Nivel 4 · Recurrencias y límites (31–40)
 31. Calcula $\displaystyle\lim_{n\to\infty} \frac{3n^2 + 2}{n^2 - 5}$.
 32. Calcula $\displaystyle\lim_{n\to\infty} \frac{5n + 1}{2n^2 + 3}$.
 33. Calcula $\displaystyle\lim_{n\to\infty} \frac{(-1)^n}{n}$.
@@ -96,9 +87,9 @@ $$\lim_{n\to\infty} a_n = L \iff \forall \varepsilon > 0\ \exists N:\ n > N \Rig
 35. Calcula $\displaystyle\lim_{n\to\infty} \frac{4n^3 - n}{2n^3 + n^2}$.
 36. Resuelve la recurrencia $a_n = 2a_{n-1} + 3$, con $a_1 = 1$.
 37. Resuelve la recurrencia $a_n = a_{n-1} + 2n$, con $a_1 = 1$.
-38. Prueba por inducción que $\displaystyle\sum_{i=1}^{n} F_i = F_{n+2} - 1$, donde $F_i$ es la sucesión de Fibonacci.
-39. Prueba por inducción que $\displaystyle\sum_{k=1}^{n} k^3 = \left(\frac{n(n+1)}{2}\right)^2$.
-40. Prueba por inducción que $n! > 2^n$ para todo $n \geq 4$.
+38. Calcula $\displaystyle\lim_{n\to\infty} \frac{6n^2 - n}{3n^2 + 2}$.
+39. Calcula $\displaystyle\lim_{n\to\infty} \frac{2^n}{3^n + 1}$.
+40. Calcula $\displaystyle\lim_{n\to\infty} \left(1 + \frac{1}{n}\right)^{n}$.
 
 ### Nivel 5 · Desafío (41–50)
 41. Suma todos los múltiplos positivos de 3 menores que 200.
@@ -141,9 +132,9 @@ $$\lim_{n\to\infty} a_n = L \iff \forall \varepsilon > 0\ \exists N:\ n > N \Rig
 <div class="r"><b>25</b> $n(2n+1)$</div>
 <div class="r"><b>26</b> $128825$</div>
 <div class="r"><b>27</b> $\frac{3}{2}$</div>
-<div class="r"><b>28</b> Bosquejo: base $1 = 1$; paso $k^2 + (2k+1) = (k+1)^2$.</div>
-<div class="r"><b>29</b> Bosquejo: base $2 = 2$; paso $(2^{k+1}-2)+2^{k+1} = 2^{k+2}-2$.</div>
-<div class="r"><b>30</b> Bosquejo: si $n$ es par, $n(n+1)$ es par; si $n$ es impar, $n+1$ es par.</div>
+<div class="r"><b>28</b> $\dfrac{7}{2}$</div>
+<div class="r"><b>29</b> $0$</div>
+<div class="r"><b>30</b> $62$</div>
 <div class="r"><b>31</b> $3$</div>
 <div class="r"><b>32</b> $0$</div>
 <div class="r"><b>33</b> $0$</div>
@@ -151,9 +142,9 @@ $$\lim_{n\to\infty} a_n = L \iff \forall \varepsilon > 0\ \exists N:\ n > N \Rig
 <div class="r"><b>35</b> $2$</div>
 <div class="r"><b>36</b> $a_n = 2^{n+1} - 3$</div>
 <div class="r"><b>37</b> $a_n = n^2 + n - 1$</div>
-<div class="r"><b>38</b> Bosquejo: base $F_1 = F_3 - 1$; paso $F_{k+2}-1+F_{k+1} = F_{k+3}-1$.</div>
-<div class="r"><b>39</b> Bosquejo: base $1 = 1$; paso $\left(\frac{k(k+1)}{2}\right)^2 + (k+1)^3 = \left(\frac{(k+1)(k+2)}{2}\right)^2$.</div>
-<div class="r"><b>40</b> Bosquejo: base $24 > 16$; paso $(k+1)! = (k+1)k! > (k+1)2^k \geq 2^{k+1}$.</div>
+<div class="r"><b>38</b> $2$</div>
+<div class="r"><b>39</b> $0$</div>
+<div class="r"><b>40</b> $e$</div>
 <div class="r"><b>41</b> $6633$</div>
 <div class="r"><b>42</b> $19$ términos, con suma $912$</div>
 <div class="r"><b>43</b> $1000(1.05)^{10} \approx 1628.89$ dólares</div>

@@ -97,25 +97,6 @@ Factorizar es escribir una expresión como producto de factores más simples. Es
 
 Método general recomendado: (1) saca factor común; (2) cuenta los términos; (3) si son dos, revisa diferencia de cuadrados o cubos; si son tres, revisa los trinomios; si son cuatro, agrupa.
 
-## Ecuaciones lineales: método paso a paso
-Una ecuación es una igualdad entre dos expresiones; resolverla es hallar los valores que la hacen verdadera. Las ecuaciones lineales tienen la incógnita con exponente 1.
-
-El principio central: **cualquier operación aplicada a un lado debe aplicarse también al otro**. La igualdad es una balanza.
-
-Método:
-1. Elimina paréntesis con la distributiva.
-2. Elimina denominadores multiplicando por el mínimo común múltiplo.
-3. Agrupa los términos con la incógnita en un lado y los constantes en el otro.
-4. Reduce términos semejantes.
-5. Despeja la incógnita dividiendo por su coeficiente.
-6. Verifica sustituyendo en la ecuación original.
-
-Ejemplo: resolver $3(x - 2) + 5 = 2x + 7$.
-- Distribuye: $3x - 6 + 5 = 2x + 7$.
-- Reduce: $3x - 1 = 2x + 7$.
-- Agrupa: $3x - 2x = 7 + 1$, es decir $x = 8$.
-- Verifica: $3(8-2) + 5 = 23$ y $2(8) + 7 = 23$. Correcto.
-
 ## Ecuaciones cuadráticas: fórmula general y factorización
 Una ecuación cuadrática tiene la forma $ax^2 + bx + c = 0$ con $a \neq 0$. Hay tres caminos principales.
 
@@ -135,18 +116,21 @@ Ejemplo con la fórmula: $2x^2 - 4x - 6 = 0$.
 $$x = \frac{4 \pm \sqrt{16 + 48}}{4} = \frac{4 \pm 8}{4}$$
 Soluciones: $x = 3$ y $x = -1$. Verificación con $x = 3$: $18 - 12 - 6 = 0$.
 
-## Inecuaciones y valor absoluto
-Una inecuación se resuelve como una ecuación, con una diferencia crítica: **al multiplicar o dividir por un número negativo, el sentido de la desigualdad se invierte**.
+## Gráficas de expresiones y funciones
 
-Ejemplo: $-2x + 1 > 7$ $\Rightarrow$ $-2x > 6$ $\Rightarrow$ $x < -3$ (se invirtió).
+Las expresiones algebraicas se visualizan con gráficas. Las más frecuentes son:
 
-El valor absoluto $|x|$ es la distancia de $x$ al cero. Las inecuaciones con valor absoluto se desdoblan:
-- $|x| < r$ significa $-r < x < r$ (intervalo).
-- $|x| > r$ significa $x > r$ o $x < -r$ (dos rayos).
+- La **recta** $y = 2x + 1$: pendiente $2$ y corte con el eje $y$ en $1$.
+- La **parábola** $y = x^2$: mínimo en el vértice $(0, 0)$.
+- El **valor absoluto** $y = |x|$: forma de V con vértice en el origen.
 
-Ejemplo: $|2x - 6| \leq 4$.
-$$-4 \leq 2x - 6 \leq 4 \Rightarrow 2 \leq 2x \leq 10 \Rightarrow 1 \leq x \leq 5$$
-El conjunto solución es el intervalo $[1, 5]$.
+:::fig func f=2*x+1 xmin=-5 xmax=5 label=y%20%3D%202x%2B1 caption=Función%20afín%3A%20%24y%3D2x%2B1%24
+
+:::fig func f=x^2 xmin=-4 xmax=4 label=y%20%3D%20x%C2%B2 caption=Parábola%3A%20%24y%3Dx%5E2%24
+
+:::fig func f=abs(x) xmin=-4 xmax=4 label=y%20%3D%20%7Cx%7C caption=Valor%20absoluto%3A%20%24y%3D%7Cx%7C%24
+
+Estas gráficas ayudan a entender qué significa factorizar: cada raíz real de la expresión es un corte con el eje $x$.
 
 ## Contextos donde se aplica
 - **Física:** las fórmulas de cinemática son álgebra: despejar tiempo o aceleración es resolver ecuaciones. $d = v_0 t + \frac{1}{2}at^2$ requiere manejar exponentes y cuadráticas.
@@ -382,33 +366,6 @@ $$\sum_{k=1}^{n} k^3 = \left(\frac{n(n+1)}{2}\right)^2$$
 
 El cambio de índice (reindexación) es una herramienta clave: $\sum_{k=1}^{n} a_k = \sum_{j=0}^{n-1} a_{j+1}$ permite alinear sumas.
 
-## Inducción matemática: el método
-La inducción demuestra afirmaciones de la forma "para todo $n \geq n_0$, $P(n)$". Es como una fila de fichas de dominó: si la primera cae y cada una tumba la siguiente, todas caen.
-
-**Estructura:**
-1. **Base:** verifica $P(n_0)$.
-2. **Hipótesis inductiva:** supón que $P(k)$ es verdadera para un $k$ arbitrario.
-3. **Paso inductivo:** demuestra que $P(k+1)$ es verdadera usando la hipótesis.
-4. **Conclusión:** por el principio de inducción, $P(n)$ vale para todo $n \geq n_0$.
-
-**Ejemplo completo.** Probar que $\sum_{k=1}^{n} k = \frac{n(n+1)}{2}$.
-
-- Base $n = 1$: $\sum_{k=1}^{1} k = 1$ y $\frac{1 \cdot 2}{2} = 1$. Correcto.
-- Hipótesis: supongamos que vale para $n = k$: $\sum_{i=1}^{k} i = \frac{k(k+1)}{2}$.
-- Paso: la suma hasta $k+1$ es la suma hasta $k$ más el término $k+1$:
-$$\sum_{i=1}^{k+1} i = \frac{k(k+1)}{2} + (k+1) = \frac{k(k+1) + 2(k+1)}{2} = \frac{(k+1)(k+2)}{2}$$
-que es exactamente la fórmula para $n = k+1$.
-- Conclusión: la fórmula vale para todo $n$ natural.
-
-## Inducción fuerte y recurrencias
-En la **inducción fuerte**, la hipótesis es que $P(j)$ vale para todos los $j \leq k$, no solo para $k$. Se usa cuando cada caso depende de varios anteriores.
-
-Es la herramienta natural para sucesiones definidas por recurrencia como Fibonacci. Ejemplo de resultado: $F_n \geq \left(\frac{3}{2}\right)^{n-2}$ para $n \geq 3$.
-
-**Cómo resolver recurrencias simples por sustitución hacia atrás:**
-- Torres de Hanói: $T(n) = 2T(n-1) + 1$, $T(1) = 1$. Iterando: $T(n) = 2^n - 1$.
-- Interés compuesto: $C_n = C_{n-1}(1 + r)$, con $C_0$ dado. Iterando: $C_n = C_0(1+r)^n$.
-
 ## Límite de una sucesión
 Una sucesión **converge** a $L$ si sus términos se acercan a $L$ tanto como queramos para $n$ suficientemente grande. Se escribe $\lim_{n\to\infty} a_n = L$.
 
@@ -432,8 +389,6 @@ Una sucesión **monótona y acotada** siempre converge: es el teorema de converg
 - **Confundir $n$ con $n-1$.** El término 10 usa $n = 10$: $a_{10} = a_1 + 9d$. Cuenta los saltos, no los términos.
 - **Usar la fórmula geométrica con $r = 1$.** El denominador se anula; con $r = 1$ la suma es $n \cdot a_1$.
 - **Usar $S_\infty$ con $|r| \geq 1$.** La serie geométrica infinita solo suma si $|r| < 1$.
-- **Inducción sin usar la hipótesis.** Si en el paso inductivo no usas que vale para $k$, algo está mal.
-- **Olvidar la base de la inducción.** Sin base, la cadena no arranca.
 - **Suponer convergencia por "los términos se ven pequeños".** Hay que verificarlo; la serie armónica diverge aunque $1/n \to 0$.
 
 ## Ejercicios propuestos
@@ -441,7 +396,6 @@ Una sucesión **monótona y acotada** siempre converge: es el teorema de converg
 2. En la PG $3, 6, 12, \ldots$ halla $a_{10}$ y $S_{10}$.
 3. Calcula $\sum_{k=1}^{50} (2k + 1)$.
 4. Calcula $\sum_{k=1}^{10} 2^k$.
-5. Prueba por inducción que $\sum_{k=1}^n (2k - 1) = n^2$.
 6. Halla el límite de $a_n = \frac{5n^2 - 3}{2n^2 + n}$.
 7. Una pelota cae desde 8 m y rebota a la mitad de la altura cada vez. ¿Distancia total recorrida?
 8. Resuelve la recurrencia $a_n = 3a_{n-1}$, $a_1 = 2$.
@@ -453,146 +407,10 @@ Una sucesión **monótona y acotada** siempre converge: es el teorema de converg
 - PA: diferencia constante, $a_n = a_1 + (n-1)d$, suma $S_n = n(a_1+a_n)/2$.
 - PG: razón constante, $a_n = a_1 r^{n-1}$; suma finita y serie infinita si $|r| < 1$.
 - La notación sigma compacta y sus sumas notables son herramientas de cálculo.
-- La inducción prueba afirmaciones sobre todos los naturales: base, hipótesis, paso.
 - Sucesiones monótonas y acotadas convergen.
 `,
 
 
-  "demostracion": String.raw`
-## ¿Qué es demostrar en matemática?
-Una **demostración** es una cadena de razonamientos que parte de definiciones, axiomas y hechos ya probados, y llega a una conclusión de manera inevitable. No es un argumento persuasivo: es una verificación lógica que cualquiera puede revisar paso a paso.
-
-La estructura mínima de cualquier afirmación matemática es una **implicación**:
-$$\text{si } P \text{ entonces } Q$$
-donde $P$ es la hipótesis y $Q$ la tesis. Demostrar es conectar $P$ con $Q$ mediante pasos justificados.
-
-Distinguir **condición necesaria** y **suficiente** es esencial:
-- $P$ es suficiente para $Q$ si $P \Rightarrow Q$.
-- $P$ es necesaria para $Q$ si $Q \Rightarrow P$ (es decir, sin $P$ no hay $Q$).
-- "Si y solo si" ($P \Leftrightarrow Q$) significa ambas.
-
-Confundirlas produce errores graves: probar la recíproca no prueba la afirmación original.
-
-## El vocabulario lógico de las demostraciones
-Los **cuantificadores** expresan alcance:
-- $\forall$: "para todo" (universal).
-- $\exists$: "existe" (existencial).
-
-Una afirmación como "todo primo mayor que 2 es impar" se escribe $\forall p (p \text{ primo}, p > 2 \Rightarrow p \text{ impar})$.
-
-**Negación de cuantificadores** (reglas de De Morgan cuantificacionales):
-$$\neg(\forall x\, P(x)) \equiv \exists x\, \neg P(x)$$
-$$\neg(\exists x\, P(x)) \equiv \forall x\, \neg P(x)$$
-
-Negar "todos los números son pares" da "existe un número que no es par". Negar "existe un múltiplo de 7" da "ningún número es múltiplo de 7".
-
-**Contraejemplo.** Para refutar $\forall x\, P(x)$ basta un solo $x$ con $\neg P(x)$. La afirmación "todo primo es impar" se refuta con $2$. Un ejemplo no prueba una afirmación universal, pero un contraejemplo la destruye.
-
-## Demostración directa
-La estrategia más natural: supón la hipótesis y avanza hasta la tesis aplicando definiciones y teoremas.
-
-**Ejemplo.** Demostrar que la suma de dos números pares es par.
-- Hipótesis: $a$ y $b$ son pares, es decir $a = 2m$ y $b = 2n$ para enteros $m, n$.
-- Suma: $a + b = 2m + 2n = 2(m + n)$.
-- Como $m + n$ es entero, $a + b$ es par. $\blacksquare$
-
-La clave de la demostración directa es **traducir cada palabra a su definición** y combinar algebraicamente. La definición de par no es "lo que termina en 0, 2, 4, 6, 8": es "es $2$ por un entero".
-
-## Demostración por contrapositiva
-La **contrapositiva** de $P \Rightarrow Q$ es $\neg Q \Rightarrow \neg P$. Ambas son lógicamente equivalentes: probar una prueba la otra. Se usa cuando la hipótesis es difícil de manipular pero su negación es simple.
-
-**Ejemplo.** Si $n^2$ es par, entonces $n$ es par.
-- Contrapositiva: si $n$ es impar, entonces $n^2$ es impar.
-- Supón $n$ impar: $n = 2k + 1$.
-- Entonces $n^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1$, que es impar. $\blacksquare$
-
-Sin contrapositiva, probar directamente "si $n^2$ es par entonces $n$ es par" es incómodo: tomar raíz cuadrada no da información directa sobre la paridad.
-
-**Advertencia.** La contrapositiva NO es lo mismo que la recíproca. La recíproca de $P \Rightarrow Q$ es $Q \Rightarrow P$, y no es equivalente.
-
-## Demostración por contradicción (reducción al absurdo)
-Para probar $P \Rightarrow Q$ por contradicción, supón $P$ verdadera y $Q$ falsa, y deriva una imposibilidad (una contradicción con un hecho conocido o con la propia hipótesis).
-
-**Ejemplo clásico.** $\sqrt{2}$ es irracional.
-- Supón lo contrario: $\sqrt{2} = a/b$ con $a, b$ enteros sin factores comunes.
-- Elevando al cuadrado: $2 = a^2/b^2$, es decir $a^2 = 2b^2$.
-- Entonces $a^2$ es par, y por el resultado anterior $a$ es par: $a = 2k$.
-- Sustituyendo: $4k^2 = 2b^2$, es decir $b^2 = 2k^2$; entonces $b$ también es par.
-- Pero $a$ y $b$ no podían tener factores comunes. Contradicción. $\blacksquare$
-
-El método es poderoso porque convierte una afirmación negativa ("no es racional") en un cálculo.
-
-## Inducción matemática
-Para afirmaciones indexadas por los naturales, la inducción es el método estándar:
-
-1. **Base:** verifica el caso inicial $n_0$.
-2. **Hipótesis:** supón $P(k)$ cierta.
-3. **Paso:** demuestra $P(k+1)$ usando $P(k)$.
-
-**Ejemplo.** Demostrar que $2^n > n$ para todo $n \geq 1$.
-- Base $n = 1$: $2^1 = 2 > 1$. Correcto.
-- Hipótesis: $2^k > k$.
-- Paso: $2^{k+1} = 2 \cdot 2^k > 2k = k + k \geq k + 1$ para $k \geq 1$. Correcto.
-- Conclusión: vale para todo $n \geq 1$.
-
-**Inducción fuerte:** se supone válido para todos los valores menores o iguales que $k$. Se usa en Fibonacci y en el teorema fundamental de la aritmética.
-
-## Disyunción de casos y doble implicación
-**Prueba por casos.** Cuando las hipótesis se dividen naturalmente, se prueba cada caso por separado. Ejemplo: todo entero es par o impar; probar una propiedad en ambos casos.
-
-**Doble implicación.** Para probar $P \Leftrightarrow Q$ se demuestran las dos direcciones:
-1. $P \Rightarrow Q$ (ida).
-2. $Q \Rightarrow P$ (vuelta).
-
-A veces se encadena con equivalencias: $P \Leftrightarrow R_1 \Leftrightarrow R_2 \Leftrightarrow Q$.
-
-**Ejemplo.** $n$ es par si y solo si $n^2$ es par.
-- Ida: si $n = 2k$, entonces $n^2 = 4k^2 = 2(2k^2)$ es par.
-- Vuelta: probada arriba por contrapositiva. $\blacksquare$
-
-## Cómo elegir la técnica correcta
-1. **Escribe con precisión** la hipótesis y la tesis, con cuantificadores explícitos.
-2. Si la tesis es una igualdad con $n$ natural, considera inducción.
-3. Si la hipótesis es simple pero la negación de la tesis es manejable, prueba contrapositiva.
-4. Si la afirmación es negativa o de imposibilidad ("no existe", "no es posible"), usa contradicción.
-5. Si la hipótesis tiene casos naturales, divide en casos.
-6. Si sospechas que la afirmación es falsa, busca un contraejemplo antes de gastar tiempo.
-
-## Contextos donde se aplica
-- **Toda la matemática:** no hay teorema sin demostración; es el estándar de verdad de la disciplina.
-- **Ciencias de la computación:** verificar programas y probar corrección de algoritmos usa inducción e invariantes.
-- **Ingeniería y física:** los modelos se apoyan en teoremas demostrados; entender la demostración evita malinterpretar las condiciones.
-- **Formación del pensamiento:** demostrar entrena la argumentación rigurosa, útil en derecho, filosofía y debate.
-- **Inteligencia artificial:** los teoremas de imposibilidad y los límites formales usan estas técnicas.
-
-## Errores comunes y cómo evitarlos
-- **Probar la recíproca.** $P \Rightarrow Q$ no es $Q \Rightarrow P$. Si pruebas la vuelta, prueba la ida también.
-- **Usar lo que se quiere probar (petición de principio).** Cada paso debe apoyarse en hechos ya establecidos, no en la tesis.
-- **Confundir necesario con suficiente.** "Si $x > 2$ entonces $x > 0$" es cierto; la recíproca no.
-- **Generalizar desde ejemplos.** Que $3^2 + 4^2 = 5^2$ no prueba nada sobre todos los triángulos.
-- **Olvidar la base de la inducción.** Sin base no hay cadena.
-- **Saltos no justificados.** Cada igualdad y cada implicación merece una razón; el lector no debe adivinarla.
-
-## Ejercicios propuestos
-1. Demuestra directamente que la suma de dos impares es par.
-2. Demuestra por contrapositiva: si $3n + 2$ es impar, entonces $n$ es impar.
-3. Demuestra por contradicción que $\sqrt{3}$ es irracional.
-4. Prueba por inducción: $\sum_{k=1}^{n} k^2 = \frac{n(n+1)(2n+1)}{6}$.
-5. Prueba por inducción: $3^n - 1$ es divisible entre 2 para todo $n \geq 1$.
-6. Prueba la doble implicación: $n$ es impar si y solo si $n^2$ es impar.
-7. Busca un contraejemplo: "todo número primo es impar".
-8. Prueba por casos: para todo entero $n$, $n^2 + n$ es par.
-
-**Respuestas (bosquejos):** 1) $a = 2m+1$, $b = 2n+1$, suma $= 2(m+n+1)$. 2) Contrapositiva: si $n$ es par, $3n+2$ es par (suma de par y par). 3) Análoga a la de $\sqrt{2}$: $3b^2 = a^2$ obliga a $a$ y $b$ a ser múltiplos de 3. 4) Base $n=1$: $1 = 1$; paso: sumar $(k+1)^2$ y factorizar. 5) $3^{k+1} - 1 = 3(3^k - 1) + 2$; ambos términos pares. 6) Ida y vuelta por contrapositiva/inducción directa. 7) $2$. 8) Si $n$ par, $n(n+1)$ par; si $n$ impar, $n+1$ par y el producto también.
-
-## Resumen
-- Demostrar es construir una cadena lógica de hipótesis a tesis.
-- Cuantificadores y sus negaciones son el vocabulario base; un contraejemplo refuta un universal.
-- Técnicas principales: directa, contrapositiva, contradicción, casos, inducción y doble implicación.
-- La contrapositiva prueba la misma afirmación; la recíproca no.
-- La inducción necesita base, hipótesis y paso; la inducción fuerte usa todos los casos previos.
-- Elegir la técnica correcta ahorra la mitad del trabajo; escribir con precisión, la otra mitad.
-`,
 
   "operaciones-combinadas": String.raw`
 ## ¿Qué son las operaciones combinadas?

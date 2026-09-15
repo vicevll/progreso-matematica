@@ -40,22 +40,6 @@ $$\sum_{k=1}^{n} k = \frac{n(n+1)}{2}, \qquad \sum_{k=1}^{n} k^2 = \frac{n(n+1)(
 
 Mini-ejemplo: $\displaystyle\sum_{k=1}^{10}(3k + 2) = 3 \cdot \frac{10 \cdot 11}{2} + 2 \cdot 10 = 165 + 20 = 185$.
 
-## 5. Inducción matemática
-La inducción demuestra afirmaciones de la forma "para todo $n \geq n_0$, $P(n)$".
-
-1. **Base:** verifica $P(n_0)$.
-2. **Hipótesis inductiva:** supón $P(k)$ verdadera para un $k$ arbitrario.
-3. **Paso inductivo:** demuestra $P(k+1)$ usando la hipótesis.
-4. **Conclusión:** $P(n)$ vale para todo $n \geq n_0$.
-
-Mini-ejemplo: para probar $\displaystyle\sum_{k=1}^{n}(2k-1) = n^2$, la base $n = 1$ da $1 = 1$, y el paso usa
-$$k^2 + \big(2(k+1) - 1\big) = k^2 + 2k + 1 = (k+1)^2.$$
-
-## 6. Inducción fuerte y recurrencias
-En la **inducción fuerte** la hipótesis es que $P(j)$ vale para todos los $j \leq k$; se usa cuando cada caso depende de varios anteriores, como en Fibonacci.
-
-Mini-ejemplo: las Torres de Hanói cumplen $T(n) = 2T(n-1) + 1$ con $T(1) = 1$. Iterando hacia atrás se obtiene la fórmula cerrada $T(n) = 2^n - 1$; para $n = 3$, $T(3) = 7$.
-
 ## 7. Límite de sucesiones
 Una sucesión **converge** a $L$ si sus términos se acercan a $L$ tanto como se quiera para $n$ grande: $\lim_{n\to\infty} a_n = L$.
 
@@ -86,7 +70,7 @@ Mini-ejemplo: $\displaystyle\lim_{n\to\infty} \frac{3n^2 + n}{2n^2 - 5} = \frac{
 12. En una PA con $a_3 = 11$ y $d = 4$, halla $a_{10}$.
 13. Suma los 12 primeros múltiplos positivos de 5.
 14. Calcula $S_5$ de la PG con $a_1 = 8$ y $r = \frac{1}{2}$.
-15. Prueba por inducción que $\displaystyle\sum_{k=1}^{n}(2k - 1) = n^2$.
+15. En una PG con $a_3 = 12$ y $r = 2$, halla $a_1$ y $a_7$.
 
 ### Nivel 4 · Desafío
 16. Calcula $\displaystyle\lim_{n\to\infty} \frac{2n^2 + 3n}{n^2 - 1}$.
@@ -110,7 +94,7 @@ Mini-ejemplo: $\displaystyle\lim_{n\to\infty} \frac{3n^2 + n}{2n^2 - 5} = \frac{
 12) $39$.
 13) $390$.
 14) $\frac{31}{2}$.
-15) Bosquejo: base $1 = 1$; paso $k^2 + (2k + 1) = (k+1)^2$.
+15) $a_1 = 3$; $a_7 = 192$.
 16) $2$.
 17) $0$.
 18) $a_n = 2 \cdot 3^{n-1}$.

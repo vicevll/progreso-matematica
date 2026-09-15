@@ -25,18 +25,6 @@ Una misma función admite varias representaciones y pasar de una a otra es una d
 
 La **prueba de la recta vertical** dice que una gráfica representa una función si ninguna recta vertical la corta más de una vez. La circunferencia $x^2 + y^2 = 1$ no es función; la parábola $y = x^2$ sí lo es.
 
-## Dominio, codominio y rango
-
-El **dominio** es el conjunto de entradas permitidas y el **rango** (o imagen) el conjunto de salidas alcanzadas. Para hallar el dominio se detectan las operaciones prohibidas:
-
-- **División por cero:** en $f(x) = \dfrac{1}{x - 2}$ el dominio es $\mathbb{R} \setminus \{2\}$.
-- **Raíces pares de negativos:** en $f(x) = \sqrt{x - 3}$ el dominio es $[3, \infty)$.
-- **Logaritmos de no positivos:** en $f(x) = \ln(x + 1)$ el dominio es $(-1, \infty)$.
-
-Para el rango se despeja $x$ en función de $y$ o se lee la gráfica.
-
-**Mini-ejemplo.** $f(x) = \sqrt{4 - x^2}$ exige $-2 \le x \le 2$; como la raíz nunca es negativa y el máximo es $2$ en $x = 0$, el rango es $[0, 2]$.
-
 ## Funciones básicas
 
 Estas funciones son los ladrillos de las demás y conviene reconocerlas de inmediato:
@@ -54,23 +42,23 @@ Estas funciones son los ladrillos de las demás y conviene reconocerlas de inmed
 
 **Sus gráficas.** La **lineal** $y = mx$ y la **afín** $y = mx + b$ son rectas: $m$ es la pendiente y $b$ el corte con el eje $y$.
 
-:::fig func f=x xmin=-5 xmax=5 label=y%20%3D%20x caption=Función%20lineal%3A%20y%20%3D%20x
+:::fig func f=x xmin=-5 xmax=5 label=y%20%3D%20x caption=Función%20lineal%3A%20%24y%3Dx%24
 
-:::fig func f=2*x+1 xmin=-5 xmax=5 label=y%20%3D%202x%20%2B%201 caption=Función%20afín%3A%20y%20%3D%202x%20%2B%201
+:::fig func f=2*x+1 xmin=-5 xmax=5 label=y%20%3D%202x%2B1 caption=Función%20afín%3A%20%24y%3D2x%2B1%24
 
 La **cuadrática** $y = ax^2 + bx + c$ dibuja una parábola: abre hacia arriba si $a > 0$, hacia abajo si $a < 0$, con vértice en $x = -\dfrac{b}{2a}$.
 
-:::fig func f=x^2 xmin=-4 xmax=4 label=y%20%3D%20x^2 caption=Parábola%3A%20y%20%3D%20x^2
+:::fig func f=x^2 xmin=-4 xmax=4 label=y%20%3D%20x%C2%B2 caption=Parábola%3A%20%24y%3Dx%5E2%24
 
-:::fig func f=x^2-4*x+3 xmin=-2 xmax=6 label=y%20%3D%20x^2-4x%2B3 caption=Parábola%20con%20raíces%20en%201%20y%203
+:::fig func f=x^2-4*x+3 xmin=-2 xmax=6 label=y%20%3D%20x%C2%B2-4x%2B3 caption=Parábola%20con%20raíces%20en%201%20y%203%3A%20%24y%3Dx%5E2-4x%2B3%24
 
 Otras básicas: el **valor absoluto** $y = |x|$ forma una V, la **raíz cuadrada** $y = \sqrt{x}$ crece y se aplana, y la **racional** $y = \dfrac{1}{x}$ es una hipérbola con asíntotas en los ejes.
 
-:::fig func f=abs(x) xmin=-4 xmax=4 label=y%20%3D%20%7Cx%7C caption=Valor%20absoluto%3A%20y%20%3D%20%7Cx%7C
+:::fig func f=abs(x) xmin=-4 xmax=4 label=y%20%3D%20%7Cx%7C caption=Valor%20absoluto%3A%20%24y%3D%7Cx%7C%24
 
-:::fig func f=sqrt(x) xmin=0 xmax=6 label=y%20%3D%20sqrt(x) caption=Raíz%20cuadrada%3A%20y%20%3D%20%CE%9Ax
+:::fig func f=sqrt(x) xmin=0 xmax=6 label=y%20%3D%20%E2%88%9Ax caption=Raíz%20cuadrada%3A%20%24y%3D%5Csqrt%7Bx%7D%24
 
-:::fig func f=1/x xmin=-5 xmax=5 ymin=-5 ymax=5 label=y%20%3D%201%2Fx caption=Racional%3A%20y%20%3D%201%2Fx
+:::fig func f=1/x xmin=-5 xmax=5 ymin=-5 ymax=5 label=y%20%3D%201%2Fx caption=Racional%3A%20%24y%3D%5Cfrac%7B1%7D%7Bx%7D%24
 
 ## Composición de funciones
 
@@ -106,13 +94,13 @@ A veces hay que **restringir el dominio**: $f(x) = x^2$ no es inyectiva en $\mat
 
 ## Ejercicios (20)
 
-### Nivel 1 · Dominio y rango
+### Nivel 1 · Evaluación y tipos
 
-1. Halla el dominio de $f(x) = \dfrac{1}{x - 4}$.
-2. Halla el dominio de $f(x) = \sqrt{x - 2}$.
-3. Halla el rango de $f(x) = x^2 - 3$.
-4. Halla el dominio de $f(x) = \dfrac{\sqrt{x + 1}}{x}$.
-5. Halla el rango de $f(x) = \sqrt{x + 2}$.
+1. Si $f(x) = x^2 + 1$, calcula $f(0)$ y $f(2)$.
+2. Halla el vértice de $f(x) = x^2 - 2x - 3$.
+3. Clasifica $f(x) = -3x + 2$ y da su pendiente.
+4. Con $f(x) = x^2$ y $g(x) = x + 1$, halla $(f \circ g)(x)$.
+5. Halla las raíces de $f(x) = x^2 - 9$.
 
 ### Nivel 2 · Evaluación y tipos
 
@@ -127,24 +115,24 @@ A veces hay que **restringir el dominio**: $f(x) = x^2$ no es inyectiva en $\mat
 11. Con $f(x) = x + 3$ y $g(x) = 2x$, halla $(f \circ g)(x)$.
 12. Con $f(x) = x + 3$ y $g(x) = 2x$, halla $(g \circ f)(x)$.
 13. Con $f(x) = x^2$ y $g(x) = x + 1$, halla $(f \circ g)(x)$.
-14. Con $f(x) = \sqrt{x}$ y $g(x) = x - 4$, halla el dominio de $f \circ g$.
+14. Con $f(x) = x^2$ y $g(x) = x - 4$, halla $(f \circ g)(x)$.
 15. Con $f(x) = 2x$ y $g(x) = x - 1$, calcula $(f \circ g)(3)$.
 
-### Nivel 4 · Inversa y transformaciones
+### Nivel 4 · Inversa y cuadráticas
 
 16. Halla la inversa de $f(x) = x - 7$.
 17. Halla la inversa de $f(x) = 4x + 1$.
 18. Halla la inversa de $f(x) = \dfrac{x - 3}{2}$.
 19. Halla el vértice de $g(x) = (x + 1)^2 - 4$.
-20. Halla el dominio y el rango de $g(x) = \sqrt{x} + 2$.
+20. Halla el vértice de $g(x) = (x + 1)^2 - 4$.
 
 ## Respuestas
 
-1. $\mathbb{R} \setminus \{4\}$
-2. $[2, \infty)$
-3. $[-3, \infty)$
-4. $[-1, 0) \cup (0, \infty)$
-5. $[0, \infty)$
+1. $f(0) = 1$, $f(2) = 5$
+2. $(1, -4)$
+3. Lineal (afín), pendiente $-3$
+4. $(f \circ g)(x) = (x + 1)^2$
+5. $x = \pm 3$
 6. $f(4) = 11$
 7. Pendiente $2$, corte en $-3$
 8. $x = -2$ y $x = 2$
@@ -153,10 +141,10 @@ A veces hay que **restringir el dominio**: $f(x) = x^2$ no es inyectiva en $\mat
 11. $(f \circ g)(x) = 2x + 3$
 12. $(g \circ f)(x) = 2x + 6$
 13. $(f \circ g)(x) = (x + 1)^2$
-14. $[4, \infty)$
+14. $(f \circ g)(x) = (x - 4)^2$
 15. $(f \circ g)(3) = 4$
 16. $f^{-1}(x) = x + 7$
 17. $f^{-1}(x) = \dfrac{x - 1}{4}$
 18. $f^{-1}(x) = 2x + 3$
 19. $(-1, -4)$
-20. Dominio $[0, \infty)$, rango $[2, \infty)$
+20. $(-1, -4)$

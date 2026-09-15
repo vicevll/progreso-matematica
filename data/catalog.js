@@ -2,7 +2,7 @@ window.CATALOGO = [
   {
     id: "algebra-escolar",
     nombre: "Álgebra escolar y fundamentos",
-    descripcion: "Bases del álgebra, los números y la demostración: el lenguaje con el que se escribe toda la matemática.",
+    descripcion: "Bases del álgebra y los números: el lenguaje con el que se escribe toda la matemática.",
     color: "#f59e0b",
     temas: [
       {
@@ -27,7 +27,7 @@ window.CATALOGO = [
         id: "algebra-elemental",
         nombre: "Álgebra elemental",
         nivel: "10°–11°",
-        descripcion: "Expresiones, factorización, ecuaciones e inecuaciones."
+        descripcion: "Expresiones, factorización y productos notables."
       },
       {
         id: "numeros-reales-complejos",
@@ -39,13 +39,7 @@ window.CATALOGO = [
         id: "sucesiones-sumatorias",
         nombre: "Sucesiones y sumatorias",
         nivel: "10°–11°",
-        descripcion: "Progresiones, notación sigma, inducción matemática."
-      },
-      {
-        id: "demostracion",
-        nombre: "Métodos de demostración",
-        nivel: "10°–11° / Univ 1",
-        descripcion: "Directa, contrapositiva, contradicción e inducción."
+        descripcion: "Progresiones, notación sigma y límites de sucesiones."
       }
     ]
   },
@@ -59,7 +53,7 @@ window.CATALOGO = [
         id: "funciones",
         nombre: "Funciones",
         nivel: "10°–11°",
-        descripcion: "Dominio, rango, composición, inversa y tipos básicos."
+        descripcion: "Composición, inversa y tipos básicos."
       },
       {
         id: "exp-log",
@@ -103,19 +97,13 @@ window.CATALOGO = [
         id: "series",
         nombre: "Sucesiones y series infinitas",
         nivel: "Univ 2",
-        descripcion: "Criterios de convergencia, Taylor, potencias y Fourier."
+        descripcion: "Criterios de convergencia, Taylor y potencias."
       },
       {
         id: "edo",
         nombre: "Ecuaciones diferenciales ordinarias",
         nivel: "Univ 2–3",
         descripcion: "Primer orden, lineales, sistemas y transformada de Laplace."
-      },
-      {
-        id: "edp",
-        nombre: "Ecuaciones en derivadas parciales",
-        nivel: "Univ 4–5",
-        descripcion: "Ecuaciones de calor, onda y Laplace; métodos de solución."
       }
     ]
   },

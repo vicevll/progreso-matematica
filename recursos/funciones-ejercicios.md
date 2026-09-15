@@ -8,12 +8,6 @@
 
 Una función asigna a cada entrada una única salida. Se escribe $f: A \to B$ con $y = f(x)$, donde $A$ es el dominio y $B$ el codominio.
 
-### Dominio
-
-- $\dfrac{1}{g(x)}$ exige $g(x) \neq 0$.
-- $\sqrt{g(x)}$ (raíz par) exige $g(x) \geq 0$.
-- $\ln(g(x))$ exige $g(x) > 0$.
-
 ### Composición
 
 $$(f \circ g)(x) = f\big(g(x)\big), \qquad (g \circ f)(x) = g\big(f(x)\big)$$
@@ -24,17 +18,17 @@ $f^{-1}$ existe si $f$ es inyectiva y cumple $f\big(f^{-1}(x)\big) = x$. Se obti
 
 ### Gráficas de funciones básicas
 
-:::fig func f=x xmin=-5 xmax=5 label=y%20%3D%20x caption=Función%20lineal%3A%20y%20%3D%20x
+:::fig func f=x xmin=-5 xmax=5 label=y%20%3D%20x caption=Función%20lineal%3A%20%24y%3Dx%24
 
-:::fig func f=2*x+1 xmin=-5 xmax=5 label=y%20%3D%202x%20%2B%201 caption=Función%20afín%3A%20y%20%3D%202x%20%2B%201
+:::fig func f=2*x+1 xmin=-5 xmax=5 label=y%20%3D%202x%2B1 caption=Función%20afín%3A%20%24y%3D2x%2B1%24
 
-:::fig func f=x^2 xmin=-4 xmax=4 label=y%20%3D%20x^2 caption=Parábola%3A%20y%20%3D%20x^2
+:::fig func f=x^2 xmin=-4 xmax=4 label=y%20%3D%20x%C2%B2 caption=Parábola%3A%20%24y%3Dx%5E2%24
 
-:::fig func f=abs(x) xmin=-4 xmax=4 label=y%20%3D%20%7Cx%7C caption=Valor%20absoluto
+:::fig func f=abs(x) xmin=-4 xmax=4 label=y%20%3D%20%7Cx%7C caption=Valor%20absoluto%3A%20%24y%3D%7Cx%7C%24
 
-:::fig func f=sqrt(x) xmin=0 xmax=6 label=y%20%3D%20sqrt(x) caption=Raíz%20cuadrada
+:::fig func f=sqrt(x) xmin=0 xmax=6 label=y%20%3D%20%E2%88%9Ax caption=Raíz%20cuadrada%3A%20%24y%3D%5Csqrt%7Bx%7D%24
 
-:::fig func f=1/x xmin=-5 xmax=5 ymin=-5 ymax=5 label=y%20%3D%201%2Fx caption=Racional
+:::fig func f=1/x xmin=-5 xmax=5 ymin=-5 ymax=5 label=y%20%3D%201%2Fx caption=Racional%3A%20%24y%3D%5Cfrac%7B1%7D%7Bx%7D%24
 
 ### Tipos de funciones
 
@@ -53,18 +47,18 @@ $f^{-1}$ existe si $f$ es inyectiva y cumple $f\big(f^{-1}(x)\big) = x$. Se obti
 
 ## Ejercicios (50)
 
-### Nivel 1 · Dominio y rango
+### Nivel 1 · Evaluación y tipos
 
-1. Halla el dominio de $f(x) = \dfrac{1}{x - 3}$.
-2. Halla el dominio de $f(x) = \sqrt{x - 5}$.
-3. Halla el dominio de $f(x) = \sqrt{2 - x}$.
-4. Halla el dominio de $f(x) = \dfrac{1}{\sqrt{x - 1}}$.
-5. Halla el dominio de $f(x) = \ln(x + 4)$.
-6. Halla el rango de $f(x) = x^2 + 2$.
-7. Halla el rango de $f(x) = \sqrt{x - 1}$.
-8. Halla el rango de $f(x) = -x^2$.
-9. Halla el dominio de $f(x) = \dfrac{x}{x^2 - 9}$.
-10. Halla el rango de $f(x) = \dfrac{1}{x}$.
+1. Si $f(x) = 2x - 1$, calcula $f(3)$ y $f(-2)$.
+2. Halla el vértice de $f(x) = x^2 - 6x + 5$.
+3. Clasifica $f(x) = 5x - 3$ y da su pendiente.
+4. Con $f(x) = x^2$ y $g(x) = x + 1$, halla $(f \circ g)(x)$.
+5. Con $f(x) = x^2$ y $g(x) = x + 1$, halla $(g \circ f)(x)$.
+6. Halla las raíces de $f(x) = x^2 - 25$.
+7. Halla el vértice de $f(x) = x^2 + 4x + 1$.
+8. Clasifica $f(x) = 4$ (tipo de función).
+9. Si $f(x) = x^2 + 3$, calcula $f(0)$ y $f(-2)$.
+10. Halla las raíces de $f(x) = x^2 - x - 6$.
 
 ### Nivel 2 · Evaluación, gráficas y tipos
 
@@ -85,7 +79,7 @@ $f^{-1}$ existe si $f$ es inyectiva y cumple $f\big(f^{-1}(x)\big) = x$. Se obti
 22. Con $f(x) = x + 1$ y $g(x) = 3x$, halla $(g \circ f)(x)$.
 23. Con $f(x) = x^2$ y $g(x) = x - 2$, halla $(f \circ g)(x)$.
 24. Con $f(x) = x^2$ y $g(x) = x - 2$, halla $(g \circ f)(x)$.
-25. Con $f(x) = \sqrt{x}$ y $g(x) = x - 3$, halla el dominio de $f \circ g$.
+25. Con $f(x) = x^2$ y $g(x) = x - 3$, halla $(f \circ g)(x)$.
 26. Con $f(x) = 2x - 1$ y $g(x) = x^2$, calcula $(f \circ g)(2)$.
 27. Con $f(x) = 2x - 1$ y $g(x) = x^2$, calcula $(g \circ f)(2)$.
 28. Con $f(x) = x + 2$ y $g(x) = \dfrac{1}{x}$, halla $(f \circ g)(x)$.
@@ -111,9 +105,9 @@ $f^{-1}$ existe si $f$ es inyectiva y cumple $f\big(f^{-1}(x)\big) = x$. Se obti
 42. Halla el vértice de $f(x) = (x - 2)^2$.
 43. Halla las raíces de $f(x) = x^2 - 4$.
 44. Halla el vértice de $g(x) = (x - 2)^2 + 3$.
-45. Halla el dominio de $g(x) = 2\sqrt{x}$.
-46. Halla el dominio de $g(x) = \sqrt{x + 1}$.
-47. Halla el rango de $g(x) = -\sqrt{x}$.
+45. Halla el vértice de $f(x) = 2x^2 - 4x$.
+46. Halla las raíces de $f(x) = x^2 + 2x - 8$.
+47. Halla el vértice de $g(x) = x^2 - 2x + 1$.
 48. ¿Es inyectiva $f(x) = x^2$ restringida a $[0, \infty)$?
 49. ¿Es sobreyectiva $f(x) = x^2$ con $f: \mathbb{R} \to \mathbb{R}$?
 50. ¿Es biyectiva $f(x) = x^3$ con $f: \mathbb{R} \to \mathbb{R}$?
@@ -121,16 +115,16 @@ $f^{-1}$ existe si $f$ es inyectiva y cumple $f\big(f^{-1}(x)\big) = x$. Se obti
 ## Solucionario · resultados
 
 <div class="results">
-<div class="r"><b>01</b> $\mathbb{R} \setminus \{3\}$</div>
-<div class="r"><b>02</b> $[5, \infty)$</div>
-<div class="r"><b>03</b> $(-\infty, 2]$</div>
-<div class="r"><b>04</b> $(1, \infty)$</div>
-<div class="r"><b>05</b> $(-4, \infty)$</div>
-<div class="r"><b>06</b> $[2, \infty)$</div>
-<div class="r"><b>07</b> $[0, \infty)$</div>
-<div class="r"><b>08</b> $(-\infty, 0]$</div>
-<div class="r"><b>09</b> $\mathbb{R} \setminus \{-3, 3\}$</div>
-<div class="r"><b>10</b> $\mathbb{R} \setminus \{0\}$</div>
+<div class="r"><b>01</b> $f(3) = 5$, $f(-2) = -5$</div>
+<div class="r"><b>02</b> $(3, -4)$</div>
+<div class="r"><b>03</b> Lineal (afín), pendiente $5$</div>
+<div class="r"><b>04</b> $(f \circ g)(x) = (x + 1)^2$</div>
+<div class="r"><b>05</b> $(g \circ f)(x) = x^2 + 1$</div>
+<div class="r"><b>06</b> $x = \pm 5$</div>
+<div class="r"><b>07</b> $(-2, -3)$</div>
+<div class="r"><b>08</b> Constante</div>
+<div class="r"><b>09</b> $f(0) = 3$, $f(-2) = 7$</div>
+<div class="r"><b>10</b> $x = 3$ y $x = -2$</div>
 <div class="r"><b>11</b> $f(3) = 5$, $f(-2) = -5$</div>
 <div class="r"><b>12</b> $1$, $5$, $5$</div>
 <div class="r"><b>13</b> Pendiente $3$, corte en $-2$</div>
@@ -145,7 +139,7 @@ $f^{-1}$ existe si $f$ es inyectiva y cumple $f\big(f^{-1}(x)\big) = x$. Se obti
 <div class="r"><b>22</b> $(g \circ f)(x) = 3x + 3$</div>
 <div class="r"><b>23</b> $(f \circ g)(x) = (x - 2)^2$</div>
 <div class="r"><b>24</b> $(g \circ f)(x) = x^2 - 2$</div>
-<div class="r"><b>25</b> $[3, \infty)$</div>
+<div class="r"><b>25</b> $(f \circ g)(x) = (x - 3)^2$</div>
 <div class="r"><b>26</b> $7$</div>
 <div class="r"><b>27</b> $9$</div>
 <div class="r"><b>28</b> $(f \circ g)(x) = \dfrac{1}{x} + 2$</div>
@@ -165,9 +159,9 @@ $f^{-1}$ existe si $f$ es inyectiva y cumple $f\big(f^{-1}(x)\big) = x$. Se obti
 <div class="r"><b>42</b> $(2, 0)$</div>
 <div class="r"><b>43</b> $x = \pm 2$</div>
 <div class="r"><b>44</b> $(2, 3)$</div>
-<div class="r"><b>45</b> $[0, \infty)$</div>
-<div class="r"><b>46</b> $[-1, \infty)$</div>
-<div class="r"><b>47</b> $(-\infty, 0]$</div>
+<div class="r"><b>45</b> $(1, -2)$</div>
+<div class="r"><b>46</b> $x = 2$ y $x = -4$</div>
+<div class="r"><b>47</b> $(1, 0)$</div>
 <div class="r"><b>48</b> Sí</div>
 <div class="r"><b>49</b> No</div>
 <div class="r"><b>50</b> Sí</div>

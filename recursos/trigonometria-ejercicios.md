@@ -109,11 +109,11 @@ $$y = A\operatorname{sen}\big(B(x - C)\big) + D, \qquad \text{amplitud} = |A|, \
 46. Un triángulo tiene lados $4$, $5$ y $6$. Halla el ángulo opuesto al lado $6$.
 47. En un triángulo, $A = 40°$, $B = 60°$ y $c = 12$. Halla $a$.
 
-### Gráficas
+### Triángulos fáciles
 
-48. Para $y = 2\operatorname{sen}(4x)$, indica amplitud y periodo.
-49. Halla el rango de $y = -3\cos x + 1$.
-50. Para $y = 5\operatorname{sen}(\pi x - \pi)$, indica amplitud, periodo y desfase.
+48. En un triángulo rectángulo, un cateto mide $6$ y la hipotenusa $10$. Halla el otro cateto y el seno del ángulo agudo opuesto al cateto de $6$.
+49. Halla la altura de un árbol si su sombra mide $12$ m y el ángulo de elevación del sol es de $45°$.
+50. En un triángulo rectángulo, los catetos miden $5$ y $12$. Halla la hipotenusa y las razones seno y coseno del ángulo agudo mayor.
 
 ## Solucionario · resultados
 
@@ -165,7 +165,7 @@ $$y = A\operatorname{sen}\big(B(x - C)\big) + D, \qquad \text{amplitud} = |A|, \
 <div class="r"><b>45</b> $c = \sqrt{39} \approx 6.24$</div>
 <div class="r"><b>46</b> $C = \arccos\dfrac{1}{8} \approx 82.82°$</div>
 <div class="r"><b>47</b> $a = \dfrac{12\operatorname{sen}40°}{\operatorname{sen}80°} \approx 7.83$</div>
-<div class="r"><b>48</b> amplitud $2$, periodo $\dfrac{\pi}{2}$</div>
-<div class="r"><b>49</b> $[-2, 4]$</div>
-<div class="r"><b>50</b> amplitud $5$, periodo $2$, desfase $1$ a la derecha</div>
+<div class="r"><b>48</b> cateto $8$; $\operatorname{sen} = \dfrac{3}{5}$</div>
+<div class="r"><b>49</b> $12$ m</div>
+<div class="r"><b>50</b> hipotenusa $13$; $\operatorname{sen} = \dfrac{12}{13}$, $\cos = \dfrac{5}{13}$</div>
 </div>

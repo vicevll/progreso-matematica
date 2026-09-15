@@ -134,20 +134,6 @@ La ley de cosenos generaliza el teorema de Pitágoras: si $C = 90°$, entonces $
 
 $$c^2 = 49 + 100 - 2(7)(10)\left(\frac{1}{2}\right) = 79 \;\Rightarrow\; c \approx 8.89$$
 
-## Gráficas de las funciones trigonométricas
-
-- $y = \operatorname{sen}x$: dominio $\mathbb{R}$, rango $[-1, 1]$, periodo $2\pi$, cruza el origen.
-- $y = \cos x$: igual que el seno, pero empieza en el máximo $(0, 1)$.
-- $y = \tan x$: periodo $\pi$, asíntotas verticales en $x = \frac{\pi}{2} + k\pi$, rango $\mathbb{R}$.
-
-La forma general es
-
-$$y = A\operatorname{sen}\big(B(x - C)\big) + D$$
-
-donde $|A|$ es la **amplitud**, $\dfrac{2\pi}{|B|}$ el **periodo**, $C$ el **desfase** y $D$ la **línea media**.
-
-**Mini-ejemplo.** Para $y = 3\operatorname{sen}(2x - \pi) + 1$: amplitud $3$, periodo $\pi$, desfase $\frac{\pi}{2}$ a la derecha y línea media $y = 1$; el rango es $[-2, 4]$.
-
 ## Ejercicios (20)
 
 ### Nivel 1
@@ -163,7 +149,7 @@ donde $|A|$ es la **amplitud**, $\dfrac{2\pi}{|B|}$ el **periodo**, $C$ el **des
 6. Simplifica $\dfrac{1 - \cos^2\theta}{\operatorname{sen}\theta}$.
 7. Si $\cos\theta = \dfrac{3}{5}$ y $\theta$ está en el cuarto cuadrante, halla $\operatorname{sen}\theta$ y $\tan\theta$.
 8. Calcula $\operatorname{sen}15°$ con la identidad de la diferencia.
-9. Describe la amplitud y el periodo de $y = 4\operatorname{sen}(3x)$.
+9. Un triángulo rectángulo tiene catetos $9$ y $12$. Halla la hipotenusa y la tangente del ángulo opuesto al cateto de $9$.
 10. Resuelve $2\operatorname{sen}\theta - 1 = 0$ en $[0, 2\pi)$.
 
 ### Nivel 3
@@ -180,7 +166,7 @@ donde $|A|$ es la **amplitud**, $\dfrac{2\pi}{|B|}$ el **periodo**, $C$ el **des
 17. Verifica la identidad $\dfrac{\operatorname{sen}^2\theta}{1 - \cos\theta} = 1 + \cos\theta$.
 18. Calcula $\operatorname{sen}75°$ con la identidad de la suma.
 19. Desde una distancia de $30$ m se observa la cima de un edificio con un ángulo de elevación de $60°$. Halla la altura.
-20. Para $y = -3\cos(2x) + 2$, indica amplitud, periodo y rango.
+20. La sombra de un poste mide $15$ m y el ángulo de elevación del sol es de $30°$. Halla la altura del poste.
 
 ## Respuestas
 
@@ -192,7 +178,7 @@ donde $|A|$ es la **amplitud**, $\dfrac{2\pi}{|B|}$ el **periodo**, $C$ el **des
 6. $\operatorname{sen}\theta$.
 7. $\operatorname{sen}\theta = -\dfrac{4}{5}$, $\tan\theta = -\dfrac{4}{3}$.
 8. $\dfrac{\sqrt{6} - \sqrt{2}}{4}$.
-9. Amplitud $4$, periodo $\dfrac{2\pi}{3}$.
+9. Hipotenusa $15$; $\tan = \dfrac{3}{4}$.
 10. $\theta = \dfrac{\pi}{6}$ y $\theta = \dfrac{5\pi}{6}$.
 11. $\theta = \dfrac{\pi}{3}, \dfrac{2\pi}{3}, \dfrac{4\pi}{3}, \dfrac{5\pi}{3}$.
 12. $\operatorname{sen}(2x) = \dfrac{24}{25}$.
@@ -203,4 +189,4 @@ donde $|A|$ es la **amplitud**, $\dfrac{2\pi}{|B|}$ el **periodo**, $C$ el **des
 17. Válida: $\operatorname{sen}^2\theta = (1 - \cos\theta)(1 + \cos\theta)$.
 18. $\dfrac{\sqrt{6} + \sqrt{2}}{4}$.
 19. $h = 30\sqrt{3} \approx 51.96$ m.
-20. Amplitud $3$, periodo $\pi$, rango $[-1, 5]$.
+20. $h = 15\tan 30° = 5\sqrt{3} \approx 8.66$ m.

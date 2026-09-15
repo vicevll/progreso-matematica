@@ -49,7 +49,7 @@ as $$
       -- Cálculo y temas premium: requieren sesión iniciada
       when p_area = 'calculo' then
         auth.uid() is not null
-      when p_tema in ('trigonometria','numeros-reales-complejos','demostracion','polinomios') then
+      when p_tema in ('trigonometria','numeros-reales-complejos','sucesiones-sumatorias','algebra-elemental','inecuaciones','exp-log') then
         auth.uid() is not null
       -- Todo lo demás es público
       else true
