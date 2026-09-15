@@ -1859,3 +1859,209 @@ a {
     animation-duration: 0.01ms !important;
   }
 }
+
+/* ---------- Tipografía de inicio (subrayados y textos clave) ---------- */
+
+.hero-simple .hero-desc {
+  font-size: 1.18rem;
+  line-height: 1.45;
+}
+
+.home-note {
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+/* ---------- Responsive completo ---------- */
+
+.topbar-right {
+  flex-wrap: wrap;
+}
+
+.progress-row {
+  flex-wrap: wrap;
+}
+
+.hero-progress .label {
+  white-space: normal;
+  line-height: 1.4;
+}
+
+.reco-actions,
+.update-actions,
+.modal-actions {
+  flex-wrap: wrap;
+}
+
+.continue-card {
+  max-width: 100%;
+}
+
+@media (max-width: 780px) {
+  .hero-simple {
+    padding: 60px 0 44px;
+  }
+
+  .hero-simple .hero-desc {
+    font-size: 1.1rem;
+  }
+
+  .lesson-section {
+    padding: 26px 20px;
+  }
+
+  .course-hero,
+  .area-header {
+    padding: 24px 20px;
+  }
+
+  .recursos {
+    padding: 18px 16px;
+  }
+
+  .reco {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .area-grid,
+  .topic-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero-simple {
+    padding: 46px 0 36px;
+  }
+
+  .hero-simple .hero-mark img {
+    width: 92%;
+  }
+
+  .hero-simple .hero-desc {
+    font-size: 1.05rem;
+  }
+
+  .home-note {
+    font-size: 0.8rem;
+  }
+
+  .area-card {
+    min-height: 150px;
+    padding: 16px;
+  }
+
+  .topic-card {
+    min-height: 0;
+    padding: 14px;
+  }
+
+  .lesson-section {
+    padding: 20px 14px;
+  }
+
+  .lesson-body {
+    font-size: 0.92rem;
+  }
+
+  .google-btn {
+    padding: 7px 10px;
+    font-size: 0.55rem;
+  }
+
+  .btn {
+    padding: 8px 11px;
+  }
+
+  .modal-box {
+    padding: 20px 16px;
+  }
+
+  .course-hero h1,
+  .area-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .continue-card {
+    width: 100%;
+  }
+
+  .locked-view {
+    padding: 40px 14px;
+  }
+
+  .locked-view h1 {
+    font-size: 1.5rem;
+  }
+
+  .recurso-card {
+    padding: 12px;
+  }
+
+  .hero-progress {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .hero-progress .bar {
+    width: 100%;
+  }
+
+  .nav-row {
+    flex-direction: column;
+  }
+
+  .nav-row .btn {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .lesson-head {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 420px) {
+  .eyebrow {
+    font-size: 0.55rem;
+  }
+
+  .section-title {
+    font-size: 0.62rem;
+  }
+
+  .topic-progress {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .reco-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .reco-btn {
+    text-align: center;
+  }
+
+  .recurso-actions {
+    flex-wrap: wrap;
+  }
+
+  .lesson-lock {
+    align-items: stretch;
+  }
+
+  .recursos-head h2 {
+    font-size: 1rem;
+  }
+
+  .modal-kicker,
+  .update-kicker {
+    letter-spacing: 0.1em;
+  }
+}

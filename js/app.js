@@ -711,7 +711,7 @@
           '<button class="reco-shuffle" type="button" title="Ver otra recomendación">Ver otra ↻</button>' +
         "</div>" +
         '<a class="reco-title" href="#/curso/' + guide.areaId + "/" + guide.temaId + '">' + esc(guide.temaNombre) + "</a>" +
-        '<p class="reco-meta">' + esc(guide.areaNombre) + " · " + esc(guide.nivel) + "</p>" +
+        '<p class="reco-meta">' + esc(guide.areaNombre) + "</p>" +
         '<div class="reco-actions">' +
           '<a class="reco-btn" href="' + guide.simple.archivo + '" download>Guía simple · 20 ejercicios</a>' +
           '<a class="reco-btn" href="' + guide.ejercicios.archivo + '" download>Cuaderno · 50 ejercicios</a>' +
@@ -849,7 +849,6 @@
           '<div class="topic-num">' + (cDone ? "✓" : i + 1) + "</div>" +
           '<div class="topic-body">' +
             "<h3>" + esc(tema.nombre) +
-              '<span class="badge nivel">' + esc(tema.nivel) + "</span>" +
               lockBadge +
             "</h3>" +
             "<p>" + esc(tema.descripcion) + "</p>" +
@@ -1030,7 +1029,6 @@
         "<h1>" + esc(tema.nombre) + "</h1>" +
         '<div class="course-badges">' +
           '<span class="badge">' + esc(area.nombre) + "</span>" +
-          '<span class="badge nivel">' + esc(tema.nivel) + "</span>" +
         "</div>" +
         '<p class="course-desc">' + esc(tema.descripcion) + "</p>" +
         '<div class="progress-row">' +
