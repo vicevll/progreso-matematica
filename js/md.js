@@ -60,13 +60,13 @@ window.mdToHtml = function (md) {
     if (fig) {
       closeList();
       var attrs = "";
-      (fig[2] || "").split(/\s+/).forEach(function (pair) {
+(fig[2] || "").split(/\s+/).forEach(function (pair) {
         if (!pair) return;
         var kv = pair.split("=");
         if (!kv[0]) return;
-        var value = String(kv[1] || "").replace(/\+/g, " ");
+        var value = String(kv.slice(1).join("="));
         try { value = decodeURIComponent(value); } catch (e) { /* dejar tal cual */ }
-        attrs += " data-" + kv[0] + '="' + value.replace(/"/g, "&quot;") + '"';
+        attrs += ' data-' + kv[0] + '="' + value.replace(/"/g, "&quot;") + '"';
       });
       html.push('<figure class="fig" data-fig="' + fig[1] + '"' + attrs + "></figure>");
       continue;

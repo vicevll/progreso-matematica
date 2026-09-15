@@ -54,30 +54,23 @@ Estas funciones son los ladrillos de las demás y conviene reconocerlas de inmed
 
 **Sus gráficas.** La **lineal** $y = mx$ y la **afín** $y = mx + b$ son rectas: $m$ es la pendiente y $b$ el corte con el eje $y$.
 
-:::fig func f=x xmin=-5 xmax=5 label=y+=+x caption=Función+lineal%3A+y+%3D+x
+:::fig func f=x xmin=-5 xmax=5 label=y%20%3D%20x caption=Función%20lineal%3A%20y%20%3D%20x
 
-:::fig func f=2*x+1 xmin=-5 xmax=5 label=y+=+2x+%2B+1 caption=Función+afín%3A+y+%3D+2x+%2B+1
+:::fig func f=2*x+1 xmin=-5 xmax=5 label=y%20%3D%202x%20%2B%201 caption=Función%20afín%3A%20y%20%3D%202x%20%2B%201
 
 La **cuadrática** $y = ax^2 + bx + c$ dibuja una parábola: abre hacia arriba si $a > 0$, hacia abajo si $a < 0$, con vértice en $x = -\dfrac{b}{2a}$.
 
-:::fig func f=x^2 xmin=-4 xmax=4 label=y+=+x^2 caption=Parábola%3A+y+%3D+x^2
+:::fig func f=x^2 xmin=-4 xmax=4 label=y%20%3D%20x^2 caption=Parábola%3A%20y%20%3D%20x^2
 
-:::fig func f=x^2-4*x+3 xmin=-2 xmax=6 label=y+=+x^2-4x+3 caption=Parábola+con+raíces+en+1+y+3
+:::fig func f=x^2-4*x+3 xmin=-2 xmax=6 label=y%20%3D%20x^2-4x%2B3 caption=Parábola%20con%20raíces%20en%201%20y%203
 
-## Transformaciones de gráficas
+Otras básicas: el **valor absoluto** $y = |x|$ forma una V, la **raíz cuadrada** $y = \sqrt{x}$ crece y se aplana, y la **racional** $y = \dfrac{1}{x}$ es una hipérbola con asíntotas en los ejes.
 
-Partiendo de una gráfica base se aplica:
+:::fig func f=abs(x) xmin=-4 xmax=4 label=y%20%3D%20%7Cx%7C caption=Valor%20absoluto%3A%20y%20%3D%20%7Cx%7C
 
-$$g(x) = a \cdot f\big(b(x - h)\big) + k$$
+:::fig func f=sqrt(x) xmin=0 xmax=6 label=y%20%3D%20sqrt(x) caption=Raíz%20cuadrada%3A%20y%20%3D%20%CE%9Ax
 
-- $+ k$: desplaza verticalmente $k$ unidades.
-- $x - h$: desplaza horizontalmente $h$ unidades (a la derecha si $h > 0$).
-- $a$: estira verticalmente si $|a| > 1$, comprime si $0 < |a| < 1$; si $a < 0$ refleja sobre el eje $x$.
-- $b$: comprime horizontalmente si $|b| > 1$; si $b < 0$ refleja sobre el eje $y$.
-
-**Mini-ejemplo.** $g(x) = (x - 2)^2 + 3$ es la parábola $x^2$ desplazada 2 a la derecha y 3 arriba; su vértice es $(2, 3)$.
-
-**Mini-ejemplo.** $g(x) = -\sqrt{x + 1}$ desplaza la raíz 1 a la izquierda y la refleja; dominio $[-1, \infty)$, rango $(-\infty, 0]$.
+:::fig func f=1/x xmin=-5 xmax=5 ymin=-5 ymax=5 label=y%20%3D%201%2Fx caption=Racional%3A%20y%20%3D%201%2Fx
 
 ## Composición de funciones
 
@@ -143,7 +136,7 @@ A veces hay que **restringir el dominio**: $f(x) = x^2$ no es inyectiva en $\mat
 17. Halla la inversa de $f(x) = 4x + 1$.
 18. Halla la inversa de $f(x) = \dfrac{x - 3}{2}$.
 19. Halla el vértice de $g(x) = (x + 1)^2 - 4$.
-20. Describe la transformación de $g(x) = \sqrt{x} + 2$ respecto a $\sqrt{x}$.
+20. Halla el dominio y el rango de $g(x) = \sqrt{x} + 2$.
 
 ## Respuestas
 
@@ -166,4 +159,4 @@ A veces hay que **restringir el dominio**: $f(x) = x^2$ no es inyectiva en $\mat
 17. $f^{-1}(x) = \dfrac{x - 1}{4}$
 18. $f^{-1}(x) = 2x + 3$
 19. $(-1, -4)$
-20. La gráfica de $\sqrt{x}$ desplazada 2 unidades hacia arriba.
+20. Dominio $[0, \infty)$, rango $[2, \infty)$

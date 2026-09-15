@@ -1821,6 +1821,23 @@ a {
   color: var(--warn, #e8a13c);
 }
 
+.update-banner.update-info {
+  border-top: 2px solid var(--accent);
+}
+
+.update-banner.update-info .update-kicker {
+  color: var(--accent);
+}
+
+.lesson-lock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
 @media (max-width: 640px) {
   .update-banner {
     right: 16px;

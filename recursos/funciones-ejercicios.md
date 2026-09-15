@@ -22,19 +22,19 @@ $$(f \circ g)(x) = f\big(g(x)\big), \qquad (g \circ f)(x) = g\big(f(x)\big)$$
 
 $f^{-1}$ existe si $f$ es inyectiva y cumple $f\big(f^{-1}(x)\big) = x$. Se obtiene despejando $y$ tras intercambiar $x$ y $y$.
 
-### Transformaciones
-
-$$g(x) = a \cdot f\big(b(x - h)\big) + k$$
-
-$k$ desplaza vertical; $h$ desplaza horizontal; $a$ estira o refleja en vertical; $b$ comprime o refleja en horizontal.
-
 ### Gráficas de funciones básicas
 
-:::fig func f=x xmin=-5 xmax=5 label=y+=+x caption=Función+lineal%3A+y+%3D+x
+:::fig func f=x xmin=-5 xmax=5 label=y%20%3D%20x caption=Función%20lineal%3A%20y%20%3D%20x
 
-:::fig func f=2*x+1 xmin=-5 xmax=5 label=y+=+2x+%2B+1 caption=Función+afín%3A+y+%3D+2x+%2B+1
+:::fig func f=2*x+1 xmin=-5 xmax=5 label=y%20%3D%202x%20%2B%201 caption=Función%20afín%3A%20y%20%3D%202x%20%2B%201
 
-:::fig func f=x^2 xmin=-4 xmax=4 label=y+=+x^2 caption=Parábola%3A+y+%3D+x^2
+:::fig func f=x^2 xmin=-4 xmax=4 label=y%20%3D%20x^2 caption=Parábola%3A%20y%20%3D%20x^2
+
+:::fig func f=abs(x) xmin=-4 xmax=4 label=y%20%3D%20%7Cx%7C caption=Valor%20absoluto
+
+:::fig func f=sqrt(x) xmin=0 xmax=6 label=y%20%3D%20sqrt(x) caption=Raíz%20cuadrada
+
+:::fig func f=1/x xmin=-5 xmax=5 ymin=-5 ymax=5 label=y%20%3D%201%2Fx caption=Racional
 
 ### Tipos de funciones
 
@@ -105,13 +105,13 @@ $k$ desplaza vertical; $h$ desplaza horizontal; $a$ estira o refleja en vertical
 39. Halla la inversa de $f(x) = 5x + 2$.
 40. Halla la inversa de $f(x) = \dfrac{2x}{x + 1}$.
 
-### Nivel 5 · Transformaciones y clasificación
+### Nivel 5 · Cuadráticas y clasificación
 
-41. Describe la transformación de $g(x) = x^2 + 3$ respecto a $x^2$.
-42. Describe la transformación de $g(x) = (x - 2)^2$ respecto a $x^2$.
-43. Describe la transformación de $g(x) = -x^2$ respecto a $x^2$.
+41. Halla el vértice de $f(x) = x^2 + 3$.
+42. Halla el vértice de $f(x) = (x - 2)^2$.
+43. Halla las raíces de $f(x) = x^2 - 4$.
 44. Halla el vértice de $g(x) = (x - 2)^2 + 3$.
-45. Describe el efecto del factor en $g(x) = 2\sqrt{x}$ respecto a $\sqrt{x}$.
+45. Halla el dominio de $g(x) = 2\sqrt{x}$.
 46. Halla el dominio de $g(x) = \sqrt{x + 1}$.
 47. Halla el rango de $g(x) = -\sqrt{x}$.
 48. ¿Es inyectiva $f(x) = x^2$ restringida a $[0, \infty)$?
@@ -161,11 +161,11 @@ $k$ desplaza vertical; $h$ desplaza horizontal; $a$ estira o refleja en vertical
 <div class="r"><b>38</b> $f^{-1}(x) = x^2$, $x \geq 0$</div>
 <div class="r"><b>39</b> $f^{-1}(x) = \dfrac{x - 2}{5}$</div>
 <div class="r"><b>40</b> $f^{-1}(x) = \dfrac{x}{2 - x}$</div>
-<div class="r"><b>41</b> Desplazada 3 unidades hacia arriba</div>
-<div class="r"><b>42</b> Desplazada 2 unidades a la derecha</div>
-<div class="r"><b>43</b> Reflejada sobre el eje $x$</div>
+<div class="r"><b>41</b> $(0, 3)$</div>
+<div class="r"><b>42</b> $(2, 0)$</div>
+<div class="r"><b>43</b> $x = \pm 2$</div>
 <div class="r"><b>44</b> $(2, 3)$</div>
-<div class="r"><b>45</b> Estiramiento vertical de factor $2$</div>
+<div class="r"><b>45</b> $[0, \infty)$</div>
 <div class="r"><b>46</b> $[-1, \infty)$</div>
 <div class="r"><b>47</b> $(-\infty, 0]$</div>
 <div class="r"><b>48</b> Sí</div>

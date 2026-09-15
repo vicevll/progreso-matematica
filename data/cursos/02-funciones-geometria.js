@@ -54,19 +54,15 @@ Estas funciones son los ladrillos de todas las demás; conviene reconocerlas al 
 - **Exponencial y logarítmica:** crecimiento rápido y su inversa (en otro curso).
 - **Por partes:** reglas distintas en intervalos distintos, como $f(x) = |x|$.
 
-## Transformaciones de gráficas
-Conocer la gráfica base y aplicar transformaciones evita tabular cientos de puntos:
+:::fig func f=x^2 xmin=-4 xmax=4 label=y%20%3D%20x^2 caption=Cuadrática%3A%20parábola
 
-$$g(x) = a \cdot f(b(x - h)) + k$$
+:::fig func f=x^3 xmin=-3 xmax=3 label=y%20%3D%20x^3 caption=Cúbica
 
-- $+ k$: desplaza verticalmente $k$ unidades.
-- $x - h$: desplaza horizontalmente $h$ unidades (a la derecha si $h > 0$).
-- $a$: estira ($|a| > 1$) o comprime ($0 < |a| < 1$) verticalmente; si $a < 0$, refleja sobre el eje $x$.
-- $b$: comprime horizontalmente si $|b| > 1$ y estira si $0 < |b| < 1$; si $b < 0$, refleja sobre el eje $y$.
+:::fig func f=abs(x) xmin=-4 xmax=4 label=y%20%3D%20%7Cx%7C caption=Valor%20absoluto
 
-**Ejemplo.** $g(x) = (x - 2)^2 + 3$ es la parábola $x^2$ desplazada 2 a la derecha y 3 arriba; vértice en $(2, 3)$.
+:::fig func f=sqrt(x) xmin=0 xmax=6 label=y%20%3D%20sqrt(x) caption=Raíz%20cuadrada
 
-**Ejemplo.** $g(x) = -\sqrt{x + 1}$: raíz desplazada 1 a la izquierda y reflejada hacia abajo; dominio $[-1, \infty)$, rango $(-\infty, 0]$.
+:::fig func f=1/x xmin=-5 xmax=5 ymin=-5 ymax=5 label=y%20%3D%201%2Fx caption=Racional%201%2Fx
 
 ## Composición de funciones
 La **composición** aplica primero una función y luego otra:
@@ -115,9 +111,9 @@ Una función **cuadrática** tiene la forma $f(x) = ax^2 + bx + c$ con $a \neq 0
 - El eje de simetría es la recta vertical que pasa por el vértice.
 - Las raíces se calculan con la fórmula general $x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$.
 
-:::fig func f=x^2 xmin=-4 xmax=4 label=y+=+x^2 caption=Parábola%3A+y+%3D+x^2
+:::fig func f=x^2 xmin=-4 xmax=4 label=y%20%3D%20x^2 caption=Parábola%3A%20y%20%3D%20x^2
 
-:::fig func f=x^2-4*x+3 xmin=-2 xmax=6 label=y+=+x^2-4x+3 caption=Parábola+con+raíces+en+1+y+3
+:::fig func f=x^2-4*x+3 xmin=-2 xmax=6 label=y%20%3D%20x^2-4x%203 caption=Parábola%20con%20raíces%20en%201%20y%203
 
 **Ejemplo.** Para $f(x) = x^2 - 4x + 3$: el vértice está en $x = 2$ con $f(2) = -1$, y las raíces son $x = 1$ y $x = 3$.
 
@@ -128,9 +124,9 @@ La función **lineal** $f(x) = mx$ y la **afín** $f(x) = mx + b$ tienen como gr
 - $m$ es la **pendiente**: la inclinación de la recta.
 - $b$ es la **ordenada al origen**: el punto donde la recta corta el eje $y$.
 
-:::fig func f=x xmin=-5 xmax=5 label=y+=+x caption=Función+lineal%3A+y+%3D+x
+:::fig func f=x xmin=-5 xmax=5 label=y%20%3D%20x caption=Función%20lineal%3A%20y%20%3D%20x
 
-:::fig func f=2*x+1 xmin=-5 xmax=5 label=y+=+2x+%2B+1 caption=Función+afín%3A+y+%3D+2x+%2B+1
+:::fig func f=2*x+1 xmin=-5 xmax=5 label=y%20%3D%202x%20%2B%201 caption=Función%20afín%3A%20y%20%3D%202x%20%2B%201
 
 Si $m > 0$ la recta sube; si $m < 0$ baja; si $m = 0$ es horizontal.
 
@@ -288,11 +284,11 @@ Queda alrededor del 6.25%: cuatro vidas medias.
 
 La **exponencial** $f(x) = a^x$ con $a > 1$ crece muy rápido: pasa por $(0, 1)$ y el eje $x$ es una **asíntota** (la curva se acerca pero nunca lo toca).
 
-:::fig func f=2^x xmin=-3 xmax=5 label=y+=+2^x caption=Exponencial%3A+y+%3D+2^x
+:::fig func f=2^x xmin=-3 xmax=5 label=y%20%3D%202^x caption=Exponencial%3A%20y%20%3D%202^x
 
 El **logaritmo** $g(x) = \log_a x$ es la función inversa: pasa por $(1, 0)$, crece lentamente y tiene al eje $y$ como asíntota. Las gráficas de $a^x$ y $\log_a x$ son simétricas respecto a la recta $y = x$.
 
-:::fig func f=ln(x) xmin=0.2 xmax=6 label=y+=+ln(x) caption=Logaritmo+natural%3A+y+%3D+ln(x)
+:::fig func f=ln(x) xmin=0.2 xmax=6 label=y%20%3D%20ln(x) caption=Logaritmo%20natural%3A%20y%20%3D%20ln(x)
 
 ## Contextos donde se aplica
 - **Finanzas:** interés compuesto, valor presente, inflación, crecimiento de inversiones.
@@ -342,7 +338,7 @@ Es el puente entre la geometría y el análisis: cada señal periódica se desco
 ## Razones trigonométricas en el triángulo rectángulo
 En un triángulo rectángulo con un ángulo agudo $\theta$:
 
-:::fig right-triangle adj=4 opp=3 angle=θ adjLabel=adyacente oppLabel=opuesto hypLabel=hipotenusa caption=El+ángulo+θ+y+los+tres+lados:+adyacente,+opuesto+e+hipotenusa.
+:::fig right-triangle adj=4 opp=3 angle=θ adjLabel=adyacente oppLabel=opuesto hypLabel=hipotenusa caption=El%20ángulo%20θ%20y%20los%20tres%20lados:%20adyacente,%20opuesto%20e%20hipotenusa. 
 $$\text{sen}\,\theta = \frac{\text{cateto opuesto}}{\text{hipotenusa}}, \qquad \cos\theta = \frac{\text{cateto adyacente}}{\text{hipotenusa}}$$
 $$\tan\theta = \frac{\text{cateto opuesto}}{\text{cateto adyacente}} = \frac{\text{sen}\,\theta}{\cos\theta}$$
 
@@ -365,9 +361,9 @@ Los radianes son la unidad natural: $2\pi$ radianes equivalen a $360$ grados, as
 
 Estos valores se memorizan con dos triángulos: el isósceles rectángulo (45-45-90) y el medio triángulo equilátero (30-60-90).
 
-:::fig right-triangle adj=1 opp=1 angle=45° adjLabel=1 oppLabel=1 hypLabel=√2 caption=Triángulo+45-45-90:+catetos+iguales+e+hipotenusa+√2.
+:::fig right-triangle adj=1 opp=1 angle=45° adjLabel=1 oppLabel=1 hypLabel=√2 caption=Triángulo%2045-45-90:%20catetos%20iguales%20e%20hipotenusa%20√2. 
 
-:::fig right-triangle adj=1.732 opp=1 angle=30° adjLabel=√3 oppLabel=1 hypLabel=2 caption=Triángulo+30-60-90:+lados+en+razón+1:+√3:+2.
+:::fig right-triangle adj=1.732 opp=1 angle=30° adjLabel=√3 oppLabel=1 hypLabel=2 caption=Triángulo%2030-60-90:%20lados%20en%20razón%201:%20√3:%202. 
 
 La tabla completa, para tenerla a mano:
 

@@ -50,12 +50,53 @@
     }, 7000);
   }
 
-  window.Novedades = { notifyError: notifyError };
+  function notifyInfo(message) {
+    var toast = document.createElement("aside");
+    toast.className = "update-banner update-info";
+    toast.innerHTML =
+      '<span class="update-kicker">Studappy</span>' +
+      "<p>" + message + "</p>";
+    document.body.appendChild(toast);
+    setTimeout(function () {
+      if (toast.parentNode) toast.parentNode.removeChild(toast);
+    }, 3000);
+  }
+
+  window.Novedades = { notifyError: notifyError, notify: notifyInfo };
+
+  var loginLock = false;
+
+  function beginLogin(dest) {
+    if (loginLock) return;
+    loginLock = true;
+    try {
+      if (dest) localStorage.setItem("mate-login-dest", dest);
+    } catch (e) {
+      /* almacenamiento no disponible */
+    }
+    if (window.Novedades && window.Novedades.notify) {
+      window.Novedades.notify("Abriendo Google para iniciar sesión…");
+    }
+    window.SB.signInWithGoogle().catch(function (err) {
+      loginLock = false;
+      try {
+        localStorage.removeItem("mate-login-dest");
+      } catch (e2) {
+        /* ignorar */
+      }
+      if (window.Novedades && window.Novedades.notifyError) {
+        window.Novedades.notifyError(
+          "No se pudo iniciar sesión: " + (err && err.message ? err.message : "error desconocido")
+        );
+      }
+    });
+  }
 
   window.SB = {
     configured: configured,
     client: client,
     redirectTo: redirectTo,
+    beginLogin: beginLogin,
     signInWithGoogle: function () {
       if (!client) return notConfigured();
       return client.auth

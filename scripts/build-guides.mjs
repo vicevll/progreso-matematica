@@ -60,7 +60,7 @@ function parseParams(raw) {
     if (!pair) return;
     const [key, ...rest] = pair.split("=");
     if (!key) return;
-    let value = rest.join("=").replace(/\+/g, " ");
+    let value = rest.join("=");
     try { value = decodeURIComponent(value); } catch (e) { /* dejar */ }
     params[key] = value;
   });

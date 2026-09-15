@@ -612,24 +612,8 @@
   }
 
   function loginToSee(dest) {
-    try {
-      localStorage.setItem("mate-login-dest", dest);
-    } catch (e) {
-      /* almacenamiento no disponible */
-    }
-    if (window.SB && window.SB.configured) {
-      window.SB.signInWithGoogle().catch(function (err) {
-        try {
-          localStorage.removeItem("mate-login-dest");
-        } catch (e2) {
-          /* ignorar */
-        }
-        if (window.Novedades && window.Novedades.notifyError) {
-          window.Novedades.notifyError(
-            "No se pudo iniciar sesión: " + (err && err.message ? err.message : "error desconocido")
-          );
-        }
-      });
+    if (window.SB && window.SB.configured && window.SB.beginLogin) {
+      window.SB.beginLogin(dest);
     } else if (window.Novedades && window.Novedades.notifyError) {
       window.Novedades.notifyError("Inicia sesión con Google para continuar.");
     }
@@ -813,7 +797,7 @@
 
     var last = loadLastVisited();
     var continueCard = "";
-    if (last) {
+    if (last && isSignedIn()) {
       var lastArea = findArea(last.areaId);
       var lastTema = lastArea ? findTema(lastArea, last.temaId) : null;
       if (lastArea && lastTema) {
@@ -1016,7 +1000,7 @@
       return;
     }
 
-    saveLastVisited(area.id, tema.id);
+    if (isSignedIn()) saveLastVisited(area.id, tema.id);
 
     var sections = getSections(area.id, tema.id);
     var stats = courseStats(area.id, tema.id);
@@ -1050,7 +1034,11 @@
           "</header>" +
           '<div class="lesson-body">' + window.mdToHtml(sec.body) + "</div>" +
           '<footer class="lesson-footer">' +
-            sectionButton(area.id, tema.id, i, done) +
+            (isSignedIn()
+              ? sectionButton(area.id, tema.id, i, done)
+              : '<div class="lesson-lock"><span>Inicia sesión para guardar tu avance</span>' +
+                googleBtnHtml("#/curso/" + area.id + "/" + tema.id, "Entrar con Google") +
+                "</div>") +
           "</footer>" +
         "</section>"
       );
