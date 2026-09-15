@@ -30,12 +30,6 @@ window.CATALOGO = [
         descripcion: "El símbolo que anuncia la conclusión."
       },
       {
-        id: "igualdad",
-        nombre: "= La igualdad",
-        nivel: "Básico",
-        descripcion: "El signo que equilibra todo el álgebra."
-      },
-      {
         id: "pi",
         nombre: "π (pi)",
         nivel: "Básico",

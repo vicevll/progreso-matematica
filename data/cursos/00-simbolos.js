@@ -19,10 +19,6 @@ Por costumbre histórica: el álgebra nació con ecuaciones y se adoptó la $x$ 
 - En $x - 5 = 2$, la incógnita vale $x = 7$.
 - En $y = 3x$, si $x = 2$ entonces $y = 6$.
 
-## Errores comunes
-- Confundir incógnita con variable: en $x + 3 = 7$ hay UN valor; en $y = 2x$ hay infinitos pares.
-- Cambiar el significado de $x$ a mitad de un problema.
-
 ## Dónde lo verás en Studappy
 En casi todos los temas: álgebra, funciones, ecuaciones, límites y mucho más.
 `,
@@ -49,10 +45,6 @@ Con $f(x) = 2x - 1$:
 - $f(5) = 9$
 - $f(a) = 2a - 1$ (la entrada puede ser una letra)
 
-## Errores comunes
-- Confundir $f(x)$ con $f \cdot x$: NO es multiplicación, es "f evaluada en x".
-- Confundir $f(x + 1)$ (entrada desplazada) con $f(x) + 1$ (resultado desplazado).
-
 ## Dónde lo verás en Studappy
 En Funciones, y como base de cálculo, exponenciales, logaritmos y más.
 `,
@@ -76,10 +68,6 @@ Por ejemplo, si una temperatura pasa de $20°$ a $35°$: $\Delta T = 15°$.
 ## El $\Delta$ de la cuadrática
 En la fórmula general de la ecuación cuadrática, $\Delta = b^2 - 4ac$ se llama **discriminante** y decide cuántas soluciones hay.
 
-## Errores comunes
-- Confundir el triángulo figura con la letra $\Delta$.
-- Olvidar que $\Delta$ es una DIFERENCIA, no un valor absoluto.
-
 ## Dónde lo verás en Studappy
 En Trigonometría, Geometría, Ecuaciones y Cálculo.
 `,
@@ -101,38 +89,10 @@ $$2x = 8 \qquad \therefore \quad x = 4$$
 ## Ejemplo
 - Si $x + 1 = 5$, entonces $x = 4$. $\therefore$ la solución es $4$.
 
-## Errores comunes
-- Usarlo sin que haya una cadena de razonamiento previa.
-- Confundirlo con $\Rightarrow$ ("implica"): $\Rightarrow$ une pasos, $\therefore$ anuncia el final.
-
 ## Dónde lo verás en Studappy
 En Álgebra, Ecuaciones y en las resoluciones de los ejercicios.
 `,
 
-  "igualdad": String.raw`
-## ¿Qué significa?
-El signo $=$ se lee **"igual"** y afirma que las dos expresiones que lo rodean valen **lo mismo**. Es el símbolo más importante del álgebra.
-
-$$3 + 4 = 7$$
-
-## La igualdad como balanza
-Una ecuación es una igualdad con una incógnita: $x + 5 = 12$. Resolverla es encontrar el valor que hace verdadera la igualdad.
-
-**Regla de oro:** lo que hagas de un lado, hazlo del otro.
-
-## Otros usos
-- Definición: $A = \pi r^2$ significa "el área es".
-- Resultado: $f(2) = 9$.
-- Aproximación: $\approx$ (casi igual), como $\pi \approx 3.14$.
-
-## Errores comunes
-- Escribir $=$ cuando quieres decir $\approx$.
-- Romper la balanza: operar solo de un lado.
-- Usar $=$ entre expresiones que no son iguales.
-
-## Dónde lo verás en Studappy
-En absolutamente todos los temas: es el idioma de la matemática.
-`,
 
   "pi": String.raw`
 ## ¿Qué significa?
@@ -150,11 +110,6 @@ Es la razón entre la **circunferencia** de un círculo y su **diámetro**: en c
 
 ## ¿Cuánto vale?
 Es un número **irracional**: tiene infinitos decimales que no se repiten. En cálculos se usa $\pi \approx 3.14$ o la fracción $\frac{22}{7}$ como aproximación.
-
-## Errores comunes
-- Tratar $\pi$ como una variable: es un número fijo.
-- Usar $3.14$ cuando el resultado debe dejarse con $\pi$ (exacto).
-- Confundir grados y radianes: $\pi$ radianes $= 180°$.
 
 ## Dónde lo verás en Studappy
 En Geometría, Trigonometría y Cálculo integral.
@@ -179,11 +134,6 @@ $$\sqrt[3]{8} = 2 \quad \text{porque} \quad 2^3 = 8$$
 - La raíz cuadrada de un número negativo NO existe en los reales; en complejos es $i\sqrt{|x|}$.
 - $\sqrt{x^2} = |x|$.
 
-## Errores comunes
-- Creer que $\sqrt{x^2} = x$ siempre: en realidad es $|x|$.
-- Olvidar que $\sqrt{a + b} \neq \sqrt{a} + \sqrt{b}$.
-- Sacar raíces de números negativos sin usar complejos.
-
 ## Dónde lo verás en Studappy
 En Álgebra, Ecuaciones, Funciones, Exponenciales y Cálculo.
 `,
@@ -204,11 +154,6 @@ $$\sum (a_k + b_k) = \sum a_k + \sum b_k \qquad \sum c \cdot a_k = c \sum a_k$$
 
 ## Sumas famosas
 $$\sum_{k=1}^{n} k = \frac{n(n+1)}{2}, \qquad \sum_{k=1}^{n} k^2 = \frac{n(n+1)(2n+1)}{6}$$
-
-## Errores comunes
-- Confundir el índice ($k$) con el límite superior.
-- Cambiar los límites al reindexar sin ajustar la expresión.
-- Pensar que $\sum (a_k \cdot b_k) = \sum a_k \cdot \sum b_k$ (falso).
 
 ## Dónde lo verás en Studappy
 En Sucesiones y sumatorias, Series y Cálculo integral.
@@ -235,10 +180,6 @@ Porque al acercar $x$ a $2$, la expresión se acerca a $7$.
 - Para estudiar qué pasa en puntos donde la función no está definida.
 - Para analizar el comportamiento al infinito: $\lim_{x \to \infty} \frac{1}{x} = 0$.
 
-## Errores comunes
-- Dar $0/0$ o $\infty/\infty$ como respuesta: son señales de que hay que trabajar más.
-- Confundir el valor en el punto con el límite: pueden ser distintos.
-
 ## Dónde lo verás en Studappy
 En Límites, Cálculo diferencial, Sucesiones y Series.
 `,
@@ -255,10 +196,6 @@ El símbolo $\infty$ significa **"infinito"**: no es un número, sino una idea: 
 ## Ejemplos
 - $\frac{1}{x} \to 0$ cuando $x \to \infty$: al dividir entre algo gigante, queda casi cero.
 - La suma infinita $1 + \frac{1}{2} + \frac{1}{4} + \cdots$ se acerca a $2$.
-
-## Errores comunes
-- Operar con $\infty$ como si fuera un número ($\infty - \infty$ no está definido).
-- Decir que algo "es infinito" cuando en realidad "tiende a infinito".
 
 ## Dónde lo verás en Studappy
 En Límites, Series, Intervalos y Análisis.
