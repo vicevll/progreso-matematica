@@ -12,7 +12,7 @@
   };
 
   var RECURSOS = {
-    "undefined/operaciones-combinadas": {
+    "algebra-escolar/operaciones-combinadas": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Operaciones combinadas.",
       items: [
@@ -32,7 +32,7 @@
         }
       ]
     },
-    "undefined/ecuaciones": {
+    "algebra-escolar/ecuaciones": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Ecuaciones.",
       items: [
@@ -52,7 +52,7 @@
         }
       ]
     },
-    "undefined/inecuaciones": {
+    "algebra-escolar/inecuaciones": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Inecuaciones.",
       items: [
@@ -72,7 +72,7 @@
         }
       ]
     },
-    "undefined/algebra-elemental": {
+    "algebra-escolar/algebra-elemental": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Álgebra elemental.",
       items: [
@@ -92,7 +92,7 @@
         }
       ]
     },
-    "undefined/numeros-reales-complejos": {
+    "algebra-escolar/numeros-reales-complejos": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Números reales y complejos.",
       items: [
@@ -112,7 +112,7 @@
         }
       ]
     },
-    "undefined/sucesiones-sumatorias": {
+    "algebra-escolar/sucesiones-sumatorias": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Sucesiones y sumatorias.",
       items: [
@@ -132,7 +132,7 @@
         }
       ]
     },
-    "undefined/demostracion": {
+    "algebra-escolar/demostracion": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Métodos de demostración.",
       items: [
@@ -152,7 +152,7 @@
         }
       ]
     },
-    "undefined/funciones": {
+    "funciones-geometria/funciones": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Funciones.",
       items: [
@@ -172,7 +172,7 @@
         }
       ]
     },
-    "undefined/exp-log": {
+    "funciones-geometria/exp-log": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Funciones exponenciales y logarítmicas.",
       items: [
@@ -192,7 +192,7 @@
         }
       ]
     },
-    "undefined/trigonometria": {
+    "funciones-geometria/trigonometria": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Trigonometría.",
       items: [
@@ -212,7 +212,7 @@
         }
       ]
     },
-    "undefined/limites": {
+    "calculo/limites": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Límites y continuidad.",
       items: [
@@ -232,7 +232,7 @@
         }
       ]
     },
-    "undefined/calc-diferencial": {
+    "calculo/calc-diferencial": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Cálculo diferencial.",
       items: [
@@ -252,7 +252,7 @@
         }
       ]
     },
-    "undefined/calc-integral": {
+    "calculo/calc-integral": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Cálculo integral.",
       items: [
@@ -272,7 +272,7 @@
         }
       ]
     },
-    "undefined/series": {
+    "calculo/series": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Sucesiones y series infinitas.",
       items: [
@@ -292,7 +292,7 @@
         }
       ]
     },
-    "undefined/edo": {
+    "calculo/edo": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Ecuaciones diferenciales ordinarias.",
       items: [
@@ -312,7 +312,7 @@
         }
       ]
     },
-    "undefined/edp": {
+    "calculo/edp": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Ecuaciones en derivadas parciales.",
       items: [
@@ -332,7 +332,7 @@
         }
       ]
     },
-    "undefined/matrices": {
+    "algebra-superior/matrices": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Matrices.",
       items: [
@@ -352,7 +352,7 @@
         }
       ]
     },
-    "undefined/algebra-lineal": {
+    "algebra-superior/algebra-lineal": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Álgebra lineal.",
       items: [
