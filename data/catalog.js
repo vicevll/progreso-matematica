@@ -1,5 +1,73 @@
 window.CATALOGO = [
   {
+    id: "simbolos",
+    nombre: "Conceptos y símbolos",
+    descripcion: "Los símbolos y conceptos que más se repiten en toda la web, explicados de forma simple.",
+    color: "#64748b",
+    temas: [
+      {
+        id: "x",
+        nombre: "La x: variable e incógnita",
+        nivel: "Básico",
+        descripcion: "La letra más usada para nombrar lo desconocido."
+      },
+      {
+        id: "fx",
+        nombre: "f(x): la notación de función",
+        nivel: "Básico",
+        descripcion: "Qué significa 'f de x' y cómo evaluar funciones."
+      },
+      {
+        id: "triangulo",
+        nombre: "El triángulo y Δ (delta)",
+        nivel: "Básico",
+        descripcion: "La figura geométrica y el símbolo de cambio."
+      },
+      {
+        id: "por-lo-tanto",
+        nombre: "∴ Por lo tanto",
+        nivel: "Básico",
+        descripcion: "El símbolo que anuncia la conclusión."
+      },
+      {
+        id: "igualdad",
+        nombre: "= La igualdad",
+        nivel: "Básico",
+        descripcion: "El signo que equilibra todo el álgebra."
+      },
+      {
+        id: "pi",
+        nombre: "π (pi)",
+        nivel: "Básico",
+        descripcion: "El número del círculo y sus infinitos decimales."
+      },
+      {
+        id: "raiz",
+        nombre: "√ La raíz",
+        nivel: "Básico",
+        descripcion: "La operación inversa de la potencia."
+      },
+      {
+        id: "sumatoria",
+        nombre: "∑ La sumatoria",
+        nivel: "Básico",
+        descripcion: "El símbolo para sumar muchos términos."
+      },
+      {
+        id: "limite",
+        nombre: "lim El límite",
+        nivel: "Básico",
+        descripcion: "A qué valor se acerca una función."
+      },
+      {
+        id: "infinito",
+        nombre: "∞ El infinito",
+        nivel: "Básico",
+        descripcion: "La idea de crecer sin límite."
+      }
+    ]
+  },
+  {
     id: "algebra-escolar",
     nombre: "Álgebra escolar y fundamentos",
     descripcion: "Bases del álgebra y los números: el lenguaje con el que se escribe toda la matemática.",
