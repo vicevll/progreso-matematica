@@ -12,7 +12,7 @@
   };
 
   var RECURSOS = {
-    "algebra-escolar/operaciones-combinadas": {
+    "undefined/operaciones-combinadas": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Operaciones combinadas.",
       items: [
@@ -32,7 +32,7 @@
         }
       ]
     },
-    "algebra-escolar/ecuaciones": {
+    "undefined/ecuaciones": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Ecuaciones.",
       items: [
@@ -52,7 +52,7 @@
         }
       ]
     },
-    "algebra-escolar/inecuaciones": {
+    "undefined/inecuaciones": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Inecuaciones.",
       items: [
@@ -72,7 +72,7 @@
         }
       ]
     },
-    "algebra-escolar/algebra-elemental": {
+    "undefined/algebra-elemental": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Álgebra elemental.",
       items: [
@@ -92,7 +92,7 @@
         }
       ]
     },
-    "algebra-escolar/numeros-reales-complejos": {
+    "undefined/numeros-reales-complejos": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Números reales y complejos.",
       items: [
@@ -112,7 +112,7 @@
         }
       ]
     },
-    "algebra-escolar/sucesiones-sumatorias": {
+    "undefined/sucesiones-sumatorias": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Sucesiones y sumatorias.",
       items: [
@@ -132,27 +132,7 @@
         }
       ]
     },
-    "algebra-escolar/polinomios": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Polinomios y ecuaciones.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "7 páginas · PDF",
-          archivo: "recursos/polinomios-simple.pdf",
-          fuente: "recursos/polinomios-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "7 páginas · PDF",
-          archivo: "recursos/polinomios-ejercicios.pdf",
-          fuente: "recursos/polinomios-ejercicios.md"
-        }
-      ]
-    },
-    "algebra-escolar/demostracion": {
+    "undefined/demostracion": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Métodos de demostración.",
       items: [
@@ -172,27 +152,27 @@
         }
       ]
     },
-    "funciones-geometria/funciones": {
+    "undefined/funciones": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Funciones.",
       items: [
         {
           titulo: "Guía simple",
           descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "7 páginas · PDF",
+          meta: "6 páginas · PDF",
           archivo: "recursos/funciones-simple.pdf",
           fuente: "recursos/funciones-simple.md"
         },
         {
           titulo: "50 ejercicios",
           descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "6 páginas · PDF",
+          meta: "5 páginas · PDF",
           archivo: "recursos/funciones-ejercicios.pdf",
           fuente: "recursos/funciones-ejercicios.md"
         }
       ]
     },
-    "funciones-geometria/exp-log": {
+    "undefined/exp-log": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Funciones exponenciales y logarítmicas.",
       items: [
@@ -212,7 +192,7 @@
         }
       ]
     },
-    "funciones-geometria/trigonometria": {
+    "undefined/trigonometria": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Trigonometría.",
       items: [
@@ -232,47 +212,7 @@
         }
       ]
     },
-    "funciones-geometria/geometria-euclidiana": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Geometría euclidiana.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "8 páginas · PDF",
-          archivo: "recursos/geometria-euclidiana-simple.pdf",
-          fuente: "recursos/geometria-euclidiana-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "6 páginas · PDF",
-          archivo: "recursos/geometria-euclidiana-ejercicios.pdf",
-          fuente: "recursos/geometria-euclidiana-ejercicios.md"
-        }
-      ]
-    },
-    "funciones-geometria/geometria-analitica": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Geometría analítica.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "6 páginas · PDF",
-          archivo: "recursos/geometria-analitica-simple.pdf",
-          fuente: "recursos/geometria-analitica-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "7 páginas · PDF",
-          archivo: "recursos/geometria-analitica-ejercicios.pdf",
-          fuente: "recursos/geometria-analitica-ejercicios.md"
-        }
-      ]
-    },
-    "calculo/limites": {
+    "undefined/limites": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Límites y continuidad.",
       items: [
@@ -292,7 +232,7 @@
         }
       ]
     },
-    "calculo/calc-diferencial": {
+    "undefined/calc-diferencial": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Cálculo diferencial.",
       items: [
@@ -312,7 +252,7 @@
         }
       ]
     },
-    "calculo/calc-integral": {
+    "undefined/calc-integral": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Cálculo integral.",
       items: [
@@ -332,7 +272,7 @@
         }
       ]
     },
-    "calculo/series": {
+    "undefined/series": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Sucesiones y series infinitas.",
       items: [
@@ -352,27 +292,7 @@
         }
       ]
     },
-    "calculo/calc-vectorial": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Cálculo vectorial.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "8 páginas · PDF",
-          archivo: "recursos/calc-vectorial-simple.pdf",
-          fuente: "recursos/calc-vectorial-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "7 páginas · PDF",
-          archivo: "recursos/calc-vectorial-ejercicios.pdf",
-          fuente: "recursos/calc-vectorial-ejercicios.md"
-        }
-      ]
-    },
-    "calculo/edo": {
+    "undefined/edo": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Ecuaciones diferenciales ordinarias.",
       items: [
@@ -392,7 +312,7 @@
         }
       ]
     },
-    "calculo/edp": {
+    "undefined/edp": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Ecuaciones en derivadas parciales.",
       items: [
@@ -412,7 +332,7 @@
         }
       ]
     },
-    "algebra-superior/matrices": {
+    "undefined/matrices": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Matrices.",
       items: [
@@ -432,7 +352,7 @@
         }
       ]
     },
-    "algebra-superior/algebra-lineal": {
+    "undefined/algebra-lineal": {
       titulo: "Material descargable",
       descripcion: "Dos guías en PDF para acompañar el estudio de Álgebra lineal.",
       items: [
@@ -670,10 +590,6 @@
     demostracion: {
       titulo: "Métodos de demostración está bloqueado",
       texto: "Inicia sesión con Google para estudiar Métodos de demostración."
-    },
-    polinomios: {
-      titulo: "Polinomios y ecuaciones está bloqueado",
-      texto: "Inicia sesión con Google para estudiar Polinomios y ecuaciones."
     }
   };
 
@@ -1176,6 +1092,7 @@
 
     renderMath();
     if (window.Diagram) window.Diagram.hydrate(app);
+    renderMath();
     setupReveal();
     setupCourseSpy();
   }

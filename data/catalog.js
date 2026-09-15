@@ -42,12 +42,6 @@ window.CATALOGO = [
         descripcion: "Progresiones, notación sigma, inducción matemática."
       },
       {
-        id: "polinomios",
-        nombre: "Polinomios y ecuaciones",
-        nivel: "10°–11° / Univ 1",
-        descripcion: "Raíces, teorema del factor y teorema fundamental del álgebra."
-      },
-      {
         id: "demostracion",
         nombre: "Métodos de demostración",
         nivel: "10°–11° / Univ 1",
@@ -57,8 +51,8 @@ window.CATALOGO = [
   },
   {
     id: "funciones-geometria",
-    nombre: "Funciones, trigonometría y geometría",
-    descripcion: "Funciones, el triángulo y la geometría clásica del plano y del espacio.",
+    nombre: "Funciones y trigonometría",
+    descripcion: "Funciones, sus gráficas y la trigonometría: el lenguaje del cambio y de los ángulos.",
     color: "#10b981",
     temas: [
       {
@@ -78,18 +72,6 @@ window.CATALOGO = [
         nombre: "Trigonometría",
         nivel: "10°–11°",
         descripcion: "Razones, identidades, ecuaciones, ley de senos y cosenos."
-      },
-      {
-        id: "geometria-euclidiana",
-        nombre: "Geometría euclidiana",
-        nivel: "10°–11°",
-        descripcion: "Axiomas, congruencia, semejanza, círculos y demostraciones."
-      },
-      {
-        id: "geometria-analitica",
-        nombre: "Geometría analítica",
-        nivel: "10°–11° / Univ 1",
-        descripcion: "Recta, cónicas, lugares geométricos y coordenadas polares."
       }
     ]
   },
@@ -122,12 +104,6 @@ window.CATALOGO = [
         nombre: "Sucesiones y series infinitas",
         nivel: "Univ 2",
         descripcion: "Criterios de convergencia, Taylor, potencias y Fourier."
-      },
-      {
-        id: "calc-vectorial",
-        nombre: "Cálculo vectorial",
-        nivel: "Univ 3",
-        descripcion: "Integrales de línea y superficie; teoremas de Green, Stokes y Gauss."
       },
       {
         id: "edo",

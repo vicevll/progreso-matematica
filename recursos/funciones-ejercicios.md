@@ -1,6 +1,6 @@
 # Funciones · 50 ejercicios
 
-**Área:** Funciones, trigonometría y geometría · **Nivel:** 10°–11° · Dominio, rango, composición, inversa y tipos básicos.
+**Área:** Funciones y trigonometría · **Nivel:** 10°–11° · Dominio, rango, composición, inversa y tipos básicos.
 
 ## Formulario
 
@@ -28,10 +28,13 @@ $$g(x) = a \cdot f\big(b(x - h)\big) + k$$
 
 $k$ desplaza vertical; $h$ desplaza horizontal; $a$ estira o refleja en vertical; $b$ comprime o refleja en horizontal.
 
-### Paridad
+### Gráficas de funciones básicas
 
-- Par: $f(-x) = f(x)$.
-- Impar: $f(-x) = -f(x)$.
+:::fig func f=x xmin=-5 xmax=5 label=y+=+x caption=Función+lineal%3A+y+%3D+x
+
+:::fig func f=2*x+1 xmin=-5 xmax=5 label=y+=+2x+%2B+1 caption=Función+afín%3A+y+%3D+2x+%2B+1
+
+:::fig func f=x^2 xmin=-4 xmax=4 label=y+=+x^2 caption=Parábola%3A+y+%3D+x^2
 
 ### Tipos de funciones
 
@@ -63,15 +66,15 @@ $k$ desplaza vertical; $h$ desplaza horizontal; $a$ estira o refleja en vertical
 9. Halla el dominio de $f(x) = \dfrac{x}{x^2 - 9}$.
 10. Halla el rango de $f(x) = \dfrac{1}{x}$.
 
-### Nivel 2 · Evaluación, paridad y tipos
+### Nivel 2 · Evaluación, gráficas y tipos
 
 11. Si $f(x) = 2x - 1$, calcula $f(3)$ y $f(-2)$.
 12. Si $f(x) = x^2 + 1$, calcula $f(0)$, $f(2)$ y $f(-2)$.
-13. Determina si $f(x) = x^2$ es par, impar o ninguna.
-14. Determina si $f(x) = x^3$ es par, impar o ninguna.
-15. Determina si $f(x) = x^4 - x^2$ es par, impar o ninguna.
-16. Determina si $f(x) = x^2 + x$ es par, impar o ninguna.
-17. Determina si $f(x) = x^5 + x$ es par, impar o ninguna.
+13. Halla la pendiente y el corte con el eje $y$ de $f(x) = 3x - 2$.
+14. Halla el vértice de $f(x) = x^2 - 2x + 1$.
+15. Halla las raíces de $f(x) = x^2 - 9$.
+16. Clasifica $f(x) = 2x + 1$ y da su pendiente.
+17. Halla $f(0)$ para $f(x) = x^2 + 5x$.
 18. Clasifica $f(x) = 3x + 2$ (constante, lineal, cuadrática, ...).
 19. Clasifica $f(x) = x^2 - 4x + 1$.
 20. Clasifica $f(x) = 2$.
@@ -130,11 +133,11 @@ $k$ desplaza vertical; $h$ desplaza horizontal; $a$ estira o refleja en vertical
 <div class="r"><b>10</b> $\mathbb{R} \setminus \{0\}$</div>
 <div class="r"><b>11</b> $f(3) = 5$, $f(-2) = -5$</div>
 <div class="r"><b>12</b> $1$, $5$, $5$</div>
-<div class="r"><b>13</b> Par</div>
-<div class="r"><b>14</b> Impar</div>
-<div class="r"><b>15</b> Par</div>
-<div class="r"><b>16</b> Ninguna</div>
-<div class="r"><b>17</b> Impar</div>
+<div class="r"><b>13</b> Pendiente $3$, corte en $-2$</div>
+<div class="r"><b>14</b> $(1, 0)$</div>
+<div class="r"><b>15</b> $x = \pm 3$</div>
+<div class="r"><b>16</b> Lineal (afín), pendiente $2$</div>
+<div class="r"><b>17</b> $0$</div>
 <div class="r"><b>18</b> Lineal</div>
 <div class="r"><b>19</b> Cuadrática</div>
 <div class="r"><b>20</b> Constante</div>

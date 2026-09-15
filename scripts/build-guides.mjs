@@ -3,13 +3,18 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from "fs
 import { spawn } from "child_process";
 import { dirname, join, resolve } from "path";
 import { fileURLToPath } from "url";
+import { tmpdir } from "os";
 
 const require = createRequire(import.meta.url);
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const katex = require(join(root, "vendor/katex/katex.min.js"));
 const diagram = require(join(root, "js/diagram.js"));
 
-const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+const CHROME =
+  process.env.CHROME_PATH ||
+  (process.platform === "darwin"
+    ? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+    : "C:/Program Files/Google/Chrome/Application/chrome.exe");
 
 function escapeHtml(text) {
   return String(text)
@@ -70,6 +75,9 @@ function figureBlock(line) {
   const caption = params.caption ? `<figcaption>${escapeHtml(params.caption)}</figcaption>` : "";
   if (match[1] === "right-triangle") {
     return `<figure class="fig">${diagram.rightTriangle(params)}${caption}</figure>`;
+  }
+  if (match[1] === "func") {
+    return `<figure class="fig">${diagram.funcGraph(params)}${caption}</figure>`;
   }
   return "";
 }
@@ -259,14 +267,16 @@ async function buildGuide(name, title) {
   const pdfPath = join(root, "recursos", `${name}.pdf`);
   mkdirSync(outDir, { recursive: true });
   writeFileSync(htmlPath, buildHtml(readFileSync(mdPath, "utf8"), title), "utf8");
-  await runChrome(pdfPath, htmlPath, `/tmp/chrome-guides-${name}`);
+  await runChrome(pdfPath, htmlPath, join(tmpdir(), `chrome-guides-${name}`));
   console.log("PDF generado:", pdfPath);
 }
 
 const wanted = process.argv[2];
 const guides = [
   ["trigonometria-simple", "Trigonometría"],
-  ["trigonometria-ejercicios", "Trigonometría · 50 ejercicios"]
+  ["trigonometria-ejercicios", "Trigonometría · 50 ejercicios"],
+  ["funciones-simple", "Funciones"],
+  ["funciones-ejercicios", "Funciones · 50 ejercicios"]
 ].filter(([name]) => !wanted || name === wanted);
 
 for (const [name, title] of guides) await buildGuide(name, title);

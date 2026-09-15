@@ -1,6 +1,6 @@
 # Funciones
 
-**Área:** Funciones, trigonometría y geometría · **Nivel:** 10°–11°
+**Área:** Funciones y trigonometría · **Nivel:** 10°–11°
 
 Dominio, rango, composición, inversa y tipos básicos.
 
@@ -51,6 +51,18 @@ Estas funciones son los ladrillos de las demás y conviene reconocerlas de inmed
 - **Por partes:** reglas distintas por intervalos, como $f(x) = |x|$.
 
 **Mini-ejemplo.** $f(x) = -2x + 5$ es lineal con pendiente $-2$; corta el eje $y$ en $5$.
+
+**Sus gráficas.** La **lineal** $y = mx$ y la **afín** $y = mx + b$ son rectas: $m$ es la pendiente y $b$ el corte con el eje $y$.
+
+:::fig func f=x xmin=-5 xmax=5 label=y+=+x caption=Función+lineal%3A+y+%3D+x
+
+:::fig func f=2*x+1 xmin=-5 xmax=5 label=y+=+2x+%2B+1 caption=Función+afín%3A+y+%3D+2x+%2B+1
+
+La **cuadrática** $y = ax^2 + bx + c$ dibuja una parábola: abre hacia arriba si $a > 0$, hacia abajo si $a < 0$, con vértice en $x = -\dfrac{b}{2a}$.
+
+:::fig func f=x^2 xmin=-4 xmax=4 label=y+=+x^2 caption=Parábola%3A+y+%3D+x^2
+
+:::fig func f=x^2-4*x+3 xmin=-2 xmax=6 label=y+=+x^2-4x+3 caption=Parábola+con+raíces+en+1+y+3
 
 ## Transformaciones de gráficas
 
@@ -109,11 +121,11 @@ A veces hay que **restringir el dominio**: $f(x) = x^2$ no es inyectiva en $\mat
 4. Halla el dominio de $f(x) = \dfrac{\sqrt{x + 1}}{x}$.
 5. Halla el rango de $f(x) = \sqrt{x + 2}$.
 
-### Nivel 2 · Evaluación, paridad y tipos
+### Nivel 2 · Evaluación y tipos
 
 6. Si $f(x) = 3x - 1$, calcula $f(4)$.
-7. Determina si $f(x) = x^3 - x$ es par, impar o ninguna.
-8. Determina si $f(x) = x^4 + 1$ es par, impar o ninguna.
+7. Para $f(x) = 2x - 3$, ¿cuál es la pendiente y el corte con el eje $y$?
+8. Halla las raíces de $f(x) = x^2 - 4$.
 9. Clasifica $f(x) = -2x + 5$ (constante, lineal, cuadrática, ...).
 10. Clasifica $f(x) = x^2 - 6x + 5$.
 
@@ -141,8 +153,8 @@ A veces hay que **restringir el dominio**: $f(x) = x^2$ no es inyectiva en $\mat
 4. $[-1, 0) \cup (0, \infty)$
 5. $[0, \infty)$
 6. $f(4) = 11$
-7. Impar
-8. Par
+7. Pendiente $2$, corte en $-3$
+8. $x = -2$ y $x = 2$
 9. Lineal
 10. Cuadrática
 11. $(f \circ g)(x) = 2x + 3$
