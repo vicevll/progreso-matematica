@@ -809,11 +809,28 @@
         continueCard +
       "</section>" +
       renderRecomendacion() +
+      '<a class="bib-home-card reveal" href="#/biblioteca">' +
+        '<span class="bib-home-kicker">Biblioteca · ' + (window.LIBROS || []).length + " libros</span>" +
+        '<span class="bib-home-title">Libros de matemática en PDF</span>' +
+        '<span class="bib-home-meta">Catálogo completo con buscador →</span>' +
+      "</a>" +
       '<h2 class="section-title reveal">Áreas</h2>' +
       '<div class="area-grid">' + cards + "</div>";
 
     clearCourseSpy();
     setupReveal();
+  }
+
+  function renderBiblioteca() {
+    setWide(false);
+    if (window.Biblioteca) {
+      window.Biblioteca.render(app);
+      setupReveal();
+    } else {
+      app.innerHTML =
+        '<nav class="breadcrumb"><a href="#/">Inicio</a></nav>' +
+        '<p class="bib-empty">La biblioteca aún no está disponible.</p>';
+    }
   }
 
   function renderArea(areaId, openProximamente) {
@@ -1257,6 +1274,8 @@
       renderAreaGuarded(parts[1]);
     } else if (parts[0] === "curso" && parts[1] && parts[2]) {
       renderCursoGuarded(parts[1], parts[2]);
+    } else if (parts[0] === "biblioteca") {
+      renderBiblioteca();
     } else {
       renderHome();
     }
