@@ -1,23 +1,34 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Studappy · Mi progreso en matemática</title>
-  <meta name="description" content="Aprende matemáticas y mide tu avance en tiempo real." />
+  <title>Studappy · Flashcards</title>
+  <meta name="description" content="Estudia con flashcards y mide tu avance." />
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-94RBE9QSW2"></script>
-  <script src="js/gtag.js?v=20260913-25"></script>
+  <script src="js/gtag.js?v=20261004-3"></script>
   <link rel="icon" type="image/png" href="favicon.png?v=1" />
   <link rel="apple-touch-icon" href="favicon.png?v=1" />
   <link rel="stylesheet" href="vendor/katex/katex.min.css" />
-  <link rel="stylesheet" href="css/styles.css?v=20260925-1" />
+  <link rel="stylesheet" href="css/styles.css?v=20261010-7" />
 </head>
 <body>
+  <div class="parallax-scene" aria-hidden="true">
+    <span class="parallax-orb orb-a" data-parallax="0.18"></span>
+    <span class="parallax-orb orb-b" data-parallax="0.32"></span>
+    <span class="parallax-orb orb-c" data-parallax="0.08"></span>
+  </div>
+  <div class="custom-scrollbar" id="custom-scrollbar" aria-hidden="true"><span id="custom-scrollbar-thumb"></span></div>
   <header class="topbar">
     <a class="brand" href="#/">Studappy</a>
+    <nav class="main-nav" id="main-nav" hidden aria-label="Navegación principal">
+      <a href="#/">Mis mazos</a>
+      <a href="#/tienda">Tienda</a>
+    </nav>
     <div class="topbar-right">
-      <span class="topbar-tag" id="topbar-tag">22 temas · 4 áreas</span>
+      <span class="topbar-tag" id="topbar-tag">Flashcards</span>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Usar modo oscuro"></button>
       <div class="account" id="account"></div>
     </div>
   </header>
@@ -25,27 +36,27 @@
   <main id="app"></main>
 
   <footer class="footer">
-    <span>Aprende matemáticas y mide tu avance en tiempo real.</span>
+    <span>Estudia con flashcards y mide tu avance en tiempo real.</span>
   </footer>
 
-  <script src="data/catalog.js?v=20260913-25"></script>
-  <script src="data/libros.js?v=20260925-1"></script>
-  <script src="data/cursos/00-simbolos.js?v=20260913-25"></script>
-  <script src="data/cursos/01-algebra-escolar.js?v=20260913-25"></script>
-  <script src="data/cursos/02-funciones-geometria.js?v=20260913-25"></script>
-  <script src="data/cursos/03-calculo.js?v=20260913-25"></script>
-  <script src="data/cursos/05-algebra-superior.js?v=20260913-25"></script>
+  <script src="data/decks.js?v=20261010-2"></script>
+  <script src="data/catalogo-tienda.js?v=20261010-4"></script>
+  <script src="js/icons.js?v=20261004-5"></script>
+  <script src="js/theme.js?v=20261004-2"></script>
+  <script src="js/scrollbar.js?v=20261004-1"></script>
+  <script src="js/copy-protection.js?v=20261004-1"></script>
+  <script src="js/deckstore.js?v=20261010-4"></script>
+  <script src="js/motion.js?v=20261004-1"></script>
+  <script src="js/confirm.js?v=20261010-1"></script>
   <script src="vendor/katex/katex.min.js"></script>
   <script src="vendor/katex/auto-render.min.js"></script>
-  <script src="js/md.js?v=20260913-25"></script>
-  <script src="js/diagram.js?v=20260913-25"></script>
+  <script src="js/md.js?v=20261004-3"></script>
   <script src="vendor/supabase/supabase-js.min.js"></script>
-  <script src="js/config.js?v=20260913-25"></script>
-  <script src="js/supabase.js?v=20260913-25"></script>
-  <script src="js/store.js?v=20260913-25"></script>
-  <script src="js/profile.js?v=20260913-25"></script>
-  <script src="js/account.js?v=20260913-25"></script>
-  <script src="js/biblioteca.js?v=20260925-1"></script>
-  <script src="js/app.js?v=20260925-1"></script>
+  <script src="js/config.js?v=20261004-3"></script>
+  <script src="js/supabase.js?v=20261004-3"></script>
+  <script src="js/account.js?v=20261004-4"></script>
+  <script src="js/cloud-decks.js?v=20261010-8"></script>
+  <script src="js/tienda.js?v=20261010-5"></script>
+  <script src="js/app.js?v=20261010-7"></script>
 </body>
 </html>

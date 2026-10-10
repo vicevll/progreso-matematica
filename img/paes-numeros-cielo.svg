@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 620" fill="none">
+  <g stroke="#fff" stroke-linecap="round">
+    <rect x="18" y="18" width="964" height="584" stroke-width="3" opacity=".8"/>
+    <rect x="30" y="30" width="940" height="560" stroke-width="1" opacity=".44"/>
+    <path d="M48 310H952M500 42V578M180 48V572M820 48V572" stroke-width="1" opacity=".2"/>
+    <path d="M240 343L52 265M240 343L76 410M240 343L124 126M240 343L185 64M240 343L332 54M240 343L465 82M240 343L620 52M240 343L755 83M240 343L930 142M240 343L950 280M240 343L924 474M240 343L750 557M240 343L570 534M240 343L430 580M240 343L305 584M240 343L102 536" stroke-width="1.4" opacity=".66"/>
+    <path d="M250 328L75 188M250 328L135 450M250 328L355 95M250 328L530 130M250 328L700 190M250 328L900 350M250 328L685 490M250 328L460 540M250 328L300 570M250 328L62 352" stroke-width=".8" opacity=".5"/>
+    <path d="M594 119L640 170L696 142L740 194L784 166M698 355L743 388L790 365L835 414L892 392M440 197L468 225L510 211L544 248L583 235M330 445L364 474L404 455L438 491L479 475" stroke-width="1" opacity=".55"/>
+    <path d="M252 343L250 320M252 343L270 334M252 343L263 361M252 343L235 359M252 343L230 334M252 343L245 315M252 343L280 350M252 343L221 348" stroke-width="2" opacity=".75"/>
+  </g>
+  <g fill="#fff" opacity=".78">
+    <circle cx="250" cy="343" r="5"/><circle cx="640" cy="170" r="3"/><circle cx="696" cy="142" r="2.5"/><circle cx="740" cy="194" r="3"/><circle cx="784" cy="166" r="2"/>
+    <circle cx="743" cy="388" r="3"/><circle cx="790" cy="365" r="2"/><circle cx="835" cy="414" r="3"/><circle cx="892" cy="392" r="2.5"/>
+    <circle cx="468" cy="225" r="2.5"/><circle cx="510" cy="211" r="3"/><circle cx="544" cy="248" r="2"/><circle cx="583" cy="235" r="2.5"/>
+    <circle cx="364" cy="474" r="2"/><circle cx="404" cy="455" r="2.5"/><circle cx="438" cy="491" r="2"/><circle cx="479" cy="475" r="3"/>
+    <circle cx="116" cy="95" r="1.7"/><circle cx="160" cy="178" r="1.2"/><circle cx="220" cy="110" r="1.5"/><circle cx="306" cy="82" r="1.3"/><circle cx="383" cy="155" r="1.7"/><circle cx="558" cy="79" r="1.2"/><circle cx="872" cy="103" r="1.8"/>
+    <circle cx="74" cy="493" r="1.5"/><circle cx="156" cy="545" r="1.2"/><circle cx="544" cy="553" r="1.7"/><circle cx="640" cy="526" r="1.3"/><circle cx="866" cy="535" r="1.8"/><circle cx="928" cy="221" r="1.3"/>
+  </g>
+  <g fill="#fff" font-family="Georgia,serif" font-size="11" letter-spacing="2" opacity=".58">
+    <text x="612" y="158">CYGNUS</text><text x="708" y="132">LYRA</text><text x="753" y="218">PEGASUS</text>
+    <text x="720" y="376">PISCES</text><text x="846" y="435">CETUS</text><text x="467" y="197">PERSEUS</text>
+    <text x="372" y="443">ARIES</text><text x="102" y="230">CAMELOPARDALIS</text><text x="55" y="460">HYDRA</text>
+  </g>
+  <g stroke="#fff" stroke-width="1" opacity=".7">
+    <path d="M18 52h20M18 102h12M18 152h20M18 202h12M18 252h20M18 302h12M18 352h20M18 402h12M18 452h20M18 502h12M18 552h20"/>
+    <path d="M982 52h-20M982 102h-12M982 152h-20M982 202h-12M982 252h-20M982 302h-12M982 352h-20M982 402h-12M982 452h-20M982 502h-12M982 552h-20"/>
+  </g>
+</svg>

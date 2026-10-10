@@ -1,8 +1,7 @@
 (function () {
   var app = document.getElementById("app");
-  var revealObserver = null;
-  var courseObserver = null;
-  var reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  var PKEY = "studappy-progress-v2";
+  var reduceMotion = false;
   var MATH_OPTIONS = {
     delimiters: [
       { left: "$$", right: "$$", display: true },
@@ -11,439 +10,124 @@
     throwOnError: false
   };
 
-  var RECURSOS = {
-    "algebra-escolar/operaciones-combinadas": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Operaciones combinadas.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "6 páginas · PDF",
-          archivo: "recursos/operaciones-combinadas-simple.pdf",
-          fuente: "recursos/operaciones-combinadas-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "6 páginas · PDF",
-          archivo: "recursos/operaciones-combinadas-ejercicios.pdf",
-          fuente: "recursos/operaciones-combinadas-ejercicios.md"
-        }
-      ]
-    },
-    "algebra-escolar/ecuaciones": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Ecuaciones.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "5 páginas · PDF",
-          archivo: "recursos/ecuaciones-simple.pdf",
-          fuente: "recursos/ecuaciones-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "6 páginas · PDF",
-          archivo: "recursos/ecuaciones-ejercicios.pdf",
-          fuente: "recursos/ecuaciones-ejercicios.md"
-        }
-      ]
-    },
-    "algebra-escolar/inecuaciones": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Inecuaciones.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "5 páginas · PDF",
-          archivo: "recursos/inecuaciones-simple.pdf",
-          fuente: "recursos/inecuaciones-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "6 páginas · PDF",
-          archivo: "recursos/inecuaciones-ejercicios.pdf",
-          fuente: "recursos/inecuaciones-ejercicios.md"
-        }
-      ]
-    },
-    "algebra-escolar/algebra-elemental": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Álgebra elemental.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "6 páginas · PDF",
-          archivo: "recursos/algebra-elemental-simple.pdf",
-          fuente: "recursos/algebra-elemental-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "7 páginas · PDF",
-          archivo: "recursos/algebra-elemental-ejercicios.pdf",
-          fuente: "recursos/algebra-elemental-ejercicios.md"
-        }
-      ]
-    },
-    "algebra-escolar/numeros-reales-complejos": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Números reales y complejos.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "7 páginas · PDF",
-          archivo: "recursos/numeros-reales-complejos-simple.pdf",
-          fuente: "recursos/numeros-reales-complejos-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "8 páginas · PDF",
-          archivo: "recursos/numeros-reales-complejos-ejercicios.pdf",
-          fuente: "recursos/numeros-reales-complejos-ejercicios.md"
-        }
-      ]
-    },
-    "algebra-escolar/sucesiones-sumatorias": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Sucesiones y sumatorias.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "4 páginas · PDF",
-          archivo: "recursos/sucesiones-sumatorias-simple.pdf",
-          fuente: "recursos/sucesiones-sumatorias-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "5 páginas · PDF",
-          archivo: "recursos/sucesiones-sumatorias-ejercicios.pdf",
-          fuente: "recursos/sucesiones-sumatorias-ejercicios.md"
-        }
-      ]
-    },
-    "funciones-geometria/funciones": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Funciones.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "6 páginas · PDF",
-          archivo: "recursos/funciones-simple.pdf",
-          fuente: "recursos/funciones-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "5 páginas · PDF",
-          archivo: "recursos/funciones-ejercicios.pdf",
-          fuente: "recursos/funciones-ejercicios.md"
-        }
-      ]
-    },
-    "funciones-geometria/exp-log": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Funciones exponenciales y logarítmicas.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "6 páginas · PDF",
-          archivo: "recursos/exp-log-simple.pdf",
-          fuente: "recursos/exp-log-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "7 páginas · PDF",
-          archivo: "recursos/exp-log-ejercicios.pdf",
-          fuente: "recursos/exp-log-ejercicios.md"
-        }
-      ]
-    },
-    "funciones-geometria/trigonometria": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Trigonometría.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "6 páginas · PDF",
-          archivo: "recursos/trigonometria-simple.pdf",
-          fuente: "recursos/trigonometria-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "5 páginas · PDF",
-          archivo: "recursos/trigonometria-ejercicios.pdf",
-          fuente: "recursos/trigonometria-ejercicios.md"
-        }
-      ]
-    },
-    "calculo/limites": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Límites y continuidad.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "7 páginas · PDF",
-          archivo: "recursos/limites-simple.pdf",
-          fuente: "recursos/limites-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "8 páginas · PDF",
-          archivo: "recursos/limites-ejercicios.pdf",
-          fuente: "recursos/limites-ejercicios.md"
-        }
-      ]
-    },
-    "calculo/calc-diferencial": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Cálculo diferencial.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "9 páginas · PDF",
-          archivo: "recursos/calc-diferencial-simple.pdf",
-          fuente: "recursos/calc-diferencial-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "8 páginas · PDF",
-          archivo: "recursos/calc-diferencial-ejercicios.pdf",
-          fuente: "recursos/calc-diferencial-ejercicios.md"
-        }
-      ]
-    },
-    "calculo/calc-integral": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Cálculo integral.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "10 páginas · PDF",
-          archivo: "recursos/calc-integral-simple.pdf",
-          fuente: "recursos/calc-integral-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "9 páginas · PDF",
-          archivo: "recursos/calc-integral-ejercicios.pdf",
-          fuente: "recursos/calc-integral-ejercicios.md"
-        }
-      ]
-    },
-    "calculo/series": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Sucesiones y series infinitas.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "7 páginas · PDF",
-          archivo: "recursos/series-simple.pdf",
-          fuente: "recursos/series-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "6 páginas · PDF",
-          archivo: "recursos/series-ejercicios.pdf",
-          fuente: "recursos/series-ejercicios.md"
-        }
-      ]
-    },
-    "calculo/edo": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Ecuaciones diferenciales ordinarias.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "10 páginas · PDF",
-          archivo: "recursos/edo-simple.pdf",
-          fuente: "recursos/edo-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "8 páginas · PDF",
-          archivo: "recursos/edo-ejercicios.pdf",
-          fuente: "recursos/edo-ejercicios.md"
-        }
-      ]
-    },
-    "algebra-superior/matrices": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Matrices.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "9 páginas · PDF",
-          archivo: "recursos/matrices-simple.pdf",
-          fuente: "recursos/matrices-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "8 páginas · PDF",
-          archivo: "recursos/matrices-ejercicios.pdf",
-          fuente: "recursos/matrices-ejercicios.md"
-        }
-      ]
-    },
-    "algebra-superior/algebra-lineal": {
-      titulo: "Material descargable",
-      descripcion: "Dos guías en PDF para acompañar el estudio de Álgebra lineal.",
-      items: [
-        {
-          titulo: "Guía simple",
-          descripcion: "Teoría esencial + 20 ejercicios con respuestas.",
-          meta: "8 páginas · PDF",
-          archivo: "recursos/algebra-lineal-simple.pdf",
-          fuente: "recursos/algebra-lineal-simple.md"
-        },
-        {
-          titulo: "50 ejercicios",
-          descripcion: "Formulario completo + 50 ejercicios y solucionario de resultados.",
-          meta: "9 páginas · PDF",
-          archivo: "recursos/algebra-lineal-ejercicios.pdf",
-          fuente: "recursos/algebra-lineal-ejercicios.md"
-        }
-      ]
+  var progress = loadProgress();
+  var session = null;
+  var draft = null;
+  var editingId = null;
+  var editorStep = 1;
+  var authReady = !!(window.Auth && window.Auth.ready);
+
+  function clone(value) {
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  function loadProgress() {
+    try {
+      var raw = localStorage.getItem(PKEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
     }
-  };
-
-  function isSectionDone(areaId, temaId, index) {
-    return window.ProgressStore.isSectionDone(areaId, temaId, index);
   }
 
-  function toggleSection(areaId, temaId, index) {
-    window.ProgressStore.toggle(areaId, temaId, index);
-  }
-
-  function getSections(areaId, temaId) {
-    var cursos = window.CURSOS[areaId] || {};
-    var md = cursos[temaId];
-    if (!md) return [];
-    var lines = md.split("\n");
-    var sections = [];
-    var current = null;
-    for (var i = 0; i < lines.length; i++) {
-      var trimmed = lines[i].trim();
-      var heading = trimmed.match(/^##\s+(.*)$/);
-      if (heading) {
-        if (current) sections.push(current);
-        current = { title: heading[1], body: [] };
-      } else if (current) {
-        current.body.push(lines[i]);
-      }
+  function saveProgress() {
+    try {
+      localStorage.setItem(PKEY, JSON.stringify(progress));
+    } catch (e) {
+      /* almacenamiento no disponible */
     }
-    if (current) sections.push(current);
-    return sections.map(function (s) {
-      return { title: s.title, body: s.body.join("\n") };
-    });
   }
 
-  function courseStats(areaId, temaId) {
-    var sections = getSections(areaId, temaId);
+  function isKnown(deckId, cardId) {
+    return !!(progress[deckId] && progress[deckId][cardId]);
+  }
+
+  function setKnown(deckId, cardId, value) {
+    if (!progress[deckId]) progress[deckId] = {};
+    if (value) progress[deckId][cardId] = 1;
+    else delete progress[deckId][cardId];
+    saveProgress();
+  }
+
+  function deckStats(deck) {
     var done = 0;
-    sections.forEach(function (_, i) {
-      if (isSectionDone(areaId, temaId, i)) done++;
+    deck.cards.forEach(function (card) {
+      if (isKnown(deck.id, card.id)) done++;
     });
-    return { done: done, total: sections.length };
-  }
-
-  function areaStats(area) {
-    var done = 0;
-    var total = 0;
-    area.temas.forEach(function (tema) {
-      var s = courseStats(area.id, tema.id);
-      done += s.done;
-      total += s.total;
-    });
-    return { done: done, total: total };
-  }
-
-  function globalStats() {
-    var done = 0;
-    var total = 0;
-    CATALOGO.forEach(function (area) {
-      var s = areaStats(area);
-      done += s.done;
-      total += s.total;
-    });
-    return { done: done, total: total };
-  }
-
-  function globalCounts() {
-    var temas = 0;
-    CATALOGO.forEach(function (area) {
-      temas += area.temas.length;
-    });
-    return { areas: CATALOGO.length, temas: temas };
-  }
-
-  function updateTopbarTag() {
-    var tag = document.getElementById("topbar-tag");
-    if (!tag) return;
-    var c = globalCounts();
-    tag.textContent = c.temas + " temas · " + c.areas + " áreas";
-  }
-
-  function findArea(areaId) {
-    for (var i = 0; i < CATALOGO.length; i++) {
-      if (CATALOGO[i].id === areaId) return CATALOGO[i];
-    }
-    return null;
-  }
-
-  function findTema(area, temaId) {
-    for (var i = 0; i < area.temas.length; i++) {
-      if (area.temas[i].id === temaId) return area.temas[i];
-    }
-    return null;
+    return { done: done, total: deck.cards.length };
   }
 
   function esc(s) {
-    return String(s)
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function escText(s) {
+    return String(s == null ? "" : s)
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;");
   }
 
-  function renderMath() {
+  function ic(name, opts) {
+    return window.icon ? window.icon(name, opts) : "";
+  }
+
+  function showNotice(message) {
+    var old = document.querySelector(".app-toast");
+    if (old && old.parentNode) old.parentNode.removeChild(old);
+    var toast = document.createElement("div");
+    toast.className = "app-toast";
+    toast.setAttribute("role", "status");
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(function () {
+      if (toast.parentNode) toast.parentNode.removeChild(toast);
+    }, 6000);
+  }
+
+  function cardHtml(text) {
+    if (window.mdToHtml) return window.mdToHtml(text == null ? "" : String(text));
+    return "<p>" + escText(text) + "</p>";
+  }
+
+  function renderMath(scope) {
     if (typeof window.renderMathInElement === "function") {
       try {
-        window.renderMathInElement(app, MATH_OPTIONS);
+        window.renderMathInElement(scope, MATH_OPTIONS);
       } catch (e) {
         /* fórmula inválida: queda el texto original */
       }
     }
   }
 
-  function setWide(on) {
-    app.classList.toggle("wide", !!on);
+  function shuffle(list) {
+    var out = list.slice();
+    for (var i = out.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = out[i];
+      out[i] = out[j];
+      out[j] = tmp;
+    }
+    return out;
+  }
+
+  function updateTopbarTag() {
+    var tag = document.getElementById("topbar-tag");
+    if (!tag) return;
+    var decks = window.DeckStore.all();
+    var cards = 0;
+    decks.forEach(function (d) { cards += d.cards.length; });
+    tag.textContent =
+      decks.length + (decks.length === 1 ? " mazo · " : " mazos · ") +
+      cards + (cards === 1 ? " tarjeta" : " tarjetas");
+  }
+
+  function isSignedIn() {
+    return authReady && !!(window.Auth && window.Auth.isSignedIn && window.Auth.isSignedIn());
   }
 
   function setupReveal() {
@@ -453,874 +137,772 @@
       });
       return;
     }
-    if (!revealObserver) {
-      revealObserver = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            revealObserver.unobserve(entry.target);
-          }
-        });
-      }, { rootMargin: "0px 0px -6% 0px", threshold: 0.06 });
-    }
-    Array.prototype.forEach.call(document.querySelectorAll(".reveal:not(.is-visible)"), function (el) {
-      revealObserver.observe(el);
-    });
-  }
-
-  function setupCourseSpy() {
-    clearCourseSpy();
-    var nav = document.getElementById("section-index");
-    if (!nav || typeof window.IntersectionObserver !== "function") return;
-    var chips = nav.querySelectorAll(".chip");
-    courseObserver = new IntersectionObserver(function (entries) {
+    var observer = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
-        Array.prototype.forEach.call(chips, function (chip) {
-          chip.classList.toggle("active", chip.getAttribute("data-target") === entry.target.id);
-        });
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
       });
-    }, { rootMargin: "-42% 0px -52% 0px", threshold: 0 });
-    Array.prototype.forEach.call(document.querySelectorAll(".lesson-section"), function (section) {
-      courseObserver.observe(section);
+    }, { rootMargin: "0px 0px -6% 0px", threshold: 0.06 });
+    Array.prototype.forEach.call(document.querySelectorAll(".reveal:not(.is-visible)"), function (el) {
+      observer.observe(el);
     });
-  }
-
-  function clearCourseSpy() {
-    if (courseObserver) {
-      courseObserver.disconnect();
-      courseObserver = null;
-    }
   }
 
   function setupParallax() {
-    if (reduceMotion) return;
+    var scene = document.querySelector(".parallax-scene");
+    var items = scene ? scene.querySelectorAll("[data-parallax]") : [];
+    if (!scene || !items.length || reduceMotion) return;
+
+    var pointerX = 0;
+    var pointerY = 0;
     var ticking = false;
+
     function update() {
-      var scrollTop = window.scrollY;
-      document.documentElement.style.setProperty("--scroll", String(scrollTop));
-      var nav = document.getElementById("section-index");
-      if (nav) {
-        var max = document.documentElement.scrollHeight - window.innerHeight;
-        nav.style.setProperty("--read", max > 0 ? Math.min(1, scrollTop / max).toFixed(4) : "0");
-      }
+      var scrollY = window.scrollY || 0;
+      Array.prototype.forEach.call(items, function (item) {
+        var depth = parseFloat(item.getAttribute("data-parallax")) || 0;
+        var x = pointerX * depth;
+        var y = pointerY * depth - scrollY * depth * 0.08;
+        item.style.transform = "translate3d(" + x.toFixed(2) + "px," + y.toFixed(2) + "px,0)";
+      });
       ticking = false;
     }
-    window.addEventListener("scroll", function () {
-      if (!ticking) {
-        ticking = true;
-        window.requestAnimationFrame(update);
-      }
+
+    function requestUpdate() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(update);
+    }
+
+    window.addEventListener("pointermove", function (event) {
+      pointerX = (event.clientX / window.innerWidth - 0.5) * 36;
+      pointerY = (event.clientY / window.innerHeight - 0.5) * 24;
+      requestUpdate();
     }, { passive: true });
-    update();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate, { passive: true });
+    requestUpdate();
   }
 
-  function loadLastVisited() {
-    return window.ProgressStore.getLastVisited();
-  }
-
-  function saveLastVisited(areaId, temaId) {
-    window.ProgressStore.setLastVisited(areaId, temaId);
-  }
-
-  /* ---------- Bloqueos y acceso ---------- */
-
-  var AREA_LOCKS = {
-    "algebra-superior": {
-      tipo: "proximamente",
-      titulo: "Próximamente",
-      texto: "Álgebra superior estará disponible pronto. Te avisaremos cuando se abra para todos."
-    },
-    calculo: {
-      tipo: "login",
-      titulo: "Cálculo requiere tu cuenta",
-      texto: "Para entrar a Cálculo necesitas iniciar sesión con Google."
-    }
-  };
-
-  var TEMA_LOCKS = {
-    trigonometria: {
-      titulo: "Trigonometría está bloqueada",
-      texto: "Inicia sesión con Google para estudiar Trigonometría."
-    },
-    "numeros-reales-complejos": {
-      titulo: "Números reales y complejos está bloqueado",
-      texto: "Inicia sesión con Google para estudiar Números reales y complejos."
-    },
-    "sucesiones-sumatorias": {
-      titulo: "Sucesiones y sumatorias está bloqueado",
-      texto: "Inicia sesión con Google para estudiar Sucesiones y sumatorias."
-    },
-    "algebra-elemental": {
-      titulo: "Álgebra elemental está bloqueada",
-      texto: "Inicia sesión con Google para estudiar Álgebra elemental."
-    },
-    inecuaciones: {
-      titulo: "Inecuaciones está bloqueado",
-      texto: "Inicia sesión con Google para estudiar Inecuaciones."
-    },
-    "exp-log": {
-      titulo: "Funciones exponenciales y logarítmicas está bloqueado",
-      texto: "Inicia sesión con Google para estudiar Funciones exponenciales y logarítmicas."
-    }
-  };
-
-  function isSignedIn() {
-    return !!(window.ProgressStore && window.ProgressStore.getUser());
-  }
-
-  function areaLock(areaId) {
-    var lock = AREA_LOCKS[areaId];
-    if (!lock) return null;
-    if (lock.tipo === "login" && isSignedIn()) return null;
-    return lock;
-  }
-
-  function temaLock(temaId) {
-    var lock = TEMA_LOCKS[temaId];
-    if (!lock) return null;
-    if (isSignedIn()) return null;
-    return lock;
-  }
-
-  function loginToSee(dest) {
-    if (window.SB && window.SB.configured && window.SB.beginLogin) {
-      window.SB.beginLogin(dest);
-    } else if (window.Novedades && window.Novedades.notifyError) {
-      window.Novedades.notifyError("Inicia sesión con Google para continuar.");
-    }
-  }
-
-  function googleBtnHtml(dest, label) {
-    return (
-      '<button class="google-btn" type="button" data-dest="' + esc(dest) + '">' +
-        (window.GOOGLE_ICON || "") +
-        "<span>" + esc(label || "Entrar con Google") + "</span>" +
-      "</button>"
-    );
-  }
-
-  function openModal(titulo, texto, loginDest) {
-    var existing = document.getElementById("modal-overlay");
-    if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
-
-    var footer;
-    if (loginDest) {
-      footer =
-        '<div class="update-actions modal-actions">' +
-          '<button class="btn" id="modal-back" type="button">Volver</button>' +
-          googleBtnHtml(loginDest, "Entrar con Google") +
-        "</div>";
-    } else {
-      footer =
-        '<div class="update-actions">' +
-          '<button class="btn primary" id="modal-close" type="button">Entendido</button>' +
-        "</div>";
-    }
-
-    var overlay = document.createElement("div");
-    overlay.id = "modal-overlay";
-    overlay.className = "modal-overlay";
-    overlay.innerHTML =
-      '<div class="modal-box" role="dialog" aria-modal="true">' +
-        '<span class="modal-kicker">Studappy</span>' +
-        "<h3>" + esc(titulo) + "</h3>" +
-        "<p>" + esc(texto) + "</p>" +
-        footer +
-      "</div>";
-    document.body.appendChild(overlay);
-
-    function cerrar() {
-      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-    }
-    overlay.addEventListener("click", function (ev) {
-      if (ev.target === overlay) cerrar();
-    });
-
-    var closeBtn = overlay.querySelector("#modal-close");
-    if (closeBtn) closeBtn.addEventListener("click", cerrar);
-    var backBtn = overlay.querySelector("#modal-back");
-    if (backBtn) backBtn.addEventListener("click", cerrar);
-  }
-
-  function openLoginModal(titulo, texto, dest) {
-    openModal(
-      titulo,
-      (texto || "Esta sección está bloqueada: necesitas iniciar sesión con Google para acceder.") +
-        " No te preocupes: al volver te dejamos justo donde estabas.",
-      dest
-    );
-  }
-
-  function renderLocked(titulo, texto, cta) {
+  function renderLanding() {
+    var tag = document.getElementById("topbar-tag");
+    if (tag) tag.textContent = "Flashcards";
     app.innerHTML =
-      '<nav class="breadcrumb"><a href="#/">Inicio</a></nav>' +
-      '<section class="locked-view">' +
-        '<div class="locked-icon" aria-hidden="true">🔒</div>' +
-        "<h1>" + esc(titulo) + "</h1>" +
-        "<p>" + esc(texto) + "</p>" +
-        (cta || "") +
+      '<section class="landing-hero">' +
+        '<span class="eyebrow">ESTUDIO · FLASHCARDS</span>' +
+        '<h1>Studappy</h1>' +
+        '<p>Convierte lo que necesitas aprender en tarjetas claras, visuales y fáciles de repasar.</p>' +
+        '<button class="btn primary landing-login" id="landing-login" type="button">' + (window.GOOGLE_ICON || "") + "<span>Iniciar sesión con Google</span></button>" +
+        '<small>Tu espacio de estudio se abre después de iniciar sesión.</small>' +
+      "</section>" +
+      '<section class="bento-grid" aria-label="Funciones de Studappy">' +
+        '<article class="bento-box bento-wide"><span class="bento-icon">' + ic("cards", { size: 25 }) + '</span><div><span class="bento-label">Crea</span><h2>Mazos a tu medida</h2><p>Organiza preguntas y respuestas para cada materia, proyecto o examen.</p></div></article>' +
+        '<article class="bento-box"><span class="bento-icon blue">' + ic("target", { size: 25 }) + '</span><span class="bento-label">Aprende</span><h2>Repasa con intención</h2><p>Marca lo que ya dominas y vuelve a lo pendiente.</p></article>' +
+        '<article class="bento-box"><span class="bento-icon sky">' + ic("refresh", { size: 25 }) + '</span><span class="bento-label">Organiza</span><h2>Tu ritmo</h2><p>Muestra la respuesta cuando quieras y mezcla las cartas en cada ronda.</p></article>' +
+        '<article class="bento-box bento-wide bento-note"><span class="bento-icon mint">' + ic("sparkle", { size: 25 }) + '</span><div><span class="bento-label">Tu biblioteca</span><h2>Accede a tus mazos en tu cuenta</h2><p>Los mazos adquiridos se sincronizan con tu cuenta de Studappy; tus propios mazos permanecen en este dispositivo.</p></div></article>' +
       "</section>";
     setupReveal();
   }
 
-  function lockedLoginCta(dest) {
+  /* ---------- Home / administración ---------- */
+
+  function deckCardHtml(deck, index) {
+    var stats = deckStats(deck);
+    var pct = stats.total ? Math.round((stats.done / stats.total) * 100) : 0;
+    var menu = deck.origen === "tienda"
+      ? '<span class="deck-owned-badge">' + ic("check", { size: 14 }) + "Adquirido</span>" +
+        '<button class="icon-btn danger" type="button" data-remove-store="' + deck.id + '" title="Eliminar de mi biblioteca" aria-label="Eliminar de mi biblioteca">' + ic("trash") + "</button>"
+      : '<button class="icon-btn" type="button" data-edit="' + deck.id + '" title="Editar mazo">' + ic("edit") + "</button>" +
+        '<button class="icon-btn danger" type="button" data-del="' + deck.id + '" title="Eliminar mazo">' + ic("trash") + "</button>";
     return (
-      '<div class="locked-actions">' +
-        '<button class="btn locked-back" type="button">Volver</button>' +
-        googleBtnHtml(dest, "Entrar con Google") +
+      '<div class="deck-card' + (deck.origen === "tienda" ? " owned" : "") + (deck.catalogId === "paes-m1-numeros" ? " store-numbers" : "") + ' reveal" style="--deck-color:' + esc(deck.color) + ";transition-delay:" + (index % 8) * 35 + 'ms">' +
+        '<div class="deck-top">' +
+          '<span class="deck-dot" style="background:' + esc(deck.color) + '"></span>' +
+          '<div class="deck-menu">' + menu + "</div>" +
+        "</div>" +
+        '<a class="deck-link" href="#/mazo/' + deck.id + '">' +
+          "<h3>" + esc(deck.nombre) + "</h3>" +
+          (deck.descripcion ? "<p>" + esc(deck.descripcion) + "</p>" : '<p class="deck-empty-desc">Sin descripción</p>') +
+        "</a>" +
+        '<div class="deck-foot">' +
+          '<span class="deck-count">' + ic("cards", { size: 16 }) + stats.total + "</span>" +
+          '<div class="mini-bar"><span style="width:' + pct + '%"></span></div>' +
+          '<span class="deck-pct">' + stats.done + "/" + stats.total + "</span>" +
+        "</div>" +
       "</div>"
     );
   }
 
-  /* ---------- Vistas ---------- */
-
-  function flatGuides(areaId) {
-    var out = [];
-    CATALOGO.forEach(function (area) {
-      if (areaId && area.id !== areaId) return;
-      area.temas.forEach(function (tema) {
-        var pack = RECURSOS[area.id + "/" + tema.id];
-        if (!pack || !pack.items || pack.items.length < 2) return;
-        out.push({
-          areaId: area.id,
-          areaNombre: area.nombre,
-          temaId: tema.id,
-          temaNombre: tema.nombre,
-          nivel: tema.nivel,
-          simple: pack.items[0],
-          ejercicios: pack.items[1]
-        });
-      });
+  function renderGrid(filter) {
+    var grid = document.getElementById("deck-grid");
+    if (!grid) return;
+    var term = (filter || "").trim().toLowerCase();
+    var decks = window.DeckStore.all().filter(function (deck) {
+      if (!term) return true;
+      return (deck.nombre + " " + deck.descripcion).toLowerCase().indexOf(term) !== -1;
     });
-    return out;
-  }
-
-  function randomGuide(areaId) {
-    var pool = flatGuides(areaId);
-    if (!pool.length) return null;
-    return pool[Math.floor(Math.random() * pool.length)];
-  }
-
-  function recoCardHtml(guide) {
-    if (!guide) return "";
-    return (
-      '<aside class="reco" id="reco">' +
-        '<div class="reco-head">' +
-          '<span class="reco-kicker">Guía recomendada</span>' +
-          '<button class="reco-shuffle" type="button" title="Ver otra recomendación">Ver otra ↻</button>' +
-        "</div>" +
-        '<a class="reco-title" href="#/curso/' + guide.areaId + "/" + guide.temaId + '">' + esc(guide.temaNombre) + "</a>" +
-        '<p class="reco-meta">' + esc(guide.areaNombre) + "</p>" +
-        '<div class="reco-actions">' +
-          '<a class="reco-btn" href="' + guide.simple.archivo + '" download>Guía simple · 20 ejercicios</a>' +
-          '<a class="reco-btn" href="' + guide.ejercicios.archivo + '" download>Cuaderno · 50 ejercicios</a>' +
-        "</div>" +
-      "</aside>"
-    );
-  }
-
-  function renderRecomendacion(areaId) {
-    if (!isSignedIn()) {
-      return (
-        '<aside class="reco reco-locked reveal">' +
-          '<span class="reco-kicker">Guía recomendada</span>' +
-          '<p class="reco-meta">Inicia sesión para recibir recomendaciones de guías.</p>' +
-          '<div class="reco-actions">' +
-            googleBtnHtml("#/", "Entrar con Google") +
-          "</div>" +
-        "</aside>"
-      );
+    var count = document.getElementById("deck-count-label");
+    if (count) {
+      count.textContent = decks.length + (decks.length === 1 ? " mazo" : " mazos");
     }
-    return recoCardHtml(randomGuide(areaId));
+    grid.innerHTML = decks.length
+      ? decks.map(deckCardHtml).join("")
+      : '<p class="grid-empty">Sin resultados para esa búsqueda.</p>';
+    setupReveal();
   }
 
   function renderHome() {
-    setWide(false);
-    var g = globalStats();
-    var counts = globalCounts();
-    var pct = g.total ? Math.round((g.done / g.total) * 100) : 0;
-
-    var cards = CATALOGO.map(function (area, i) {
-      var s = areaStats(area);
-      var aPct = s.total ? Math.round((s.done / s.total) * 100) : 0;
-      var lock = areaLock(area.id);
-      var lockBadge = "";
-      var extraAttrs = "";
-      var cls = "area-card reveal";
-      if (lock) {
-        cls += " locked";
-        extraAttrs = ' data-lock="' + area.id + '"';
-        lockBadge = '<span class="lock-badge" aria-hidden="true">🔒</span>';
-      }
-      return (
-        '<a class="' + cls + '" href="#/area/' + area.id + '"' + extraAttrs + ' style="--area-color:' + area.color + ";transition-delay:" + (i % 8) * 35 + 'ms">' +
-          lockBadge +
-          "<h2>" + esc(area.nombre) + "</h2>" +
-          "<p>" + esc(area.descripcion) + "</p>" +
-          '<div class="area-meta">' +
-            "<span>" + s.total + " secciones</span>" +
-            '<div class="mini-bar"><span style="width:' + aPct + '%"></span></div>' +
-            "<span>" + s.done + "/" + s.total + "</span>" +
-          "</div>" +
-        "</a>"
-      );
-    }).join("");
-
-    var last = loadLastVisited();
-    var continueCard = "";
-    if (last && isSignedIn()) {
-      var lastArea = findArea(last.areaId);
-      var lastTema = lastArea ? findTema(lastArea, last.temaId) : null;
-      if (lastArea && lastTema) {
-        continueCard =
-          '<a class="continue-card reveal" href="#/curso/' + lastArea.id + "/" + lastTema.id + '">' +
-            '<span class="continue-kicker">Continuar donde ibas</span>' +
-            '<span class="continue-title">' + esc(lastTema.nombre) + "</span>" +
-            '<span class="continue-meta">' + esc(lastArea.nombre) + "</span>" +
-          "</a>";
-      }
-    }
-
-    var user = window.ProgressStore ? window.ProgressStore.getUser() : null;
-    var greeting = "";
-    if (user && window.Profile) {
-      greeting =
-        '<div class="hero-user reveal">' +
-          window.Profile.avatarHtml(user, "md") +
-          '<span class="hero-user-text">' +
-            '<span class="hero-user-kicker">Hola,</span>' +
-            '<span class="hero-user-name">' + esc(window.Profile.name(user)) + "</span>" +
-          "</span>" +
-        "</div>";
-    }
+    updateTopbarTag();
+    var decks = window.DeckStore.all();
+    var totalDone = 0;
+    var totalCards = 0;
+    decks.forEach(function (deck) {
+      var s = deckStats(deck);
+      totalDone += s.done;
+      totalCards += s.total;
+    });
+    var pct = totalCards ? Math.round((totalDone / totalCards) * 100) : 0;
 
     app.innerHTML =
-      '<section class="hero-simple">' +
-        greeting +
-        '<div class="eyebrow reveal">MAPA DE ESTUDIO <span>01—0' + counts.areas + "</span></div>" +
-        '<div class="hero-mark reveal"><img src="img/studappy.png" alt="Studappy" /></div>' +
-        '<p class="reveal hero-desc">Aprende matemáticas y mide tu avance en tiempo real.</p>' +
-        '<div class="hero-progress reveal">' +
-          '<div class="bar"><span style="width:' + pct + '%"></span></div>' +
-          '<span class="label">' + g.done + " de " + g.total + " secciones · " + pct + "%</span>" +
+      '<section class="admin-head">' +
+        '<div class="admin-title">' +
+          '<span class="eyebrow">PANEL DE MAZOS</span>' +
+          "<h1>Mis mazos</h1>" +
+          '<p class="admin-sub">Crea, edita y estudia tus flashcards.</p>' +
         "</div>" +
-        '<div class="home-note reveal"><span class="note-dot"></span><span>Elige un área para comenzar una nueva línea de estudio.</span></div>' +
-        continueCard +
+         '<div class="admin-actions"><a class="btn ghost lg" href="#/tienda">' + ic("layers") + '<span>Tienda</span></a><button class="btn primary lg" id="new-deck" type="button">' + ic("plus") + '<span>Nuevo mazo</span></button></div>' +
       "</section>" +
-      renderRecomendacion() +
-      '<a class="bib-home-card reveal" href="#/biblioteca">' +
-        '<span class="bib-home-kicker">Biblioteca · ' + (window.LIBROS || []).length + " libros</span>" +
-        '<span class="bib-home-title">Libros de matemática en PDF</span>' +
-        '<span class="bib-home-meta">Catálogo completo con buscador →</span>' +
-      "</a>" +
-      '<h2 class="section-title reveal">Áreas</h2>' +
-      '<div class="area-grid">' + cards + "</div>";
+      (decks.length
+        ? '<div class="toolbar">' +
+            '<label class="search">' + ic("search", { size: 18 }) +
+              '<input type="search" id="deck-search" placeholder="Buscar mazo…" autocomplete="off" />' +
+            "</label>" +
+            '<div class="toolbar-stats">' +
+              '<span id="deck-count-label">' + decks.length + (decks.length === 1 ? " mazo" : " mazos") + "</span>" +
+              '<div class="mini-bar"><span style="width:' + pct + '%"></span></div>' +
+              "<span>" + totalDone + "/" + totalCards + " vistas</span>" +
+            "</div>" +
+          "</div>" +
+          '<div class="deck-grid" id="deck-grid">' +
+            decks.map(deckCardHtml).join("") +
+          "</div>"
+        : '<div class="empty-state">' +
+            '<span class="empty-icon">' + ic("sparkle", { size: 34 }) + "</span>" +
+            "<h2>Sin mazos todavía</h2>" +
+            "<p>Crea tu primer mazo y empieza a estudiar en segundos.</p>" +
+            '<button class="btn primary" id="new-deck" type="button">' + ic("plus") + "<span>Nuevo mazo</span></button>" +
+            '<a class="btn ghost" href="#/tienda">' + ic("layers") + "<span>Explorar tienda</span></a>" +
+          "</div>");
 
-    clearCourseSpy();
     setupReveal();
   }
 
-  function renderBiblioteca() {
-    setWide(false);
-    if (window.Biblioteca) {
-      window.Biblioteca.render(app);
-      setupReveal();
-    } else {
-      app.innerHTML =
-        '<nav class="breadcrumb"><a href="#/">Inicio</a></nav>' +
-        '<p class="bib-empty">La biblioteca aún no está disponible.</p>';
-    }
-  }
+  /* ---------- Editor de mazo ---------- */
 
-  function renderArea(areaId, openProximamente) {
-    setWide(false);
-    var area = findArea(areaId);
-    if (!area) return renderHome();
-
-    var lock = areaLock(area.id);
-    if (lock) {
-      if (lock.tipo === "proximamente" && !openProximamente) {
-        renderLocked(lock.titulo, lock.texto);
-        return;
-      }
-      if (lock.tipo === "login") {
-        renderLocked(lock.titulo, lock.texto, lockedLoginCta("#/area/" + area.id));
-        return;
-      }
-    }
-
-    var s = areaStats(area);
-    var pct = s.total ? Math.round((s.done / s.total) * 100) : 0;
-
-    var topics = area.temas.map(function (tema, i) {
-      var c = courseStats(area.id, tema.id);
-      var cDone = c.total > 0 && c.done === c.total;
-      var cPct = c.total ? Math.round((c.done / c.total) * 100) : 0;
-      var tLock = temaLock(tema.id);
-      var lockBadge = tLock ? '<span class="lock-badge" aria-hidden="true">🔒</span>' : "";
-      var lockAttrs = tLock ? ' data-lock-dest="#/curso/' + area.id + "/" + tema.id + '"' : "";
-      var cls = "topic-card reveal" + (cDone ? " done" : "") + (tLock ? " locked" : "");
-      return (
-        '<a class="' + cls + '" href="#/curso/' + area.id + "/" + tema.id + '"' + lockAttrs + ' style="transition-delay:' + Math.min(i, 8) * 30 + 'ms">' +
-          '<div class="topic-num">' + (cDone ? "✓" : i + 1) + "</div>" +
-          '<div class="topic-body">' +
-            "<h3>" + esc(tema.nombre) +
-              lockBadge +
-            "</h3>" +
-            "<p>" + esc(tema.descripcion) + "</p>" +
-            '<div class="topic-progress">' +
-              '<div class="mini-bar"><span style="width:' + cPct + '%"></span></div>' +
-              "<span>" + c.done + "/" + c.total + " secciones</span>" +
-            "</div>" +
-          "</div>" +
-        "</a>"
-      );
-    }).join("");
-
-    app.innerHTML =
-      '<nav class="breadcrumb">' +
-        '<a href="#/">Inicio</a><span class="sep">/</span><span>' + esc(area.nombre) + "</span>" +
-      "</nav>" +
-      '<section class="area-header" style="--area-color:' + area.color + '">' +
-        "<h1>" + esc(area.nombre) + "</h1>" +
-        "<p>" + esc(area.descripcion) + "</p>" +
-        '<div class="progress-row">' +
-          '<div class="mini-bar"><span style="width:' + pct + '%"></span></div>' +
-          "<span>" + s.done + " de " + s.total + " secciones completadas</span>" +
-        "</div>" +
-      "</section>" +
-      renderRecomendacion(areaId) +
-      '<div class="topic-list">' + topics + "</div>";
-
-    clearCourseSpy();
-    setupReveal();
-  }
-
-  function sectionButton(areaId, temaId, index, done) {
+  function editorHtml() {
     return (
-      '<button class="btn section-toggle' + (done ? " done" : " primary") + '" ' +
-        'data-area="' + areaId + '" data-tema="' + temaId + '" data-index="' + index + '">' +
-        (done ? "✓ Sección completada" : "Marcar como completado") +
-      "</button>"
-    );
-  }
-
-  function renderRecursos(areaId, temaId) {
-    var pack = RECURSOS[areaId + "/" + temaId];
-    if (!pack) return "";
-
-    var signed = isSignedIn();
-
-    var cards = pack.items.map(function (item) {
-      var actions;
-      if (signed) {
-        actions =
-          '<div class="recurso-actions">' +
-            '<a class="recurso-btn" href="' + item.archivo + '" download>Descargar PDF</a>' +
-            (item.fuente
-              ? '<a class="recurso-link" href="' + item.fuente + '" download>Markdown</a>'
-              : "") +
-          "</div>";
-      } else {
-        actions =
-          '<div class="recurso-actions">' +
-            '<button class="google-btn recurso-login" type="button" data-dest="#/curso/' + areaId + "/" + temaId + '">' +
-              (window.GOOGLE_ICON || "") +
-              "<span>Inicia sesión para descargar</span>" +
-            "</button>" +
-          "</div>";
-      }
-      return (
-        '<article class="recurso-card reveal' + (signed ? "" : " recurso-locked") + '">' +
-          '<span class="recurso-icon" aria-hidden="true">' + (signed ? "↓" : "🔒") + "</span>" +
-          '<div class="recurso-body">' +
-            '<div class="recurso-top">' +
-              '<span class="recurso-titulo">' + esc(item.titulo) + "</span>" +
-              '<span class="recurso-meta">' + esc(item.meta) + "</span>" +
-            "</div>" +
-            '<p class="recurso-desc">' + esc(item.descripcion) + "</p>" +
-            actions +
+      '<div class="modal" role="dialog" aria-modal="true">' +
+        '<header class="modal-head">' +
+          "<div>" +
+            '<span class="modal-kicker" id="ed-kicker">' + (editingId ? "Editar mazo" : "Nuevo mazo") + "</span>" +
+            '<h2 id="ed-title">' + (editingId ? "Editar mazo" : "Crear mazo") + "</h2>" +
           "</div>" +
-        "</article>"
-      );
-    }).join("");
-
-    var nota = signed
-      ? ""
-      : '<p class="recurso-note">Las guías se descargan solo con tu cuenta. Inicia sesión con Google.</p>';
-
-    return (
-      '<section class="recursos" aria-label="Material descargable">' +
-        '<header class="recursos-head reveal">' +
-          '<span class="recursos-kicker">' + esc(pack.titulo) + "</span>" +
-          "<h2>Guías para descargar</h2>" +
-          "<p>" + esc(pack.descripcion) + "</p>" +
-          nota +
+          '<button class="icon-btn" id="ed-close" type="button" title="Cerrar">' + ic("x") + "</button>" +
         "</header>" +
-        '<div class="recurso-grid">' + cards + "</div>" +
-      "</section>"
+        '<div class="guided-progress" id="ed-progress" aria-label="Progreso de creación"></div>' +
+        '<div class="modal-body" id="ed-content"></div>' +
+        '<footer class="modal-foot">' +
+          (editingId
+            ? '<button class="btn danger ghost" id="ed-delete" type="button">' + ic("trash", { size: 16 }) + "<span>Eliminar</span></button>"
+            : "<span></span>") +
+          '<div class="modal-foot-right guided-nav">' +
+            '<button class="btn ghost" id="ed-cancel" type="button">Cancelar</button>' +
+            '<button class="btn ghost" id="ed-back" type="button">' + ic("arrowLeft", { size: 16 }) + "<span>Atrás</span></button>" +
+            '<button class="btn primary" id="ed-next" type="button"><span>Continuar</span>' + ic("chevronRight", { size: 16 }) + "</button>" +
+          "</div>" +
+        "</footer>" +
+      "</div>"
     );
   }
 
-  function renderCurso(areaId, temaId, openProximamente) {
-    setWide(true);
-    var area = findArea(areaId);
-    if (!area) return renderHome();
-    var tema = findTema(area, temaId);
-    if (!tema) return renderArea(areaId);
-
-    var lock = areaLock(area.id);
-    if (lock) {
-      if (lock.tipo === "proximamente" && !openProximamente) {
-        renderLocked(lock.titulo, lock.texto);
-        return;
-      }
-      if (lock.tipo === "login") {
-        renderLocked(lock.titulo, lock.texto, lockedLoginCta("#/curso/" + area.id + "/" + tema.id));
-        return;
-      }
-    }
-
-    var tLock = temaLock(tema.id);
-    if (tLock) {
-      renderLocked(tLock.titulo, tLock.texto, lockedLoginCta("#/curso/" + area.id + "/" + tema.id));
-      return;
-    }
-
-    if (isSignedIn()) saveLastVisited(area.id, tema.id);
-
-    var sections = getSections(area.id, tema.id);
-    var stats = courseStats(area.id, tema.id);
-    var pct = stats.total ? Math.round((stats.done / stats.total) * 100) : 0;
-
-    if (sections.length === 0) {
-      app.innerHTML =
-        '<nav class="breadcrumb"><a href="#/">Inicio</a><span class="sep">/</span>' +
-        '<a href="#/area/' + area.id + '">' + esc(area.nombre) + "</a></nav>" +
-        '<p class="empty">Este curso todavía no tiene contenido.</p>';
-      return;
-    }
-
-    var chips = sections.map(function (sec, i) {
-      var done = isSectionDone(area.id, tema.id, i);
+  function editorStepHtml() {
+    if (editorStep === 1) {
       return (
-        '<button class="chip' + (done ? " done" : "") + '" data-target="seccion-' + i + '" title="' + esc(sec.title) + '">' +
-          '<span class="chip-check">' + (done ? "✓" : i + 1) + "</span>" +
-          "<span>" + esc(sec.title) + "</span>" +
-        "</button>"
+        '<div class="guided-step">' +
+          '<span class="guided-icon">' + ic("layers", { size: 24 }) + "</span>" +
+          '<p class="guided-lead">Primero dale un nombre para saber qué vas a estudiar.</p>' +
+          '<label class="field" id="ed-name-field"><span>Nombre del mazo</span>' +
+            '<input id="ed-name" type="text" maxlength="60" placeholder="Ej. Vocabulario de inglés" value="' + esc(draft.nombre) + '" />' +
+          "</label>" +
+          '<p class="guided-tip">Puedes cambiarlo todo después.</p>' +
+        "</div>"
+      );
+    }
+
+    if (editorStep === 2) {
+      return (
+        '<div class="guided-step">' +
+          '<span class="guided-icon">' + ic("cards", { size: 24 }) + "</span>" +
+          '<p class="guided-lead">Ahora crea tarjetas. En cada una, escribe una pregunta y su respuesta.</p>' +
+          '<div class="cards-editor">' +
+            '<div class="cards-editor-head">' +
+              '<span id="ed-cards-count">Tarjetas (' + draft.cards.length + ")</span>" +
+              '<button class="btn ghost sm" id="ed-add" type="button">' + ic("plus", { size: 16 }) + "<span>Agregar</span></button>" +
+            "</div>" +
+            '<div class="cards-list" id="ed-cards"></div>' +
+          "</div>" +
+          '<p class="guided-error" id="ed-card-error">Agrega al menos una tarjeta antes de continuar.</p>' +
+          '<p class="guided-tip">No necesitas terminar todo ahora. Puedes volver y editar el mazo cuando quieras.</p>' +
+        "</div>"
+      );
+    }
+
+    var swatches = window.DeckStore.PALETTE.map(function (color) {
+      var active = color.toLowerCase() === (draft.color || "").toLowerCase();
+      return (
+        '<button class="swatch' + (active ? " active" : "") + '" type="button" data-color="' + color + '" ' +
+        'style="background:' + color + '" aria-label="Color ' + color + '"></button>'
       );
     }).join("");
+    var filled = draft.cards.filter(function (card) { return (card.q || "").trim() || (card.a || "").trim(); }).length;
 
-    var lessons = sections.map(function (sec, i) {
-      var done = isSectionDone(area.id, tema.id, i);
-      return (
-        '<section class="lesson-section reveal' + (done ? " done" : "") + '" id="seccion-' + i + '" style="transition-delay:' + Math.min(i, 6) * 40 + 'ms">' +
-          '<header class="lesson-head">' +
-            '<span class="lesson-num">' + (i + 1) + "</span>" +
-            "<h2>" + esc(sec.title) + "</h2>" +
-          "</header>" +
-          '<div class="lesson-body">' + window.mdToHtml(sec.body) + "</div>" +
-          '<footer class="lesson-footer">' +
-            (isSignedIn()
-              ? sectionButton(area.id, tema.id, i, done)
-              : '<div class="lesson-lock"><span>Inicia sesión para guardar tu avance</span>' +
-                googleBtnHtml("#/curso/" + area.id + "/" + tema.id, "Entrar con Google") +
-                "</div>") +
-          "</footer>" +
-        "</section>"
-      );
-    }).join("");
-
-    var index = area.temas.indexOf(tema);
-    var prev = index > 0 ? area.temas[index - 1] : null;
-    var next = index < area.temas.length - 1 ? area.temas[index + 1] : null;
-
-    app.innerHTML =
-      '<nav class="breadcrumb">' +
-        '<a href="#/">Inicio</a><span class="sep">/</span>' +
-        '<a href="#/area/' + area.id + '">' + esc(area.nombre) + "</a>" +
-        '<span class="sep">/</span><span>' + esc(tema.nombre) + "</span>" +
-      "</nav>" +
-      '<header class="course-hero" style="--area-color:' + area.color + '">' +
-        "<h1>" + esc(tema.nombre) + "</h1>" +
-        '<div class="course-badges">' +
-          '<span class="badge">' + esc(area.nombre) + "</span>" +
-        "</div>" +
-        '<p class="course-desc">' + esc(tema.descripcion) + "</p>" +
-        '<div class="progress-row">' +
-          '<div class="mini-bar"><span id="course-progress-bar" style="width:' + pct + '%"></span></div>' +
-          '<span id="course-progress-label">' + stats.done + " de " + stats.total + " secciones completadas</span>" +
-        "</div>" +
-      "</header>" +
-      renderRecursos(area.id, tema.id) +
-      '<nav class="section-index" id="section-index">' + chips + "</nav>" +
-      '<div class="lesson-list">' + lessons + "</div>" +
-      '<div class="nav-row">' +
-        (prev
-          ? '<a class="btn" href="#/curso/' + area.id + "/" + prev.id + '">← ' + esc(prev.nombre) + "</a>"
-          : "<span></span>") +
-        (next
-          ? '<a class="btn" href="#/curso/' + area.id + "/" + next.id + '">' + esc(next.nombre) + " →</a>"
-          : "<span></span>") +
-      "</div>";
-
-    renderMath();
-    if (window.Diagram) window.Diagram.hydrate(app);
-    renderMath();
-    setupReveal();
-    setupCourseSpy();
+    return (
+      '<div class="guided-step">' +
+        '<span class="guided-icon">' + ic("sparkle", { size: 24 }) + "</span>" +
+        '<p class="guided-lead">Ya tienes la base. Puedes añadir una descripción y elegir un color para reconocerlo rápido.</p>' +
+        '<label class="field"><span>Descripción <small>opcional</small></span>' +
+          '<input id="ed-desc" type="text" maxlength="140" placeholder="Ej. Palabras para el examen del viernes" value="' + esc(draft.descripcion) + '" />' +
+        "</label>" +
+        '<div class="field"><span>Color</span><div class="swatches" id="ed-colors">' + swatches + "</div></div>" +
+        '<div class="guided-review"><strong>Resumen</strong><span><b>' + filled + "</b> " + (filled === 1 ? "tarjeta lista" : "tarjetas listas") + " · " + esc(draft.nombre || "Mazo sin título") + "</span></div>" +
+      "</div>"
+    );
   }
 
-  function updateCourseUI(areaId, temaId, index, button) {
-    var done = isSectionDone(areaId, temaId, index);
+  function renderEditorStep() {
+    var overlay = document.getElementById("editor");
+    if (!overlay) return;
+    var content = overlay.querySelector("#ed-content");
+    if (!content) return;
+    content.innerHTML = editorStepHtml();
+    if (editorStep === 2) renderEditorCards();
 
-    var section = button.closest(".lesson-section");
-    if (section) section.classList.toggle("done", done);
-
-    button.classList.toggle("done", done);
-    button.classList.toggle("primary", !done);
-    button.textContent = done ? "✓ Sección completada" : "Marcar como completado";
-
-    var chip = document.querySelector('.chip[data-target="seccion-' + index + '"]');
-    if (chip) {
-      chip.classList.toggle("done", done);
-      var check = chip.querySelector(".chip-check");
-      if (check) check.textContent = done ? "✓" : String(index + 1);
+    var progressBox = overlay.querySelector("#ed-progress");
+    if (progressBox) {
+      progressBox.innerHTML = [1, 2, 3].map(function (step) {
+        return '<span class="guided-dot' + (step === editorStep ? " active" : step < editorStep ? " complete" : "") + '">' + step + "</span>";
+      }).join('<span class="guided-line"></span>');
     }
+    var back = overlay.querySelector("#ed-back");
+    var next = overlay.querySelector("#ed-next");
+    if (back) back.style.display = editorStep === 1 ? "none" : "inline-flex";
+    if (next) {
+      next.innerHTML = editorStep === 3
+        ? ic("check", { size: 16 }) + "<span>" + (editingId ? "Guardar cambios" : "Crear mazo") + "</span>"
+        : "<span>Continuar</span>" + ic("chevronRight", { size: 16 });
+    }
+    var kicker = overlay.querySelector("#ed-kicker");
+    var title = overlay.querySelector("#ed-title");
+    var labels = ["Empecemos", "Contenido", "Último paso"];
+    var titles = ["Nombra tu mazo", "Añade tus tarjetas", "Deja todo listo"];
+    if (kicker) kicker.textContent = labels[editorStep - 1];
+    if (title) title.textContent = titles[editorStep - 1];
+    var focus = overlay.querySelector(editorStep === 1 ? "#ed-name" : editorStep === 3 ? "#ed-desc" : "#ed-cards textarea");
+    if (focus) focus.focus();
+  }
 
-    var stats = courseStats(areaId, temaId);
+  function askAbandon(onConfirm) {
+    if (window.StudappyConfirm) {
+      window.StudappyConfirm.ask("Los cambios que no hayas guardado se perderán.", onConfirm);
+    } else if (typeof onConfirm === "function") {
+      onConfirm();
+    }
+  }
+
+  function renderEditorCards() {
+    var box = document.getElementById("ed-cards");
+    if (!box) return;
+    box.innerHTML = draft.cards.map(function (card, i) {
+      return (
+        '<div class="card-row" data-id="' + card.id + '">' +
+          '<span class="card-row-num">' + (i + 1) + "</span>" +
+          '<div class="card-row-fields">' +
+            '<textarea rows="2" data-role="q" placeholder="Pregunta">' + escText(card.q) + "</textarea>" +
+            '<textarea rows="2" data-role="a" placeholder="Respuesta">' + escText(card.a) + "</textarea>" +
+          "</div>" +
+          '<button class="icon-btn danger" type="button" data-remove="' + card.id + '" title="Quitar tarjeta">' + ic("trash", { size: 16 }) + "</button>" +
+        "</div>"
+      );
+    }).join("");
+    var count = document.getElementById("ed-cards-count");
+    if (count) count.textContent = "Tarjetas (" + draft.cards.length + ")";
+  }
+
+  function openEditor(deck) {
+    if (deck && deck.origen === "tienda") return;
+    editingId = deck ? deck.id : null;
+    draft = deck ? clone(deck) : window.DeckStore.create();
+
+    var overlay = document.createElement("div");
+    overlay.className = "overlay";
+    overlay.id = "editor";
+    overlay.innerHTML = editorHtml();
+    document.body.appendChild(overlay);
+    editorStep = 1;
+    renderEditorStep();
+
+    overlay.addEventListener("click", function (e) {
+      if (e.target === overlay) {
+        askAbandon(closeEditor);
+        return;
+      }
+      var color = e.target.closest(".swatch[data-color]");
+      if (color) {
+        draft.color = color.getAttribute("data-color");
+        Array.prototype.forEach.call(overlay.querySelectorAll(".swatch"), function (s) {
+          s.classList.toggle("active", s.getAttribute("data-color") === draft.color);
+        });
+        return;
+      }
+      var add = e.target.closest("#ed-add");
+      if (add) {
+        draft.cards.push(window.DeckStore.newCard());
+        renderEditorCards();
+        var rows = overlay.querySelectorAll(".card-row textarea");
+        if (rows.length) rows[rows.length - 1].focus();
+        return;
+      }
+      if (e.target.closest("#ed-back")) {
+        if (editorStep > 1) {
+          askAbandon(function () {
+            editorStep--;
+            renderEditorStep();
+          });
+        }
+        return;
+      }
+      if (e.target.closest("#ed-next")) {
+        if (editorStep === 1) {
+          var nameInput = overlay.querySelector("#ed-name");
+          if (!nameInput || !nameInput.value.trim()) {
+            var nameField = overlay.querySelector("#ed-name-field");
+            if (nameField) nameField.classList.add("invalid");
+            if (nameInput) nameInput.focus();
+            return;
+          }
+          draft.nombre = nameInput.value;
+        }
+        if (editorStep === 2) {
+          var hasCard = draft.cards.some(function (card) {
+            return (card.q || "").trim() && (card.a || "").trim();
+          });
+          if (!hasCard) {
+            var cardError = overlay.querySelector("#ed-card-error");
+            if (cardError) cardError.classList.add("visible");
+            var firstCardField = overlay.querySelector("#ed-cards textarea");
+            if (firstCardField) firstCardField.focus();
+            return;
+          }
+        }
+        if (editorStep < 3) {
+          editorStep++;
+          renderEditorStep();
+        } else {
+          saveEditor();
+        }
+        return;
+      }
+      var remove = e.target.closest("[data-remove]");
+      if (remove) {
+        var id = remove.getAttribute("data-remove");
+        draft.cards = draft.cards.filter(function (c) { return c.id !== id; });
+        if (!draft.cards.length) draft.cards.push(window.DeckStore.newCard());
+        renderEditorCards();
+        return;
+      }
+      if (e.target.closest("#ed-close") || e.target.closest("#ed-cancel")) {
+        askAbandon(closeEditor);
+        return;
+      }
+      if (e.target.closest("#ed-delete")) return deleteFromEditor();
+    });
+
+    overlay.addEventListener("input", function (e) {
+      var nameInput = e.target.closest("#ed-name");
+      if (nameInput) {
+        draft.nombre = nameInput.value;
+        var nameField = overlay.querySelector("#ed-name-field");
+        if (nameField && nameInput.value.trim()) nameField.classList.remove("invalid");
+        return;
+      }
+      var descInput = e.target.closest("#ed-desc");
+      if (descInput) { draft.descripcion = descInput.value; return; }
+      var field = e.target.closest(".card-row textarea");
+      if (field) {
+        var row = field.closest(".card-row");
+        var card = draft.cards.filter(function (c) { return c.id === row.getAttribute("data-id"); })[0];
+        if (card) card[field.getAttribute("data-role")] = field.value;
+        var cardError = overlay.querySelector("#ed-card-error");
+        if (cardError) cardError.classList.remove("visible");
+      }
+    });
+
+    overlay.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") askAbandon(closeEditor);
+    });
+  }
+
+  function closeEditor() {
+    var overlay = document.getElementById("editor");
+    draft = null;
+    editingId = null;
+    if (window.Motion) window.Motion.close(overlay);
+    else if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+  }
+
+  function enterRoute() {
+    app.classList.remove("route-enter");
+    void app.offsetWidth;
+    app.classList.add("route-enter");
+  }
+
+  function saveEditor() {
+    draft.nombre = (draft.nombre || "").trim() || "Mazo sin título";
+    draft.descripcion = (draft.descripcion || "").trim();
+    draft.cards = draft.cards.filter(function (c) {
+      return (c.q && c.q.trim()) || (c.a && c.a.trim());
+    });
+    if (!draft.cards.length) draft.cards.push(window.DeckStore.newCard());
+    var saved = window.DeckStore.save(draft);
+    var wasNew = !editingId;
+    closeEditor();
+    if (session && session.deckId === saved.id) startSession(saved, false);
+    route();
+    if (wasNew) {
+      location.hash = "#/mazo/" + saved.id;
+    }
+  }
+
+  function deleteFromEditor() {
+    if (!editingId) return;
+    var deck = window.DeckStore.get(editingId);
+    if (!deck || deck.origen === "tienda") return;
+    if (window.StudappyConfirm) {
+      window.StudappyConfirm.ask("El mazo y sus tarjetas se eliminarán de este dispositivo.", function () {
+        window.DeckStore.remove(editingId);
+        closeEditor();
+        location.hash = "#/";
+        route();
+      });
+    }
+  }
+
+  function requestDelete(id) {
+    var deck = window.DeckStore.get(id);
+    if (!deck || deck.origen === "tienda") return;
+    if (window.StudappyConfirm) {
+      window.StudappyConfirm.ask('¿Eliminar el mazo "' + deck.nombre + '"?', function () {
+        window.DeckStore.remove(id);
+        renderHome();
+      });
+    }
+  }
+
+  function requestRemoveStoreDeck(id) {
+    var deck = window.DeckStore.get(id);
+    if (!deck || deck.origen !== "tienda" || !window.CloudDecks) return;
+    if (!window.StudappyConfirm) return;
+    window.StudappyConfirm.ask(
+      "El mazo y su avance se quitarán de tu biblioteca y de tu cuenta. El catálogo lo conservará y podrás añadirlo otra vez.",
+      function () {
+        window.CloudDecks.remove(deck.id)
+          .then(function () {
+            delete progress[deck.id];
+            saveProgress();
+            renderHome();
+          })
+          .catch(function (error) {
+            showNotice("No se pudo eliminar el mazo: " + (error.message || "error de conexión"));
+          });
+      },
+      { title: "¿Eliminar mazo de tu biblioteca?", confirmLabel: "Eliminar mazo", cancelLabel: "Conservar" }
+    );
+  }
+
+  /* ---------- Estudio ---------- */
+
+  function startSession(deck, onlyMissing) {
+    var order = deck.cards
+      .filter(function (card) { return !onlyMissing || !isKnown(deck.id, card.id); })
+      .map(function (card) { return card.id; });
+    session = { deckId: deck.id, order: order, pos: 0, flipped: false, prepared: false, shuffle: true };
+  }
+
+  function findCard(deck, cardId) {
+    for (var i = 0; i < deck.cards.length; i++) {
+      if (deck.cards[i].id === cardId) return deck.cards[i];
+    }
+    return null;
+  }
+
+  function renderStudy() {
+    var deck = window.DeckStore.get(session.deckId);
+    if (!deck) return renderHome();
+    if (!session.prepared) return renderPreparation(deck);
+    var stats = deckStats(deck);
     var pct = stats.total ? Math.round((stats.done / stats.total) * 100) : 0;
-    var bar = document.getElementById("course-progress-bar");
-    var label = document.getElementById("course-progress-label");
-    if (bar) bar.style.width = pct + "%";
-    if (label) label.textContent = stats.done + " de " + stats.total + " secciones completadas";
+
+    if (session.pos >= session.order.length) return renderSummary(deck, stats);
+
+    var card = findCard(deck, session.order[session.pos]);
+    if (!card) {
+      session.pos++;
+      return renderStudy();
+    }
+    var counter = session.pos + 1 + " / " + session.order.length;
+    var isDone = isKnown(deck.id, card.id);
+
+    app.innerHTML =
+      '<nav class="breadcrumb"><a href="#/" data-confirm-leave="true">Mis mazos</a><span class="sep">' + ic("chevronRight", { size: 14 }) + "</span><span>" + esc(deck.nombre) + "</span></nav>" +
+      '<section class="study">' +
+        '<header class="study-head">' +
+          "<h1>" + esc(deck.nombre) + "</h1>" +
+          '<div class="study-stats">' +
+            '<div class="mini-bar"><span style="width:' + pct + '%"></span></div>' +
+            "<span>" + stats.done + "/" + stats.total + " vistas</span>" +
+            (deck.origen === "tienda" ? '<span class="deck-owned-badge study-owned">' + ic("check", { size: 14 }) + "Mazo de la tienda</span>" :
+              '<button class="link-btn" id="fc-edit" type="button">' + ic("edit", { size: 15 }) + "Editar mazo</button>") +
+          "</div>" +
+        "</header>" +
+        '<div class="flashcard' + (session.flipped ? " flipped" : "") + '" id="fc-card" aria-live="polite">' +
+          '<div class="flashcard-inner">' +
+            '<div class="flashcard-face flashcard-front">' +
+              '<span class="flashcard-kicker">Pregunta</span>' +
+              '<div class="flashcard-stage"><div class="flashcard-text">' + cardHtml(card.q) + "</div></div>" +
+              '<span class="flashcard-hint">Usa el botón para mostrar la carta</span>' +
+            "</div>" +
+            '<div class="flashcard-face flashcard-back">' +
+              '<span class="flashcard-kicker">Respuesta</span>' +
+              '<div class="flashcard-stage"><div class="flashcard-text">' + cardHtml(card.a) + "</div></div>" +
+            "</div>" +
+          "</div>" +
+        "</div>" +
+        '<div class="study-actions">' +
+          '<button class="btn primary" id="fc-show" type="button" style="display:' + (session.flipped ? "none" : "inline-flex") + '">' + ic("refresh", { size: 16 }) + "<span>Mostrar carta</span></button>" +
+          '<button class="btn primary" id="fc-next" type="button" style="display:' + (session.flipped ? "inline-flex" : "none") + '">' + ic("chevronRight", { size: 16 }) + "<span>Siguiente carta</span></button>" +
+        "</div>" +
+        '<div class="study-foot">' +
+          '<span class="study-counter">' + counter + (isDone ? " · vista" : "") + "</span>" +
+          '<div class="study-tools">' +
+            '<button class="link-btn" id="fc-shuffle" type="button">' + ic("shuffle", { size: 15 }) + "Mezclar</button>" +
+            '<button class="link-btn" id="fc-restart" type="button">' + ic("refresh", { size: 15 }) + "Reiniciar avance</button>" +
+          "</div>" +
+        "</div>" +
+      "</section>";
+
+    renderMath(document.querySelector(".flashcard-front .flashcard-stage"));
+    renderMath(document.querySelector(".flashcard-back .flashcard-stage"));
+    setupReveal();
+  }
+
+  function renderSummary(deck, stats) {
+    var pending = deck.cards.filter(function (card) { return !isKnown(deck.id, card.id); });
+    var allDone = pending.length === 0;
+
+    app.innerHTML =
+      '<nav class="breadcrumb"><a href="#/">Mis mazos</a><span class="sep">' + ic("chevronRight", { size: 14 }) + "</span><span>" + esc(deck.nombre) + "</span></nav>" +
+      '<section class="study-summary reveal">' +
+        '<span class="summary-icon ' + (allDone ? "ok" : "") + '">' + ic(allDone ? "check" : "brain", { size: 40 }) + "</span>" +
+        "<h1>" + (allDone ? "¡Mazo dominado!" : "Ronda terminada") + "</h1>" +
+        "<p>" + stats.done + " de " + stats.total + " tarjetas vistas en <strong>" + esc(deck.nombre) + "</strong>.</p>" +
+        '<div class="summary-actions">' +
+          (pending.length
+            ? '<button class="btn primary" id="fc-review" type="button">' + ic("target", { size: 16 }) + "<span>Repasar " + pending.length + " pendientes</span></button>"
+            : "") +
+          '<button class="btn ghost" id="fc-again" type="button">' + ic("refresh", { size: 16 }) + "<span>Repetir todo</span></button>" +
+          '<a class="btn ghost" href="#/">' + ic("layers", { size: 16 }) + "<span>Volver a los mazos</span></a>" +
+        "</div>" +
+      "</section>";
+
+    setupReveal();
+  }
+
+  function renderPreparation(deck) {
+    var count = session.order.length;
+    app.innerHTML =
+      '<nav class="breadcrumb"><a href="#/" data-confirm-leave="true">Mis mazos</a><span class="sep">' + ic("chevronRight", { size: 14 }) + "</span><span>" + esc(deck.nombre) + "</span></nav>" +
+      '<section class="study-ready reveal">' +
+        '<span class="ready-icon">' + ic("sparkle", { size: 34 }) + "</span>" +
+        '<span class="eyebrow">MODO DE ESTUDIO</span>' +
+        "<h1>¿Preparada?</h1>" +
+        '<p>Vas a repasar <strong>' + count + (count === 1 ? " tarjeta" : " tarjetas") + '</strong> de <strong>' + esc(deck.nombre) + "</strong>." +
+        '<br />Primero verás la pregunta y después podrás mostrar la respuesta.</p>' +
+        '<label class="shuffle-choice"><input id="study-shuffle" type="checkbox" checked /><span class="shuffle-check">' + ic("shuffle", { size: 17 }) + "</span><span><strong>Mezclar las cartas</strong><small>Cambia el orden en cada ronda.</small></span></label>" +
+        '<button class="btn primary lg" id="study-ready" type="button">' + ic("play", { size: 18 }) + "<span>Preparada</span></button>" +
+      "</section>";
+    setupReveal();
+  }
+
+  function flip() {
+    if (!session || session.pos >= session.order.length) return;
+    session.flipped = !session.flipped;
+    var card = document.getElementById("fc-card");
+    if (card) {
+      card.classList.toggle("flipped", session.flipped);
+    }
+    var show = document.getElementById("fc-show");
+    var next = document.getElementById("fc-next");
+    if (show) show.style.display = session.flipped ? "none" : "inline-flex";
+    if (next) next.style.display = session.flipped ? "inline-flex" : "none";
+  }
+
+  function nextCard() {
+    if (!session) return;
+    var deck = window.DeckStore.get(session.deckId);
+    if (!deck || !session.flipped || session.pos >= session.order.length) return;
+    setKnown(deck.id, session.order[session.pos], true);
+    session.pos++;
+    session.flipped = false;
+    renderStudy();
   }
 
   /* ---------- Eventos globales ---------- */
 
   document.addEventListener("click", function (e) {
-    var locked = e.target.closest(".area-card.locked");
-    if (locked) {
+    var leave = e.target.closest("[data-confirm-leave]");
+    if (leave) {
       e.preventDefault();
-      var lockId = locked.getAttribute("data-lock");
-      var lock = AREA_LOCKS[lockId] || null;
-      if (!lock || (lock.tipo === "login" && isSignedIn())) {
-        location.hash = "#/area/" + lockId;
-        return;
-      }
-      if (lock.tipo === "proximamente") {
-        if (isSignedIn()) {
-          serverCanAccess(lockId, "").then(function (ok) {
-            if (ok) {
-              location.hash = "#/area/" + lockId;
-            } else {
-              openModal(lock.titulo, lock.texto);
-            }
-          });
-          return;
-        }
-        openModal(lock.titulo, lock.texto);
-      } else {
-        openLoginModal(lock.titulo, "Esta sección está bloqueada porque aún no has iniciado sesión.", "#/area/" + lockId);
+      if (window.StudappyConfirm) {
+        window.StudappyConfirm.ask("Vas a salir del apartado de estudio.", function () {
+          location.hash = leave.getAttribute("href") || "#/";
+        });
       }
       return;
     }
-
-    var lockedTema = e.target.closest(".topic-card.locked");
-    if (lockedTema) {
+    if (e.target.closest("#landing-login")) {
+      if (window.SB && window.SB.beginLogin) window.SB.beginLogin();
+      return;
+    }
+    if (e.target.closest("#new-deck")) {
+      openEditor(null);
+      return;
+    }
+    var edit = e.target.closest("[data-edit]");
+    if (edit) {
       e.preventDefault();
-      var tDest = lockedTema.getAttribute("data-lock-dest") || "#/";
-      var temaIdLock = tDest.split("/").pop();
-      var tLock = TEMA_LOCKS[temaIdLock] || null;
-      if (!tLock || isSignedIn()) {
-        location.hash = tDest;
-        return;
-      }
-      openLoginModal(tLock.titulo, "Esta sección está bloqueada porque aún no has iniciado sesión.", tDest);
+      openEditor(window.DeckStore.get(edit.getAttribute("data-edit")));
       return;
     }
-
-    var gBtn = e.target.closest(".google-btn[data-dest]");
-    if (gBtn) {
-      var overlayBox = gBtn.closest("#modal-overlay");
-      if (overlayBox && overlayBox.parentNode) overlayBox.parentNode.removeChild(overlayBox);
-      loginToSee(gBtn.getAttribute("data-dest") || "#/");
+    var del = e.target.closest("[data-del]");
+    if (del) {
+      e.preventDefault();
+      requestDelete(del.getAttribute("data-del"));
       return;
     }
-
-    var backBtn = e.target.closest(".locked-back, #modal-back");
-    if (backBtn) {
-      var overlayBox2 = backBtn.closest("#modal-overlay");
-      if (overlayBox2 && overlayBox2.parentNode) overlayBox2.parentNode.removeChild(overlayBox2);
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        location.hash = "#/";
-      }
+    var removeStore = e.target.closest("[data-remove-store]");
+    if (removeStore) {
+      e.preventDefault();
+      requestRemoveStoreDeck(removeStore.getAttribute("data-remove-store"));
       return;
     }
-
-    var button = e.target.closest(".section-toggle");
-    if (button) {
-      var areaId = button.getAttribute("data-area");
-      var temaId = button.getAttribute("data-tema");
-      var index = parseInt(button.getAttribute("data-index"), 10);
-      toggleSection(areaId, temaId, index);
-      updateCourseUI(areaId, temaId, index, button);
+    if (e.target.closest("#fc-edit") && session) {
+      openEditor(window.DeckStore.get(session.deckId));
       return;
     }
-
-    var shuffle = e.target.closest(".reco-shuffle");
-    if (shuffle) {
-      var box = document.getElementById("reco");
-      if (box) {
-        var hash = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
-        var ctxArea = hash[0] === "area" ? hash[1] : null;
-        box.outerHTML = recoCardHtml(randomGuide(ctxArea));
-      }
+    if (e.target.closest("#study-ready") && session) {
+      var shuffleChoice = document.getElementById("study-shuffle");
+      session.shuffle = !shuffleChoice || shuffleChoice.checked;
+      if (session.shuffle) session.order = shuffle(session.order);
+      session.prepared = true;
+      renderStudy();
       return;
     }
+    if (e.target.closest("#fc-show")) { flip(); return; }
+    if (e.target.closest("#fc-next")) { nextCard(); return; }
+    if (e.target.closest("#fc-restart") && session) {
+      progress[session.deckId] = {};
+      saveProgress();
+      var deckB = window.DeckStore.get(session.deckId);
+      if (deckB) startSession(deckB, false);
+      renderStudy();
+      return;
+    }
+    if (e.target.closest("#fc-review") && session) {
+      var deckC = window.DeckStore.get(session.deckId);
+      if (deckC) startSession(deckC, true);
+      renderStudy();
+      return;
+    }
+    if (e.target.closest("#fc-again") && session) {
+      var deckD = window.DeckStore.get(session.deckId);
+      if (deckD) startSession(deckD, false);
+      renderStudy();
+      return;
+    }
+  });
 
-    var chip = e.target.closest(".chip");
-    if (chip) {
-      var target = document.getElementById(chip.getAttribute("data-target"));
-      if (target) {
-        var y = target.getBoundingClientRect().top + window.scrollY - 70;
-        window.scrollTo({ top: y, behavior: "smooth" });
-      }
+  document.addEventListener("input", function (e) {
+    if (e.target && e.target.id === "deck-search") renderGrid(e.target.value);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (!session || document.getElementById("editor")) return;
+    if (!session.prepared) return;
+    if (session.pos >= session.order.length) return;
+    if (e.key === " " || e.key === "Enter") {
+      e.preventDefault();
+      if (!session.flipped) flip();
+    } else if (e.key === "ArrowRight" || e.key === "1") {
+      nextCard();
     }
   });
 
   /* ---------- Router ---------- */
 
-  var lastSignedIn = null;
-
-  function isProtectedArea(id) {
-    return id === "algebra-superior" || id === "calculo";
-  }
-
-  function isProtectedTema(id) {
-    return !!TEMA_LOCKS[id];
-  }
-
-  function serverCanAccess(areaId, temaId) {
-    if (!(window.SB && window.SB.configured && window.SB.client)) {
-      return Promise.resolve({ activo: false, ok: true });
-    }
-    return window.SB.client
-      .rpc("tiene_acceso", { p_area: areaId, p_tema: temaId || "" })
-      .then(function (res) {
-        // Si la función aún no existe en Supabase, se usan las reglas locales
-        if (res && res.error) return { activo: false, ok: true };
-        return { activo: true, ok: !!res.data };
-      })
-      .catch(function () {
-        return { activo: false, ok: true };
-      });
-  }
-
-  function renderAreaGuarded(areaId) {
-    var lock = areaLock(areaId);
-    if (!isProtectedArea(areaId)) {
-      renderArea(areaId);
+  function route() {
+    var mainNav = document.getElementById("main-nav");
+    if (mainNav) mainNav.hidden = !isSignedIn();
+    if (!isSignedIn()) {
+      session = null;
+      renderLanding();
+      window.scrollTo(0, 0);
       return;
     }
-    serverCanAccess(areaId, "").then(function (res) {
-      if (!res.activo) {
-        // Sin gate en Supabase: aplican las reglas locales
-        renderArea(areaId);
-        return;
-      }
-      if (res.ok) {
-        renderArea(areaId, true);
-      } else if (lock) {
-        renderLocked(lock.titulo, lock.texto, lock.tipo === "login" ? lockedLoginCta("#/area/" + areaId) : "");
-      } else {
-        renderLocked("Contenido restringido", "No tienes permiso para entrar a esta sección.");
-      }
-    });
-  }
-
-  function renderCursoGuarded(areaId, temaId) {
-    var lock = areaLock(areaId);
-    var tLock = temaLock(temaId);
-    if (!isProtectedArea(areaId) && !isProtectedTema(temaId)) {
-      renderCurso(areaId, temaId);
-      return;
-    }
-    serverCanAccess(areaId, temaId).then(function (res) {
-      if (!res.activo) {
-        renderCurso(areaId, temaId);
-        return;
-      }
-      if (res.ok) {
-        renderCurso(areaId, temaId, true);
-      } else if (lock) {
-        renderLocked(lock.titulo, lock.texto, lock.tipo === "login" ? lockedLoginCta("#/curso/" + areaId + "/" + temaId) : "");
-      } else if (tLock) {
-        renderLocked(tLock.titulo, tLock.texto, lockedLoginCta("#/curso/" + areaId + "/" + temaId));
-      } else {
-        renderLocked("Contenido restringido", "No tienes permiso para entrar a esta sección.");
-      }
-    });
-  }
-
-  function route(animate) {
     var hash = location.hash.replace(/^#\/?/, "");
     var parts = hash.split("/").filter(Boolean);
-
-    if (parts[0] === "area" && parts[1]) {
-      renderAreaGuarded(parts[1]);
-    } else if (parts[0] === "curso" && parts[1] && parts[2]) {
-      renderCursoGuarded(parts[1], parts[2]);
-    } else if (parts[0] === "biblioteca") {
-      renderBiblioteca();
+    if (parts[0] === "tienda") {
+      session = null;
+      if (window.Tienda) window.Tienda.render(app);
+      else app.innerHTML = '<p class="store-setup-note">La tienda aún no está disponible.</p>';
+    } else if (parts[0] === "mazo" && parts[1]) {
+      var deck = window.DeckStore.get(parts[1]);
+      if (!deck) return renderHome();
+      if (!session || session.deckId !== deck.id) startSession(deck, false);
+      renderStudy();
     } else {
+      session = null;
       renderHome();
     }
     window.scrollTo(0, 0);
-    if (animate !== false) {
-      app.classList.remove("route-enter");
-      void app.offsetWidth;
-      app.classList.add("route-enter");
-    }
   }
 
-  if (window.ProgressStore && typeof window.ProgressStore.onUpdate === "function") {
-    window.ProgressStore.onUpdate(function () {
-      var y = window.scrollY;
-      route(false);
-      window.scrollTo(0, y);
+  window.addEventListener("hashchange", function () {
+    route();
+    enterRoute();
+  });
+  if (window.Auth && window.Auth.onChange) {
+    window.Auth.onChange(function () {
+      authReady = true;
+      route();
     });
   }
-
-  if (window.ProgressStore && typeof window.ProgressStore.onChange === "function") {
-    window.ProgressStore.onChange(function () {
-      var signed = isSignedIn();
-      var authChanged = signed !== lastSignedIn;
-      lastSignedIn = signed;
-      if (!authChanged) return;
-      var y = window.scrollY;
-      route(false);
-      window.scrollTo(0, y);
-    });
-  }
-
-  if (window.Profile && typeof window.Profile.onChange === "function") {
-    window.Profile.onChange(function () {
-      var hash = location.hash.replace(/^#\/?/, "");
-      if (!hash) {
-        var y = window.scrollY;
-        route(false);
-        window.scrollTo(0, y);
-      }
-    });
-  }
-
+  window.addEventListener("studappy:cloud-decks-changed", function () {
+    if (!isSignedIn()) return;
+    var hash = location.hash.replace(/^#\/?/, "").split("/")[0];
+    if (!hash || hash === "tienda") route();
+  });
   setupParallax();
-  updateTopbarTag();
-  window.addEventListener("hashchange", route);
   route();
-  lastSignedIn = isSignedIn();
 })();
