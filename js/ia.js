@@ -8,23 +8,38 @@
   var TIPOS = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
   var restantes = null;
 
+  // Las Edge Functions de los proyectos nuevos de Supabase solo aceptan las
+  // claves de formato nuevo (sb_publishable_...), no la anon key antigua.
+  // Es pública como la anon key; se configura en js/config.js.
+  function clavePublicable() {
+    var cfg = window.APP_CONFIG || {};
+    var clave = String(cfg.SUPABASE_PUBLISHABLE_KEY || "").trim();
+    return clave.indexOf("sb_publishable_") === 0 ? clave : "";
+  }
+
   function isDemo() {
     return !!(window.Auth && window.Auth.isDemo && window.Auth.isDemo());
   }
 
-  // Lee el mensaje de error que devolvió la función (o uno genérico).
+  // Lee el mensaje de error que devolvió la función o la plataforma.
   function mensajeDeError(error) {
     var res = error && error.context;
     if (error && error.name === "FunctionsHttpError" && res && typeof res.json === "function") {
       var status = res.status;
+      var porEstado = function () {
+        if (status === 404) return "El generador aún no está instalado en el servidor (falta desplegar la función " + FUNCION + ").";
+        if (status === 401) return "Tu sesión expiró. Vuelve a iniciar sesión.";
+        return "El generador respondió con un error (" + status + ").";
+      };
       return res.json().then(function (body) {
-        if (body && body.error) return body.error;
-        if (status === 404) return "El generador aún no está instalado en el servidor (falta desplegar la función " + FUNCION + ").";
-        return "El generador respondió con un error (" + status + ").";
-      }, function () {
-        if (status === 404) return "El generador aún no está instalado en el servidor (falta desplegar la función " + FUNCION + ").";
-        return "El generador respondió con un error (" + status + ").";
-      });
+        if (body && body.error) return body.error; // mensaje de nuestra función
+        var code = body && body.code;
+        if (code === "INVALID_API_KEY" || code === "INVALID_CREDENTIALS") {
+          return "Falta configurar la publishable key de Supabase (SUPABASE_PUBLISHABLE_KEY en js/config.js).";
+        }
+        if (window.console && body) console.error("Respuesta del generador:", status, body);
+        return porEstado();
+      }, porEstado);
     }
     return Promise.resolve("No se pudo conectar con el generador. Revisa tu conexión e intenta de nuevo.");
   }
@@ -36,8 +51,11 @@
     if (!window.SB || !window.SB.client) {
       return Promise.reject(new Error("El generador no está disponible ahora."));
     }
+    var opciones = { body: body, timeout: 120000 };
+    var clave = clavePublicable();
+    if (clave) opciones.headers = { apikey: clave }; // la sesión del usuario sigue yendo en Authorization
     return window.SB.client.functions
-      .invoke(FUNCION, { body: body, timeout: 120000 })
+      .invoke(FUNCION, opciones)
       .then(function (res) {
         if (res.error) {
           return mensajeDeError(res.error).then(function (msg) { throw new Error(msg); });
