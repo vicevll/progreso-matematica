@@ -1467,6 +1467,11 @@ html.dark-mode .orb-c {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 40px 90px rgba(20, 47, 80, 0.28);
+  animation: pop 0.26s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
 .gen-progress {

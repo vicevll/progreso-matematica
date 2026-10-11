@@ -4,9 +4,10 @@
 // la cuota diaria de cada usuario. El navegador nunca ve la key.
 (function () {
   var FUNCION = "generar-tarjetas";
-  var MAX_ARCHIVO = 5 * 1024 * 1024;
+  var MAX_ARCHIVO = 10 * 1024 * 1024;
   var TIPOS = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
   var restantes = null;
+  var periodo = "dia";
 
   // Las Edge Functions de los proyectos nuevos de Supabase solo aceptan las
   // claves de formato nuevo (sb_publishable_...), no la anon key antigua.
@@ -62,6 +63,7 @@
         }
         var data = res.data || {};
         if (typeof data.restantes === "number") restantes = data.restantes;
+        if (data.periodo) periodo = String(data.periodo);
         return data;
       });
   }
@@ -146,23 +148,25 @@
     }
   }
 
-  function transcribirArchivo(file, progress) {
+  // "sesion" identifica el mazo que se está generando: todas las llamadas de
+  // una misma sesión cuentan como un solo mazo en el límite.
+  function transcribirArchivo(file, progress, sesion) {
     var mime = fileToMime(file);
     if (TIPOS.indexOf(mime) === -1) return Promise.reject(new Error("Formato no soportado. Usa PDF, JPG, PNG o WEBP."));
-    if (file.size > MAX_ARCHIVO) return Promise.reject(new Error("El archivo pesa " + (file.size / 1048576).toFixed(1) + " MB; el máximo es 5 MB."));
+    if (file.size > MAX_ARCHIVO) return Promise.reject(new Error("El archivo pesa " + (file.size / 1048576).toFixed(1) + " MB; el máximo es 10 MB."));
     if (typeof progress === "function") progress("Leyendo archivo...");
     return fileToBase64(file).then(function (b64) {
       if (typeof progress === "function") progress(mime === "application/pdf" ? "La IA está leyendo el PDF..." : "La IA está leyendo la imagen...");
-      return invocar({ accion: "transcribir", archivo: { mime: mime, datos: b64 } });
+      return invocar({ accion: "transcribir", sesion: sesion, archivo: { mime: mime, datos: b64 } });
     }).then(function (data) {
       return String(data.texto || "");
     });
   }
 
   // Devuelve el texto crudo de la IA; se convierte con parseJson.
-  function generarTarjetas(markdown, count, progress, evitar) {
+  function generarTarjetas(markdown, count, progress, evitar, sesion) {
     if (typeof progress === "function") progress("La IA está creando las tarjetas...");
-    return invocar({ accion: "generar", texto: markdown, cantidad: count, evitar: evitar || [] }).then(function (data) {
+    return invocar({ accion: "generar", sesion: sesion, texto: markdown, cantidad: count, evitar: evitar || [] }).then(function (data) {
       return String(data.texto || "");
     });
   }
@@ -174,6 +178,7 @@
     parseJson: parseJson,
     repararLatexJson: repararLatexJson,
     restantes: function () { return restantes; },
+    periodo: function () { return periodo; },
     disponible: function () { return !isDemo(); }
   };
 })();

@@ -1,8 +1,8 @@
 // Studappy · Edge Function "generar-tarjetas"
 //
 // Recibe pedidos del generador de mazos de usuarios con sesión iniciada,
-// descuenta su cuota diaria (supabase/ia.sql) y llama a Gemini con la key del
-// proyecto, que nunca llega al navegador.
+// descuenta su límite de mazos con IA (supabase/ia.sql) y llama a Gemini con
+// la key del proyecto, que nunca llega al navegador.
 //
 // Secretos (Supabase -> Edge Functions -> Secrets):
 //   GEMINI_API_KEY        obligatorio, tu key de Google AI Studio
@@ -10,10 +10,10 @@
 //   GEMINI_MODELO_VISION  opcional, modelo para leer PDF e imágenes
 // SUPABASE_URL, SUPABASE_ANON_KEY y SUPABASE_SERVICE_ROLE_KEY los pone Supabase.
 //
-// Pedidos (POST JSON):
-//   { accion: "transcribir", archivo: { mime, datos } }   datos en base64
-//   { accion: "generar", texto, cantidad, evitar? }
-// Respuesta: { texto, restantes }  o  { error, codigo } con status 4xx/5xx.
+// Pedidos (POST JSON). "sesion" identifica el mazo que se está generando:
+//   { accion: "transcribir", sesion, archivo: { mime, datos } }   datos en base64
+//   { accion: "generar", sesion, texto, cantidad, evitar? }
+// Respuesta: { texto, restantes, periodo }  o  { error, codigo } con status 4xx/5xx.
 
 const GEMINI_KEY = Deno.env.get("GEMINI_API_KEY") ?? "";
 // Por defecto, la familia Flash-Lite (la más barata). Si quieres más calidad
@@ -25,8 +25,9 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
 
-const MAX_ARCHIVO_BYTES = 5 * 1024 * 1024;
+const MAX_ARCHIVO_BYTES = 10 * 1024 * 1024;
 const MAX_TEXTO = 40000;
+const MAX_TARJETAS = 20; // máximo de tarjetas por mazo generado con IA
 const TIPOS_ARCHIVO = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
 
 const CORS: Record<string, string> = {
@@ -117,7 +118,10 @@ async function rpc(nombre: string, args: Record<string, unknown>): Promise<unkno
     let detalle: { message?: string; hint?: string } = {};
     try { detalle = JSON.parse(texto); } catch { /* texto plano */ }
     if (detalle.hint === "cuota_agotada") {
-      throw new ErrorUsuario(429, detalle.message || "Llegaste al límite de hoy.", "cuota");
+      throw new ErrorUsuario(429, detalle.message || "Llegaste al límite de mazos con IA.", "cuota");
+    }
+    if (detalle.hint === "cuota_mazo") {
+      throw new ErrorUsuario(429, detalle.message || "Este mazo ya usó todas sus llamadas a la IA.", "cuota_mazo");
     }
     console.error(`RPC ${nombre}`, res.status, texto.slice(0, 500));
     if (res.status === 404) {
@@ -169,6 +173,10 @@ async function gemini(modelo: string, partes: unknown[], config: Record<string, 
 
 function validar(body: any) {
   if (!body || typeof body !== "object") throw new ErrorUsuario(400, "Pedido inválido.", "pedido");
+  const sesion = String(body.sesion ?? "");
+  if (!/^[A-Za-z0-9_-]{8,64}$/.test(sesion)) {
+    throw new ErrorUsuario(400, "Recarga la página e intenta de nuevo (falta la sesión del generador).", "pedido");
+  }
   if (body.accion === "transcribir") {
     const archivo = body.archivo ?? {};
     const mime = String(archivo.mime ?? "");
@@ -178,9 +186,9 @@ function validar(body: any) {
     }
     if (!datos || !/^[A-Za-z0-9+/=\s]+$/.test(datos)) throw new ErrorUsuario(400, "El archivo llegó vacío o dañado.", "pedido");
     if (datos.length > Math.ceil(MAX_ARCHIVO_BYTES / 3) * 4 + 16) {
-      throw new ErrorUsuario(413, "El archivo supera los 5 MB.", "tamano");
+      throw new ErrorUsuario(413, "El archivo supera los 10 MB.", "tamano");
     }
-    return { accion: "transcribir" as const, mime, datos };
+    return { accion: "transcribir" as const, sesion, mime, datos };
   }
   if (body.accion === "generar") {
     const texto = String(body.texto ?? "").trim();
@@ -188,11 +196,11 @@ function validar(body: any) {
     if (texto.length > MAX_TEXTO) {
       throw new ErrorUsuario(413, `El texto es muy largo (máximo ${MAX_TEXTO.toLocaleString("es-CL")} caracteres). Divídelo en partes.`, "tamano");
     }
-    const cantidad = Math.min(30, Math.max(5, Math.round(Number(body.cantidad) || 10)));
+    const cantidad = Math.min(MAX_TARJETAS, Math.max(5, Math.round(Number(body.cantidad) || 10)));
     const evitar = Array.isArray(body.evitar)
       ? body.evitar.map((q: unknown) => String(q ?? "").slice(0, 300)).filter(Boolean).slice(0, 60)
       : [];
-    return { accion: "generar" as const, texto, cantidad, evitar };
+    return { accion: "generar" as const, sesion, texto, cantidad, evitar };
   }
   throw new ErrorUsuario(400, "Acción desconocida.", "pedido");
 }
@@ -202,14 +210,16 @@ Deno.serve(async (req: Request) => {
   if (req.method !== "POST") return responder(405, { error: "Método no permitido.", codigo: "metodo" });
 
   let userId = "";
+  let sesion = "";
   let consumido = false;
   let devolver = false;
   try {
     if (!GEMINI_KEY) throw new ErrorUsuario(500, "Falta configurar GEMINI_API_KEY en los secretos de Supabase.", "config");
     userId = await usuarioDe(req);
     const pedido = validar(await req.json().catch(() => null));
+    sesion = pedido.sesion;
 
-    const restantes = Number(await rpc("ia_consumir", { p_user: userId }));
+    const cuota = (await rpc("ia_consumir", { p_user: userId, p_sesion: sesion })) as { restantes?: number; periodo?: string } | null;
     consumido = true;
 
     let texto: string;
@@ -242,10 +252,17 @@ Deno.serve(async (req: Request) => {
     if (pedido.accion === "transcribir" && texto.includes("SIN_TEXTO")) {
       throw new ErrorUsuario(422, "No se encontró texto legible en el archivo.", "sin_texto");
     }
-    return responder(200, { texto, restantes });
+    if (pedido.accion === "generar") {
+      // Aunque la IA devuelva de más, nunca se entregan más tarjetas de las pedidas.
+      try {
+        const tarjetas = JSON.parse(texto);
+        if (Array.isArray(tarjetas)) texto = JSON.stringify(tarjetas.slice(0, pedido.cantidad));
+      } catch { /* formato inesperado: el navegador lo repara y también recorta */ }
+    }
+    return responder(200, { texto, restantes: Number(cuota?.restantes ?? 0), periodo: cuota?.periodo ?? "dia" });
   } catch (e) {
     if (consumido && devolver) {
-      try { await rpc("ia_devolver", { p_user: userId }); } catch (e2) { console.error("No se pudo devolver el uso", e2); }
+      try { await rpc("ia_devolver", { p_user: userId, p_sesion: sesion }); } catch (e2) { console.error("No se pudo devolver el uso", e2); }
     }
     if (e instanceof ErrorUsuario) return responder(e.status, { error: e.message, codigo: e.codigo });
     console.error("Error inesperado", e);

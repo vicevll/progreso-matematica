@@ -3,13 +3,23 @@
 (function () {
   var overlay = null;
   var step = 1;
+  var MAX_TARJETAS = 20; // máximo de tarjetas por mazo generado con IA (la función aplica el mismo límite)
   // Cada llamada a la IA recibe un número; si el wizard se cierra o se
   // retrocede, se incrementa y las respuestas antiguas se ignoran.
   var requestId = 0;
   var state = freshState();
 
   function freshState() {
-    return { markdown: "", cards: [], nombre: "", descripcion: "", color: "#2f80ed", status: "", statusError: false, busy: false, count: 10 };
+    return { markdown: "", cards: [], nombre: "", descripcion: "", color: "#2f80ed", status: "", statusError: false, busy: false, count: 10, sesion: nuevaSesion() };
+  }
+
+  // Identifica este mazo ante el límite de IA: abrir el generador de nuevo es
+  // otro mazo; regenerar o cambiar de archivo dentro del mismo no lo es.
+  function nuevaSesion() {
+    var bytes = new Uint8Array(12);
+    if (window.crypto && window.crypto.getRandomValues) window.crypto.getRandomValues(bytes);
+    else for (var i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
+    return "g" + Array.prototype.map.call(bytes, function (b) { return ("0" + b.toString(16)).slice(-2); }).join("");
   }
 
   function esc(s) {
@@ -112,7 +122,7 @@
         '<div class="gen-tabs"><button class="gen-tab active" data-tab="file" type="button">Subir archivo</button><button class="gen-tab" data-tab="text" type="button">Pegar texto</button></div>' +
         '<div id="gen-tab-file" class="gen-tab-panel active">' +
           '<label class="gen-drop" id="gen-drop" for="gen-file-input">' +
-            '<span class="gen-drop-inner">' + ic("upload", 32) + '<strong>Arrastra un archivo aquí</strong><small>o haz clic para elegir · PDF, JPG, PNG o WEBP · máx. 5 MB</small></span>' +
+            '<span class="gen-drop-inner">' + ic("upload", 32) + '<strong>Arrastra un archivo aquí</strong><small>o haz clic para elegir · PDF, JPG, PNG o WEBP · máx. 10 MB</small></span>' +
             '<input id="gen-file-input" type="file" accept="application/pdf,image/jpeg,image/png,image/webp" hidden />' +
           "</label>" +
           '<div class="gen-file-status" id="gen-file-status"></div>' +
@@ -156,7 +166,7 @@
 
   function countHtml() {
     return '<label class="gen-count"><span>Cantidad: <output id="gen-count-output">' + state.count + "</output></span>" +
-      '<input id="gen-count" type="range" min="5" max="30" value="' + state.count + '" /></label>';
+      '<input id="gen-count" type="range" min="5" max="' + MAX_TARJETAS + '" value="' + state.count + '" /></label>';
   }
 
   function renderCards() {
@@ -325,7 +335,7 @@
       syncButtons(); // habilita "Siguiente" en cuanto hay texto pegado
     }
     if (e.target.id === "gen-count") {
-      state.count = parseInt(e.target.value, 10) || 10;
+      state.count = Math.min(MAX_TARJETAS, parseInt(e.target.value, 10) || 10);
       var output = document.getElementById("gen-count-output");
       if (output) output.textContent = state.count;
     }
@@ -354,7 +364,7 @@
     syncButtons();
     IA.transcribirArchivo(file, function (msg) {
       if (token === requestId) fileStatus(msg);
-    }).then(function (text) {
+    }, state.sesion).then(function (text) {
       if (token !== requestId || !overlay) return;
       state.markdown = text;
       fileStatus("Listo · " + text.length + " caracteres");
@@ -388,18 +398,20 @@
     render();
   }
 
-  // Convierte la respuesta de la IA en tarjetas { q, a } (máximo 30).
+  // Convierte la respuesta de la IA en tarjetas { q, a } (máximo MAX_TARJETAS).
   function toCards(raw) {
     var cards = IA.parseJson(raw);
     if (!Array.isArray(cards) || !cards.length) throw new Error("La IA no devolvió tarjetas válidas.");
-    return cards.slice(0, 30).map(function (c) { return { q: String(c.q || ""), a: String(c.a || "") }; });
+    return cards.slice(0, MAX_TARJETAS).map(function (c) { return { q: String(c.q || ""), a: String(c.a || "") }; });
   }
 
   // Lanza una generación y gestiona el estado "ocupado", los mensajes y los
   // errores. onCards recibe las tarjetas solo si la respuesta sigue vigente.
   function listoMensaje(n) {
     var quedan = window.IA && window.IA.restantes ? window.IA.restantes() : null;
-    return "Listo · " + n + " tarjetas" + (typeof quedan === "number" ? " · te quedan " + quedan + (quedan === 1 ? " uso" : " usos") + " de IA hoy" : "");
+    if (typeof quedan !== "number") return "Listo · " + n + " tarjetas";
+    var cuando = { dia: " hoy", semana: " esta semana", mes: " este mes" }[window.IA.periodo ? window.IA.periodo() : "dia"] || "";
+    return "Listo · " + n + " tarjetas · te " + (quedan === 1 ? "queda 1 mazo" : "quedan " + quedan + " mazos") + " con IA" + cuando;
   }
 
   function requestCards(count, startMessage, onCards, evitar) {
@@ -410,7 +422,7 @@
     syncButtons();
     IA.generarTarjetas(state.markdown, count, function (msg) {
       if (token === requestId) setStatus(msg);
-    }, evitar).then(function (raw) {
+    }, evitar, state.sesion).then(function (raw) {
       if (token !== requestId || !overlay) return;
       var cards = toCards(raw);
       state.busy = false;
