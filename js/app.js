@@ -20,20 +20,25 @@
   }
 
   // El avance vive en DeckStore: hay una copia por cuenta y se sincroniza.
-  function isKnown(deckId, cardId) {
-    return window.DeckStore.isKnown(deckId, cardId);
-  }
-
-  function setKnown(deckId, cardId, value) {
-    window.DeckStore.setKnown(deckId, cardId, value);
+  // "sabe" | "no" | "pendiente" | null
+  function statusOf(deckId, cardId) {
+    return window.DeckStore.getStatus(deckId, cardId);
   }
 
   function deckStats(deck) {
     var done = 0;
+    var pend = 0;
     deck.cards.forEach(function (card) {
-      if (isKnown(deck.id, card.id)) done++;
+      var st = statusOf(deck.id, card.id);
+      if (st === "sabe") done++;
+      else if (st === "pendiente") pend++;
     });
-    return { done: done, total: deck.cards.length };
+    return { done: done, pend: pend, total: deck.cards.length };
+  }
+
+  function pendHtml(n, className) {
+    if (!n) return "";
+    return '<span class="' + className + '" title="Tarjetas guardadas como pendientes">' + n + (n === 1 ? " pendiente" : " pendientes") + "</span>";
   }
 
   function esc(s) {
@@ -185,7 +190,7 @@
       "</section>" +
       '<section class="bento-grid" aria-label="Funciones de Studappy">' +
         '<article class="bento-box bento-wide"><span class="bento-icon">' + ic("cards", { size: 25 }) + '</span><div><span class="bento-label">Crea</span><h2>Mazos a tu medida</h2><p>Organiza preguntas y respuestas para cada materia, proyecto o examen.</p></div></article>' +
-        '<article class="bento-box"><span class="bento-icon blue">' + ic("target", { size: 25 }) + '</span><span class="bento-label">Aprende</span><h2>Repasa con intención</h2><p>Ve cuántas tarjetas llevas en cada mazo y vuelve a las que te faltan.</p></article>' +
+        '<article class="bento-box"><span class="bento-icon blue">' + ic("target", { size: 25 }) + '</span><span class="bento-label">Aprende</span><h2>Repasa con intención</h2><p>Marca cada tarjeta con "Lo sé", "No lo sé" o "Pendiente", y vuelve a lo que te falta.</p></article>' +
         '<article class="bento-box"><span class="bento-icon sky">' + ic("refresh", { size: 25 }) + '</span><span class="bento-label">Organiza</span><h2>Tu ritmo</h2><p>Muestra la respuesta cuando quieras y mezcla las cartas en cada ronda.</p></article>' +
         '<article class="bento-box bento-wide bento-note"><span class="bento-icon mint">' + ic("sparkle", { size: 25 }) + '</span><div><span class="bento-label">Tu biblioteca</span><h2>Tus mazos te siguen</h2><p>Tus mazos, los de la tienda y tu avance se guardan en tu cuenta: entra desde cualquier dispositivo y sigue donde quedaste.</p></div></article>' +
       "</section>";
@@ -215,8 +220,9 @@
         '<div class="deck-foot">' +
           '<span class="deck-count">' + ic("cards", { size: 16 }) + stats.total + "</span>" +
           '<div class="mini-bar"><span style="width:' + pct + '%"></span></div>' +
-          '<span class="deck-pct">' + stats.done + "/" + stats.total + "</span>" +
+          '<span class="deck-pct" title="Tarjetas que ya sabes">' + stats.done + "/" + stats.total + "</span>" +
         "</div>" +
+        pendHtml(stats.pend, "deck-pend") +
       "</div>"
     );
   }
@@ -259,7 +265,7 @@
           '<p class="admin-sub">Crea, edita y estudia tus flashcards.</p>' +
         "</div>" +
          '<div class="admin-actions">' +
-          '<button class="btn ghost lg" id="open-generador" type="button">' + ic("sparkle") + '<span>Generar con IA</span></button>' +
+          '<button class="btn btn-ia lg" id="open-generador" type="button">' + ic("sparkle") + '<span>Generar con IA</span></button>' +
           '<a class="btn ghost lg" href="#/tienda">' + ic("layers") + '<span>Tienda</span></a>' +
           '<button class="btn primary lg" id="new-deck" type="button">' + ic("plus") + '<span>Nuevo mazo</span></button>' +
         '</div>' +
@@ -274,7 +280,7 @@
             '<div class="toolbar-stats">' +
               '<span id="deck-count-label">' + decks.length + (decks.length === 1 ? " mazo" : " mazos") + "</span>" +
               '<div class="mini-bar"><span style="width:' + pct + '%"></span></div>' +
-              "<span>" + totalDone + "/" + totalCards + " vistas</span>" +
+              "<span>" + totalDone + "/" + totalCards + " dominadas</span>" +
             "</div>" +
           "</div>" +
           '<div class="deck-grid" id="deck-grid">' +
@@ -570,7 +576,7 @@
     var saved = window.DeckStore.save(draft);
     var wasNew = !editingId;
     closeEditor();
-    if (session && session.deckId === saved.id) startSession(saved, false);
+    if (session && session.deckId === saved.id) startSession(saved, "todas");
     route();
     if (wasNew) {
       location.hash = "#/mazo/" + saved.id;
@@ -624,12 +630,16 @@
 
   /* ---------- Estudio ---------- */
 
-  function startSession(deck, onlyMissing) {
+  // filtro: "todas" o "pendientes" (las guardadas como pendientes).
+  function startSession(deck, filtro) {
+    filtro = filtro === "pendientes" ? "pendientes" : "todas";
     var order = deck.cards
-      .filter(function (card) { return !onlyMissing || !isKnown(deck.id, card.id); })
+      .filter(function (card) { return filtro === "todas" || statusOf(deck.id, card.id) === "pendiente"; })
       .map(function (card) { return card.id; });
-    session = { deckId: deck.id, order: order, pos: 0, flipped: false, prepared: false, shuffle: true };
+    session = { deckId: deck.id, filtro: filtro, order: order, pos: 0, flipped: false, prepared: false, shuffle: true };
   }
+
+  var ETIQUETA_ESTADO = { sabe: "la sabes", no: "no la sabías", pendiente: "pendiente" };
 
   function findCard(deck, cardId) {
     for (var i = 0; i < deck.cards.length; i++) {
@@ -653,7 +663,7 @@
       return renderStudy();
     }
     var counter = session.pos + 1 + " / " + session.order.length;
-    var isDone = isKnown(deck.id, card.id);
+    var estado = statusOf(deck.id, card.id);
 
     app.innerHTML =
       '<nav class="breadcrumb"><a href="#/" data-confirm-leave="true">Mis mazos</a><span class="sep">' + ic("chevronRight", { size: 14 }) + "</span><span>" + esc(deck.nombre) + "</span></nav>" +
@@ -662,7 +672,8 @@
           "<h1>" + esc(deck.nombre) + "</h1>" +
           '<div class="study-stats">' +
             '<div class="mini-bar"><span style="width:' + pct + '%"></span></div>' +
-            "<span>" + stats.done + "/" + stats.total + " vistas</span>" +
+            "<span>" + stats.done + "/" + stats.total + " dominadas</span>" +
+            pendHtml(stats.pend, "study-pend") +
             (deck.origen === "tienda" ? '<span class="deck-owned-badge study-owned">' + ic("check", { size: 14 }) + "Mazo de la tienda</span>" :
               '<button class="link-btn" id="fc-edit" type="button">' + ic("edit", { size: 15 }) + "Editar mazo</button>") +
           "</div>" +
@@ -672,7 +683,7 @@
             '<div class="flashcard-face flashcard-front">' +
               '<span class="flashcard-kicker">Pregunta</span>' +
               '<div class="flashcard-stage"><div class="flashcard-text">' + cardHtml(card.q) + "</div></div>" +
-              '<span class="flashcard-hint">Usa el botón para mostrar la carta</span>' +
+              '<span class="flashcard-hint">Piensa tu respuesta y luego muestra la carta</span>' +
             "</div>" +
             '<div class="flashcard-face flashcard-back">' +
               '<span class="flashcard-kicker">Respuesta</span>' +
@@ -682,10 +693,15 @@
         "</div>" +
         '<div class="study-actions">' +
           '<button class="btn primary" id="fc-show" type="button" style="display:' + (session.flipped ? "none" : "inline-flex") + '">' + ic("refresh", { size: 16 }) + "<span>Mostrar carta</span></button>" +
-          '<button class="btn primary" id="fc-next" type="button" style="display:' + (session.flipped ? "inline-flex" : "none") + '">' + ic("chevronRight", { size: 16 }) + "<span>Siguiente carta</span></button>" +
+        "</div>" +
+        // Autoevaluación, como en Anki: aparece al mostrar la respuesta.
+        '<div class="grade-actions" id="fc-grade" role="group" aria-label="¿Sabías la respuesta?"' + (session.flipped ? "" : " hidden") + ">" +
+          '<button class="btn-grade sabe" type="button" data-grade="sabe">' + ic("check", { size: 17 }) + "<span>Lo sé</span><kbd>1</kbd></button>" +
+          '<button class="btn-grade no" type="button" data-grade="no">' + ic("x", { size: 17 }) + "<span>No lo sé</span><kbd>2</kbd></button>" +
+          '<button class="btn-grade pendiente" type="button" data-grade="pendiente">' + ic("target", { size: 17 }) + "<span>Guardar como pendiente</span><kbd>3</kbd></button>" +
         "</div>" +
         '<div class="study-foot">' +
-          '<span class="study-counter">' + counter + (isDone ? " · vista" : "") + "</span>" +
+          '<span class="study-counter">' + counter + (session.filtro === "pendientes" ? " · pendientes" : "") + (estado ? " · " + ETIQUETA_ESTADO[estado] : "") + "</span>" +
           '<div class="study-tools">' +
             '<button class="link-btn" id="fc-shuffle" type="button">' + ic("shuffle", { size: 15 }) + "Mezclar</button>" +
             '<button class="link-btn" id="fc-restart" type="button">' + ic("refresh", { size: 15 }) + "Reiniciar avance</button>" +
@@ -699,18 +715,19 @@
   }
 
   function renderSummary(deck, stats) {
-    var pending = deck.cards.filter(function (card) { return !isKnown(deck.id, card.id); });
-    var allDone = pending.length === 0;
+    var allDone = stats.total > 0 && stats.done === stats.total;
+    var detalle = "Sabes <strong>" + stats.done + " de " + stats.total + "</strong> tarjetas de <strong>" + esc(deck.nombre) + "</strong>" +
+      (stats.pend ? " y tienes <strong>" + stats.pend + (stats.pend === 1 ? " pendiente" : " pendientes") + "</strong>" : "") + ".";
 
     app.innerHTML =
       '<nav class="breadcrumb"><a href="#/">Mis mazos</a><span class="sep">' + ic("chevronRight", { size: 14 }) + "</span><span>" + esc(deck.nombre) + "</span></nav>" +
       '<section class="study-summary reveal">' +
         '<span class="summary-icon ' + (allDone ? "ok" : "") + '">' + ic(allDone ? "check" : "brain", { size: 40 }) + "</span>" +
-        "<h1>" + (allDone ? "¡Repasaste todo el mazo!" : "Ronda terminada") + "</h1>" +
-        "<p>" + stats.done + " de " + stats.total + " tarjetas vistas en <strong>" + esc(deck.nombre) + "</strong>.</p>" +
+        "<h1>" + (allDone ? "¡Sabes todo el mazo!" : "Ronda terminada") + "</h1>" +
+        "<p>" + detalle + "</p>" +
         '<div class="summary-actions">' +
-          (pending.length
-            ? '<button class="btn primary" id="fc-review" type="button">' + ic("target", { size: 16 }) + "<span>Repasar " + pending.length + " pendientes</span></button>"
+          (stats.pend
+            ? '<button class="btn btn-pend" id="fc-review" type="button">' + ic("target", { size: 16 }) + "<span>Repasar " + stats.pend + (stats.pend === 1 ? " pendiente" : " pendientes") + "</span></button>"
             : "") +
           '<button class="btn ghost" id="fc-again" type="button">' + ic("refresh", { size: 16 }) + "<span>Repetir todo</span></button>" +
           '<a class="btn ghost" href="#/">' + ic("layers", { size: 16 }) + "<span>Volver a los mazos</span></a>" +
@@ -722,16 +739,25 @@
 
   function renderPreparation(deck) {
     var count = session.order.length;
+    var pend = deckStats(deck).pend;
     app.innerHTML =
       '<nav class="breadcrumb"><a href="#/" data-confirm-leave="true">Mis mazos</a><span class="sep">' + ic("chevronRight", { size: 14 }) + "</span><span>" + esc(deck.nombre) + "</span></nav>" +
       '<section class="study-ready reveal">' +
         '<span class="ready-icon">' + ic("sparkle", { size: 34 }) + "</span>" +
         '<span class="eyebrow">MODO DE ESTUDIO</span>' +
         "<h1>¿Todo listo?</h1>" +
-        '<p>Vas a repasar <strong>' + count + (count === 1 ? " tarjeta" : " tarjetas") + '</strong> de <strong>' + esc(deck.nombre) + "</strong>." +
-        '<br />Primero verás la pregunta y después podrás mostrar la respuesta.</p>' +
+        '<p>Vas a repasar <strong>' + count + (count === 1 ? " tarjeta" : " tarjetas") + (session.filtro === "pendientes" ? " pendientes" : "") + '</strong> de <strong>' + esc(deck.nombre) + "</strong>." +
+        "<br />Al ver la respuesta, marca si la sabías: las que no, vuelven al final de la ronda.</p>" +
         '<label class="shuffle-choice"><input id="study-shuffle" type="checkbox" checked /><span class="shuffle-check">' + ic("shuffle", { size: 17 }) + "</span><span><strong>Mezclar las cartas</strong><small>Cambia el orden en cada ronda.</small></span></label>" +
-        '<button class="btn primary lg" id="study-ready" type="button">' + ic("play", { size: 18 }) + "<span>Empezar</span></button>" +
+        '<div class="ready-actions">' +
+          '<button class="btn primary lg" id="study-ready" type="button">' + ic("play", { size: 18 }) + "<span>Empezar</span></button>" +
+          (session.filtro === "todas" && pend
+            ? '<button class="btn btn-pend lg" id="study-pend" type="button">' + ic("target", { size: 18 }) + "<span>Solo pendientes (" + pend + ")</span></button>"
+            : "") +
+          (session.filtro === "pendientes"
+            ? '<button class="btn ghost lg" id="study-all" type="button">' + ic("layers", { size: 18 }) + "<span>Todas las tarjetas</span></button>"
+            : "") +
+        "</div>" +
       "</section>";
     setupReveal();
   }
@@ -744,16 +770,20 @@
       card.classList.toggle("flipped", session.flipped);
     }
     var show = document.getElementById("fc-show");
-    var next = document.getElementById("fc-next");
+    var grade = document.getElementById("fc-grade");
     if (show) show.style.display = session.flipped ? "none" : "inline-flex";
-    if (next) next.style.display = session.flipped ? "inline-flex" : "none";
+    if (grade) grade.hidden = !session.flipped;
   }
 
-  function nextCard() {
-    if (!session) return;
+  // "sabe": dominada · "no": vuelve al final de esta ronda · "pendiente": se
+  // guarda para repasarla después y no se repite ahora.
+  function gradeCard(tipo) {
+    if (!session || !session.flipped || session.pos >= session.order.length) return;
     var deck = window.DeckStore.get(session.deckId);
-    if (!deck || !session.flipped || session.pos >= session.order.length) return;
-    setKnown(deck.id, session.order[session.pos], true);
+    if (!deck) return;
+    var cardId = session.order[session.pos];
+    window.DeckStore.setStatus(deck.id, cardId, tipo);
+    if (tipo === "no") session.order.push(cardId);
     session.pos++;
     session.flipped = false;
     renderStudy();
@@ -810,6 +840,12 @@
       openEditor(window.DeckStore.get(session.deckId));
       return;
     }
+    if ((e.target.closest("#study-pend") || e.target.closest("#study-all")) && session) {
+      var deckP = window.DeckStore.get(session.deckId);
+      if (deckP) startSession(deckP, e.target.closest("#study-pend") ? "pendientes" : "todas");
+      renderStudy();
+      return;
+    }
     if (e.target.closest("#study-ready") && session) {
       var shuffleChoice = document.getElementById("study-shuffle");
       session.shuffle = !shuffleChoice || shuffleChoice.checked;
@@ -819,23 +855,32 @@
       return;
     }
     if (e.target.closest("#fc-show")) { flip(); return; }
-    if (e.target.closest("#fc-next")) { nextCard(); return; }
+    var gradeBtn = e.target.closest("[data-grade]");
+    if (gradeBtn) { gradeCard(gradeBtn.getAttribute("data-grade")); return; }
+    if (e.target.closest("#fc-shuffle") && session) {
+      // Mezcla las tarjetas que quedan en la ronda (la actual incluida).
+      var restantes = shuffle(session.order.slice(session.pos));
+      session.order = session.order.slice(0, session.pos).concat(restantes);
+      session.flipped = false;
+      renderStudy();
+      return;
+    }
     if (e.target.closest("#fc-restart") && session) {
       window.DeckStore.resetProgress(session.deckId);
       var deckB = window.DeckStore.get(session.deckId);
-      if (deckB) startSession(deckB, false);
+      if (deckB) startSession(deckB, "todas");
       renderStudy();
       return;
     }
     if (e.target.closest("#fc-review") && session) {
       var deckC = window.DeckStore.get(session.deckId);
-      if (deckC) startSession(deckC, true);
+      if (deckC) startSession(deckC, "pendientes");
       renderStudy();
       return;
     }
     if (e.target.closest("#fc-again") && session) {
       var deckD = window.DeckStore.get(session.deckId);
-      if (deckD) startSession(deckD, false);
+      if (deckD) startSession(deckD, "todas");
       renderStudy();
       return;
     }
@@ -845,15 +890,22 @@
     if (e.target && e.target.id === "deck-search") renderGrid(e.target.value);
   });
 
+  // Atajos: Espacio/Enter muestra la carta; 1 = Lo sé, 2 = No lo sé, 3 = Pendiente.
   document.addEventListener("keydown", function (e) {
-    if (!session || document.getElementById("editor")) return;
-    if (!session.prepared) return;
-    if (session.pos >= session.order.length) return;
-    if (e.key === " " || e.key === "Enter") {
+    if (!session || document.getElementById("editor") || document.querySelector(".confirm-overlay, .generador-overlay")) return;
+    if (!session.prepared || session.pos >= session.order.length) return;
+    if (e.target && e.target.closest && e.target.closest("input, textarea, select")) return;
+    if (!session.flipped) {
+      if (e.key === " " || e.key === "Enter") {
+        e.preventDefault();
+        flip();
+      }
+      return;
+    }
+    var tipo = { "1": "sabe", "2": "no", "3": "pendiente" }[e.key];
+    if (tipo) {
       e.preventDefault();
-      if (!session.flipped) flip();
-    } else if (e.key === "ArrowRight" || e.key === "1") {
-      nextCard();
+      gradeCard(tipo);
     }
   });
 
@@ -895,7 +947,7 @@
     } else if (parts[0] === "mazo" && parts[1]) {
       var deck = window.DeckStore.get(parts[1]);
       if (!deck) return renderHome();
-      if (!session || session.deckId !== deck.id) startSession(deck, false);
+      if (!session || session.deckId !== deck.id) startSession(deck, "todas");
       renderStudy();
     } else {
       session = null;
@@ -916,8 +968,18 @@
   }
   // Cuando la sincronización trae cambios (u ocurre la primera carga), se
   // redibuja Mis mazos conservando lo escrito en el buscador.
+  // Si se abrió el enlace de un mazo antes de que llegara desde la cuenta, se
+  // mostró el inicio: cuando el mazo aparece, se abre.
+  function retryDeckRoute() {
+    var parts = location.hash.replace(/^#\/?/, "").split("/");
+    if (parts[0] !== "mazo" || !parts[1]) return false;
+    if ((!session || session.deckId !== parts[1]) && window.DeckStore.get(parts[1])) route();
+    return true;
+  }
+
   function refreshHomeFromSync() {
     if (!isSignedIn()) return;
+    if (retryDeckRoute()) return;
     var hash = location.hash.replace(/^#\/?/, "").split("/")[0];
     if (hash) return;
     var search = document.getElementById("deck-search");
@@ -936,6 +998,7 @@
 
   window.addEventListener("studappy:cloud-decks-changed", function () {
     if (!isSignedIn()) return;
+    if (retryDeckRoute()) return;
     var hash = location.hash.replace(/^#\/?/, "").split("/")[0];
     if (!hash || hash === "tienda") route();
   });

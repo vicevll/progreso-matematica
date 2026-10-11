@@ -16,7 +16,11 @@
   var account = null;
   var decks = [];
   var pendientes = {};      // id de mazo -> "guardar" | "borrar"
-  var progreso = {};        // id de mazo -> { id de tarjeta: 1 }
+  // id de mazo -> { id de tarjeta: estado }. Estados guardados:
+  //   1 = "Lo sé" (dominada) · "n" = "No lo sé" · "p" = pendiente.
+  // El 1 es el mismo valor que antes significaba "vista": se conserva como dominada.
+  var progreso = {};
+  var CODIGO = { sabe: 1, no: "n", pendiente: "p" };
   var progresoActualizado = 0;
   var progresoPendiente = false;
   var listeners = [];
@@ -216,16 +220,25 @@
     },
 
     /* ---- Avance de estudio ---- */
-    isKnown: function (deckId, cardId) {
-      return !!(progreso[deckId] && progreso[deckId][cardId]);
+    // "sabe" | "no" | "pendiente" | null (sin responder)
+    getStatus: function (deckId, cardId) {
+      var v = progreso[deckId] && progreso[deckId][cardId];
+      if (v === 1 || v === true) return "sabe";
+      if (v === "n") return "no";
+      if (v === "p") return "pendiente";
+      return null;
     },
-    setKnown: function (deckId, cardId, value) {
-      var had = !!(progreso[deckId] && progreso[deckId][cardId]);
-      if (had === !!value) return;
+    setStatus: function (deckId, cardId, status) {
+      var nuevo = CODIGO[status];
+      var actual = progreso[deckId] && progreso[deckId][cardId];
+      if (actual === nuevo || (nuevo === undefined && actual === undefined)) return;
       if (!progreso[deckId]) progreso[deckId] = {};
-      if (value) progreso[deckId][cardId] = 1;
-      else delete progreso[deckId][cardId];
+      if (nuevo === undefined) delete progreso[deckId][cardId];
+      else progreso[deckId][cardId] = nuevo;
       touchProgress();
+    },
+    isKnown: function (deckId, cardId) {
+      return window.DeckStore.getStatus(deckId, cardId) === "sabe";
     },
     resetProgress: function (deckId) {
       if (!progreso[deckId]) return;
@@ -280,7 +293,7 @@
       Object.keys(old).forEach(function (deckId) {
         if (!isObject(old[deckId]) || indexOf(deckId) === -1) return;
         progreso[deckId] = progreso[deckId] || {};
-        Object.keys(old[deckId]).forEach(function (cardId) { progreso[deckId][cardId] = 1; });
+        Object.keys(old[deckId]).forEach(function (cardId) { if (old[deckId][cardId]) progreso[deckId][cardId] = 1; });
       });
       progresoActualizado = Date.now();
       progresoPendiente = true;
