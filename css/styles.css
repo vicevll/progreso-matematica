@@ -481,6 +481,13 @@ html.dark-mode .orb-c {
   font-size: 0.74rem;
 }
 
+.btn:disabled {
+  opacity: 0.55;
+  box-shadow: none;
+  transform: none;
+  pointer-events: none;
+}
+
 .icon-btn {
   display: inline-grid;
   width: 36px;
@@ -799,6 +806,12 @@ html.dark-mode .orb-c {
   color: var(--text-muted);
   font-size: clamp(1rem, 2vw, 1.25rem);
   line-height: 1.55;
+}
+
+.landing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .landing-login {
@@ -1616,6 +1629,11 @@ html.dark-mode .orb-c {
   min-height: 1.4em;
 }
 
+.gen-status {
+  margin-bottom: 10px;
+}
+
+.gen-file-status.error,
 .gen-status.error {
   background: var(--danger-soft);
   color: var(--danger);

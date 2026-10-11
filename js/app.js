@@ -189,13 +189,20 @@
   function renderLanding() {
     var tag = document.getElementById("topbar-tag");
     if (tag) tag.textContent = "Flashcards";
+    // Solo en localhost (ver account.js): entrar sin Google para probar.
+    var canDemo = !!(window.Auth && window.Auth.canDemo && window.Auth.canDemo());
     app.innerHTML =
       '<section class="landing-hero">' +
         '<span class="eyebrow">ESTUDIO · FLASHCARDS</span>' +
         '<h1>Studappy</h1>' +
         '<p>Convierte lo que necesitas aprender en tarjetas claras, visuales y fáciles de repasar.</p>' +
-        '<button class="btn primary landing-login" id="landing-login" type="button">' + (window.GOOGLE_ICON || "") + "<span>Iniciar sesión con Google</span></button>" +
-        '<small>Tu espacio de estudio se abre después de iniciar sesión.</small>' +
+        '<div class="landing-actions">' +
+          '<button class="btn primary landing-login" id="landing-login" type="button">' + (window.GOOGLE_ICON || "") + "<span>Iniciar sesión con Google</span></button>" +
+          (canDemo ? '<button class="btn ghost" id="landing-demo" type="button">' + ic("play", { size: 16 }) + "<span>Entrar en modo prueba</span></button>" : "") +
+        "</div>" +
+        (canDemo
+          ? "<small>Modo prueba: solo aparece en localhost, no usa tu cuenta y la tienda queda desactivada.</small>"
+          : "<small>Tu espacio de estudio se abre después de iniciar sesión.</small>") +
       "</section>" +
       '<section class="bento-grid" aria-label="Funciones de Studappy">' +
         '<article class="bento-box bento-wide"><span class="bento-icon">' + ic("cards", { size: 25 }) + '</span><div><span class="bento-label">Crea</span><h2>Mazos a tu medida</h2><p>Organiza preguntas y respuestas para cada materia, proyecto o examen.</p></div></article>' +
@@ -273,7 +280,7 @@
           '<p class="admin-sub">Crea, edita y estudia tus flashcards.</p>' +
         "</div>" +
          '<div class="admin-actions">' +
-          '<a class="btn ghost lg" id="open-generador" href="#/generador">' + ic("sparkle") + '<span>Generar con IA</span></a>' +
+          '<button class="btn ghost lg" id="open-generador" type="button">' + ic("sparkle") + '<span>Generar con IA</span></button>' +
           '<a class="btn ghost lg" href="#/tienda">' + ic("layers") + '<span>Tienda</span></a>' +
           '<button class="btn primary lg" id="new-deck" type="button">' + ic("plus") + '<span>Nuevo mazo</span></button>' +
         '</div>' +
@@ -789,8 +796,16 @@
       if (window.SB && window.SB.beginLogin) window.SB.beginLogin();
       return;
     }
+    if (e.target.closest("#landing-demo")) {
+      if (window.Auth && window.Auth.startDemo) window.Auth.startDemo();
+      return;
+    }
     if (e.target.closest("#new-deck")) {
       openEditor(null);
+      return;
+    }
+    if (e.target.closest("#open-generador")) {
+      openGenerador();
       return;
     }
     var edit = e.target.closest("[data-edit]");
@@ -863,6 +878,16 @@
     }
   });
 
+  /* ---------- Generador ---------- */
+
+  // El generador es un modal (como el editor), no una ruta: así la dirección
+  // no queda pegada en #/generador al cerrarlo y los re-render del router
+  // (cambios de sesión, sincronización) no abren un segundo wizard.
+  function openGenerador() {
+    if (window.Generador) window.Generador.open();
+    else showNotice("El generador aún no está disponible.");
+  }
+
   /* ---------- Router ---------- */
 
   function route() {
@@ -870,6 +895,7 @@
     if (mainNav) mainNav.hidden = !isSignedIn();
     if (!isSignedIn()) {
       session = null;
+      if (window.Generador && window.Generador.isOpen && window.Generador.isOpen()) window.Generador.close();
       renderLanding();
       window.scrollTo(0, 0);
       return;
@@ -877,9 +903,12 @@
     var hash = location.hash.replace(/^#\/?/, "");
     var parts = hash.split("/").filter(Boolean);
     if (parts[0] === "generador") {
+      // Enlaces antiguos a #/generador: se reemplaza la dirección por el
+      // inicio (sin disparar hashchange ni sumar historial) y se abre el modal.
       session = null;
-      if (window.Generador) window.Generador.open();
-      else app.innerHTML = '<p class="store-setup-note">El generador aún no está disponible.</p>';
+      if (window.history && window.history.replaceState) window.history.replaceState(null, "", "#/");
+      renderHome();
+      openGenerador();
     } else if (parts[0] === "tienda") {
       session = null;
       if (window.Tienda) window.Tienda.render(app);

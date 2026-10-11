@@ -3,14 +3,14 @@
 (function () {
   var overlay = null;
   var step = 1;
-  var state = {
-    markdown: "",
-    cards: [],
-    nombre: "",
-    descripcion: "",
-    color: "#2f80ed",
-    status: ""
-  };
+  // Cada llamada a la IA recibe un número; si el wizard se cierra o se
+  // retrocede, se incrementa y las respuestas antiguas se ignoran.
+  var requestId = 0;
+  var state = freshState();
+
+  function freshState() {
+    return { markdown: "", cards: [], nombre: "", descripcion: "", color: "#2f80ed", status: "", statusError: false, busy: false };
+  }
 
   function esc(s) {
     return String(s == null ? "" : s)
@@ -21,11 +21,55 @@
     return window.icon ? window.icon(name, { size: size || 18 }) : "";
   }
 
+  function isOpen() {
+    return !!(overlay && overlay.parentNode);
+  }
+
   function close() {
+    requestId++;
     if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
     overlay = null;
-    state = { markdown: "", cards: [], nombre: "", descripcion: "", color: "#2f80ed", status: "" };
+    state = freshState();
     step = 1;
+  }
+
+  function canAdvance() {
+    if (state.busy) return false;
+    if (step === 1) return !!state.markdown.trim();
+    return true;
+  }
+
+  function statusHtml() {
+    return '<div class="gen-status' + (state.statusError ? " error" : "") + '" id="gen-status" role="status" aria-live="polite"' +
+      (state.status ? "" : " hidden") + ">" + esc(state.status) + "</div>";
+  }
+
+  // Actualiza el mensaje de estado sin redibujar el paso (textContent: el
+  // texto de error puede venir de la respuesta de la API).
+  function setStatus(message, isError) {
+    state.status = message || "";
+    state.statusError = !!isError;
+    var el = overlay && overlay.querySelector("#gen-status");
+    if (!el) return;
+    el.textContent = state.status;
+    el.classList.toggle("error", state.statusError);
+    el.hidden = !state.status;
+    if (state.statusError && el.scrollIntoView) el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }
+
+  // Sincroniza los botones con el estado actual (ocupado, texto vacío, etc.).
+  function syncButtons() {
+    if (!overlay) return;
+    var next = overlay.querySelector("#gen-next");
+    if (next) {
+      next.disabled = !canAdvance();
+      var label = next.querySelector("span");
+      if (label) label.textContent = state.busy ? "Generando…" : "Siguiente";
+    }
+    var regen = overlay.querySelector("#gen-regenerate");
+    if (regen) regen.disabled = state.busy;
+    var create = overlay.querySelector("#gen-create");
+    if (create) create.disabled = state.busy || state.cards.length < 1;
   }
 
   function dots() {
@@ -83,6 +127,7 @@
         '<span class="gen-icon">' + ic("edit", 28) + "</span>" +
         '<h2>Revisa el texto extraído</h2>' +
         '<p>La IA transcribió el contenido. Corrige lo que necesites antes de generar las tarjetas.</p>' +
+        statusHtml() +
         '<textarea id="gen-markdown" rows="14" placeholder="Markdown del contenido...">' + esc(state.markdown) + "</textarea>" +
         '<div class="gen-hint">Tip: usa $...$ para fórmulas en línea y $$...$$ para fórmulas en bloque.</div>' +
       "</div>"
@@ -98,10 +143,10 @@
         '<div class="gen-cards-controls">' +
           '<label class="gen-count"><span>Cantidad: <output id="gen-count-output">' + state.cards.length + "</output></span>" +
             '<input id="gen-count" type="range" min="5" max="30" value="' + state.cards.length + '" /></label>' +
-          '<button class="btn ghost sm" id="gen-regenerate" type="button">' + ic("refresh", 16) + "<span>Regenerar</span></button>" +
+          '<button class="btn ghost sm" id="gen-regenerate" type="button"' + (state.busy ? " disabled" : "") + ">" + ic("refresh", 16) + "<span>Regenerar</span></button>" +
         "</div>" +
+        statusHtml() +
         '<div class="gen-cards-list" id="gen-cards-list"></div>' +
-        '<div class="gen-status" id="gen-status">' + state.status + "</div>" +
       "</div>"
     );
   }
@@ -145,21 +190,24 @@
   }
 
   function footerHtml() {
-    var nextDisabled = step === 1 && !state.markdown ? ' disabled' : '';
-    var createDisabled = step === 4 && state.cards.length < 1 ? ' disabled' : '';
+    var nextDisabled = canAdvance() ? "" : " disabled";
+    var createDisabled = state.busy || state.cards.length < 1 ? " disabled" : "";
+    var nextLabel = state.busy ? "Generando…" : "Siguiente";
     return (
       '<span class="gen-footer-note">' + (step === 4 ? "Se guarda en este dispositivo." : "") + '</span>' +
       '<div class="gen-footer-actions">' +
         '<button class="btn ghost" id="gen-cancel" type="button">Cancelar</button>' +
         (step > 1 ? '<button class="btn ghost" id="gen-back" type="button">' + ic("arrowLeft", 16) + " Atrás</button>" : "") +
         (step < 4
-          ? '<button class="btn primary" id="gen-next" type="button"' + nextDisabled + '><span>Siguiente</span>' + ic("chevronRight", 16) + "</button>"
+          ? '<button class="btn primary" id="gen-next" type="button"' + nextDisabled + "><span>" + nextLabel + "</span>" + ic("chevronRight", 16) + "</button>"
           : '<button class="btn primary" id="gen-create" type="button"' + createDisabled + '>' + ic("check", 16) + "<span>Crear mazo</span></button>") +
       "</div>"
     );
   }
 
   function open() {
+    // Idempotente: si ya está abierto no se crea un segundo wizard encima.
+    if (isOpen()) return;
     overlay = document.createElement("div");
     overlay.className = "overlay generador-overlay";
     overlay.innerHTML = (
@@ -175,7 +223,7 @@
     );
     document.body.appendChild(overlay);
     step = 1;
-    state = { markdown: "", cards: [], nombre: "", descripcion: "", color: "#2f80ed", status: "" };
+    state = freshState();
     render();
     attachEvents();
   }
@@ -211,11 +259,19 @@
       return;
     }
     if (e.target.closest("#gen-back")) {
-      askAbandon(function () { step = Math.max(1, step - 1); render(); });
+      askAbandon(function () {
+        requestId++; // descarta una generación en curso
+        state.busy = false;
+        setStatus("");
+        step = Math.max(1, step - 1);
+        render();
+      });
       return;
     }
-    if (e.target.closest("#gen-next")) { nextStep(); return; }
-    if (e.target.closest("#gen-create")) { createDeck(); return; }
+    var next = e.target.closest("#gen-next");
+    if (next) { if (!next.disabled) nextStep(); return; }
+    var create = e.target.closest("#gen-create");
+    if (create) { if (!create.disabled) createDeck(); return; }
 
     var tab = e.target.closest(".gen-tab");
     if (tab) {
@@ -240,14 +296,18 @@
       return;
     }
 
-    if (e.target.closest("#gen-regenerate")) { regenerate(); return; }
+    var regen = e.target.closest("#gen-regenerate");
+    if (regen) { if (!regen.disabled) regenerate(); return; }
   }
 
   function handleInput(e) {
     if (e.target.id === "gen-markdown") state.markdown = e.target.value;
     if (e.target.id === "gen-nombre") state.nombre = e.target.value;
     if (e.target.id === "gen-desc") state.descripcion = e.target.value;
-    if (e.target.id === "gen-raw-text") state.markdown = e.target.value;
+    if (e.target.id === "gen-raw-text") {
+      state.markdown = e.target.value;
+      syncButtons(); // habilita "Siguiente" en cuanto hay texto pegado
+    }
     if (e.target.id === "gen-count") {
       var count = parseInt(e.target.value, 10);
       var output = document.getElementById("gen-count-output");
@@ -265,26 +325,43 @@
 
   function handleFile(file) {
     if (!file) return;
+    var token = ++requestId;
     var status = document.getElementById("gen-file-status");
-    if (status) status.textContent = "Procesando " + file.name + "...";
+    function fileStatus(message, isError) {
+      if (!status) return;
+      status.textContent = message;
+      status.classList.toggle("error", !!isError);
+    }
+    fileStatus("Procesando " + file.name + "...");
     state.markdown = "";
-    state.status = "";
+    setStatus("");
+    syncButtons();
     IA.transcribirArchivo(file, function (msg) {
-      if (status) status.textContent = msg;
+      if (token === requestId) fileStatus(msg);
     }).then(function (text) {
+      if (token !== requestId || !overlay) return;
       state.markdown = text;
-      if (status) status.textContent = "Listo · " + text.length + " caracteres";
-      setTimeout(function () { nextStep(); }, 400);
+      fileStatus("Listo · " + text.length + " caracteres");
+      syncButtons();
+      setTimeout(function () {
+        if (token === requestId && overlay && step === 1) nextStep();
+      }, 400);
     }).catch(function (err) {
-      if (status) status.textContent = "Error: " + (err.message || err);
+      if (token !== requestId || !overlay) return;
+      fileStatus("Error: " + (err.message || err), true);
+      syncButtons();
     });
   }
 
   function nextStep() {
+    if (state.busy) return;
     if (step === 1 && !state.markdown.trim()) return;
     if (step === 2) {
       state.markdown = (document.getElementById("gen-markdown") || {}).value || state.markdown;
-      if (!state.markdown.trim()) return;
+      if (!state.markdown.trim()) {
+        setStatus("Escribe o pega algo de contenido antes de generar.", true);
+        return;
+      }
       generateCards();
       return;
     }
@@ -295,49 +372,57 @@
     render();
   }
 
+  // Convierte la respuesta de la IA en tarjetas { q, a } (máximo 30).
+  function toCards(raw) {
+    var cards = IA.parseJson(raw);
+    if (!Array.isArray(cards) || !cards.length) throw new Error("La IA no devolvió tarjetas válidas.");
+    return cards.slice(0, 30).map(function (c) { return { q: String(c.q || ""), a: String(c.a || "") }; });
+  }
+
+  // Lanza una generación y gestiona el estado "ocupado", los mensajes y los
+  // errores. onCards recibe las tarjetas solo si la respuesta sigue vigente.
+  function requestCards(count, startMessage, onCards) {
+    if (state.busy) return;
+    var token = ++requestId;
+    state.busy = true;
+    setStatus(startMessage);
+    syncButtons();
+    IA.generarTarjetas(state.markdown, count, function (msg) {
+      if (token === requestId) setStatus(msg);
+    }).then(function (raw) {
+      if (token !== requestId || !overlay) return;
+      var cards = toCards(raw);
+      state.busy = false;
+      state.cards = cards;
+      state.status = "Listo · " + cards.length + " tarjetas";
+      state.statusError = false;
+      onCards();
+    }).catch(function (err) {
+      if (token !== requestId || !overlay) return;
+      state.busy = false;
+      setStatus("Error: " + (err && err.message ? err.message : err), true);
+      syncButtons();
+    });
+  }
+
   function generateCards() {
-    state.status = "Generando tarjetas...";
-    render();
     var count = 10;
     var countInput = document.getElementById("gen-count");
     if (countInput) count = parseInt(countInput.value, 10) || 10;
-    IA.generarTarjetas(state.markdown, count, function (msg) {
-      state.status = msg;
-      var statusEl = document.getElementById("gen-status");
-      if (statusEl) statusEl.textContent = msg;
-    }).then(function (raw) {
-      var cards = IA.parseJson(raw);
-      if (!Array.isArray(cards) || !cards.length) throw new Error("La IA no devolvió tarjetas válidas.");
-      state.cards = cards.slice(0, 30).map(function (c) { return { q: String(c.q || ""), a: String(c.a || "") }; });
-      state.status = "Listo · " + state.cards.length + " tarjetas";
+    requestCards(count, "Generando tarjetas…", function () {
       step = 3;
-      render();
-    }).catch(function (err) {
-      state.status = "Error: " + (err.message || err);
       render();
     });
   }
 
   function regenerate() {
     collectCardsFromDom();
-    state.status = "Regenerando...";
-    render();
     var countInput = document.getElementById("gen-count");
     var count = countInput ? parseInt(countInput.value, 10) || 10 : state.cards.length || 10;
-    IA.generarTarjetas(state.markdown, count, function (msg) {
-      state.status = msg;
-      var statusEl = document.getElementById("gen-status");
-      if (statusEl) statusEl.textContent = msg;
-    }).then(function (raw) {
-      var cards = IA.parseJson(raw);
-      if (!Array.isArray(cards) || !cards.length) throw new Error("La IA no devolvió tarjetas válidas.");
-      state.cards = cards.slice(0, 30).map(function (c) { return { q: String(c.q || ""), a: String(c.a || "") }; });
-      state.status = "Listo · " + state.cards.length + " tarjetas";
+    requestCards(count, "Regenerando…", function () {
       renderCards();
-    }).catch(function (err) {
-      state.status = "Error: " + (err.message || err);
-      var statusEl = document.getElementById("gen-status");
-      if (statusEl) statusEl.textContent = state.status;
+      setStatus(state.status);
+      syncButtons();
     });
   }
 
@@ -379,5 +464,5 @@
     }, 60);
   }
 
-  window.Generador = { open: open };
+  window.Generador = { open: open, close: close, isOpen: isOpen };
 })();

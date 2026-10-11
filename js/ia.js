@@ -108,15 +108,25 @@
     });
   }
 
+  // Rellena {clave} en una plantilla en una sola pasada.
+  // Usa una función como reemplazo para que los "$$", "$&" o "$'" del
+  // contenido (muy comunes en LaTeX) se copien tal cual y no se interpreten
+  // como patrones especiales de String.replace.
+  function fillPrompt(template, vars) {
+    return String(template).replace(/\{(\w+)\}/g, function (match, key) {
+      return Object.prototype.hasOwnProperty.call(vars, key) ? String(vars[key]) : match;
+    });
+  }
+
   function generarTarjetas(markdown, count, progress) {
     var config = loadConfig();
+    var prompt = fillPrompt(PROMPTS.generar, { count: count, content: markdown });
     if (config.provider === "groq") {
       if (typeof progress === "function") progress("Enviando a Groq...");
-      var prompt = PROMPTS.generar.replace("{count}", count).replace("{content}", markdown);
       return callGroq(prompt);
     }
     if (typeof progress === "function") progress("Enviando a Gemini...");
-    return callGemini([{ text: PROMPTS.generar.replace("{count}", count).replace("{content}", markdown) }]);
+    return callGemini([{ text: prompt }]);
   }
 
   window.IA = {
@@ -127,6 +137,7 @@
     callGroq: callGroq,
     transcribirArchivo: transcribirImagen,
     generarTarjetas: generarTarjetas,
+    fillPrompt: fillPrompt,
     parseJson: parseJson
   };
 })();

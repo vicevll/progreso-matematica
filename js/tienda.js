@@ -60,7 +60,9 @@
         '<div class="store-stats"><span><strong>' + availableCount + "</strong> " + (availableCount === 1 ? "mazo disponible" : "mazos disponibles") + "</span><span><strong>" + ownedCount + "</strong> " + (ownedCount === 1 ? "adquirido" : "adquiridos") + "</span></div></section>" +
       (window.CloudDecks && window.CloudDecks.configured()
         ? ""
-        : '<p class="store-setup-note">Para guardar adquisiciones, configura Supabase y ejecuta <code>supabase/tienda.sql</code> en el SQL Editor.</p>') +
+        : window.Auth && window.Auth.isDemo && window.Auth.isDemo()
+          ? '<p class="store-setup-note">Estás en modo prueba: puedes ver el catálogo, pero para añadir mazos entra con Google.</p>'
+          : '<p class="store-setup-note">Para guardar adquisiciones, configura Supabase y ejecuta <code>supabase/tienda.sql</code> en el SQL Editor.</p>') +
       '<section class="store-grid">' + items.map(itemHtml).join("") + "</section>";
   }
 
@@ -78,6 +80,10 @@
       })
       .catch(function (error) {
         var detail = error && error.message ? error.message : "Error desconocido";
+        if (window.Auth && window.Auth.isDemo && window.Auth.isDemo()) {
+          messages[catalogId] = detail;
+          return;
+        }
         messages[catalogId] = "No se pudo adquirir. Verifica que supabase/tienda.sql esté ejecutado y que Supabase esté activo. " + detail;
       })
       .then(function () {

@@ -8,8 +8,13 @@
     return window.Auth && window.Auth.user ? window.Auth.user() : null;
   }
 
+  function isDemo() {
+    return !!(window.Auth && window.Auth.isDemo && window.Auth.isDemo());
+  }
+
   function configured() {
-    return !!(window.SB && window.SB.configured && window.SB.client);
+    // En modo prueba no hay sesión real de Supabase: la tienda queda desactivada.
+    return !isDemo() && !!(window.SB && window.SB.configured && window.SB.client);
   }
 
   function check(result) {
@@ -167,6 +172,7 @@
     }
     var currentUser = user();
     if (!currentUser) return Promise.reject(new Error("Inicia sesión para agregar el mazo a tu biblioteca."));
+    if (isDemo()) return Promise.reject(new Error("En modo prueba la tienda no guarda mazos. Entra con Google para probarla."));
     if (!configured()) return Promise.reject(new Error("Supabase no está configurado."));
     if (isOwned(catalogId)) return Promise.resolve(window.DeckStore.all().filter(function (deck) { return deck.catalogId === catalogId; })[0]);
 

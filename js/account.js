@@ -6,6 +6,33 @@
   var listeners = [];
   var ready = false;
 
+  // Modo prueba: solo en localhost permite entrar sin Google para probar la
+  // app. No toca Supabase (la tienda queda desactivada) y en el sitio
+  // publicado no existe, porque depende del nombre del host.
+  var LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(window.location.hostname);
+  var DEMO_KEY = "studappy-modo-prueba";
+  var DEMO_SESSION = { demo: true, user: { id: "modo-prueba", user_metadata: { full_name: "Modo prueba" } } };
+
+  function demoWanted() {
+    if (!LOCAL) return false;
+    try { return localStorage.getItem(DEMO_KEY) === "1"; } catch (e) { return false; }
+  }
+
+  function isDemo() {
+    return !!(session && session.demo);
+  }
+
+  function startDemo() {
+    if (!LOCAL) return;
+    try { localStorage.setItem(DEMO_KEY, "1"); } catch (e) { /* sin almacenamiento: dura hasta recargar */ }
+    setSession(DEMO_SESSION);
+  }
+
+  function stopDemo() {
+    try { localStorage.removeItem(DEMO_KEY); } catch (e) { /* ignorar */ }
+    setSession(null);
+  }
+
   function esc(s) {
     return String(s == null ? "" : s)
       .replace(/&/g, "&amp;")
@@ -47,6 +74,8 @@
   }
 
   function setSession(next) {
+    // Una sesión real de Google siempre tiene prioridad sobre el modo prueba.
+    if (!next && demoWanted()) next = DEMO_SESSION;
     session = next;
     ready = true;
     window.Auth.ready = true;
@@ -55,6 +84,15 @@
   }
 
   function render() {
+    if (isDemo()) {
+      box.innerHTML =
+        '<span class="account-profile">' +
+          avatarHtml(user()) +
+          '<span class="account-name">Modo prueba</span>' +
+        "</span>" +
+        '<button class="account-btn" id="account-logout" type="button">Salir</button>';
+      return;
+    }
     if (!window.SB || !window.SB.configured) {
       box.innerHTML =
         '<span class="account-note" title="Completa js/config.js con tu URL y anon key">Supabase sin configurar</span>';
@@ -83,13 +121,17 @@
       return;
     }
     if (e.target.closest("#account-logout")) {
-      window.SB.signOut();
+      if (isDemo()) stopDemo();
+      else window.SB.signOut();
     }
   });
 
   window.Auth = {
     ready: false,
     isSignedIn: function () { return !!user(); },
+    isDemo: isDemo,
+    canDemo: function () { return LOCAL; },
+    startDemo: startDemo,
     user: user,
     name: displayName,
     avatarHtml: avatarHtml,
