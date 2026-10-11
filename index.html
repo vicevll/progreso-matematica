@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark-mode">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#1c1d21" />
   <title>Studappy · Flashcards</title>
   <meta name="description" content="Estudia con flashcards y mide tu avance." />
   <!-- Google tag (gtag.js) -->
@@ -11,7 +13,7 @@
   <link rel="icon" type="image/png" href="favicon.png?v=1" />
   <link rel="apple-touch-icon" href="favicon.png?v=1" />
   <link rel="stylesheet" href="vendor/katex/katex.min.css" />
-  <link rel="stylesheet" href="css/styles.css?v=20261011-5" />
+  <link rel="stylesheet" href="css/styles.css?v=20261011-6" />
 </head>
 <body>
   <div class="parallax-scene" aria-hidden="true">
@@ -28,7 +30,6 @@
     </nav>
     <div class="topbar-right">
       <span class="topbar-tag" id="topbar-tag">Flashcards</span>
-      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Usar modo oscuro"></button>
       <div class="account" id="account"></div>
     </div>
   </header>
@@ -42,7 +43,7 @@
   <script src="data/decks.js?v=20261010-2"></script>
   <script src="data/catalogo-tienda.js?v=20261010-4"></script>
   <script src="js/icons.js?v=20261004-5"></script>
-  <script src="js/theme.js?v=20261004-2"></script>
+  <script src="js/theme.js?v=20261011-1"></script>
   <script src="js/scrollbar.js?v=20261004-1"></script>
   <script src="js/deckstore.js?v=20261011-1"></script>
   <script src="js/motion.js?v=20261004-1"></script>
@@ -52,13 +53,13 @@
   <script src="vendor/katex/katex.min.js"></script>
   <script src="vendor/katex/auto-render.min.js"></script>
   <script src="js/md.js?v=20261011-1"></script>
-  <script src="vendor/supabase/supabase-js.min.js"></script>
+  <script src="vendor/supabase/supabase-js.min.js?v=20261011"></script>
   <script src="js/config.js?v=20261011-1"></script>
   <script src="js/supabase.js?v=20261004-3"></script>
   <script src="js/account.js?v=20261011-2"></script>
   <script src="js/cloud-decks.js?v=20261011-2"></script>
   <script src="js/sync-mazos.js?v=20261011-1"></script>
-  <script src="js/tienda.js?v=20261011-2"></script>
+  <script src="js/tienda.js?v=20261011-3"></script>
   <script src="js/app.js?v=20261011-4"></script>
 </body>
 </html>

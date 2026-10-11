@@ -880,6 +880,11 @@ html.dark-mode .orb-c {
   color: #5865d9;
 }
 
+html.dark-mode .bento-icon.blue {
+  background: #262c4a;
+  color: #8f9bff;
+}
+
 .bento-icon.sky {
   background: var(--sky-soft);
   color: #159bd7;
@@ -2763,4 +2768,63 @@ html:not(.dark-mode) .deck-card.owned.store-numbers::after {
 
 @media (max-width: 720px) {
   .store-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- Celular: encabezado fijo, cuadrado y de ancho completo ---------- */
+
+@media (max-width: 720px) {
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 12px;
+    width: 100%;
+    margin: 0;
+    padding: 10px max(16px, env(safe-area-inset-right)) 10px max(16px, env(safe-area-inset-left));
+    padding-top: max(10px, env(safe-area-inset-top));
+    border: 0;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  }
+
+  .topbar .brand {
+    order: 1;
+  }
+
+  .topbar-right {
+    order: 2;
+    width: auto;
+    margin-left: auto;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  /* Segunda fila, solo con sesión iniciada. */
+  .main-nav {
+    order: 3;
+    flex-basis: 100%;
+    width: 100%;
+    justify-content: center;
+    margin: 0;
+  }
+
+  .main-nav[hidden] {
+    display: none;
+  }
+
+  .topbar-tag,
+  .account-name {
+    display: none;
+  }
+
+  .google-btn {
+    padding: 7px 12px;
+    font-size: 0.74rem;
+  }
 }

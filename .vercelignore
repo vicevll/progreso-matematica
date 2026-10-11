@@ -1,4 +1,6 @@
-# Herramientas de desarrollo local: no se publican.
-dev/
-servir-local.cmd
-supabase/
+# Herramientas de desarrollo local y SQL: no se publican.
+# La barra inicial ancla cada regla a la raíz: sin ella, "supabase/" también
+# excluiría vendor/supabase/ (la librería de inicio de sesión).
+/dev/
+/servir-local.cmd
+/supabase/

@@ -29,7 +29,7 @@
     } else {
       action = '<button class="btn ghost" type="button" disabled><span>Próximamente</span></button>';
     }
-    var message = messages[item.id] || (owned ? "Ya está en Mis mazos y se sincroniza con tu cuenta." : available ? "Gratis · se guarda en tu biblioteca de Supabase." : "Estamos preparando este mazo gratuito.");
+    var message = messages[item.id] || (owned ? "Ya está en Mis mazos y se sincroniza con tu cuenta." : available ? "Gratis · se guarda en tu cuenta." : "Estamos preparando este mazo gratuito.");
     var breakdown = item.breakdown || {};
     var counts = item.cards.length
       ? item.cards.length + " tarjetas · " + (breakdown.concepts || 0) + " conceptos · " + (breakdown.exercises || 0) + " ejercicios · " + (breakdown.formulas || 0) + " fórmulas"
@@ -56,7 +56,7 @@
     container.innerHTML =
       '<nav class="breadcrumb"><a href="#/">Mis mazos</a><span class="sep">' + icon("chevronRight", 14) + "</span><span>Tienda</span></nav>" +
       '<section class="store-header"><span class="eyebrow">BIBLIOTECA DE ESTUDIO</span><h1>Tienda de mazos</h1>' +
-        '<p>Explora mazos de flashcards. Al obtener uno gratis, se copia a tu biblioteca de Supabase para que puedas estudiarlo desde Mis mazos.</p>' +
+        '<p>Explora mazos de flashcards. Al añadir uno gratis, queda en tu cuenta y puedes estudiarlo desde Mis mazos.</p>' +
         '<div class="store-stats"><span><strong>' + availableCount + "</strong> " + (availableCount === 1 ? "mazo disponible" : "mazos disponibles") + "</span><span><strong>" + ownedCount + "</strong> " + (ownedCount === 1 ? "adquirido" : "adquiridos") + "</span></div></section>" +
       (window.CloudDecks && window.CloudDecks.configured()
         ? ""
