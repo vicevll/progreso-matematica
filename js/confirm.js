@@ -28,7 +28,7 @@
         '<p>' + esc(message || "Los cambios que no hayas guardado se perderán.") + "</p>" +
         '<div class="confirm-actions">' +
           '<button class="btn ghost" id="confirm-stay" type="button">' + esc(options.cancelLabel || "Seguir aquí") + "</button>" +
-          '<button class="btn danger" id="confirm-leave" type="button">' + esc(options.confirmLabel || "Abandonar") + "</button>" +
+          '<button class="btn ' + (options.confirmClass === "primary" ? "primary" : "danger") + '" id="confirm-leave" type="button">' + esc(options.confirmLabel || "Abandonar") + "</button>" +
         "</div>" +
       "</div>";
     document.body.appendChild(overlay);

@@ -1,6 +1,5 @@
 (function () {
   var app = document.getElementById("app");
-  var PKEY = "studappy-progress-v2";
   var reduceMotion = false;
   var MATH_OPTIONS = {
     delimiters: [
@@ -10,7 +9,6 @@
     throwOnError: false
   };
 
-  var progress = loadProgress();
   var session = null;
   var draft = null;
   var editingId = null;
@@ -21,32 +19,13 @@
     return JSON.parse(JSON.stringify(value));
   }
 
-  function loadProgress() {
-    try {
-      var raw = localStorage.getItem(PKEY);
-      return raw ? JSON.parse(raw) : {};
-    } catch (e) {
-      return {};
-    }
-  }
-
-  function saveProgress() {
-    try {
-      localStorage.setItem(PKEY, JSON.stringify(progress));
-    } catch (e) {
-      /* almacenamiento no disponible */
-    }
-  }
-
+  // El avance vive en DeckStore: hay una copia por cuenta y se sincroniza.
   function isKnown(deckId, cardId) {
-    return !!(progress[deckId] && progress[deckId][cardId]);
+    return window.DeckStore.isKnown(deckId, cardId);
   }
 
   function setKnown(deckId, cardId, value) {
-    if (!progress[deckId]) progress[deckId] = {};
-    if (value) progress[deckId][cardId] = 1;
-    else delete progress[deckId][cardId];
-    saveProgress();
+    window.DeckStore.setKnown(deckId, cardId, value);
   }
 
   function deckStats(deck) {
@@ -206,9 +185,9 @@
       "</section>" +
       '<section class="bento-grid" aria-label="Funciones de Studappy">' +
         '<article class="bento-box bento-wide"><span class="bento-icon">' + ic("cards", { size: 25 }) + '</span><div><span class="bento-label">Crea</span><h2>Mazos a tu medida</h2><p>Organiza preguntas y respuestas para cada materia, proyecto o examen.</p></div></article>' +
-        '<article class="bento-box"><span class="bento-icon blue">' + ic("target", { size: 25 }) + '</span><span class="bento-label">Aprende</span><h2>Repasa con intención</h2><p>Marca lo que ya dominas y vuelve a lo pendiente.</p></article>' +
+        '<article class="bento-box"><span class="bento-icon blue">' + ic("target", { size: 25 }) + '</span><span class="bento-label">Aprende</span><h2>Repasa con intención</h2><p>Ve cuántas tarjetas llevas en cada mazo y vuelve a las que te faltan.</p></article>' +
         '<article class="bento-box"><span class="bento-icon sky">' + ic("refresh", { size: 25 }) + '</span><span class="bento-label">Organiza</span><h2>Tu ritmo</h2><p>Muestra la respuesta cuando quieras y mezcla las cartas en cada ronda.</p></article>' +
-        '<article class="bento-box bento-wide bento-note"><span class="bento-icon mint">' + ic("sparkle", { size: 25 }) + '</span><div><span class="bento-label">Tu biblioteca</span><h2>Accede a tus mazos en tu cuenta</h2><p>Los mazos adquiridos se sincronizan con tu cuenta de Studappy; tus propios mazos permanecen en este dispositivo.</p></div></article>' +
+        '<article class="bento-box bento-wide bento-note"><span class="bento-icon mint">' + ic("sparkle", { size: 25 }) + '</span><div><span class="bento-label">Tu biblioteca</span><h2>Tus mazos te siguen</h2><p>Tus mazos, los de la tienda y tu avance se guardan en tu cuenta: entra desde cualquier dispositivo y sigue donde quedaste.</p></div></article>' +
       "</section>";
     setupReveal();
   }
@@ -285,7 +264,9 @@
           '<button class="btn primary lg" id="new-deck" type="button">' + ic("plus") + '<span>Nuevo mazo</span></button>' +
         '</div>' +
       "</section>" +
-      (decks.length
+      (!decks.length && window.SyncMazos && window.SyncMazos.cargando()
+        ? '<div class="empty-state"><span class="empty-icon">' + ic("refresh", { size: 34 }) + "</span><h2>Cargando tus mazos…</h2><p>Los estamos trayendo desde tu cuenta.</p></div>"
+        : decks.length
         ? '<div class="toolbar">' +
             '<label class="search">' + ic("search", { size: 18 }) +
               '<input type="search" id="deck-search" placeholder="Buscar mazo…" autocomplete="off" />' +
@@ -601,7 +582,7 @@
     var deck = window.DeckStore.get(editingId);
     if (!deck || deck.origen === "tienda") return;
     if (window.StudappyConfirm) {
-      window.StudappyConfirm.ask("El mazo y sus tarjetas se eliminarán de este dispositivo.", function () {
+      window.StudappyConfirm.ask("El mazo y sus tarjetas se eliminarán de tu cuenta.", function () {
         window.DeckStore.remove(editingId);
         closeEditor();
         location.hash = "#/";
@@ -614,7 +595,7 @@
     var deck = window.DeckStore.get(id);
     if (!deck || deck.origen === "tienda") return;
     if (window.StudappyConfirm) {
-      window.StudappyConfirm.ask('¿Eliminar el mazo "' + deck.nombre + '"?', function () {
+      window.StudappyConfirm.ask('El mazo "' + deck.nombre + '" y su avance se eliminarán de tu cuenta.', function () {
         window.DeckStore.remove(id);
         renderHome();
       });
@@ -630,8 +611,7 @@
       function () {
         window.CloudDecks.remove(deck.id)
           .then(function () {
-            delete progress[deck.id];
-            saveProgress();
+            window.DeckStore.resetProgress(deck.id);
             renderHome();
           })
           .catch(function (error) {
@@ -726,7 +706,7 @@
       '<nav class="breadcrumb"><a href="#/">Mis mazos</a><span class="sep">' + ic("chevronRight", { size: 14 }) + "</span><span>" + esc(deck.nombre) + "</span></nav>" +
       '<section class="study-summary reveal">' +
         '<span class="summary-icon ' + (allDone ? "ok" : "") + '">' + ic(allDone ? "check" : "brain", { size: 40 }) + "</span>" +
-        "<h1>" + (allDone ? "¡Mazo dominado!" : "Ronda terminada") + "</h1>" +
+        "<h1>" + (allDone ? "¡Repasaste todo el mazo!" : "Ronda terminada") + "</h1>" +
         "<p>" + stats.done + " de " + stats.total + " tarjetas vistas en <strong>" + esc(deck.nombre) + "</strong>.</p>" +
         '<div class="summary-actions">' +
           (pending.length
@@ -747,11 +727,11 @@
       '<section class="study-ready reveal">' +
         '<span class="ready-icon">' + ic("sparkle", { size: 34 }) + "</span>" +
         '<span class="eyebrow">MODO DE ESTUDIO</span>' +
-        "<h1>¿Preparada?</h1>" +
+        "<h1>¿Todo listo?</h1>" +
         '<p>Vas a repasar <strong>' + count + (count === 1 ? " tarjeta" : " tarjetas") + '</strong> de <strong>' + esc(deck.nombre) + "</strong>." +
         '<br />Primero verás la pregunta y después podrás mostrar la respuesta.</p>' +
         '<label class="shuffle-choice"><input id="study-shuffle" type="checkbox" checked /><span class="shuffle-check">' + ic("shuffle", { size: 17 }) + "</span><span><strong>Mezclar las cartas</strong><small>Cambia el orden en cada ronda.</small></span></label>" +
-        '<button class="btn primary lg" id="study-ready" type="button">' + ic("play", { size: 18 }) + "<span>Preparada</span></button>" +
+        '<button class="btn primary lg" id="study-ready" type="button">' + ic("play", { size: 18 }) + "<span>Empezar</span></button>" +
       "</section>";
     setupReveal();
   }
@@ -841,8 +821,7 @@
     if (e.target.closest("#fc-show")) { flip(); return; }
     if (e.target.closest("#fc-next")) { nextCard(); return; }
     if (e.target.closest("#fc-restart") && session) {
-      progress[session.deckId] = {};
-      saveProgress();
+      window.DeckStore.resetProgress(session.deckId);
       var deckB = window.DeckStore.get(session.deckId);
       if (deckB) startSession(deckB, false);
       renderStudy();
@@ -935,6 +914,26 @@
       route();
     });
   }
+  // Cuando la sincronización trae cambios (u ocurre la primera carga), se
+  // redibuja Mis mazos conservando lo escrito en el buscador.
+  function refreshHomeFromSync() {
+    if (!isSignedIn()) return;
+    var hash = location.hash.replace(/^#\/?/, "").split("/")[0];
+    if (hash) return;
+    var search = document.getElementById("deck-search");
+    var term = search ? search.value : "";
+    var hadFocus = search && document.activeElement === search;
+    renderHome();
+    var again = document.getElementById("deck-search");
+    if (again && term) {
+      again.value = term;
+      renderGrid(term);
+    }
+    if (again && hadFocus) again.focus();
+  }
+  window.addEventListener("studappy:mazos-sincronizados", refreshHomeFromSync);
+  window.addEventListener("studappy:mazos-cargando", refreshHomeFromSync);
+
   window.addEventListener("studappy:cloud-decks-changed", function () {
     if (!isSignedIn()) return;
     var hash = location.hash.replace(/^#\/?/, "").split("/")[0];

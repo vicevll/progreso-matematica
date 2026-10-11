@@ -77,6 +77,11 @@
     // Una sesión real de Google siempre tiene prioridad sobre el modo prueba.
     if (!next && demoWanted()) next = DEMO_SESSION;
     session = next;
+    // Antes de avisar a los demás módulos, el almacén pasa a los mazos de
+    // esta cuenta (o a ninguno si no hay sesión).
+    if (window.DeckStore && window.DeckStore.useAccount) {
+      window.DeckStore.useAccount(next && next.user ? next.user.id : null);
+    }
     ready = true;
     window.Auth.ready = true;
     render();
@@ -120,9 +125,21 @@
       if (window.SB && window.SB.beginLogin) window.SB.beginLogin();
       return;
     }
-    if (e.target.closest("#account-logout")) {
-      if (isDemo()) stopDemo();
-      else window.SB.signOut();
+    var logout = e.target.closest("#account-logout");
+    if (logout) {
+      if (isDemo()) {
+        stopDemo();
+        return;
+      }
+      if (logout.disabled) return;
+      logout.disabled = true;
+      logout.textContent = "Saliendo…";
+      // Sube los cambios pendientes antes de cerrar la sesión.
+      var salir = window.SyncMazos ? window.SyncMazos.salir() : window.SB.signOut();
+      Promise.resolve(salir).catch(function () {
+        logout.disabled = false;
+        logout.textContent = "Salir";
+      });
     }
   });
 

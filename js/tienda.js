@@ -66,6 +66,16 @@
       '<section class="store-grid">' + items.map(itemHtml).join("") + "</section>";
   }
 
+  // Solo se redibuja si la tienda sigue en pantalla: si el usuario se fue a
+  // otra página mientras se guardaba el mazo, no se pisa esa página.
+  function onStorePage() {
+    return location.hash.replace(/^#\/?/, "").split("/")[0] === "tienda";
+  }
+
+  function refresh() {
+    if (onStorePage()) render();
+  }
+
   document.addEventListener("click", function (event) {
     var button = event.target.closest("[data-acquire]");
     if (!button || !window.CloudDecks) return;
@@ -73,22 +83,17 @@
     if (busy[catalogId]) return;
     busy[catalogId] = true;
     messages[catalogId] = "Guardando en tu cuenta…";
-    render();
+    refresh();
     window.CloudDecks.acquire(catalogId)
       .then(function () {
         messages[catalogId] = "Mazo agregado correctamente a tu biblioteca.";
       })
       .catch(function (error) {
-        var detail = error && error.message ? error.message : "Error desconocido";
-        if (window.Auth && window.Auth.isDemo && window.Auth.isDemo()) {
-          messages[catalogId] = detail;
-          return;
-        }
-        messages[catalogId] = "No se pudo adquirir. Verifica que supabase/tienda.sql esté ejecutado y que Supabase esté activo. " + detail;
+        messages[catalogId] = error && error.message ? error.message : "No se pudo añadir el mazo. Intenta de nuevo.";
       })
       .then(function () {
         busy[catalogId] = false;
-        render();
+        refresh();
       });
   });
 

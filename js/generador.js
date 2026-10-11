@@ -9,7 +9,7 @@
   var state = freshState();
 
   function freshState() {
-    return { markdown: "", cards: [], nombre: "", descripcion: "", color: "#2f80ed", status: "", statusError: false, busy: false };
+    return { markdown: "", cards: [], nombre: "", descripcion: "", color: "#2f80ed", status: "", statusError: false, busy: false, count: 10 };
   }
 
   function esc(s) {
@@ -106,11 +106,14 @@
         '<span class="gen-icon">' + ic("upload", 28) + "</span>" +
         '<h2>¿De dónde sacamos el contenido?</h2>' +
         '<p>Sube un PDF o una imagen (foto, captura, escaneo) y la IA lo convierte en tarjetas. También puedes pegar texto directamente.</p>' +
+        (window.IA && window.IA.disponible && !window.IA.disponible()
+          ? '<div class="gen-status error" role="status">En modo prueba el generador no puede usar la IA. Entra con Google para probarlo.</div>'
+          : "") +
         '<div class="gen-tabs"><button class="gen-tab active" data-tab="file" type="button">Subir archivo</button><button class="gen-tab" data-tab="text" type="button">Pegar texto</button></div>' +
         '<div id="gen-tab-file" class="gen-tab-panel active">' +
           '<label class="gen-drop" id="gen-drop" for="gen-file-input">' +
-            '<span class="gen-drop-inner">' + ic("upload", 32) + '<strong>Arrastra un archivo aquí</strong><small>o haz clic para elegir · PDF, JPG, PNG</small></span>' +
-            '<input id="gen-file-input" type="file" accept="application/pdf,image/jpeg,image/png" hidden />' +
+            '<span class="gen-drop-inner">' + ic("upload", 32) + '<strong>Arrastra un archivo aquí</strong><small>o haz clic para elegir · PDF, JPG, PNG o WEBP · máx. 5 MB</small></span>' +
+            '<input id="gen-file-input" type="file" accept="application/pdf,image/jpeg,image/png,image/webp" hidden />' +
           "</label>" +
           '<div class="gen-file-status" id="gen-file-status"></div>' +
         "</div>" +
@@ -126,9 +129,10 @@
       '<div class="gen-step">' +
         '<span class="gen-icon">' + ic("edit", 28) + "</span>" +
         '<h2>Revisa el texto extraído</h2>' +
-        '<p>La IA transcribió el contenido. Corrige lo que necesites antes de generar las tarjetas.</p>' +
+        '<p>Revisa el contenido y corrige lo que necesites. Después elige cuántas tarjetas quieres.</p>' +
+        '<div class="gen-cards-controls">' + countHtml() + "</div>" +
         statusHtml() +
-        '<textarea id="gen-markdown" rows="14" placeholder="Markdown del contenido...">' + esc(state.markdown) + "</textarea>" +
+        '<textarea id="gen-markdown" rows="12" placeholder="Markdown del contenido...">' + esc(state.markdown) + "</textarea>" +
         '<div class="gen-hint">Tip: usa $...$ para fórmulas en línea y $$...$$ para fórmulas en bloque.</div>' +
       "</div>"
     );
@@ -141,14 +145,18 @@
         '<h2>Tarjetas generadas</h2>' +
         '<p>La IA creó estas tarjetas. Edítalas, elimínalas o regenera un lote nuevo.</p>' +
         '<div class="gen-cards-controls">' +
-          '<label class="gen-count"><span>Cantidad: <output id="gen-count-output">' + state.cards.length + "</output></span>" +
-            '<input id="gen-count" type="range" min="5" max="30" value="' + state.cards.length + '" /></label>' +
+          countHtml() +
           '<button class="btn ghost sm" id="gen-regenerate" type="button"' + (state.busy ? " disabled" : "") + ">" + ic("refresh", 16) + "<span>Regenerar</span></button>" +
         "</div>" +
         statusHtml() +
         '<div class="gen-cards-list" id="gen-cards-list"></div>' +
       "</div>"
     );
+  }
+
+  function countHtml() {
+    return '<label class="gen-count"><span>Cantidad: <output id="gen-count-output">' + state.count + "</output></span>" +
+      '<input id="gen-count" type="range" min="5" max="30" value="' + state.count + '" /></label>';
   }
 
   function renderCards() {
@@ -194,7 +202,7 @@
     var createDisabled = state.busy || state.cards.length < 1 ? " disabled" : "";
     var nextLabel = state.busy ? "Generando…" : "Siguiente";
     return (
-      '<span class="gen-footer-note">' + (step === 4 ? "Se guarda en este dispositivo." : "") + '</span>' +
+      '<span class="gen-footer-note">' + (step === 4 ? (window.Auth && window.Auth.isDemo && window.Auth.isDemo() ? "Modo prueba: se guarda en este navegador." : "Se guarda en tu cuenta.") : "") + '</span>' +
       '<div class="gen-footer-actions">' +
         '<button class="btn ghost" id="gen-cancel" type="button">Cancelar</button>' +
         (step > 1 ? '<button class="btn ghost" id="gen-back" type="button">' + ic("arrowLeft", 16) + " Atrás</button>" : "") +
@@ -234,17 +242,25 @@
     overlay.addEventListener("change", handleChange);
     overlay.addEventListener("keydown", function (e) { if (e.key === "Escape") askAbandon(close); });
 
-    var drop = document.getElementById("gen-drop");
-    if (drop) {
-      drop.addEventListener("dragover", function (e) { e.preventDefault(); drop.classList.add("drag-over"); });
-      drop.addEventListener("dragleave", function () { drop.classList.remove("drag-over"); });
-      drop.addEventListener("drop", function (e) {
-        e.preventDefault();
-        drop.classList.remove("drag-over");
-        var file = e.dataTransfer.files && e.dataTransfer.files[0];
-        if (file) handleFile(file);
-      });
-    }
+    // Delegado en el overlay: la zona se redibuja al volver al paso 1.
+    overlay.addEventListener("dragover", function (e) {
+      var drop = e.target.closest && e.target.closest("#gen-drop");
+      if (!drop) return;
+      e.preventDefault();
+      drop.classList.add("drag-over");
+    });
+    overlay.addEventListener("dragleave", function (e) {
+      var drop = e.target.closest && e.target.closest("#gen-drop");
+      if (drop && !drop.contains(e.relatedTarget)) drop.classList.remove("drag-over");
+    });
+    overlay.addEventListener("drop", function (e) {
+      var drop = e.target.closest && e.target.closest("#gen-drop");
+      if (!drop) return;
+      e.preventDefault();
+      drop.classList.remove("drag-over");
+      var file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if (file) handleFile(file);
+    });
   }
 
   function askAbandon(onConfirm) {
@@ -309,9 +325,9 @@
       syncButtons(); // habilita "Siguiente" en cuanto hay texto pegado
     }
     if (e.target.id === "gen-count") {
-      var count = parseInt(e.target.value, 10);
+      state.count = parseInt(e.target.value, 10) || 10;
       var output = document.getElementById("gen-count-output");
-      if (output) output.textContent = count;
+      if (output) output.textContent = state.count;
     }
     if (e.target.dataset.field && e.target.closest(".gen-card")) {
       var card = state.cards[parseInt(e.target.closest(".gen-card").getAttribute("data-idx"), 10)];
@@ -381,7 +397,12 @@
 
   // Lanza una generación y gestiona el estado "ocupado", los mensajes y los
   // errores. onCards recibe las tarjetas solo si la respuesta sigue vigente.
-  function requestCards(count, startMessage, onCards) {
+  function listoMensaje(n) {
+    var quedan = window.IA && window.IA.restantes ? window.IA.restantes() : null;
+    return "Listo · " + n + " tarjetas" + (typeof quedan === "number" ? " · te quedan " + quedan + (quedan === 1 ? " uso" : " usos") + " de IA hoy" : "");
+  }
+
+  function requestCards(count, startMessage, onCards, evitar) {
     if (state.busy) return;
     var token = ++requestId;
     state.busy = true;
@@ -389,12 +410,12 @@
     syncButtons();
     IA.generarTarjetas(state.markdown, count, function (msg) {
       if (token === requestId) setStatus(msg);
-    }).then(function (raw) {
+    }, evitar).then(function (raw) {
       if (token !== requestId || !overlay) return;
       var cards = toCards(raw);
       state.busy = false;
       state.cards = cards;
-      state.status = "Listo · " + cards.length + " tarjetas";
+      state.status = listoMensaje(cards.length);
       state.statusError = false;
       onCards();
     }).catch(function (err) {
@@ -406,10 +427,7 @@
   }
 
   function generateCards() {
-    var count = 10;
-    var countInput = document.getElementById("gen-count");
-    if (countInput) count = parseInt(countInput.value, 10) || 10;
-    requestCards(count, "Generando tarjetas…", function () {
+    requestCards(state.count, "Generando tarjetas…", function () {
       step = 3;
       render();
     });
@@ -417,13 +435,12 @@
 
   function regenerate() {
     collectCardsFromDom();
-    var countInput = document.getElementById("gen-count");
-    var count = countInput ? parseInt(countInput.value, 10) || 10 : state.cards.length || 10;
-    requestCards(count, "Regenerando…", function () {
+    var anteriores = state.cards.map(function (c) { return c.q; }).filter(Boolean);
+    requestCards(state.count, "Regenerando…", function () {
       renderCards();
       setStatus(state.status);
       syncButtons();
-    });
+    }, anteriores);
   }
 
   function collectCardsFromDom() {

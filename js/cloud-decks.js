@@ -203,6 +203,11 @@
         var deck = window.DeckStore.all().filter(function (item) { return item.catalogId === catalogId; })[0];
         if (!deck) throw new Error("Supabase confirmó la adquisición, pero el mazo no apareció al sincronizar. Revisa supabase/tienda.sql.");
         return deck;
+      })
+      .catch(function (error) {
+        // El detalle técnico queda en la consola; al usuario, un mensaje claro.
+        if (window.console && console.error) console.error("No se pudo adquirir el mazo:", error);
+        throw new Error("No se pudo añadir el mazo. Revisa tu conexión e intenta de nuevo.");
       });
   }
 
@@ -235,6 +240,10 @@
           }
           throw error;
         });
+      })
+      .catch(function (error) {
+        if (window.console && console.error) console.error("No se pudo quitar el mazo:", error);
+        throw new Error("revisa tu conexión e intenta de nuevo");
       });
   }
 

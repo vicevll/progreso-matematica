@@ -52,17 +52,6 @@ create table if not exists public.user_deck_cards (
 create index if not exists user_decks_user_idx on public.user_decks(user_id);
 create index if not exists user_deck_cards_user_deck_idx on public.user_deck_cards(user_id, deck_id);
 
--- Si ya se adquirió la versión inicial de 30 tarjetas, conserva solo las 15 actuales.
-delete from public.user_deck_cards c
-using public.user_decks d
-where c.deck_id = d.id
-  and d.catalog_id = 'paes-m1-numeros'
-  and c.card_key not in (
-    'c01','c02','c03','c04','c05',
-    'f01','f02','f03','f04','f05',
-    'e01','e02','e03','e04','e05'
-  );
-
 alter table public.store_catalog enable row level security;
 alter table public.user_decks enable row level security;
 alter table public.user_deck_cards enable row level security;
