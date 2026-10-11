@@ -1442,6 +1442,361 @@ html.dark-mode .orb-c {
   margin-left: auto;
 }
 
+/* ---------- Generador con IA ---------- */
+
+.generador-overlay {
+  align-items: center;
+}
+
+.generador-overlay .gen-modal {
+  width: min(820px, 94vw);
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.gen-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 26px 0;
+}
+
+.gen-dot {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text-faint);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.gen-dot.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+
+.gen-dot.done {
+  border-color: var(--ok);
+  background: var(--ok-soft);
+  color: var(--ok);
+}
+
+.gen-line {
+  width: 40px;
+  height: 1px;
+  background: var(--border-strong);
+}
+
+.gen-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px 34px;
+  min-height: 0;
+}
+
+.gen-step {
+  animation: modalIn 0.32s cubic-bezier(0.22, 0.8, 0.24, 1) both;
+}
+
+.gen-icon {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 16px;
+  place-items: center;
+  border-radius: 16px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.gen-step h2 {
+  margin: 0 0 8px;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  letter-spacing: -0.04em;
+}
+
+.gen-step > p {
+  max-width: 600px;
+  margin: 0 0 22px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.gen-tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-soft);
+}
+
+.gen-tab {
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.gen-tab.active {
+  background: var(--surface);
+  color: var(--accent-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+.gen-tab-panel {
+  display: none;
+}
+
+.gen-tab-panel.active {
+  display: block;
+}
+
+.gen-drop {
+  display: flex;
+  min-height: 180px;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.gen-drop:hover,
+.gen-drop.drag-over {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.gen-drop-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+}
+
+.gen-drop-inner strong {
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.gen-drop-inner small {
+  color: var(--text-faint);
+  font-size: 0.76rem;
+}
+
+.gen-file-status,
+.gen-status {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-xs);
+  background: var(--surface-soft);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  min-height: 1.4em;
+}
+
+.gen-status.error {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.gen-hint {
+  margin-top: 8px;
+  color: var(--text-faint);
+  font-size: 0.74rem;
+}
+
+.gen-step textarea,
+.gen-step input[type="text"] {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+}
+
+.gen-step textarea:focus,
+.gen-step input[type="text"]:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.gen-step textarea {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.84rem;
+  line-height: 1.6;
+}
+
+.gen-cards-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-soft);
+}
+
+.gen-count {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  flex: 1;
+}
+
+.gen-count input[type="range"] {
+  flex: 1;
+  max-width: 180px;
+  accent-color: var(--accent);
+}
+
+.gen-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 52vh;
+  overflow-y: auto;
+}
+
+.gen-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-faint);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+}
+
+.gen-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.gen-card-num {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  margin-top: 6px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.gen-card-fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gen-card-fields textarea {
+  padding: 9px 11px;
+  font-family: inherit;
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.gen-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.gen-field > span {
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.gen-field small {
+  color: var(--text-faint);
+  font-weight: 400;
+}
+
+.gen-footer-note {
+  color: var(--text-faint);
+  font-size: 0.72rem;
+}
+
+.gen-footer-actions {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+@media (max-width: 720px) {
+  .gen-content {
+    padding: 22px 20px;
+  }
+
+  .gen-progress {
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  .gen-line {
+    width: 20px;
+  }
+
+  .gen-dot {
+    width: 26px;
+    height: 26px;
+  }
+
+  .gen-cards-controls {
+    flex-wrap: wrap;
+  }
+
+  .gen-footer-note {
+    display: none;
+  }
+
+  .gen-footer-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
 /* ---------- Confirmación nativa de Studappy ---------- */
 
 .confirm-overlay {

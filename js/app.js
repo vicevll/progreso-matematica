@@ -272,7 +272,11 @@
           "<h1>Mis mazos</h1>" +
           '<p class="admin-sub">Crea, edita y estudia tus flashcards.</p>' +
         "</div>" +
-         '<div class="admin-actions"><a class="btn ghost lg" href="#/tienda">' + ic("layers") + '<span>Tienda</span></a><button class="btn primary lg" id="new-deck" type="button">' + ic("plus") + '<span>Nuevo mazo</span></button></div>' +
+         '<div class="admin-actions">' +
+          '<a class="btn ghost lg" id="open-generador" href="#/generador">' + ic("sparkle") + '<span>Generar con IA</span></a>' +
+          '<a class="btn ghost lg" href="#/tienda">' + ic("layers") + '<span>Tienda</span></a>' +
+          '<button class="btn primary lg" id="new-deck" type="button">' + ic("plus") + '<span>Nuevo mazo</span></button>' +
+        '</div>' +
       "</section>" +
       (decks.length
         ? '<div class="toolbar">' +
@@ -872,7 +876,11 @@
     }
     var hash = location.hash.replace(/^#\/?/, "");
     var parts = hash.split("/").filter(Boolean);
-    if (parts[0] === "tienda") {
+    if (parts[0] === "generador") {
+      session = null;
+      if (window.Generador) window.Generador.open();
+      else app.innerHTML = '<p class="store-setup-note">El generador aún no está disponible.</p>';
+    } else if (parts[0] === "tienda") {
       session = null;
       if (window.Tienda) window.Tienda.render(app);
       else app.innerHTML = '<p class="store-setup-note">La tienda aún no está disponible.</p>';
