@@ -4,7 +4,8 @@
 // la cuota diaria de cada usuario. El navegador nunca ve la key.
 (function () {
   var FUNCION = "generar-tarjetas";
-  var MAX_ARCHIVO = 10 * 1024 * 1024;
+  var MAX_MB = 25;
+  var MAX_ARCHIVO = MAX_MB * 1024 * 1024;
   var TIPOS = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
   var restantes = null;
   var periodo = "dia";
@@ -153,7 +154,7 @@
   function transcribirArchivo(file, progress, sesion) {
     var mime = fileToMime(file);
     if (TIPOS.indexOf(mime) === -1) return Promise.reject(new Error("Formato no soportado. Usa PDF, JPG, PNG o WEBP."));
-    if (file.size > MAX_ARCHIVO) return Promise.reject(new Error("El archivo pesa " + (file.size / 1048576).toFixed(1) + " MB; el máximo es 10 MB."));
+    if (file.size > MAX_ARCHIVO) return Promise.reject(new Error("El archivo pesa " + (file.size / 1048576).toFixed(1) + " MB; el máximo es " + MAX_MB + " MB."));
     if (typeof progress === "function") progress("Leyendo archivo...");
     return fileToBase64(file).then(function (b64) {
       if (typeof progress === "function") progress(mime === "application/pdf" ? "La IA está leyendo el PDF..." : "La IA está leyendo la imagen...");

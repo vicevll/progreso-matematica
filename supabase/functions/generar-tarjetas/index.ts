@@ -25,7 +25,9 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
 
-const MAX_ARCHIVO_BYTES = 10 * 1024 * 1024;
+// Gemini acepta hasta 50 MB de PDF en línea; 25 MB (≈33 MB en base64) deja margen.
+const MAX_ARCHIVO_MB = 25;
+const MAX_ARCHIVO_BYTES = MAX_ARCHIVO_MB * 1024 * 1024;
 const MAX_TEXTO = 40000;
 const MAX_TARJETAS = 20; // máximo de tarjetas por mazo generado con IA
 const TIPOS_ARCHIVO = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
@@ -186,7 +188,7 @@ function validar(body: any) {
     }
     if (!datos || !/^[A-Za-z0-9+/=\s]+$/.test(datos)) throw new ErrorUsuario(400, "El archivo llegó vacío o dañado.", "pedido");
     if (datos.length > Math.ceil(MAX_ARCHIVO_BYTES / 3) * 4 + 16) {
-      throw new ErrorUsuario(413, "El archivo supera los 10 MB.", "tamano");
+      throw new ErrorUsuario(413, `El archivo supera los ${MAX_ARCHIVO_MB} MB.`, "tamano");
     }
     return { accion: "transcribir" as const, sesion, mime, datos };
   }

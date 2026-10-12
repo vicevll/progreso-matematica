@@ -122,7 +122,7 @@
         '<div class="gen-tabs"><button class="gen-tab active" data-tab="file" type="button">Subir archivo</button><button class="gen-tab" data-tab="text" type="button">Pegar texto</button></div>' +
         '<div id="gen-tab-file" class="gen-tab-panel active">' +
           '<label class="gen-drop" id="gen-drop" for="gen-file-input">' +
-            '<span class="gen-drop-inner">' + ic("upload", 32) + '<strong>Arrastra un archivo aquí</strong><small>o haz clic para elegir · PDF, JPG, PNG o WEBP · máx. 10 MB</small></span>' +
+            '<span class="gen-drop-inner">' + ic("upload", 32) + '<strong>Arrastra un archivo aquí</strong><small>o haz clic para elegir · PDF, JPG, PNG o WEBP · máx. 25 MB</small></span>' +
             '<input id="gen-file-input" type="file" accept="application/pdf,image/jpeg,image/png,image/webp" hidden />' +
           "</label>" +
           '<div class="gen-file-status" id="gen-file-status"></div>' +
