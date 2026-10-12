@@ -31,16 +31,44 @@
     }
     var message = messages[item.id] || (owned ? "Ya está en Mis mazos y se sincroniza con tu cuenta." : available ? "Gratis · se guarda en tu cuenta." : "Estamos preparando este mazo gratuito.");
     var breakdown = item.breakdown || {};
-    var counts = item.cards.length
-      ? item.cards.length + " tarjetas · " + (breakdown.concepts || 0) + " conceptos · " + (breakdown.exercises || 0) + " ejercicios · " + (breakdown.formulas || 0) + " fórmulas"
-      : "Contenido en preparación";
+    var counts = !item.cards.length
+      ? "Contenido en preparación"
+      : item.sections && item.sections.length
+        ? item.cards.length + " tarjetas · " + item.sections.length + " submazos"
+        : item.cards.length + " tarjetas · " + (breakdown.concepts || 0) + " conceptos · " + (breakdown.exercises || 0) + " ejercicios · " + (breakdown.formulas || 0) + " fórmulas";
+    if (item.theme === "mago" && window.MagoArte) return magoItemHtml(item, owned, available, action, message, counts);
+    var mark = icon(available ? "cards" : "sparkle", 22);
     return (
-      '<article class="store-card' + (owned ? " owned" : "") + '" style="--deck-color:' + esc(item.color) + '">' +
-        '<div class="store-card-top"><span class="store-mark" style="background:' + esc(item.color) + '">' + icon(available ? "cards" : "sparkle", 22) + "</span>" +
+      '<article class="store-card' + (owned ? " owned" : "") + (item.theme ? " store-" + esc(item.theme) : "") + '" style="--deck-color:' + esc(item.color) + '">' +
+        '<div class="store-card-top"><span class="store-mark" style="background:' + esc(item.color) + '">' + mark + "</span>" +
           '<span class="store-badge' + (available ? " free" : " soon") + '">' + (owned ? "En tu biblioteca" : available ? "Gratis" : "Próximamente") + "</span></div>" +
         '<div class="store-card-copy"><span class="store-kicker">' + esc(item.tags.join(" · ")) + "</span><h2>" + esc(item.title) + "</h2><p>" + esc(item.description) + "</p></div>" +
         '<div class="store-card-bottom"><span class="store-card-count">' + icon("cards", 15) + esc(counts) + "</span>" +
           '<div class="store-tags">' + item.tags.map(function (tag) { return '<span>' + esc(tag) + "</span>"; }).join("") + "</div>" +
+          '<p class="store-message' + (messages[item.id] && !owned ? " error" : "") + '" role="status">' + esc(message) + "</p>" + action +
+        "</div>" +
+      "</article>"
+    );
+  }
+
+  // Mazo del mago: versión compacta de su tarjeta de Mis mazos (mismo cielo,
+  // el mago con su química en pixel art y un ícono por submazo).
+  function magoItemHtml(item, owned, available, action, message, counts) {
+    var arte = window.MagoArte;
+    var iconos = (item.sections || []).map(function (sec, i) {
+      return '<span class="sm-submazo" title="Submazo ' + (i + 1) + ": " + esc(sec.title) + '">' + arte.icono(sec.icon, 32) + "</span>";
+    }).join("");
+    return (
+      '<article class="store-card store-mago' + (owned ? " owned" : "") + '" style="--deck-color:' + esc(item.color) + '">' +
+        '<div class="sm-arte">' + arte.escenaHtml() + arte.imagenHtml() +
+          '<span class="store-badge sm-badge' + (available ? " free" : " soon") + '">' + (owned ? "En tu biblioteca" : available ? "Gratis" : "Próximamente") + "</span>" +
+        "</div>" +
+        '<div class="sm-cuerpo">' +
+          '<span class="eyebrow">' + esc(String(item.subtitle || item.tags.join(" · ")).toUpperCase()) + "</span>" +
+          "<h2>" + esc(item.title) + "</h2>" +
+          "<p>" + esc(item.description) + "</p>" +
+          '<div class="sm-submazos" aria-hidden="true">' + iconos + "</div>" +
+          '<span class="store-card-count">' + icon("cards", 15) + esc(counts) + "</span>" +
           '<p class="store-message' + (messages[item.id] && !owned ? " error" : "") + '" role="status">' + esc(message) + "</p>" + action +
         "</div>" +
       "</article>"

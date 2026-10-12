@@ -62,6 +62,16 @@
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
+/* Inter Tight (Google Fonts, OFL): solo para el título "Studappy" de la portada. */
+@font-face {
+  font-family: "Inter Tight";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/inter-tight-latin-700.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /* ---------- Paleta y tokens ---------- */
 
 html.dark-mode {
@@ -95,6 +105,14 @@ html.dark-mode {
   --card-fill: linear-gradient(180deg, #0d1528, #0a1122);
   --font-ui: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-pixel: "Silkscreen", ui-monospace, "Cascadia Mono", monospace;
+
+  /* Esquinas escalonadas chicas (cartas del fondo de la portada). */
+  --px-sm: polygon(
+    0 4px, 2px 4px, 2px 2px, 4px 2px, 4px 0,
+    calc(100% - 4px) 0, calc(100% - 4px) 2px, calc(100% - 2px) 2px, calc(100% - 2px) 4px, 100% 4px,
+    100% calc(100% - 4px), calc(100% - 2px) calc(100% - 4px), calc(100% - 2px) calc(100% - 2px), calc(100% - 4px) calc(100% - 2px), calc(100% - 4px) 100%,
+    4px 100%, 4px calc(100% - 2px), 2px calc(100% - 2px), 2px calc(100% - 4px), 0 calc(100% - 4px)
+  );
 
   /* Esquinas escalonadas como las cartas del logo. */
   --px-corners: polygon(
@@ -707,78 +725,266 @@ html.dark-mode .btn.primary:hover {
    Portada (antes de iniciar sesión)
    ===================================================================== */
 
-.landing-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-  align-items: center;
-  gap: 24px;
-  max-width: none;
-  padding: 56px 0 36px;
-}
-
-.hero-copy {
+/* Inicio: el mago de Studappy sobre fondo índigo, con la marca encima. */
+.landing-hero.hero-mago {
+  --mago-w: min(820px, 96vw);
+  --indigo: #0b0025;
+  position: relative;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  max-width: none;
+  margin-top: -40px;
+  padding: 0 0 76px;
+  text-align: center;
 }
 
-/* Marca grande en pixel, con los colores del logo y sin efectos. */
-.landing-hero h1.wordmark {
-  margin: 18px 0 6px;
-  font-family: var(--font-pixel);
-  font-size: clamp(2.8rem, 7.4vw, 6rem);
-  font-weight: 400;
-  letter-spacing: 0.02em;
-  line-height: 0.95;
+/* Cielo nocturno a todo el ancho (también detrás del encabezado): azul
+   noche con un toque violeta, que abajo se funde con el resto de la página. */
+.landing-hero.hero-mago::before {
+  position: absolute;
+  top: -240px;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  z-index: -2;
+  width: 100vw;
+  background:
+    radial-gradient(ellipse 34% 30% at 50% 38%, rgba(98, 62, 214, 0.26), transparent 72%),
+    radial-gradient(ellipse 58% 46% at 50% 30%, rgba(38, 120, 220, 0.12), transparent 74%),
+    linear-gradient(180deg, #080724 0%, #0a0a2b 46%, #08102a 74%, rgba(6, 10, 22, 0) 100%);
+  content: "";
+  pointer-events: none;
+}
+
+/* ---------- Fondo mágico: cartas, brillos y anillo ---------- */
+
+.hero-fondo {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  z-index: -1;
+  width: 100vw;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 62%, transparent 96%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 62%, transparent 96%);
+}
+
+/* Resplandor suave detrás del mago, con los colores de su magia. */
+.hf-aura {
+  position: absolute;
+  top: calc(var(--mago-w) * 0.42);
+  left: 50%;
+  width: min(900px, 120vw);
+  aspect-ratio: 1.3;
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse at 38% 45%, rgba(62, 220, 255, 0.11), transparent 58%),
+    radial-gradient(ellipse at 62% 52%, rgba(130, 90, 255, 0.13), transparent 60%);
+  transform: translate(-50%, -50%);
+  animation: hf-respirar 12s ease-in-out infinite;
+}
+
+/* Anillo mágico de puntos que gira muy lento. */
+.hf-anillo {
+  position: absolute;
+  top: calc(var(--mago-w) * 0.44);
+  left: 50%;
+  width: min(1040px, 150vw);
+  height: auto;
+  aspect-ratio: 1;
+  opacity: 0.2;
+  transform: translate(-50%, -50%);
+  animation: hf-girar 240s linear infinite;
+}
+
+/* Cartas como las del mago: borde cian→azul, esquinas pixel y un rombo. */
+.hf-carta {
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  width: var(--w);
+  aspect-ratio: 5 / 7;
+  opacity: var(--o);
+  filter: drop-shadow(0 0 10px rgba(62, 200, 255, 0.3));
+  transform: translate(-50%, 0) rotate(var(--r));
+  animation: hf-flotar var(--t) ease-in-out var(--d) infinite;
+}
+
+.hf-carta b {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(145deg, #7fe6ff, #3fa8f0 45%, #4b5ee8);
+  clip-path: var(--px-sm);
+}
+
+.hf-carta b::before {
+  position: absolute;
+  inset: 2px;
+  background: linear-gradient(180deg, #101543, #0a0c2c);
+  clip-path: var(--px-sm);
+  content: "";
+}
+
+.hf-carta i {
+  position: absolute;
+  inset: 18% 16%;
+  border: 1px solid rgba(110, 215, 255, 0.4);
+}
+
+.hf-carta i::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 34%;
+  aspect-ratio: 1;
+  border: 2px solid #6fe0ff;
+  transform: translate(-50%, -50%) rotate(45deg);
+  content: "";
+}
+
+/* Brillos en cruz de pixeles (como los del mago) que titilan despacio. */
+.hf-chispa {
+  --c: #a6ecff;
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  width: var(--s);
+  height: var(--s);
+  background: #ffffff;
+  box-shadow:
+    0 calc(var(--s) * -1) var(--c), 0 var(--s) var(--c),
+    calc(var(--s) * -1) 0 var(--c), var(--s) 0 var(--c),
+    0 calc(var(--s) * -2) rgba(166, 236, 255, 0.35), 0 calc(var(--s) * 2) rgba(166, 236, 255, 0.35),
+    calc(var(--s) * -2) 0 rgba(166, 236, 255, 0.35), calc(var(--s) * 2) 0 rgba(166, 236, 255, 0.35);
+  opacity: 0.15;
+  animation: hf-titilar var(--t) ease-in-out var(--d) infinite;
+}
+
+.hf-chispa.lila {
+  --c: #cdbdff;
+}
+
+@keyframes hf-flotar {
+  0%, 100% { transform: translate(-50%, 0) rotate(var(--r)); }
+  50% { transform: translate(-50%, -14px) rotate(calc(var(--r) + 5deg)); }
+}
+
+@keyframes hf-titilar {
+  0%, 100% { opacity: 0.12; }
+  50% { opacity: 0.9; }
+}
+
+@keyframes hf-girar {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes hf-respirar {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; }
+}
+
+.hero-escena {
+  position: relative;
+  z-index: -1;
+  width: var(--mago-w);
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+
+/* El personaje se desvanece hacia abajo, detrás del texto. */
+.hero-mago-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  -webkit-mask-image: linear-gradient(180deg, #000 38%, rgba(0, 0, 0, 0.62) 56%, rgba(0, 0, 0, 0.18) 70%, transparent 82%);
+  mask-image: linear-gradient(180deg, #000 38%, rgba(0, 0, 0, 0.62) 56%, rgba(0, 0, 0, 0.18) 70%, transparent 82%);
+  animation: flotar-mago 9s ease-in-out infinite;
+}
+
+@keyframes flotar-mago {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.hero-mago .hero-copy {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 660px;
+  margin-top: calc(var(--mago-w) * -0.42);
+  padding: 0 16px;
+}
+
+.hero-mago .eyebrow {
+  color: #b3a7ff;
+  text-shadow: 0 0 18px rgba(11, 0, 37, 0.9);
+}
+
+.landing-hero.hero-mago h1.wordmark {
+  margin: 12px 0 0;
+  font-family: "Inter Tight", var(--font-ui);
+  font-size: clamp(2.9rem, 12vw, 6.6rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1;
   text-transform: uppercase;
-  background: var(--brand-grad);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+  text-shadow: 0 2px 30px rgba(11, 0, 37, 0.95), 0 0 70px rgba(11, 0, 37, 0.8);
 }
 
-.landing-hero p {
+.landing-hero.hero-mago p {
   max-width: 520px;
-  margin: 18px 0 28px;
-  color: var(--text-muted);
+  margin: 20px auto 30px;
+  color: #c4bfe4;
   font-size: clamp(1.02rem, 1.7vw, 1.2rem);
+  line-height: 1.55;
+  text-shadow: 0 1px 18px rgba(11, 0, 37, 0.9);
 }
 
-.landing-hero small {
-  color: var(--text-faint);
+.hero-mago .landing-actions {
+  justify-content: center;
 }
 
 .landing-login {
   padding: 13px 22px;
 }
 
-.hero-art {
-  position: relative;
-  display: grid;
-  place-items: center;
-  min-height: 340px;
+html.dark-mode .hero-mago .btn.primary {
+  border: 1px solid rgba(165, 145, 255, 0.55);
+  background: #1a0f4d;
+  color: #f1edff;
 }
 
-.hero-logo {
-  position: relative;
-  z-index: 1;
-  width: min(330px, 84%);
-  height: auto;
-  filter: saturate(0.78) brightness(0.92);
-  animation: flotar 10s ease-in-out infinite;
+html.dark-mode .hero-mago .btn.primary:hover {
+  border-color: rgba(190, 175, 255, 0.9);
+  background: #22145f;
+  color: #fff;
 }
 
-.hero-halo {
-  position: absolute;
-  width: 78%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(58, 100, 200, 0.16), transparent 68%);
+html.dark-mode .hero-mago .btn.ghost {
+  border-color: rgba(165, 145, 255, 0.24);
+  background: #120836;
+  color: #d2ccf2;
 }
 
-@keyframes flotar {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+html.dark-mode .hero-mago .btn.ghost:hover {
+  border-color: rgba(190, 175, 255, 0.5);
+  background: #190b47;
+  color: #fff;
+}
+
+.landing-hero.hero-mago small {
+  margin-top: 14px;
+  color: #8d86b8;
 }
 
 /* ---------- Cinta de flashcards de ejemplo ---------- */
@@ -934,25 +1140,32 @@ html.dark-mode .btn.primary:hover {
 
 /* ---------- Celular ---------- */
 
-@media (max-width: 900px) {
-  .landing-hero {
-    grid-template-columns: 1fr;
-    padding-top: 22px;
-  }
-
-  .hero-art {
-    order: -1;
-    min-height: 0;
-  }
-
-  .hero-logo {
-    width: min(210px, 56vw);
-  }
-}
-
 @media (max-width: 720px) {
-  .landing-hero h1.wordmark {
-    font-size: clamp(2.5rem, 13vw, 4.2rem);
+  .landing-hero.hero-mago {
+    margin-top: -24px;
+    padding-bottom: 56px;
+  }
+
+  /* En pantallas angostas el mago ocupa casi todo el ancho: cartas más
+     chicas y tenues, y solo algunas. */
+  .hf-carta {
+    width: calc(var(--w) * 0.62);
+    opacity: calc(var(--o) * 0.7);
+  }
+
+  .hf-carta.bajo,
+  .hf-chispa.centro {
+    display: none;
+  }
+
+  .landing-hero.hero-mago p {
+    margin: 16px auto 24px;
+  }
+
+  .hero-mago .landing-actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: min(100%, 340px);
   }
 
   .mq-card {
@@ -978,3 +1191,997 @@ html.dark-mode .btn.primary:hover {
   }
 }
 
+
+/* =====================================================================
+   Mazo del mago (PAES Ciencias): tarjeta destacada, submazos y química
+   en pixel art. Mismo cielo nocturno y magia que la portada.
+   ===================================================================== */
+
+.deck-card.deck-mago,
+.mago-portada,
+.store-card.store-mago {
+  --cielo-mago:
+    radial-gradient(ellipse 55% 70% at 24% 46%, rgba(98, 62, 214, 0.3), transparent 70%),
+    radial-gradient(ellipse 45% 60% at 18% 32%, rgba(38, 120, 220, 0.16), transparent 72%),
+    linear-gradient(135deg, #0a0726 0%, #0b0a2c 52%, #0a1030 100%);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid rgba(150, 120, 255, 0.34);
+  background: var(--cielo-mago);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(110, 80, 240, 0.1);
+}
+
+/* ---------- Tarjeta en Mis mazos ---------- */
+
+.deck-card.deck-mago {
+  order: -1;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  min-height: 380px;
+  padding: 0;
+}
+
+.deck-card.deck-mago:hover,
+.deck-card.deck-mago:focus-within {
+  border-color: rgba(170, 145, 255, 0.55);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45), 0 0 46px rgba(120, 90, 255, 0.16);
+}
+
+.mago-lado {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 380px;
+}
+
+.mago-escena {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.mago-aura {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  aspect-ratio: 1.15;
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse at 40% 45%, rgba(62, 220, 255, 0.12), transparent 58%),
+    radial-gradient(ellipse at 60% 55%, rgba(150, 90, 255, 0.2), transparent 60%);
+  transform: translate(-50%, -50%);
+  animation: hf-respirar 12s ease-in-out infinite;
+}
+
+.mago-anillo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 130%;
+  height: auto;
+  aspect-ratio: 1;
+  opacity: 0.15;
+  transform: translate(-50%, -50%);
+  animation: hf-girar 240s linear infinite;
+}
+
+/* Química en pixel art que flota alrededor del mago. */
+.mago-flota {
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  width: var(--s);
+  height: var(--s);
+  opacity: 0.85;
+  filter: drop-shadow(0 0 8px rgba(120, 200, 255, 0.35));
+  transform: rotate(var(--r));
+  animation: mago-flotar var(--t) ease-in-out var(--d) infinite;
+}
+
+.px-icono {
+  display: block;
+  image-rendering: pixelated;
+}
+
+.mago-flota .px-icono {
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes mago-flotar {
+  0%, 100% { transform: translateY(0) rotate(var(--r)); }
+  50% { transform: translateY(-10px) rotate(calc(var(--r) + 6deg)); }
+}
+
+.mago-img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  height: auto;
+  -webkit-mask-image: linear-gradient(180deg, #000 72%, transparent 98%);
+  mask-image: linear-gradient(180deg, #000 72%, transparent 98%);
+  animation: flotar-mago 9s ease-in-out infinite;
+}
+
+.mago-lado .mago-img {
+  width: min(420px, 94%);
+  margin: -6px 0 -26px;
+}
+
+.mago-cuerpo {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 26px 28px 26px 6px;
+}
+
+.deck-mago .deck-top .eyebrow,
+.mago-portada .eyebrow {
+  color: #b3a7ff;
+  font-size: 0.64rem;
+}
+
+.deck-mago .deck-link {
+  flex: 0 0 auto;
+}
+
+.deck-mago .deck-link h3 {
+  margin: 2px 0 8px;
+  color: #ffffff;
+  font-family: "Inter Tight", var(--font-ui);
+  font-size: clamp(1.9rem, 3.4vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.02;
+}
+
+.deck-mago .deck-link p {
+  max-width: 48ch;
+  color: #c4bfe4;
+  font-size: 0.9rem;
+}
+
+.mago-chips {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.mago-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 8px 12px 8px 8px;
+  border: 1px solid rgba(150, 130, 255, 0.22);
+  border-radius: 12px;
+  background: rgba(12, 10, 44, 0.72);
+  color: var(--text);
+  text-decoration: none;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.mago-chip:hover,
+.mago-chip:focus-visible {
+  border-color: rgba(150, 200, 255, 0.55);
+  background: rgba(22, 18, 70, 0.9);
+  transform: translateY(-1px);
+}
+
+.mago-chip .px-icono {
+  flex: none;
+  width: 32px;
+  height: 32px;
+}
+
+.mago-chip-txt {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.mago-chip-num,
+.submazo-num {
+  color: #9d92e8;
+  font-family: var(--font-pixel);
+  font-size: 0.56rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mago-chip strong {
+  overflow: hidden;
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mago-chip-pct {
+  flex: none;
+  color: var(--text-faint);
+  font-size: 0.72rem;
+}
+
+.mago-chip.completo {
+  border-color: rgba(95, 207, 165, 0.45);
+}
+
+.mago-chip.completo .mago-chip-pct {
+  color: var(--ok);
+}
+
+.deck-mago .deck-foot {
+  margin-top: 18px;
+}
+
+.deck-mago .mini-bar > span,
+.mago-portada .mini-bar > span,
+.submazo .mini-bar > span {
+  background: linear-gradient(90deg, #5fd8ff, #8a6bff);
+  opacity: 1;
+}
+
+.mago-abrir {
+  align-self: flex-start;
+  margin-top: 18px;
+}
+
+html.dark-mode .deck-mago .btn.primary,
+html.dark-mode .mago-portada .btn.primary {
+  border: 1px solid rgba(165, 145, 255, 0.55);
+  background: #1a0f4d;
+  color: #f1edff;
+}
+
+html.dark-mode .deck-mago .btn.primary:hover,
+html.dark-mode .mago-portada .btn.primary:hover {
+  border-color: rgba(190, 175, 255, 0.9);
+  background: #22145f;
+  color: #ffffff;
+}
+
+/* ---------- Pantalla del mazo: elegir submazo ---------- */
+
+.mago-portada {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 26px;
+  padding: 34px 38px;
+  border-radius: 24px;
+}
+
+.mago-portada-texto {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.mago-portada h1 {
+  margin: 10px 0 8px;
+  color: #ffffff;
+  font-family: "Inter Tight", var(--font-ui);
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.mago-portada p {
+  max-width: 46ch;
+  margin: 0;
+  color: #c4bfe4;
+}
+
+.mago-progreso {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0 22px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.mago-progreso .mini-bar {
+  width: 190px;
+}
+
+.mago-portada-img {
+  position: relative;
+  z-index: 1;
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+  min-height: 300px;
+}
+
+.mago-portada-img .mago-escena {
+  inset: -34px -38px -34px -10px;
+  overflow: visible;
+}
+
+.mago-portada-img .mago-aura {
+  width: 105%;
+}
+
+.mago-portada-img .mago-img {
+  width: min(340px, 100%);
+  margin: -24px auto -46px;
+}
+
+.submazos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 16px;
+}
+
+.submazo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card-fill);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  color: var(--text);
+  text-decoration: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.submazo:hover,
+.submazo:focus-visible {
+  border-color: rgba(150, 130, 255, 0.5);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.36), 0 0 26px rgba(120, 90, 255, 0.12);
+  transform: translateY(-2px);
+}
+
+.submazo.completo {
+  border-color: rgba(95, 207, 165, 0.42);
+}
+
+.submazo-icono {
+  display: grid;
+  place-items: center;
+  width: 66px;
+  height: 66px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(150, 130, 255, 0.26);
+  border-radius: 16px;
+  background: radial-gradient(circle, rgba(130, 100, 255, 0.22), rgba(20, 16, 60, 0.6));
+}
+
+.submazo-icono .px-icono,
+.ready-px .px-icono {
+  width: 48px;
+  height: 48px;
+}
+
+.submazo h2 {
+  margin: 0;
+  font-size: 1.12rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.submazo p {
+  flex: 1;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.submazo-pie {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  color: var(--text-faint);
+  font-size: 0.74rem;
+}
+
+.submazo-pie .mini-bar {
+  display: block;
+  flex: 1;
+}
+
+.submazo .deck-pend {
+  margin-top: 4px;
+}
+
+.submazo-jugar {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border: 1px solid rgba(165, 145, 255, 0.45);
+  border-radius: 999px;
+  background: #1a0f4d;
+  color: #f1edff;
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.submazo:hover .submazo-jugar {
+  border-color: rgba(190, 175, 255, 0.9);
+  background: #22145f;
+}
+
+.ready-icon.ready-px {
+  border: 1px solid rgba(150, 130, 255, 0.26);
+  background: radial-gradient(circle, rgba(130, 100, 255, 0.24), rgba(20, 16, 60, 0.6));
+}
+
+/* ---------- Tienda: tarjeta compacta del mago ---------- */
+
+/* Arriba, una franja con el cielo, el mago y su química; abajo, el texto. */
+.store-card.store-mago {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0;
+}
+
+.store-card.store-mago:hover {
+  border-color: rgba(170, 145, 255, 0.55);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.42), 0 0 40px rgba(120, 90, 255, 0.16);
+}
+
+.sm-arte {
+  position: relative;
+  display: grid;
+  height: 168px;
+  place-items: start center;
+  overflow: hidden;
+}
+
+.sm-arte .mago-img {
+  width: 236px;
+  margin-top: -6px;
+  -webkit-mask-image: linear-gradient(180deg, #000 52%, transparent 74%);
+  mask-image: linear-gradient(180deg, #000 52%, transparent 74%);
+}
+
+.sm-arte .mago-flota {
+  width: calc(var(--s) * 0.62);
+  height: calc(var(--s) * 0.62);
+}
+
+.sm-arte .mago-anillo {
+  top: 62%;
+  width: 120%;
+}
+
+.sm-arte .mago-escena {
+  -webkit-mask-image: linear-gradient(180deg, #000 62%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 62%, transparent 100%);
+}
+
+.store-badge.sm-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  border: 1px solid rgba(95, 207, 165, 0.35);
+  background: #0c2427;
+}
+
+.store-badge.sm-badge.soon {
+  border-color: rgba(122, 184, 236, 0.35);
+  background: #0f1b3a;
+}
+
+.sm-cuerpo {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 4px 20px 20px;
+}
+
+.sm-cuerpo .eyebrow {
+  color: #b3a7ff;
+  font-size: 0.58rem;
+}
+
+.store-mago h2 {
+  margin: 6px 0 6px;
+  color: #ffffff;
+  font-family: "Inter Tight", var(--font-ui);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+}
+
+.sm-cuerpo > p:not(.store-message) {
+  margin: 0;
+  color: #c4bfe4;
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.sm-submazos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0 10px;
+}
+
+.sm-submazo {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid rgba(150, 130, 255, 0.25);
+  border-radius: 10px;
+  background: rgba(12, 10, 44, 0.72);
+}
+
+.sm-submazo .px-icono {
+  width: 32px;
+  height: 32px;
+}
+
+.store-mago .store-message {
+  flex: 1;
+  min-height: 1.4em;
+  margin: 8px 0 10px;
+}
+
+html.dark-mode .store-mago .btn.primary {
+  border: 1px solid rgba(165, 145, 255, 0.55);
+  background: #1a0f4d;
+  color: #f1edff;
+}
+
+html.dark-mode .store-mago .btn.primary:hover {
+  border-color: rgba(190, 175, 255, 0.9);
+  background: #22145f;
+  color: #ffffff;
+}
+
+/* ---------- Pantallas angostas ---------- */
+
+@media (max-width: 900px) {
+  .deck-card.deck-mago,
+  .mago-portada {
+    grid-template-columns: 1fr;
+  }
+
+  .mago-lado {
+    min-height: 270px;
+  }
+
+  .mago-lado .mago-img {
+    width: min(300px, 74%);
+    margin: 0 0 -30px;
+  }
+
+  .mago-cuerpo {
+    padding: 4px 20px 22px;
+  }
+
+  .mago-portada {
+    padding: 0 22px 26px;
+  }
+
+  .mago-portada-img {
+    order: -1;
+    min-height: 250px;
+  }
+
+  .mago-portada-img .mago-escena {
+    inset: 0 -22px;
+  }
+
+  .mago-portada-img .mago-img {
+    width: min(260px, 70%);
+    margin: 0 auto -30px;
+  }
+}
+
+@media (max-width: 520px) {
+  .mago-chips {
+    grid-template-columns: 1fr;
+  }
+
+  .mago-abrir {
+    align-self: stretch;
+    justify-content: center;
+  }
+}
+
+/* =====================================================================
+   Tour de bienvenida (js/tour.js)
+   ===================================================================== */
+
+body.tour-abierto {
+  overflow: hidden;
+}
+
+.tour-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(2, 3, 12, 0.72);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  animation: tour-fondo 0.25s ease both;
+}
+
+.tour {
+  --cielo-mago:
+    radial-gradient(ellipse 70% 55% at 50% 22%, rgba(98, 62, 214, 0.32), transparent 72%),
+    radial-gradient(ellipse 60% 45% at 30% 15%, rgba(38, 120, 220, 0.16), transparent 72%),
+    linear-gradient(180deg, #0b0830 0%, #0a0a2b 55%, #0a1028 100%);
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  width: min(540px, 100%);
+  max-height: calc(100dvh - 32px);
+  overflow: hidden auto;
+  border: 1px solid rgba(150, 120, 255, 0.38);
+  border-radius: 22px;
+  background: var(--cielo-mago);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 60px rgba(110, 80, 240, 0.16);
+  animation: tour-entrar 0.35s ease both;
+}
+
+.tour-cabeza {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 0;
+}
+
+.tour-puntos {
+  display: flex;
+  gap: 6px;
+}
+
+.tour-punto {
+  width: 22px;
+  height: 6px;
+  border-radius: 2px;
+  background: rgba(150, 130, 255, 0.22);
+  transition: background 0.25s ease, width 0.25s ease;
+}
+
+.tour-punto.hecho {
+  background: rgba(150, 130, 255, 0.55);
+}
+
+.tour-punto.activo {
+  width: 34px;
+  background: linear-gradient(90deg, #5fd8ff, #8a6bff);
+}
+
+.tour-saltar {
+  color: var(--text-muted);
+  font-size: 0.84rem;
+}
+
+.tour-paso {
+  display: flex;
+  flex-direction: column;
+  animation: tour-paso 0.3s ease both;
+}
+
+/* Ilustración de cada paso. */
+.tour-arte {
+  position: relative;
+  display: grid;
+  height: 210px;
+  margin-top: -6px;
+  place-items: center;
+  overflow: hidden;
+}
+
+.tour-arte .mago-escena {
+  -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 60%, transparent 100%);
+}
+
+.tour-arte .mago-img {
+  width: 250px;
+  margin-top: 30px;
+  -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent 78%);
+  mask-image: linear-gradient(180deg, #000 55%, transparent 78%);
+}
+
+.tour-arte .mago-flota {
+  width: calc(var(--s) * 0.7);
+  height: calc(var(--s) * 0.7);
+}
+
+.tour-arte .mago-anillo {
+  top: 62%;
+  width: 95%;
+}
+
+.tour-arte-bajo {
+  height: 150px;
+}
+
+.tour-arte-bajo .mago-img {
+  width: 210px;
+  margin-top: 24px;
+}
+
+/* Paso 2: una carta de ejemplo y las tres notas. */
+.tour-demo {
+  align-content: center;
+  gap: 14px;
+  height: auto;
+  min-height: 190px;
+  padding: 24px 24px 16px;
+}
+
+.tour-carta {
+  position: relative;
+  isolation: isolate;
+  width: min(300px, 100%);
+  padding: 18px 20px;
+  background: linear-gradient(140deg, #4d86c4, #3a5fae);
+  clip-path: var(--px-corners);
+}
+
+.tour-carta::before {
+  position: absolute;
+  inset: 2px;
+  z-index: -1;
+  background: linear-gradient(180deg, #0f182e, #0a1122);
+  clip-path: var(--px-corners);
+  content: "";
+}
+
+.tour-carta-kicker {
+  color: var(--accent);
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tour-carta p {
+  margin: 8px 0 0;
+  color: #eef3fb;
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+
+.tour-notas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.tour-notas .btn-grade {
+  min-height: 34px;
+  padding: 6px 11px;
+  border-width: 1px;
+  border-radius: 10px;
+  cursor: default;
+  font-size: 0.78rem;
+}
+
+/* Paso 4: los botones para crear mazos. */
+.tour-botones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.tour-botones .btn {
+  cursor: default;
+  pointer-events: none;
+}
+
+.tour-texto {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 28px 4px;
+  text-align: center;
+}
+
+.tour-texto .eyebrow {
+  color: #b3a7ff;
+  font-size: 0.6rem;
+}
+
+.tour-texto h2 {
+  margin: 8px 0 8px;
+  color: #ffffff;
+  font-family: "Inter Tight", var(--font-ui);
+  font-size: clamp(1.45rem, 4.6vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.tour-texto p {
+  max-width: 44ch;
+  margin: 0;
+  color: #c4bfe4;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.tour-texto strong {
+  color: #ffffff;
+}
+
+.tour-iconos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.tour-icono {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid rgba(150, 130, 255, 0.25);
+  border-radius: 10px;
+  background: rgba(12, 10, 44, 0.72);
+}
+
+.tour-icono .px-icono {
+  width: 32px;
+  height: 32px;
+}
+
+.tour-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0 0;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+}
+
+.tour-estado.ok {
+  color: var(--ok);
+}
+
+.tour-estado.error {
+  color: var(--danger);
+}
+
+.tour-reintentar {
+  margin-top: 10px;
+}
+
+.tour-girando {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(150, 130, 255, 0.3);
+  border-top-color: #8fdcf2;
+  border-radius: 50%;
+  animation: tour-girar 0.8s linear infinite;
+}
+
+.tour-pie {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 22px 24px 22px;
+}
+
+html.dark-mode .tour-pie .btn.primary {
+  border: 1px solid rgba(165, 145, 255, 0.55);
+  background: #1a0f4d;
+  color: #f1edff;
+}
+
+html.dark-mode .tour-pie .btn.primary:hover {
+  border-color: rgba(190, 175, 255, 0.9);
+  background: #22145f;
+  color: #ffffff;
+}
+
+html.dark-mode .tour-pie .btn.ghost {
+  border-color: rgba(165, 145, 255, 0.24);
+  background: #120836;
+  color: #d2ccf2;
+}
+
+@keyframes tour-fondo {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes tour-entrar {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes tour-paso {
+  from { opacity: 0; transform: translateX(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes tour-girar {
+  to { transform: rotate(360deg); }
+}
+
+/* Celular: hoja que sube desde abajo, botones a lo ancho. */
+@media (max-width: 560px) {
+  .tour-overlay {
+    align-items: end;
+    padding: 0;
+  }
+
+  .tour {
+    width: 100%;
+    max-height: 94dvh;
+    border-bottom: 0;
+    border-radius: 22px 22px 0 0;
+  }
+
+  .tour-arte {
+    height: 180px;
+  }
+
+  .tour-arte .mago-img {
+    width: 220px;
+  }
+
+  .tour-arte-bajo {
+    height: 130px;
+  }
+
+  .tour-arte-bajo .mago-img {
+    width: 180px;
+  }
+
+  .tour-texto {
+    padding: 4px 20px 0;
+  }
+
+  .tour-pie {
+    padding: 18px 18px calc(18px + env(safe-area-inset-bottom));
+  }
+
+  .tour-pie .btn {
+    flex: 1;
+    justify-content: center;
+  }
+}

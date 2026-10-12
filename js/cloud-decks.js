@@ -205,10 +205,27 @@
         return deck;
       })
       .catch(function (error) {
-        // El detalle técnico queda en la consola; al usuario, un mensaje claro.
+        // El detalle técnico queda en la consola; al usuario, un mensaje claro
+        // que diga la causa real (antes todo se mostraba como "conexión").
         if (window.console && console.error) console.error("No se pudo adquirir el mazo:", error);
-        throw new Error("No se pudo añadir el mazo. Revisa tu conexión e intenta de nuevo.");
+        throw new Error(mensajeAdquisicion(error));
       });
+  }
+
+  function mensajeAdquisicion(error) {
+    var text = String(error && error.message ? error.message : error || "");
+    var lower = text.toLowerCase();
+    // El mazo no está registrado en la tabla store_catalog de Supabase.
+    if (lower.indexOf("no está disponible para adquisición gratuita") !== -1 ||
+        lower.indexOf("foreign key") !== -1 ||
+        lower.indexOf("row-level security") !== -1) {
+      return "Este mazo todavía no está activado en Supabase. Ejecuta supabase/tienda.sql en el SQL Editor y vuelve a intentarlo.";
+    }
+    if (!text || lower.indexOf("failed to fetch") !== -1 || lower.indexOf("networkerror") !== -1 ||
+        lower.indexOf("load failed") !== -1 || lower.indexOf("network request failed") !== -1) {
+      return "No se pudo añadir el mazo. Revisa tu conexión e intenta de nuevo.";
+    }
+    return "No se pudo añadir el mazo: " + text;
   }
 
   function remove(deckId) {
@@ -267,5 +284,11 @@
         sync().catch(function () { /* reintentar al recargar o volver a entrar */ });
       }
     });
+    // La sesión puede resolverse antes de que cargue este archivo (sobre todo
+    // en un dispositivo nuevo): en ese caso no llega el aviso y los mazos de la
+    // tienda no aparecerían en Mis mazos. Se sincroniza de inmediato.
+    if (window.Auth.ready && window.Auth.user && window.Auth.user()) {
+      sync().catch(function () { /* reintentar al recargar o volver a entrar */ });
+    }
   }
 })();

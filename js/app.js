@@ -25,15 +25,206 @@
     return window.DeckStore.getStatus(deckId, cardId);
   }
 
-  function deckStats(deck) {
+  // cards (opcional): solo esas tarjetas del mazo (por ejemplo, un submazo).
+  function deckStats(deck, cards) {
+    cards = cards || deck.cards;
     var done = 0;
     var pend = 0;
-    deck.cards.forEach(function (card) {
+    cards.forEach(function (card) {
       var st = statusOf(deck.id, card.id);
       if (st === "sabe") done++;
       else if (st === "pendiente") pend++;
     });
-    return { done: done, pend: pend, total: deck.cards.length };
+    return { done: done, pend: pend, total: cards.length };
+  }
+
+  /* ---------- Mazos con submazos (por ahora, el Mazo del mago) ---------- */
+
+  // Entrada del catálogo de la tienda de la que viene el mazo, si existe.
+  function catalogoDe(deck) {
+    if (!deck || deck.origen !== "tienda" || !deck.catalogId) return null;
+    return (window.STORE_CATALOG || []).filter(function (item) { return item.id === deck.catalogId; })[0] || null;
+  }
+
+  // Submazos del mazo, o null si no tiene. Cada tarjeta pertenece al submazo
+  // cuyo id es el comienzo del suyo ("m1-04" → m1).
+  function submazosDe(deck) {
+    var entry = catalogoDe(deck);
+    if (!entry || !entry.sections || !entry.sections.length) return null;
+    return entry.sections.map(function (sec, i) {
+      return {
+        id: sec.id,
+        num: i + 1,
+        title: sec.title,
+        description: sec.description || "",
+        icon: sec.icon || "atomo",
+        cards: deck.cards.filter(function (card) { return String(card.id).split("-")[0] === sec.id; })
+      };
+    });
+  }
+
+  function submazo(deck, secId) {
+    var subs = submazosDe(deck) || [];
+    for (var i = 0; i < subs.length; i++) {
+      if (subs[i].id === secId) return subs[i];
+    }
+    return null;
+  }
+
+  function esMago(deck) {
+    var entry = catalogoDe(deck);
+    return !!(entry && entry.theme === "mago");
+  }
+
+  function iconoQuimica(nombre, size) {
+    return '<img class="px-icono" src="img/quimica/' + esc(nombre) + '.svg" alt="" width="' + (size || 32) + '" height="' + (size || 32) + '" />';
+  }
+
+  var MAGO_IMG = '<img class="mago-img" src="img/mago-quimica-600.webp?v=1" srcset="img/mago-quimica-600.webp?v=1 600w, img/mago-quimica-1100.webp?v=1 1100w" sizes="(max-width: 720px) 80vw, 460px" alt="El mago de Studappy con un átomo y una poción" width="600" height="600" decoding="async" />';
+
+  // Escena del mago: cielo nocturno, anillo mágico, química en pixel art y brillos.
+  // [ícono, x %, y %, tamaño px, giro, duración s, desfase s]
+  var QUIMICA_FLOTANTE = [
+    ["atomo", 8, 14, 48, -8, 14, -2], ["matraz", 86, 10, 48, 10, 17, -6], ["tubo", 6, 70, 32, -18, 15, -9],
+    ["molecula", 90, 64, 32, 12, 19, -4], ["tabla", 18, 40, 32, -6, 21, -12], ["bohr", 80, 38, 32, 0, 16, -7]
+  ];
+  var CHISPAS_MAGO = [[14, 26, 2, "c", 4.6, -1], [27, 12, 2, "v", 5.4, -3], [72, 20, 3, "c", 4.2, -2], [94, 34, 2, "v", 6, -4], [66, 78, 2, "c", 5.2, -1.5], [34, 84, 2, "v", 4.8, -2.6]];
+
+  function escenaMagoHtml() {
+    var flotan = QUIMICA_FLOTANTE.map(function (f) {
+      return '<span class="mago-flota" style="--x:' + f[1] + "%;--y:" + f[2] + "%;--s:" + f[3] + "px;--r:" + f[4] + "deg;--t:" + f[5] + "s;--d:" + f[6] + 's">' + iconoQuimica(f[0], f[3]) + "</span>";
+    }).join("");
+    var chispas = CHISPAS_MAGO.map(function (c) {
+      return '<span class="hf-chispa' + (c[3] === "v" ? " lila" : "") + '" style="--x:' + c[0] + "%;--y:" + c[1] + "%;--s:" + c[2] + "px;--t:" + c[4] + "s;--d:" + c[5] + 's"></span>';
+    }).join("");
+    return (
+      '<div class="mago-escena" aria-hidden="true">' +
+        '<span class="mago-aura"></span>' +
+        '<svg class="mago-anillo" viewBox="0 0 400 400" focusable="false">' +
+          '<circle cx="200" cy="200" r="196" fill="none" stroke="#7fd8ff" stroke-width="2" stroke-dasharray="2 8"/>' +
+          '<circle cx="200" cy="200" r="168" fill="none" stroke="#9a80ff" stroke-width="1.2" stroke-dasharray="12 7 2 7"/>' +
+        "</svg>" +
+        flotan + chispas +
+      "</div>"
+    );
+  }
+
+  // La tienda (js/tienda.js) usa el mismo arte en su tarjeta compacta.
+  window.MagoArte = {
+    escenaHtml: escenaMagoHtml,
+    imagenHtml: function () { return MAGO_IMG; },
+    icono: iconoQuimica
+  };
+
+  // Tarjeta destacada del Mazo del mago en Mis mazos.
+  function magoCardHtml(deck, index) {
+    var stats = deckStats(deck);
+    var pct = stats.total ? Math.round((stats.done / stats.total) * 100) : 0;
+    var entry = catalogoDe(deck) || {};
+    var subs = submazosDe(deck) || [];
+    var chips = subs.map(function (sub) {
+      var st = deckStats(deck, sub.cards);
+      var lleno = st.total && st.done === st.total;
+      return '<a class="mago-chip' + (lleno ? " completo" : "") + '" href="#/mazo/' + deck.id + "/" + esc(sub.id) + '" title="Jugar ' + esc(sub.title) + '">' +
+        iconoQuimica(sub.icon, 32) +
+        '<span class="mago-chip-txt"><span class="mago-chip-num">Submazo ' + sub.num + "</span><strong>" + esc(sub.title) + "</strong></span>" +
+        '<span class="mago-chip-pct">' + st.done + "/" + st.total + "</span>" +
+      "</a>";
+    }).join("");
+    return (
+      '<div class="deck-card owned deck-mago reveal" style="--deck-color:' + esc(deck.color) + ";transition-delay:" + (index % 8) * 35 + 'ms">' +
+        '<div class="mago-lado">' +
+          escenaMagoHtml() +
+          MAGO_IMG +
+        "</div>" +
+        '<div class="mago-cuerpo">' +
+          '<div class="deck-top">' +
+            '<span class="eyebrow">' + esc((entry.subtitle || "PAES Ciencias").toUpperCase()) + "</span>" +
+            '<div class="deck-menu">' +
+              '<span class="deck-owned-badge">' + ic("check", { size: 14 }) + "Adquirido</span>" +
+              '<button class="icon-btn danger" type="button" data-remove-store="' + deck.id + '" title="Eliminar de mi biblioteca" aria-label="Eliminar de mi biblioteca">' + ic("trash") + "</button>" +
+            "</div>" +
+          "</div>" +
+          '<a class="deck-link" href="#/mazo/' + deck.id + '">' +
+            "<h3>" + esc(deck.nombre) + "</h3>" +
+            "<p>" + esc(deck.descripcion) + "</p>" +
+          "</a>" +
+          '<div class="mago-chips">' + chips + "</div>" +
+          '<div class="deck-foot">' +
+            '<span class="deck-count">' + ic("cards", { size: 16 }) + stats.total + "</span>" +
+            '<div class="mini-bar"><span style="width:' + pct + '%"></span></div>' +
+            '<span class="deck-pct" title="Tarjetas que ya sabes">' + stats.done + "/" + stats.total + "</span>" +
+          "</div>" +
+          pendHtml(stats.pend, "deck-pend") +
+          '<a class="btn primary mago-abrir" href="#/mazo/' + deck.id + '">' + ic("layers", { size: 17 }) + "<span>Ver los 6 submazos</span></a>" +
+        "</div>" +
+      "</div>"
+    );
+  }
+
+  // Pantalla del mazo con submazos: se elige cuál jugar (o todo el mazo).
+  var vistaSubmazos = null;
+
+  function renderSubmazos(deck, subs) {
+    vistaSubmazos = deck.id;
+    var stats = deckStats(deck);
+    var pct = stats.total ? Math.round((stats.done / stats.total) * 100) : 0;
+    var entry = catalogoDe(deck) || {};
+    var tiles = subs.map(function (sub, i) {
+      var st = deckStats(deck, sub.cards);
+      var p = st.total ? Math.round((st.done / st.total) * 100) : 0;
+      return '<a class="submazo reveal' + (st.total && st.done === st.total ? " completo" : "") + '" href="#/mazo/' + deck.id + "/" + esc(sub.id) + '" style="transition-delay:' + i * 40 + 'ms">' +
+        '<span class="submazo-icono">' + iconoQuimica(sub.icon, 48) + "</span>" +
+        '<span class="submazo-num">Submazo ' + sub.num + "</span>" +
+        "<h2>" + esc(sub.title) + "</h2>" +
+        "<p>" + esc(sub.description) + "</p>" +
+        '<span class="submazo-pie">' +
+          '<span class="deck-count">' + ic("cards", { size: 15 }) + st.total + "</span>" +
+          '<span class="mini-bar"><span style="width:' + p + '%"></span></span>' +
+          '<span class="deck-pct">' + st.done + "/" + st.total + "</span>" +
+        "</span>" +
+        pendHtml(st.pend, "deck-pend") +
+        '<span class="submazo-jugar">' + ic("play", { size: 15 }) + "Jugar</span>" +
+      "</a>";
+    }).join("");
+
+    app.innerHTML =
+      '<nav class="breadcrumb"><a href="#/">Mis mazos</a><span class="sep">' + ic("chevronRight", { size: 14 }) + "</span><span>" + esc(deck.nombre) + "</span></nav>" +
+      '<section class="mago-portada reveal">' +
+        '<div class="mago-portada-texto">' +
+          '<span class="eyebrow">' + esc((entry.subtitle || "").toUpperCase()) + "</span>" +
+          "<h1>" + esc(deck.nombre) + "</h1>" +
+          "<p>Elige un submazo para estudiar por partes, o juega todas las cartas juntas.</p>" +
+          '<div class="mago-progreso">' +
+            '<div class="mini-bar"><span style="width:' + pct + '%"></span></div>' +
+            "<span>" + stats.done + "/" + stats.total + " dominadas</span>" +
+            pendHtml(stats.pend, "study-pend") +
+          "</div>" +
+          '<a class="btn primary lg" href="#/mazo/' + deck.id + '/todo">' + ic("play", { size: 18 }) + "<span>Jugar todo el mazo (" + stats.total + ")</span></a>" +
+        "</div>" +
+        // La escena (química flotante, anillo y brillos) va solo detrás del mago,
+        // para que no se cruce con el texto.
+        '<div class="mago-portada-img">' + escenaMagoHtml() + MAGO_IMG + "</div>" +
+      "</section>" +
+      '<section class="submazos-grid" aria-label="Submazos">' + tiles + "</section>";
+    setupReveal();
+  }
+
+  // Migas de pan del estudio: Mis mazos › Mazo › Submazo.
+  function migasEstudio(deck, sec, confirmar) {
+    var attr = confirmar ? ' data-confirm-leave="true"' : "";
+    var sep = '<span class="sep">' + ic("chevronRight", { size: 14 }) + "</span>";
+    return '<nav class="breadcrumb"><a href="#/"' + attr + ">Mis mazos</a>" + sep +
+      (submazosDe(deck)
+        ? '<a href="#/mazo/' + deck.id + '"' + attr + ">" + esc(deck.nombre) + "</a>" + sep + "<span>" + esc(sec ? sec.title : "Todo el mazo") + "</span>"
+        : "<span>" + esc(deck.nombre) + "</span>") +
+      "</nav>";
+  }
+
+  // Tarjetas y título de la sesión actual (el submazo o el mazo completo).
+  function alcanceSesion(deck) {
+    var sec = session && session.seccion ? submazo(deck, session.seccion) : null;
+    return { sec: sec, cards: sec ? sec.cards : deck.cards, titulo: sec ? sec.title : deck.nombre };
   }
 
   function pendHtml(n, className) {
@@ -217,13 +408,58 @@
     );
   }
 
+  // Fondo del inicio: cartas pixel que flotan, brillos que titilan y un
+  // anillo mágico, como el mundo del mago. Solo decoración.
+  // [x %, y %, ancho px, giro, opacidad, duración s, desfase s]
+  var CARTAS_FONDO = [
+    [7, 14, 46, -14, 0.5, 19, -3], [17, 44, 62, 9, 0.55, 23, -11], [4, 66, 38, -6, 0.32, 17, -7],
+    [25, 8, 30, 18, 0.3, 21, -2], [27, 70, 34, -20, 0.34, 25, -15],
+    [89, 18, 54, 12, 0.52, 20, -5], [79, 48, 40, -10, 0.4, 24, -9], [94, 56, 64, 16, 0.46, 18, -13],
+    [74, 10, 28, -22, 0.28, 22, -6], [86, 78, 36, 6, 0.32, 26, -1]
+  ];
+  // [x %, y %, tamaño del pixel, color, duración s, desfase s]
+  var CHISPAS_FONDO = [
+    [12, 30, 3, "c", 4.2, -1], [21, 22, 2, "v", 5.6, -3], [9, 50, 2, "c", 6.1, -2], [31, 36, 3, "v", 4.8, -4],
+    [15, 80, 2, "c", 5.2, -0.5], [35, 58, 2, "c", 6.6, -5], [3, 32, 2, "v", 5, -2.5], [22, 60, 3, "c", 4.4, -3.5],
+    [69, 28, 3, "c", 4.6, -2], [82, 34, 2, "v", 5.4, -1.5], [92, 40, 3, "c", 6.2, -4.5], [66, 62, 2, "v", 4.9, -0.8],
+    [77, 70, 3, "c", 5.8, -3.2], [97, 76, 2, "c", 4.3, -1.2], [72, 20, 2, "v", 6.4, -5.5], [86, 6, 2, "c", 5.1, -2.8]
+  ];
+
+  function fondoMagicoHtml() {
+    var cartas = CARTAS_FONDO.map(function (c) {
+      // "bajo": cartas a la altura del texto; en celular se ocultan.
+      return '<span class="hf-carta' + (c[1] >= 40 ? " bajo" : "") + '" style="--x:' + c[0] + "%;--y:" + c[1] + "%;--w:" + c[2] + "px;--r:" + c[3] + "deg;--o:" + c[4] + ";--t:" + c[5] + "s;--d:" + c[6] + 's"><b><i></i></b></span>';
+    }).join("");
+    var chispas = CHISPAS_FONDO.map(function (c) {
+      // "centro": brillos en la columna del texto; en celular se ocultan.
+      return '<span class="hf-chispa' + (c[3] === "v" ? " lila" : "") + (c[0] > 18 && c[0] < 82 ? " centro" : "") + '" style="--x:' + c[0] + "%;--y:" + c[1] + "%;--s:" + c[2] + "px;--t:" + c[4] + "s;--d:" + c[5] + 's"></span>';
+    }).join("");
+    return (
+      '<div class="hero-fondo" aria-hidden="true">' +
+        '<span class="hf-aura"></span>' +
+        '<svg class="hf-anillo" viewBox="0 0 400 400" focusable="false">' +
+          '<defs><linearGradient id="hf-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5fd8ff"/><stop offset="1" stop-color="#8a6bff"/></linearGradient></defs>' +
+          '<circle cx="200" cy="200" r="197" fill="none" stroke="url(#hf-grad)" stroke-width="1.6" stroke-dasharray="1.6 7.4"/>' +
+          '<circle cx="200" cy="200" r="176" fill="none" stroke="url(#hf-grad)" stroke-width="0.9" stroke-dasharray="12 6 2 6"/>' +
+          '<circle cx="200" cy="200" r="150" fill="none" stroke="url(#hf-grad)" stroke-width="0.6" stroke-dasharray="1 9"/>' +
+        "</svg>" +
+        cartas + chispas +
+      "</div>"
+    );
+  }
+
   function renderLanding() {
     var tag = document.getElementById("topbar-tag");
     if (tag) tag.textContent = "Flashcards";
     // Solo en localhost (ver account.js): entrar sin Google para probar.
     var canDemo = !!(window.Auth && window.Auth.canDemo && window.Auth.canDemo());
     app.innerHTML =
-      '<section class="landing-hero">' +
+      '<section class="landing-hero hero-mago">' +
+        fondoMagicoHtml() +
+        // El mago de Studappy: ilustración decorativa que se funde con el fondo.
+        '<div class="hero-escena" aria-hidden="true">' +
+          '<img class="hero-mago-img" src="img/mago-800.webp?v=1" srcset="img/mago-800.webp?v=1 800w, img/mago-1400.webp?v=1 1400w" sizes="(max-width: 860px) 96vw, 820px" alt="" width="800" height="800" decoding="async" fetchpriority="high" />' +
+        "</div>" +
         '<div class="hero-copy">' +
           '<span class="eyebrow">ESTUDIO · FLASHCARDS</span>' +
           '<h1 class="wordmark">Studappy</h1>' +
@@ -235,10 +471,6 @@
           (canDemo
             ? "<small>Modo prueba: solo aparece en localhost, no usa tu cuenta y la tienda queda desactivada.</small>"
             : "<small>Tu espacio de estudio se abre después de iniciar sesión.</small>") +
-        "</div>" +
-        '<div class="hero-art" aria-hidden="true">' +
-          '<span class="hero-halo"></span>' +
-          '<img class="hero-logo" src="img/hero-logo.webp?v=2" alt="" width="420" height="420" />' +
         "</div>" +
       "</section>" +
       '<section class="marquee" aria-label="Ejemplos de flashcards">' +
@@ -258,6 +490,7 @@
   /* ---------- Home / administración ---------- */
 
   function deckCardHtml(deck, index) {
+    if (esMago(deck) && submazosDe(deck)) return magoCardHtml(deck, index);
     var stats = deckStats(deck);
     var pct = stats.total ? Math.round((stats.done / stats.total) * 100) : 0;
     var menu = deck.origen === "tienda"
@@ -689,12 +922,14 @@
   /* ---------- Estudio ---------- */
 
   // filtro: "todas" o "pendientes" (las guardadas como pendientes).
-  function startSession(deck, filtro) {
+  // seccion: id del submazo (solo sus tarjetas) o null para todo el mazo.
+  function startSession(deck, filtro, seccion) {
     filtro = filtro === "pendientes" ? "pendientes" : "todas";
-    var order = deck.cards
+    var sec = seccion ? submazo(deck, seccion) : null;
+    var order = (sec ? sec.cards : deck.cards)
       .filter(function (card) { return filtro === "todas" || statusOf(deck.id, card.id) === "pendiente"; })
       .map(function (card) { return card.id; });
-    session = { deckId: deck.id, filtro: filtro, order: order, pos: 0, flipped: false, prepared: false, shuffle: true };
+    session = { deckId: deck.id, seccion: sec ? sec.id : null, filtro: filtro, order: order, pos: 0, flipped: false, prepared: false, shuffle: true };
   }
 
   var ETIQUETA_ESTADO = { sabe: "la sabes", no: "no la sabías", pendiente: "pendiente" };
@@ -710,7 +945,8 @@
     var deck = window.DeckStore.get(session.deckId);
     if (!deck) return renderHome();
     if (!session.prepared) return renderPreparation(deck);
-    var stats = deckStats(deck);
+    var alcance = alcanceSesion(deck);
+    var stats = deckStats(deck, alcance.cards);
     var pct = stats.total ? Math.round((stats.done / stats.total) * 100) : 0;
 
     if (session.pos >= session.order.length) return renderSummary(deck, stats);
@@ -724,10 +960,10 @@
     var estado = statusOf(deck.id, card.id);
 
     app.innerHTML =
-      '<nav class="breadcrumb"><a href="#/" data-confirm-leave="true">Mis mazos</a><span class="sep">' + ic("chevronRight", { size: 14 }) + "</span><span>" + esc(deck.nombre) + "</span></nav>" +
-      '<section class="study">' +
+      migasEstudio(deck, alcance.sec, true) +
+      '<section class="study' + (esMago(deck) ? " study-mago" : "") + '">' +
         '<header class="study-head">' +
-          "<h1>" + esc(deck.nombre) + "</h1>" +
+          "<h1>" + esc(alcance.titulo) + "</h1>" +
           '<div class="study-stats">' +
             '<div class="mini-bar"><span style="width:' + pct + '%"></span></div>' +
             "<span>" + stats.done + "/" + stats.total + " dominadas</span>" +
@@ -773,21 +1009,24 @@
   }
 
   function renderSummary(deck, stats) {
+    var alcance = alcanceSesion(deck);
     var allDone = stats.total > 0 && stats.done === stats.total;
-    var detalle = "Sabes <strong>" + stats.done + " de " + stats.total + "</strong> tarjetas de <strong>" + esc(deck.nombre) + "</strong>" +
+    var detalle = "Sabes <strong>" + stats.done + " de " + stats.total + "</strong> tarjetas de <strong>" + esc(alcance.titulo) + "</strong>" +
       (stats.pend ? " y tienes <strong>" + stats.pend + (stats.pend === 1 ? " pendiente" : " pendientes") + "</strong>" : "") + ".";
+    var conSubmazos = !!submazosDe(deck);
 
     app.innerHTML =
-      '<nav class="breadcrumb"><a href="#/">Mis mazos</a><span class="sep">' + ic("chevronRight", { size: 14 }) + "</span><span>" + esc(deck.nombre) + "</span></nav>" +
+      migasEstudio(deck, alcance.sec, false) +
       '<section class="study-summary reveal">' +
         '<span class="summary-icon ' + (allDone ? "ok" : "") + '">' + ic(allDone ? "check" : "brain", { size: 40 }) + "</span>" +
-        "<h1>" + (allDone ? "¡Sabes todo el mazo!" : "Ronda terminada") + "</h1>" +
+        "<h1>" + (allDone ? (alcance.sec ? "¡Dominaste este submazo!" : "¡Sabes todo el mazo!") : "Ronda terminada") + "</h1>" +
         "<p>" + detalle + "</p>" +
         '<div class="summary-actions">' +
           (stats.pend
             ? '<button class="btn btn-pend" id="fc-review" type="button">' + ic("target", { size: 16 }) + "<span>Repasar " + stats.pend + (stats.pend === 1 ? " pendiente" : " pendientes") + "</span></button>"
             : "") +
           '<button class="btn ghost" id="fc-again" type="button">' + ic("refresh", { size: 16 }) + "<span>Repetir todo</span></button>" +
+          (conSubmazos ? '<a class="btn ghost" href="#/mazo/' + deck.id + '">' + ic("cards", { size: 16 }) + "<span>Otros submazos</span></a>" : "") +
           '<a class="btn ghost" href="#/">' + ic("layers", { size: 16 }) + "<span>Volver a los mazos</span></a>" +
         "</div>" +
       "</section>";
@@ -797,14 +1036,18 @@
 
   function renderPreparation(deck) {
     var count = session.order.length;
-    var pend = deckStats(deck).pend;
+    var alcance = alcanceSesion(deck);
+    var pend = deckStats(deck, alcance.cards).pend;
     app.innerHTML =
-      '<nav class="breadcrumb"><a href="#/" data-confirm-leave="true">Mis mazos</a><span class="sep">' + ic("chevronRight", { size: 14 }) + "</span><span>" + esc(deck.nombre) + "</span></nav>" +
+      migasEstudio(deck, alcance.sec, true) +
       '<section class="study-ready reveal">' +
-        '<span class="ready-icon">' + ic("sparkle", { size: 34 }) + "</span>" +
-        '<span class="eyebrow">MODO DE ESTUDIO</span>' +
+        (alcance.sec
+          ? '<span class="ready-icon ready-px">' + iconoQuimica(alcance.sec.icon, 48) + "</span>" +
+            '<span class="eyebrow">SUBMAZO ' + alcance.sec.num + " · " + esc(deck.nombre.toUpperCase()) + "</span>"
+          : '<span class="ready-icon">' + ic("sparkle", { size: 34 }) + "</span>" +
+            '<span class="eyebrow">MODO DE ESTUDIO</span>') +
         "<h1>¿Todo listo?</h1>" +
-        '<p>Vas a repasar <strong>' + count + (count === 1 ? " tarjeta" : " tarjetas") + (session.filtro === "pendientes" ? " pendientes" : "") + '</strong> de <strong>' + esc(deck.nombre) + "</strong>." +
+        '<p>Vas a repasar <strong>' + count + (count === 1 ? " tarjeta" : " tarjetas") + (session.filtro === "pendientes" ? " pendientes" : "") + '</strong> de <strong>' + esc(alcance.titulo) + "</strong>." +
         "<br />Al ver la respuesta, marca si la sabías: las que no, vuelven al final de la ronda.</p>" +
         '<label class="shuffle-choice"><input id="study-shuffle" type="checkbox" checked /><span class="shuffle-check">' + ic("shuffle", { size: 17 }) + "</span><span><strong>Mezclar las cartas</strong><small>Cambia el orden en cada ronda.</small></span></label>" +
         '<div class="ready-actions">' +
@@ -900,7 +1143,7 @@
     }
     if ((e.target.closest("#study-pend") || e.target.closest("#study-all")) && session) {
       var deckP = window.DeckStore.get(session.deckId);
-      if (deckP) startSession(deckP, e.target.closest("#study-pend") ? "pendientes" : "todas");
+      if (deckP) startSession(deckP, e.target.closest("#study-pend") ? "pendientes" : "todas", session.seccion);
       renderStudy();
       return;
     }
@@ -924,21 +1167,24 @@
       return;
     }
     if (e.target.closest("#fc-restart") && session) {
-      window.DeckStore.resetProgress(session.deckId);
       var deckB = window.DeckStore.get(session.deckId);
-      if (deckB) startSession(deckB, "todas");
+      var secB = deckB && session.seccion ? submazo(deckB, session.seccion) : null;
+      // En un submazo solo se reinicia el avance de sus tarjetas.
+      if (secB) secB.cards.forEach(function (card) { window.DeckStore.setStatus(deckB.id, card.id, null); });
+      else window.DeckStore.resetProgress(session.deckId);
+      if (deckB) startSession(deckB, "todas", session.seccion);
       renderStudy();
       return;
     }
     if (e.target.closest("#fc-review") && session) {
       var deckC = window.DeckStore.get(session.deckId);
-      if (deckC) startSession(deckC, "pendientes");
+      if (deckC) startSession(deckC, "pendientes", session.seccion);
       renderStudy();
       return;
     }
     if (e.target.closest("#fc-again") && session) {
       var deckD = window.DeckStore.get(session.deckId);
-      if (deckD) startSession(deckD, "todas");
+      if (deckD) startSession(deckD, "todas", session.seccion);
       renderStudy();
       return;
     }
@@ -991,6 +1237,7 @@
     }
     var hash = location.hash.replace(/^#\/?/, "");
     var parts = hash.split("/").filter(Boolean);
+    vistaSubmazos = null;
     if (parts[0] === "generador") {
       // Enlaces antiguos a #/generador: se reemplaza la dirección por el
       // inicio (sin disparar hashchange ni sumar historial) y se abre el modal.
@@ -1005,7 +1252,17 @@
     } else if (parts[0] === "mazo" && parts[1]) {
       var deck = window.DeckStore.get(parts[1]);
       if (!deck) return renderHome();
-      if (!session || session.deckId !== deck.id) startSession(deck, "todas");
+      var subs = submazosDe(deck);
+      // Mazo con submazos: sin submazo elegido se muestra el selector.
+      // "#/mazo/<id>/<submazo>" juega uno; "#/mazo/<id>/todo", el mazo completo.
+      var secId = subs && parts[2] && parts[2] !== "todo" && submazo(deck, parts[2]) ? parts[2] : null;
+      if (subs && !secId && parts[2] !== "todo") {
+        session = null;
+        renderSubmazos(deck, subs);
+        window.scrollTo(0, 0);
+        return;
+      }
+      if (!session || session.deckId !== deck.id || (session.seccion || null) !== secId) startSession(deck, "todas", secId);
       renderStudy();
     } else {
       session = null;
@@ -1031,7 +1288,8 @@
   function retryDeckRoute() {
     var parts = location.hash.replace(/^#\/?/, "").split("/");
     if (parts[0] !== "mazo" || !parts[1]) return false;
-    if ((!session || session.deckId !== parts[1]) && window.DeckStore.get(parts[1])) route();
+    var enPantalla = (session && session.deckId === parts[1]) || vistaSubmazos === parts[1];
+    if (!enPantalla && window.DeckStore.get(parts[1])) route();
     return true;
   }
 

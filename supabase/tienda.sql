@@ -26,6 +26,23 @@ on conflict (catalog_id) do update set
   is_free = excluded.is_free,
   active = excluded.active;
 
+-- Mazo del mago: PAES Ciencias, estructura atómica (6 submazos).
+insert into public.store_catalog (catalog_id, title, description, color, is_free, active)
+values (
+  'paes-ciencias-mago',
+  'Mazo del mago',
+  '54 tarjetas de conocimiento sobre estructura atómica, en 6 submazos que puedes jugar por separado.',
+  '#7b5cff',
+  true,
+  true
+)
+on conflict (catalog_id) do update set
+  title = excluded.title,
+  description = excluded.description,
+  color = excluded.color,
+  is_free = excluded.is_free,
+  active = excluded.active;
+
 create table if not exists public.user_decks (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
