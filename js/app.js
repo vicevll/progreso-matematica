@@ -170,6 +170,53 @@
     requestUpdate();
   }
 
+  // Flashcards de ejemplo para la cinta animada de la portada.
+  var EJEMPLOS = [
+    { tema: "Matemática", q: "¿Cuánto es $\\frac{3}{4}$ de 20?", a: "15" },
+    { tema: "Biología", q: "¿Qué organelo produce la energía de la célula?", a: "La mitocondria" },
+    { tema: "Historia", q: "¿En qué año se proclamó la Independencia de Chile?", a: "1818" },
+    { tema: "Física", q: "¿Cómo se calcula la velocidad media?", a: "$v = \\frac{d}{t}$" },
+    { tema: "Química", q: "¿Cuál es el símbolo químico del sodio?", a: "Na" },
+    { tema: "Inglés", q: "¿Cómo se dice «aprender» en inglés?", a: "To learn" },
+    { tema: "Matemática", q: "Simplifica $2^3 \\cdot 2^2$", a: "$2^5 = 32$" },
+    { tema: "Lenguaje", q: "¿Qué es una metáfora?", a: "Una comparación implícita entre dos ideas" },
+    { tema: "Geografía", q: "¿Cuál es el río más largo de Chile?", a: "El río Loa" },
+    { tema: "Matemática", q: "¿Cuál es la pendiente de $y = 3x + 1$?", a: "$m = 3$" },
+    { tema: "Biología", q: "¿Qué molécula guarda la información genética?", a: "El ADN" },
+    { tema: "PAES M1", q: "El 20% de 150 es…", a: "30" }
+  ];
+
+  function ejemploHtml(ej, oculta) {
+    return (
+      '<article class="mq-card"' + (oculta ? ' aria-hidden="true"' : "") + ">" +
+        '<span class="mq-tema">' + esc(ej.tema) + "</span>" +
+        '<p class="mq-q">' + escText(ej.q) + "</p>" +
+        '<p class="mq-a"><span class="mq-r">R:</span> ' + escText(ej.a) + "</p>" +
+      "</article>"
+    );
+  }
+
+  // Una fila de la cinta, en bucle infinito. Cada mitad lleva los ejemplos
+  // repetidos varias veces para que siempre sea más ancha que la pantalla
+  // (incluso en monitores muy anchos o con el zoom alejado); la segunda
+  // mitad es idéntica, así el salto al reiniciar la animación no se nota.
+  var CINTA_REPETICIONES = 2;
+
+  function filaCinta(lista, reversa) {
+    var tarjetas = "";
+    for (var r = 0; r < CINTA_REPETICIONES; r++) {
+      tarjetas += lista.map(function (ej) { return ejemploHtml(ej, r > 0); }).join("");
+    }
+    return (
+      '<div class="marquee-row' + (reversa ? " reverse" : "") + '">' +
+        '<div class="marquee-track">' +
+          '<div class="marquee-set">' + tarjetas + "</div>" +
+          '<div class="marquee-set" aria-hidden="true">' + tarjetas + "</div>" +
+        "</div>" +
+      "</div>"
+    );
+  }
+
   function renderLanding() {
     var tag = document.getElementById("topbar-tag");
     if (tag) tag.textContent = "Flashcards";
@@ -177,16 +224,26 @@
     var canDemo = !!(window.Auth && window.Auth.canDemo && window.Auth.canDemo());
     app.innerHTML =
       '<section class="landing-hero">' +
-        '<span class="eyebrow">ESTUDIO · FLASHCARDS</span>' +
-        '<h1>Studappy</h1>' +
-        '<p>Convierte lo que necesitas aprender en tarjetas claras, visuales y fáciles de repasar.</p>' +
-        '<div class="landing-actions">' +
-          '<button class="btn primary landing-login" id="landing-login" type="button">' + (window.GOOGLE_ICON || "") + "<span>Iniciar sesión con Google</span></button>" +
-          (canDemo ? '<button class="btn ghost" id="landing-demo" type="button">' + ic("play", { size: 16 }) + "<span>Entrar en modo prueba</span></button>" : "") +
+        '<div class="hero-copy">' +
+          '<span class="eyebrow">ESTUDIO · FLASHCARDS</span>' +
+          '<h1 class="wordmark">Studappy</h1>' +
+          '<p>Convierte lo que necesitas aprender en tarjetas claras, visuales y fáciles de repasar.</p>' +
+          '<div class="landing-actions">' +
+            '<button class="btn primary landing-login" id="landing-login" type="button">' + (window.GOOGLE_ICON || "") + "<span>Iniciar sesión con Google</span></button>" +
+            (canDemo ? '<button class="btn ghost" id="landing-demo" type="button">' + ic("play", { size: 16 }) + "<span>Entrar en modo prueba</span></button>" : "") +
+          "</div>" +
+          (canDemo
+            ? "<small>Modo prueba: solo aparece en localhost, no usa tu cuenta y la tienda queda desactivada.</small>"
+            : "<small>Tu espacio de estudio se abre después de iniciar sesión.</small>") +
         "</div>" +
-        (canDemo
-          ? "<small>Modo prueba: solo aparece en localhost, no usa tu cuenta y la tienda queda desactivada.</small>"
-          : "<small>Tu espacio de estudio se abre después de iniciar sesión.</small>") +
+        '<div class="hero-art" aria-hidden="true">' +
+          '<span class="hero-halo"></span>' +
+          '<img class="hero-logo" src="img/hero-logo.webp?v=2" alt="" width="420" height="420" />' +
+        "</div>" +
+      "</section>" +
+      '<section class="marquee" aria-label="Ejemplos de flashcards">' +
+        filaCinta(EJEMPLOS, false) +
+        filaCinta(EJEMPLOS.slice(6).concat(EJEMPLOS.slice(0, 6)), true) +
       "</section>" +
       '<section class="bento-grid" aria-label="Funciones de Studappy">' +
         '<article class="bento-box bento-wide"><span class="bento-icon">' + ic("cards", { size: 25 }) + '</span><div><span class="bento-label">Crea</span><h2>Mazos a tu medida</h2><p>Organiza preguntas y respuestas para cada materia, proyecto o examen.</p></div></article>' +
@@ -194,6 +251,7 @@
         '<article class="bento-box"><span class="bento-icon sky">' + ic("refresh", { size: 25 }) + '</span><span class="bento-label">Organiza</span><h2>Tu ritmo</h2><p>Muestra la respuesta cuando quieras y mezcla las cartas en cada ronda.</p></article>' +
         '<article class="bento-box bento-wide bento-note"><span class="bento-icon mint">' + ic("sparkle", { size: 25 }) + '</span><div><span class="bento-label">Tu biblioteca</span><h2>Tus mazos te siguen</h2><p>Tus mazos, los de la tienda y tu avance se guardan en tu cuenta: entra desde cualquier dispositivo y sigue donde quedaste.</p></div></article>' +
       "</section>";
+    renderMath(app.querySelector(".marquee"));
     setupReveal();
   }
 

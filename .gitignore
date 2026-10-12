@@ -3,3 +3,5 @@ node_modules/
 *.log
 .build/
 desktop.ini
+# Capturas que guarda la app de Claude (no son parte del sitio)
+/Claude outputs/
