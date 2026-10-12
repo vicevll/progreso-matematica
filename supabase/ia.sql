@@ -1,10 +1,13 @@
 -- Studappy · límite del generador con IA: mazos por período.
 -- Ejecutar en Supabase -> SQL Editor -> New query -> Run.
 --
--- Cada vez que alguien abre el generador y usa la IA, eso cuenta como 1 mazo.
--- Dentro de ese mismo mazo puede leer archivos, generar y regenerar hasta
--- v_llamadas_por_mazo veces sin gastar otro. Para cambiar los límites, edita
--- las constantes de ia_consumir y vuelve a ejecutar este archivo.
+-- Cada vez que alguien abre el generador y usa la IA con la key de Studappy,
+-- eso cuenta como 1 mazo. Dentro de ese mismo mazo puede leer archivos,
+-- generar y regenerar hasta 'llamadas_por_mazo' veces sin gastar otro.
+-- Quien guarda su propia API key de Gemini no pasa por este límite (la
+-- Edge Function no llama a ia_consumir en ese caso).
+--
+-- Para cambiar los límites, edita ia_config y vuelve a ejecutar este archivo.
 
 -- Versión anterior (límite por llamadas): se reemplaza.
 drop function if exists public.ia_consumir(uuid);
@@ -30,9 +33,58 @@ create policy ia_sesiones_read_own on public.ia_sesiones
 
 grant select on public.ia_sesiones to authenticated;
 
+-- Límites del generador (un solo lugar).
+create or replace function public.ia_config()
+returns jsonb
+language sql
+immutable
+as $$
+  select jsonb_build_object(
+    'limite_mazos', 2,        -- mazos con IA por período, con la key de Studappy
+    'llamadas_por_mazo', 8,   -- leer archivos + generar + regenerar dentro de un mazo
+    'periodo', 'dia'          -- 'dia' | 'semana' | 'mes' | 'total'
+  );
+$$;
+
+-- Inicio del período actual, en hora de Chile.
+create or replace function public.ia_inicio_periodo(p_periodo text)
+returns timestamptz
+language sql
+stable
+as $$
+  select case p_periodo
+    when 'dia' then date_trunc('day', now() at time zone 'America/Santiago') at time zone 'America/Santiago'
+    when 'semana' then date_trunc('week', now() at time zone 'America/Santiago') at time zone 'America/Santiago'
+    when 'mes' then date_trunc('month', now() at time zone 'America/Santiago') at time zone 'America/Santiago'
+    else '-infinity'::timestamptz
+  end;
+$$;
+
+-- Cuántos mazos con IA le quedan al usuario en el período (sin gastar nada).
+create or replace function public.ia_estado(p_user uuid)
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v_cfg jsonb := public.ia_config();
+  v_limite integer := (v_cfg->>'limite_mazos')::integer;
+  v_periodo text := v_cfg->>'periodo';
+  v_mazos integer;
+begin
+  select count(*) into v_mazos
+  from public.ia_sesiones
+  where user_id = p_user and creada >= public.ia_inicio_periodo(v_periodo) and llamadas > 0;
+
+  return jsonb_build_object('restantes', greatest(v_limite - v_mazos, 0), 'limite', v_limite, 'periodo', v_periodo);
+end;
+$$;
+
 -- Descuenta una llamada a la IA dentro de un mazo (sesión del generador).
 -- Si la sesión es nueva, cuenta un mazo más del período.
--- Devuelve { restantes: mazos que quedan en el período, periodo }.
+-- Devuelve { restantes, limite, periodo }.
 create or replace function public.ia_consumir(p_user uuid, p_sesion text)
 returns jsonb
 language plpgsql
@@ -40,11 +92,11 @@ security definer
 set search_path = public
 as $$
 declare
-  v_limite_mazos constant integer := 8;        -- mazos con IA por período
-  v_llamadas_por_mazo constant integer := 8;   -- leer archivos + generar + regenerar
-  v_periodo constant text := 'dia';            -- 'dia' | 'semana' | 'mes' | 'total'
-  v_local timestamp := now() at time zone 'America/Santiago';
-  v_inicio timestamptz;
+  v_cfg jsonb := public.ia_config();
+  v_limite_mazos integer := (v_cfg->>'limite_mazos')::integer;
+  v_llamadas_por_mazo integer := (v_cfg->>'llamadas_por_mazo')::integer;
+  v_periodo text := v_cfg->>'periodo';
+  v_inicio timestamptz := public.ia_inicio_periodo(v_cfg->>'periodo');
   v_llamadas integer;
   v_mazos integer;
   v_cuando text;
@@ -53,17 +105,11 @@ begin
     raise exception 'Faltan el usuario o la sesión.';
   end if;
 
-  v_inicio := case v_periodo
-    when 'dia' then date_trunc('day', v_local) at time zone 'America/Santiago'
-    when 'semana' then date_trunc('week', v_local) at time zone 'America/Santiago'
-    when 'mes' then date_trunc('month', v_local) at time zone 'America/Santiago'
-    else '-infinity'::timestamptz
-  end;
   v_cuando := case v_periodo
-    when 'dia' then 'por hoy'
-    when 'semana' then 'esta semana'
-    when 'mes' then 'este mes'
-    else 'en total'
+    when 'dia' then 'de hoy'
+    when 'semana' then 'de esta semana'
+    when 'mes' then 'de este mes'
+    else 'disponibles'
   end;
 
   -- Evita que dos pedidos simultáneos del mismo usuario se salten el límite.
@@ -85,7 +131,7 @@ begin
     from public.ia_sesiones
     where user_id = p_user and creada >= v_inicio and llamadas > 0;
     if v_mazos >= v_limite_mazos then
-      raise exception 'Llegaste al límite de % mazos con IA %. Vuelve a intentarlo más adelante.', v_limite_mazos, v_cuando
+      raise exception 'Ya usaste tus % mazos con IA %.', v_limite_mazos, v_cuando
         using hint = 'cuota_agotada';
     end if;
     insert into public.ia_sesiones (user_id, sesion, llamadas) values (p_user, p_sesion, 1);
@@ -95,7 +141,7 @@ begin
   from public.ia_sesiones
   where user_id = p_user and creada >= v_inicio and llamadas > 0;
 
-  return jsonb_build_object('restantes', greatest(v_limite_mazos - v_mazos, 0), 'periodo', v_periodo);
+  return jsonb_build_object('restantes', greatest(v_limite_mazos - v_mazos, 0), 'limite', v_limite_mazos, 'periodo', v_periodo);
 end;
 $$;
 
@@ -116,8 +162,14 @@ end;
 $$;
 
 -- Solo la Edge Function (con la service role key) puede llamarlas.
+revoke all on function public.ia_config() from public, anon, authenticated;
+revoke all on function public.ia_inicio_periodo(text) from public, anon, authenticated;
+revoke all on function public.ia_estado(uuid) from public, anon, authenticated;
 revoke all on function public.ia_consumir(uuid, text) from public, anon, authenticated;
 revoke all on function public.ia_devolver(uuid, text) from public, anon, authenticated;
+grant execute on function public.ia_config() to service_role;
+grant execute on function public.ia_inicio_periodo(text) to service_role;
+grant execute on function public.ia_estado(uuid) to service_role;
 grant execute on function public.ia_consumir(uuid, text) to service_role;
 grant execute on function public.ia_devolver(uuid, text) to service_role;
 

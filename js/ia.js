@@ -1,14 +1,57 @@
 // Módulo de IA del generador.
 // Las llamadas pasan por la Edge Function "generar-tarjetas" de Supabase
-// (supabase/functions/generar-tarjetas), que guarda la key de Gemini y aplica
-// la cuota diaria de cada usuario. El navegador nunca ve la key.
+// (supabase/functions/generar-tarjetas), que guarda la key de Gemini de
+// Studappy y aplica el límite diario de cada usuario. El navegador nunca ve
+// esa key.
+//
+// Quien ya usó sus mazos del día puede guardar su propia API key de Gemini:
+// queda en este navegador (por usuario) y viaja con cada pedido a la función,
+// que la usa en lugar de la de Studappy y no descuenta del límite.
 (function () {
   var FUNCION = "generar-tarjetas";
   var MAX_MB = 25;
   var MAX_ARCHIVO = MAX_MB * 1024 * 1024;
   var TIPOS = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
+  var CLAVE_PREFIJO = "studappy-gemini-key:";
+  var FORMATO_CLAVE = /^[A-Za-z0-9._-]{20,200}$/;
   var restantes = null;
+  var limite = null;
   var periodo = "dia";
+  var clavesEnMemoria = {}; // si el navegador no deja guardar, dura hasta recargar
+
+  function usuarioId() {
+    var u = window.Auth && window.Auth.user ? window.Auth.user() : null;
+    return u && u.id ? String(u.id) : "";
+  }
+
+  function clavePropia() {
+    var id = usuarioId();
+    if (!id) return "";
+    if (clavesEnMemoria[id]) return clavesEnMemoria[id];
+    try { return localStorage.getItem(CLAVE_PREFIJO + id) || ""; } catch (e) { return ""; }
+  }
+
+  function guardarClave(clave) {
+    var id = usuarioId();
+    if (!id) return;
+    try {
+      localStorage.setItem(CLAVE_PREFIJO + id, clave);
+      delete clavesEnMemoria[id];
+    } catch (e) {
+      clavesEnMemoria[id] = clave; // el navegador no deja guardar: dura hasta recargar
+    }
+  }
+
+  function quitarClave() {
+    var id = usuarioId();
+    if (!id) return;
+    delete clavesEnMemoria[id];
+    try { localStorage.removeItem(CLAVE_PREFIJO + id); } catch (e) { /* nada */ }
+  }
+
+  function formatoClave(clave) {
+    return FORMATO_CLAVE.test(String(clave || "").trim());
+  }
 
   // Las Edge Functions de los proyectos nuevos de Supabase solo aceptan las
   // claves de formato nuevo (sb_publishable_...), no la anon key antigua.
@@ -23,27 +66,27 @@
     return !!(window.Auth && window.Auth.isDemo && window.Auth.isDemo());
   }
 
-  // Lee el mensaje de error que devolvió la función o la plataforma.
+  // Lee el error que devolvió la función o la plataforma: { msg, codigo }.
   function mensajeDeError(error) {
     var res = error && error.context;
     if (error && error.name === "FunctionsHttpError" && res && typeof res.json === "function") {
       var status = res.status;
       var porEstado = function () {
-        if (status === 404) return "El generador aún no está instalado en el servidor (falta desplegar la función " + FUNCION + ").";
-        if (status === 401) return "Tu sesión expiró. Vuelve a iniciar sesión.";
-        return "El generador respondió con un error (" + status + ").";
+        if (status === 404) return { msg: "El generador aún no está instalado en el servidor (falta desplegar la función " + FUNCION + ").", codigo: "no_desplegada" };
+        if (status === 401) return { msg: "Tu sesión expiró. Vuelve a iniciar sesión.", codigo: "sin_sesion" };
+        return { msg: "El generador respondió con un error (" + status + ").", codigo: "error" };
       };
       return res.json().then(function (body) {
-        if (body && body.error) return body.error; // mensaje de nuestra función
+        if (body && body.error) return { msg: String(body.error), codigo: String(body.codigo || "error") }; // de nuestra función
         var code = body && body.code;
         if (code === "INVALID_API_KEY" || code === "INVALID_CREDENTIALS") {
-          return "Falta configurar la publishable key de Supabase (SUPABASE_PUBLISHABLE_KEY en js/config.js).";
+          return { msg: "Falta configurar la publishable key de Supabase (SUPABASE_PUBLISHABLE_KEY en js/config.js).", codigo: "config" };
         }
         if (window.console && body) console.error("Respuesta del generador:", status, body);
         return porEstado();
       }, porEstado);
     }
-    return Promise.resolve("No se pudo conectar con el generador. Revisa tu conexión e intenta de nuevo.");
+    return Promise.resolve({ msg: "No se pudo conectar con el generador. Revisa tu conexión e intenta de nuevo.", codigo: "conexion" });
   }
 
   function invocar(body) {
@@ -60,13 +103,49 @@
       .invoke(FUNCION, opciones)
       .then(function (res) {
         if (res.error) {
-          return mensajeDeError(res.error).then(function (msg) { throw new Error(msg); });
+          return mensajeDeError(res.error).then(function (e) {
+            var err = new Error(e.msg);
+            err.codigo = e.codigo;
+            throw err;
+          });
         }
         var data = res.data || {};
-        if (typeof data.restantes === "number") restantes = data.restantes;
-        if (data.periodo) periodo = String(data.periodo);
+        if (data.propia) {
+          restantes = null;
+        } else {
+          if (typeof data.restantes === "number") restantes = data.restantes;
+          if (typeof data.limite === "number" && data.limite > 0) limite = data.limite;
+          if (data.periodo) periodo = String(data.periodo);
+        }
         return data;
       });
+  }
+
+  // Agrega la key propia (si hay) a un pedido que usa la IA.
+  function conClave(body) {
+    var k = clavePropia();
+    if (k) body.clave = k;
+    return body;
+  }
+
+  // Cuántos mazos con IA le quedan hoy, sin gastar ninguno.
+  // Resuelve { propia: true } si usa su key, { restantes, limite, periodo }
+  // o null si no se pudo saber (no bloquea al generador).
+  function estado() {
+    if (isDemo()) return Promise.resolve(null);
+    if (clavePropia()) return Promise.resolve({ propia: true });
+    return invocar({ accion: "estado" }).then(function (data) {
+      if (typeof data.restantes !== "number") return null;
+      return { restantes: data.restantes, limite: limite, periodo: periodo };
+    }, function () { return null; });
+  }
+
+  // Comprueba una key con Google antes de guardarla.
+  function verificarClave(clave) {
+    clave = String(clave || "").trim();
+    if (!clave) return Promise.reject(new Error("Pega tu API key para continuar."));
+    if (!formatoClave(clave)) return Promise.reject(new Error("Eso no parece una API key. Cópiala completa desde Google AI Studio."));
+    return invocar({ accion: "verificar", clave: clave }).then(function () { return clave; });
   }
 
   // Convierte base64 (sin el prefijo data:) desde un File.
@@ -158,7 +237,7 @@
     if (typeof progress === "function") progress("Leyendo archivo...");
     return fileToBase64(file).then(function (b64) {
       if (typeof progress === "function") progress(mime === "application/pdf" ? "La IA está leyendo el PDF..." : "La IA está leyendo la imagen...");
-      return invocar({ accion: "transcribir", sesion: sesion, archivo: { mime: mime, datos: b64 } });
+      return invocar(conClave({ accion: "transcribir", sesion: sesion, archivo: { mime: mime, datos: b64 } }));
     }).then(function (data) {
       return String(data.texto || "");
     });
@@ -167,7 +246,7 @@
   // Devuelve el texto crudo de la IA; se convierte con parseJson.
   function generarTarjetas(markdown, count, progress, evitar, sesion) {
     if (typeof progress === "function") progress("La IA está creando las tarjetas...");
-    return invocar({ accion: "generar", sesion: sesion, texto: markdown, cantidad: count, evitar: evitar || [] }).then(function (data) {
+    return invocar(conClave({ accion: "generar", sesion: sesion, texto: markdown, cantidad: count, evitar: evitar || [] })).then(function (data) {
       return String(data.texto || "");
     });
   }
@@ -179,7 +258,14 @@
     parseJson: parseJson,
     repararLatexJson: repararLatexJson,
     restantes: function () { return restantes; },
+    limite: function () { return limite; },
     periodo: function () { return periodo; },
-    disponible: function () { return !isDemo(); }
+    disponible: function () { return !isDemo(); },
+    estado: estado,
+    clavePropia: function () { return !!clavePropia(); },
+    verificarClave: verificarClave,
+    guardarClave: guardarClave,
+    quitarClave: quitarClave,
+    formatoClave: formatoClave
   };
 })();

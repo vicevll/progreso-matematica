@@ -2185,3 +2185,136 @@ html.dark-mode .tour-pie .btn.ghost {
     justify-content: center;
   }
 }
+
+/* ---------- Generador: límite diario y API key propia ---------- */
+.gen-cuota {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  width: fit-content;
+  max-width: 100%;
+  margin: -8px 0 16px;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  background: rgba(122, 184, 236, 0.06);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.gen-cuota[hidden] {
+  display: none;
+}
+
+.gen-cuota-txt {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.gen-cuota-txt .ic {
+  flex: none;
+  color: var(--accent);
+}
+
+.gen-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.gen-link:hover,
+.gen-link:focus-visible {
+  color: var(--text);
+}
+
+.gen-clave-pasos {
+  display: grid;
+  gap: 7px;
+  max-width: 600px;
+  margin: 0 0 20px;
+  padding: 14px 18px 14px 38px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.gen-clave-pasos li {
+  padding-left: 2px;
+}
+
+.gen-clave-pasos li::marker {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.gen-clave-pasos a {
+  color: var(--accent);
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+
+.gen-clave-pasos strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.gen-clave .gen-field {
+  max-width: 600px;
+  margin-bottom: 4px;
+}
+
+.gen-clave #gen-clave {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.86rem;
+}
+
+.gen-clave #gen-clave:focus {
+  border-color: rgba(122, 184, 236, 0.5);
+  box-shadow: 0 0 0 3px rgba(122, 184, 236, 0.12);
+  outline: none;
+}
+
+.gen-clave .gen-status {
+  max-width: 600px;
+}
+
+.gen-clave-nota {
+  max-width: 600px;
+  margin: 12px 0 0;
+  color: var(--text-faint);
+  font-size: 0.74rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 560px) {
+  .gen-clave-pasos {
+    padding: 12px 14px 12px 32px;
+    font-size: 0.82rem;
+  }
+
+  #gen-clave-guardar {
+    padding-inline: 14px;
+    white-space: nowrap;
+  }
+
+  #gen-clave-guardar .ic {
+    display: none;
+  }
+}

@@ -10,7 +10,15 @@
   var state = freshState();
 
   function freshState() {
-    return { markdown: "", cards: [], nombre: "", descripcion: "", color: "#2f80ed", status: "", statusError: false, busy: false, count: 10, sesion: nuevaSesion() };
+    return {
+      markdown: "", cards: [], nombre: "", descripcion: "", color: "#2f80ed", status: "", statusError: false, busy: false, count: 10, sesion: nuevaSesion(),
+      // Límite diario y API key propia
+      cuota: null,        // { restantes, limite, periodo } de la key de Studappy
+      usoIA: false,       // este mazo ya usó la IA (ya cuenta en el límite)
+      vistaClave: null,   // { motivo: "cuota" | "invalida" } muestra el panel de API key
+      pendiente: null,    // acción a reintentar después de guardar la key
+      claveOcupado: false
+    };
   }
 
   // Identifica este mazo ante el límite de IA: abrir el generador de nuevo es
@@ -78,6 +86,12 @@
     }
     var regen = overlay.querySelector("#gen-regenerate");
     if (regen) regen.disabled = state.busy;
+    var guardar = overlay.querySelector("#gen-clave-guardar");
+    if (guardar) {
+      guardar.disabled = state.claveOcupado;
+      var texto = guardar.querySelector("span");
+      if (texto) texto.textContent = state.claveOcupado ? "Comprobando…" : "Guardar y continuar";
+    }
     var create = overlay.querySelector("#gen-create");
     if (create) create.disabled = state.busy || state.cards.length < 1;
   }
@@ -92,15 +106,162 @@
     if (!overlay) return;
     var content = overlay.querySelector("#gen-content");
     if (!content) return;
-    content.innerHTML = stepHtml();
-    if (step === 3) renderCards();
+    var conClave = !!state.vistaClave;
+    content.innerHTML = conClave ? claveHtml() : stepHtml();
+    if (step === 3 && !conClave) renderCards();
     var footer = overlay.querySelector("#gen-footer");
-    if (footer) footer.innerHTML = footerHtml();
+    if (footer) footer.innerHTML = conClave ? claveFooterHtml() : footerHtml();
     var progress = overlay.querySelector("#gen-progress");
     if (progress) progress.innerHTML = dots();
     var title = overlay.querySelector("#gen-title");
-    if (title) title.textContent = ["Origen", "Texto", "Tarjetas", "Crear mazo"][step - 1];
+    if (title) title.textContent = conClave ? "Tu API key" : ["Origen", "Texto", "Tarjetas", "Crear mazo"][step - 1];
     focusFirst();
+  }
+
+  // ---------- Límite diario y API key propia ----------
+
+  var CUANDO = { dia: "de hoy", semana: "de esta semana", mes: "de este mes" };
+  var RENUEVAN = { dia: "Mañana se renuevan.", semana: "Se renuevan la próxima semana.", mes: "Se renuevan el próximo mes." };
+
+  function limiteMazos() {
+    return (state.cuota && state.cuota.limite) || (window.IA && window.IA.limite && window.IA.limite()) || 2;
+  }
+
+  function periodoActual() {
+    return (state.cuota && state.cuota.periodo) || (window.IA && window.IA.periodo ? window.IA.periodo() : "dia");
+  }
+
+  function cuotaHtml() {
+    if (!window.IA || !window.IA.disponible || !window.IA.disponible()) return "";
+    if (window.IA.clavePropia && window.IA.clavePropia()) {
+      return '<span class="gen-cuota-txt">' + ic("key", 15) + "Usando tu API key de Gemini</span>" +
+        '<button class="gen-link" id="gen-clave-quitar" type="button">Quitar</button>';
+    }
+    var c = state.cuota;
+    if (!c || typeof c.restantes !== "number" || c.restantes < 1) return "";
+    var hoy = { dia: "hoy", semana: "esta semana", mes: "este mes" }[c.periodo] || "";
+    return '<span class="gen-cuota-txt">' + ic("sparkle", 15) + (c.restantes === 1 ? "Te queda 1" : "Te quedan " + c.restantes) +
+      " de " + (c.limite || limiteMazos()) + " mazos con IA " + hoy + "</span>";
+  }
+
+  function actualizarCuota() {
+    var el = overlay && overlay.querySelector("#gen-cuota");
+    if (!el) return;
+    var html = cuotaHtml();
+    el.innerHTML = html;
+    el.hidden = !html;
+  }
+
+  // Al abrir: si ya no le quedan mazos hoy, pide la key antes de que trabaje.
+  function revisarCuota() {
+    if (!window.IA || !window.IA.estado || !window.IA.disponible()) return;
+    var ov = overlay;
+    window.IA.estado().then(function (est) {
+      if (!est || overlay !== ov) return;
+      state.cuota = est.propia ? null : est;
+      if (!est.propia && est.restantes === 0 && !state.usoIA && !state.busy && !state.vistaClave && step === 1) {
+        mostrarClave("cuota", null);
+        return;
+      }
+      actualizarCuota();
+    });
+  }
+
+  function mostrarClave(motivo, reintentar) {
+    state.vistaClave = { motivo: motivo };
+    state.pendiente = reintentar || null;
+    state.claveOcupado = false;
+    state.status = "";
+    state.statusError = false;
+    render();
+  }
+
+  // Errores que se resuelven con una API key: devuelve true si los manejó.
+  function manejarErrorClave(err, reintentar) {
+    var codigo = err && err.codigo;
+    var propia = window.IA && window.IA.clavePropia && window.IA.clavePropia();
+    if (codigo === "cuota" && !propia) { mostrarClave("cuota", reintentar); return true; }
+    if (codigo === "clave_invalida" && propia) { mostrarClave("invalida", reintentar); return true; }
+    return false;
+  }
+
+  function claveHtml() {
+    var invalida = state.vistaClave && state.vistaClave.motivo === "invalida";
+    var periodo = periodoActual();
+    var titulo = invalida
+      ? "Tu API key no funcionó"
+      : "Ya usaste tus " + limiteMazos() + " mazos con IA " + (CUANDO[periodo] || "disponibles");
+    var texto = invalida
+      ? "Google rechazó la API key que tenías guardada. Revisa que esté bien copiada o crea una nueva y pégala aquí."
+      : (RENUEVAN[periodo] ? RENUEVAN[periodo] + " " : "") +
+        "Si quieres seguir ahora, conecta tu propia API key de Gemini: es gratis y toma un par de minutos.";
+    return (
+      '<div class="gen-step gen-clave">' +
+        '<span class="gen-icon">' + ic("key", 28) + "</span>" +
+        "<h2>" + esc(titulo) + "</h2>" +
+        "<p>" + esc(texto) + "</p>" +
+        '<ol class="gen-clave-pasos">' +
+          '<li>Entra a <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a> con tu cuenta de Google. Si es tu primera vez, acepta los términos.</li>' +
+          "<li>Presiona <strong>Create API key</strong> (Crear clave de API). Si te pide un proyecto, elige el que aparece o crea uno nuevo.</li>" +
+          "<li>Copia la clave completa.</li>" +
+          "<li>Pégala aquí abajo y presiona <strong>Guardar y continuar</strong>.</li>" +
+        "</ol>" +
+        '<label class="gen-field"><span>Tu API key de Gemini</span>' +
+          '<input id="gen-clave" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="200" placeholder="Pega tu API key aquí" />' +
+        "</label>" +
+        statusHtml() +
+        '<p class="gen-clave-nota">Se guarda solo en este navegador, para tu cuenta, y se usa únicamente para generar tus mazos. ' +
+          "Google ofrece un nivel gratuito con límites de uso. Puedes quitarla cuando quieras desde el generador.</p>" +
+      "</div>"
+    );
+  }
+
+  function claveFooterHtml() {
+    return (
+      '<span class="gen-footer-note"></span>' +
+      '<div class="gen-footer-actions">' +
+        '<button class="btn ghost" id="gen-cancel" type="button">Cancelar</button>' +
+        (step > 1 ? '<button class="btn ghost" id="gen-clave-volver" type="button">' + ic("arrowLeft", 16) + " Volver</button>" : "") +
+        '<button class="btn primary" id="gen-clave-guardar" type="button"' + (state.claveOcupado ? " disabled" : "") + ">" +
+          ic("check", 16) + "<span>" + (state.claveOcupado ? "Comprobando…" : "Guardar y continuar") + "</span></button>" +
+      "</div>"
+    );
+  }
+
+  function guardarClave() {
+    if (state.claveOcupado || !overlay) return;
+    var input = overlay.querySelector("#gen-clave");
+    var clave = String((input && input.value) || "").trim();
+    if (!clave) { setStatus("Pega tu API key para continuar.", true); return; }
+    if (!window.IA.formatoClave(clave)) { setStatus("Eso no parece una API key. Cópiala completa desde Google AI Studio.", true); return; }
+    var ov = overlay;
+    state.claveOcupado = true;
+    setStatus("Comprobando tu API key con Google…");
+    syncButtons();
+    window.IA.verificarClave(clave).then(function () {
+      if (overlay !== ov) return;
+      window.IA.guardarClave(clave);
+      var pendiente = state.pendiente;
+      state.pendiente = null;
+      state.vistaClave = null;
+      state.claveOcupado = false;
+      state.status = "";
+      state.statusError = false;
+      render();
+      if (pendiente) pendiente();
+    }).catch(function (err) {
+      if (overlay !== ov) return;
+      state.claveOcupado = false;
+      setStatus(err && err.message ? err.message : String(err), true);
+      syncButtons();
+    });
+  }
+
+  function quitarClave() {
+    window.IA.quitarClave();
+    state.cuota = null;
+    actualizarCuota();
+    revisarCuota();
   }
 
   function stepHtml() {
@@ -119,6 +280,7 @@
         (window.IA && window.IA.disponible && !window.IA.disponible()
           ? '<div class="gen-status error" role="status">En modo prueba el generador no puede usar la IA. Entra con Google para probarlo.</div>'
           : "") +
+        '<div class="gen-cuota" id="gen-cuota"' + (cuotaHtml() ? "" : " hidden") + ">" + cuotaHtml() + "</div>" +
         '<div class="gen-tabs"><button class="gen-tab active" data-tab="file" type="button">Subir archivo</button><button class="gen-tab" data-tab="text" type="button">Pegar texto</button></div>' +
         '<div id="gen-tab-file" class="gen-tab-panel active">' +
           '<label class="gen-drop" id="gen-drop" for="gen-file-input">' +
@@ -244,13 +406,17 @@
     state = freshState();
     render();
     attachEvents();
+    revisarCuota();
   }
 
   function attachEvents() {
     overlay.addEventListener("click", handleClick);
     overlay.addEventListener("input", handleInput);
     overlay.addEventListener("change", handleChange);
-    overlay.addEventListener("keydown", function (e) { if (e.key === "Escape") askAbandon(close); });
+    overlay.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") askAbandon(close);
+      if (e.key === "Enter" && e.target && e.target.id === "gen-clave") { e.preventDefault(); guardarClave(); }
+    });
 
     // Delegado en el overlay: la zona se redibuja al volver al paso 1.
     overlay.addEventListener("dragover", function (e) {
@@ -292,6 +458,14 @@
         step = Math.max(1, step - 1);
         render();
       });
+      return;
+    }
+    if (e.target.closest("#gen-clave-guardar")) { guardarClave(); return; }
+    if (e.target.closest("#gen-clave-quitar")) { quitarClave(); return; }
+    if (e.target.closest("#gen-clave-volver")) {
+      state.vistaClave = null;
+      state.pendiente = null;
+      render();
       return;
     }
     var next = e.target.closest("#gen-next");
@@ -366,6 +540,7 @@
       if (token === requestId) fileStatus(msg);
     }, state.sesion).then(function (text) {
       if (token !== requestId || !overlay) return;
+      state.usoIA = true;
       state.markdown = text;
       fileStatus("Listo · " + text.length + " caracteres");
       syncButtons();
@@ -374,6 +549,7 @@
       }, 400);
     }).catch(function (err) {
       if (token !== requestId || !overlay) return;
+      if (manejarErrorClave(err, function () { handleFile(file); })) return;
       fileStatus("Error: " + (err.message || err), true);
       syncButtons();
     });
@@ -408,6 +584,7 @@
   // Lanza una generación y gestiona el estado "ocupado", los mensajes y los
   // errores. onCards recibe las tarjetas solo si la respuesta sigue vigente.
   function listoMensaje(n) {
+    if (window.IA && window.IA.clavePropia && window.IA.clavePropia()) return "Listo · " + n + " tarjetas · con tu API key";
     var quedan = window.IA && window.IA.restantes ? window.IA.restantes() : null;
     if (typeof quedan !== "number") return "Listo · " + n + " tarjetas";
     var cuando = { dia: " hoy", semana: " esta semana", mes: " este mes" }[window.IA.periodo ? window.IA.periodo() : "dia"] || "";
@@ -424,6 +601,7 @@
       if (token === requestId) setStatus(msg);
     }, evitar, state.sesion).then(function (raw) {
       if (token !== requestId || !overlay) return;
+      state.usoIA = true;
       var cards = toCards(raw);
       state.busy = false;
       state.cards = cards;
@@ -433,6 +611,7 @@
     }).catch(function (err) {
       if (token !== requestId || !overlay) return;
       state.busy = false;
+      if (manejarErrorClave(err, function () { requestCards(count, startMessage, onCards, evitar); })) return;
       setStatus("Error: " + (err && err.message ? err.message : err), true);
       syncButtons();
     });
@@ -489,7 +668,15 @@
     setTimeout(function () {
       if (!overlay) return;
       var input = overlay.querySelector("input, textarea");
-      if (input) input.focus();
+      if (!input) return;
+      if (state.vistaClave) {
+        // En el panel de la key primero hay que leer los pasos: en el celular no
+        // se abre el teclado ni se baja la vista hasta el campo.
+        var chico = window.matchMedia && window.matchMedia("(max-width: 640px)").matches;
+        if (!chico) input.focus({ preventScroll: true });
+        return;
+      }
+      input.focus();
     }, 60);
   }
 

@@ -4,6 +4,10 @@
 // descuenta su límite de mazos con IA (supabase/ia.sql) y llama a Gemini con
 // la key del proyecto, que nunca llega al navegador.
 //
+// Quien ya usó sus mazos del día puede guardar su propia API key de Gemini
+// (queda en su navegador). Si el pedido trae "clave", se usa esa key y no se
+// descuenta nada del límite. La key del usuario no se guarda ni se registra.
+//
 // Secretos (Supabase -> Edge Functions -> Secrets):
 //   GEMINI_API_KEY        obligatorio, tu key de Google AI Studio
 //   GEMINI_MODELO_TEXTO   opcional, modelo para generar tarjetas
@@ -11,9 +15,12 @@
 // SUPABASE_URL, SUPABASE_ANON_KEY y SUPABASE_SERVICE_ROLE_KEY los pone Supabase.
 //
 // Pedidos (POST JSON). "sesion" identifica el mazo que se está generando:
-//   { accion: "transcribir", sesion, archivo: { mime, datos } }   datos en base64
-//   { accion: "generar", sesion, texto, cantidad, evitar? }
-// Respuesta: { texto, restantes, periodo }  o  { error, codigo } con status 4xx/5xx.
+//   { accion: "transcribir", sesion, archivo: { mime, datos }, clave? }   datos en base64
+//   { accion: "generar", sesion, texto, cantidad, evitar?, clave? }
+//   { accion: "estado" }              cuántos mazos le quedan hoy (no gasta)
+//   { accion: "verificar", clave }    comprueba una API key con Google (no gasta)
+// Respuesta: { texto, restantes, limite, periodo } (o { texto, propia: true } con
+// key propia), o { error, codigo } con status 4xx/5xx.
 
 const GEMINI_KEY = Deno.env.get("GEMINI_API_KEY") ?? "";
 // Por defecto, la familia Flash-Lite (la más barata). Si quieres más calidad
@@ -31,6 +38,7 @@ const MAX_ARCHIVO_BYTES = MAX_ARCHIVO_MB * 1024 * 1024;
 const MAX_TEXTO = 40000;
 const MAX_TARJETAS = 20; // máximo de tarjetas por mazo generado con IA
 const TIPOS_ARCHIVO = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
+const FORMATO_CLAVE = /^[A-Za-z0-9._-]{20,200}$/;
 
 const CORS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -72,6 +80,8 @@ const ESQUEMA_TARJETAS = {
     required: ["q", "a"],
   },
 };
+
+type Cuota = { restantes?: number; limite?: number; periodo?: string };
 
 class ErrorUsuario extends Error {
   status: number;
@@ -120,7 +130,7 @@ async function rpc(nombre: string, args: Record<string, unknown>): Promise<unkno
     let detalle: { message?: string; hint?: string } = {};
     try { detalle = JSON.parse(texto); } catch { /* texto plano */ }
     if (detalle.hint === "cuota_agotada") {
-      throw new ErrorUsuario(429, detalle.message || "Llegaste al límite de mazos con IA.", "cuota");
+      throw new ErrorUsuario(429, detalle.message || "Ya usaste tus mazos con IA de hoy.", "cuota");
     }
     if (detalle.hint === "cuota_mazo") {
       throw new ErrorUsuario(429, detalle.message || "Este mazo ya usó todas sus llamadas a la IA.", "cuota_mazo");
@@ -134,12 +144,24 @@ async function rpc(nombre: string, args: Record<string, unknown>): Promise<unkno
   return texto ? JSON.parse(texto) : null;
 }
 
-async function gemini(modelo: string, partes: unknown[], config: Record<string, unknown>): Promise<string> {
+// Errores de Google cuando la key es del usuario: se los explicamos a él.
+function errorClavePropia(status: number, texto: string): ErrorUsuario | null {
+  if (status === 429) {
+    return new ErrorUsuario(429, "Tu API key llegó a su límite de uso en Google. Espera un minuto (o hasta mañana) e intenta de nuevo.", "clave_cuota");
+  }
+  if (status === 400 && !/API_KEY_INVALID|API key not valid|API key expired/i.test(texto)) return null;
+  if (status === 400 || status === 401 || status === 403) {
+    return new ErrorUsuario(400, "Google rechazó tu API key. Revisa que esté bien copiada o crea una nueva en Google AI Studio.", "clave_invalida");
+  }
+  return null;
+}
+
+async function gemini(modelo: string, partes: unknown[], config: Record<string, unknown>, clavePropia = ""): Promise<string> {
   let res: Response;
   try {
     res = await fetch(`${GEMINI_BASE}/models/${encodeURIComponent(modelo)}:generateContent`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "x-goog-api-key": GEMINI_KEY },
+      headers: { "Content-Type": "application/json", "x-goog-api-key": clavePropia || GEMINI_KEY },
       body: JSON.stringify({ contents: [{ role: "user", parts: partes }], generationConfig: config }),
     });
   } catch (e) {
@@ -148,7 +170,11 @@ async function gemini(modelo: string, partes: unknown[], config: Record<string, 
   }
   if (!res.ok) {
     const texto = await res.text();
-    console.error("Gemini", modelo, res.status, texto.slice(0, 800));
+    console.error("Gemini", modelo, res.status, clavePropia ? "(key del usuario)" : "", texto.slice(0, 800));
+    if (clavePropia) {
+      const e = errorClavePropia(res.status, texto);
+      if (e) throw e;
+    }
     if (res.status === 429) {
       throw new ErrorUsuario(503, "La IA tiene mucha demanda ahora. Intenta de nuevo en un minuto.", "ia_ocupada");
     }
@@ -173,8 +199,41 @@ async function gemini(modelo: string, partes: unknown[], config: Record<string, 
   return texto;
 }
 
+// Comprueba una key con Google listando modelos (no genera nada ni tiene costo).
+async function verificarClave(clave: string): Promise<void> {
+  let res: Response;
+  try {
+    res = await fetch(`${GEMINI_BASE}/models?pageSize=1`, { headers: { "x-goog-api-key": clave } });
+  } catch (e) {
+    console.error("Gemini sin conexión (verificar)", e);
+    throw new ErrorUsuario(502, "No se pudo comprobar la key con Google. Intenta de nuevo.", "ia_conexion");
+  }
+  if (res.ok) return;
+  const texto = await res.text();
+  if (res.status === 429) return; // la key existe; solo está ocupada
+  const e = errorClavePropia(res.status, texto);
+  if (e) throw e;
+  console.error("Gemini (verificar)", res.status, texto.slice(0, 400));
+  throw new ErrorUsuario(502, "No se pudo comprobar la key con Google. Intenta de nuevo.", "ia_error");
+}
+
+function claveDe(body: any, obligatoria: boolean): string {
+  const clave = typeof body.clave === "string" ? body.clave.trim() : "";
+  if (!clave) {
+    if (obligatoria) throw new ErrorUsuario(400, "Pega tu API key para continuar.", "clave_invalida");
+    return "";
+  }
+  if (!FORMATO_CLAVE.test(clave)) {
+    throw new ErrorUsuario(400, "Eso no parece una API key. Cópiala completa desde Google AI Studio.", "clave_invalida");
+  }
+  return clave;
+}
+
 function validar(body: any) {
   if (!body || typeof body !== "object") throw new ErrorUsuario(400, "Pedido inválido.", "pedido");
+  if (body.accion === "estado") return { accion: "estado" as const };
+  if (body.accion === "verificar") return { accion: "verificar" as const, clave: claveDe(body, true) };
+  const clave = claveDe(body, false);
   const sesion = String(body.sesion ?? "");
   if (!/^[A-Za-z0-9_-]{8,64}$/.test(sesion)) {
     throw new ErrorUsuario(400, "Recarga la página e intenta de nuevo (falta la sesión del generador).", "pedido");
@@ -190,7 +249,7 @@ function validar(body: any) {
     if (datos.length > Math.ceil(MAX_ARCHIVO_BYTES / 3) * 4 + 16) {
       throw new ErrorUsuario(413, `El archivo supera los ${MAX_ARCHIVO_MB} MB.`, "tamano");
     }
-    return { accion: "transcribir" as const, sesion, mime, datos };
+    return { accion: "transcribir" as const, sesion, clave, mime, datos };
   }
   if (body.accion === "generar") {
     const texto = String(body.texto ?? "").trim();
@@ -202,7 +261,7 @@ function validar(body: any) {
     const evitar = Array.isArray(body.evitar)
       ? body.evitar.map((q: unknown) => String(q ?? "").slice(0, 300)).filter(Boolean).slice(0, 60)
       : [];
-    return { accion: "generar" as const, sesion, texto, cantidad, evitar };
+    return { accion: "generar" as const, sesion, clave, texto, cantidad, evitar };
   }
   throw new ErrorUsuario(400, "Acción desconocida.", "pedido");
 }
@@ -216,13 +275,28 @@ Deno.serve(async (req: Request) => {
   let consumido = false;
   let devolver = false;
   try {
-    if (!GEMINI_KEY) throw new ErrorUsuario(500, "Falta configurar GEMINI_API_KEY en los secretos de Supabase.", "config");
     userId = await usuarioDe(req);
     const pedido = validar(await req.json().catch(() => null));
-    sesion = pedido.sesion;
 
-    const cuota = (await rpc("ia_consumir", { p_user: userId, p_sesion: sesion })) as { restantes?: number; periodo?: string } | null;
-    consumido = true;
+    if (pedido.accion === "estado") {
+      const est = (await rpc("ia_estado", { p_user: userId })) as Cuota | null;
+      return responder(200, { restantes: Number(est?.restantes ?? 0), limite: Number(est?.limite ?? 0), periodo: est?.periodo ?? "dia" });
+    }
+    if (pedido.accion === "verificar") {
+      await verificarClave(pedido.clave);
+      return responder(200, { ok: true });
+    }
+
+    sesion = pedido.sesion;
+    const propia = pedido.clave;
+    if (!propia && !GEMINI_KEY) throw new ErrorUsuario(500, "Falta configurar GEMINI_API_KEY en los secretos de Supabase.", "config");
+
+    // Con la key del usuario no se descuenta nada: el costo es de su cuenta de Google.
+    let cuota: Cuota | null = null;
+    if (!propia) {
+      cuota = (await rpc("ia_consumir", { p_user: userId, p_sesion: sesion })) as Cuota | null;
+      consumido = true;
+    }
 
     let texto: string;
     try {
@@ -231,6 +305,7 @@ Deno.serve(async (req: Request) => {
           MODELO_VISION,
           [{ text: PROMPT_TRANSCRIBIR }, { inline_data: { mime_type: pedido.mime, data: pedido.datos } }],
           { temperature: 0.2, maxOutputTokens: 8192 },
+          propia,
         );
       } else {
         texto = await gemini(
@@ -242,6 +317,7 @@ Deno.serve(async (req: Request) => {
             responseMimeType: "application/json",
             responseSchema: ESQUEMA_TARJETAS,
           },
+          propia,
         );
       }
     } catch (e) {
@@ -261,7 +337,13 @@ Deno.serve(async (req: Request) => {
         if (Array.isArray(tarjetas)) texto = JSON.stringify(tarjetas.slice(0, pedido.cantidad));
       } catch { /* formato inesperado: el navegador lo repara y también recorta */ }
     }
-    return responder(200, { texto, restantes: Number(cuota?.restantes ?? 0), periodo: cuota?.periodo ?? "dia" });
+    if (propia) return responder(200, { texto, propia: true });
+    return responder(200, {
+      texto,
+      restantes: Number(cuota?.restantes ?? 0),
+      limite: Number(cuota?.limite ?? 0),
+      periodo: cuota?.periodo ?? "dia",
+    });
   } catch (e) {
     if (consumido && devolver) {
       try { await rpc("ia_devolver", { p_user: userId, p_sesion: sesion }); } catch (e2) { console.error("No se pudo devolver el uso", e2); }
