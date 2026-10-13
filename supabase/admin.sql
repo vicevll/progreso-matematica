@@ -271,6 +271,24 @@ $$;
 -- Lecturas del panel (solo admins)
 -- ---------------------------------------------------------------------------
 
+-- Tarjetas que existen hoy en cada mazo. El avance solo se cuenta sobre
+-- ellas: lo de tarjetas borradas o reemplazadas no suma.
+create or replace function public.admin_tarjetas()
+returns table (user_id uuid, mazo_id text, card_id text)
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select m.user_id, m.id, c ->> 'id'
+  from public.mazos_propios m
+  cross join lateral jsonb_array_elements(m.cards) c
+  union all
+  select d.user_id, d.id::text, k.card_key
+  from public.user_decks d
+  join public.user_deck_cards k on k.deck_id = d.id;
+$$;
+
 -- Resumen general del período.
 create or replace function public.admin_resumen(
   p_desde date default null,
@@ -398,6 +416,7 @@ begin
       join u on u.id = p.user_id
       cross join lateral jsonb_each(p.datos) m
       cross join lateral jsonb_each(case when jsonb_typeof(m.value) = 'object' then m.value else '{}'::jsonb end) c
+      join public.admin_tarjetas() t on t.user_id = p.user_id and t.mazo_id = m.key and t.card_id = c.key
     ),
     pulso as (
       select
@@ -512,12 +531,7 @@ begin
       from public.user_decks d left join public.user_deck_cards c on c.deck_id = d.id
       group by d.user_id
     ),
-    -- El avance solo cuenta en mazos que todavía existen.
-    mazo_ids as (
-      select user_id, id from public.mazos_propios
-      union all
-      select user_id, id::text from public.user_decks
-    ),
+    -- El avance solo cuenta en tarjetas que todavía existen.
     prog as (
       select p.user_id,
              count(*) filter (where c.value = '1'::jsonb) as dominadas,
@@ -525,8 +539,8 @@ begin
              count(*) filter (where c.value = '"p"'::jsonb) as pendientes
       from public.progreso_usuario p
       cross join lateral jsonb_each(p.datos) m
-      join mazo_ids mi on mi.user_id = p.user_id and mi.id = m.key
       cross join lateral jsonb_each(case when jsonb_typeof(m.value) = 'object' then m.value else '{}'::jsonb end) c
+      join public.admin_tarjetas() t on t.user_id = p.user_id and t.mazo_id = m.key and t.card_id = c.key
       group by p.user_id
     ),
     gen as (select user_id, count(*) as n from public.ia_sesiones where llamadas > 0 group by user_id)
@@ -606,15 +620,23 @@ begin
              (select count(*) from public.user_deck_cards c where c.deck_id = d.id)::int, d.acquired_at
       from public.user_decks d where d.user_id = p_user
     ),
+    tarjetas as (select t.mazo_id, t.card_id from public.admin_tarjetas() t where t.user_id = p_user),
+    estados as (
+      select m.key as mazo_id, c.value as estado
+      from datos
+      cross join lateral jsonb_each(datos.d) m
+      cross join lateral jsonb_each(case when jsonb_typeof(m.value) = 'object' then m.value else '{}'::jsonb end) c
+      join tarjetas t on t.mazo_id = m.key and t.card_id = c.key
+    ),
     mazos_det as (
       select m.*,
-        (select count(*) from jsonb_each(case when jsonb_typeof(datos.d -> m.id) = 'object' then datos.d -> m.id else '{}'::jsonb end) c where c.value = '1'::jsonb) as dominadas,
-        (select count(*) from jsonb_each(case when jsonb_typeof(datos.d -> m.id) = 'object' then datos.d -> m.id else '{}'::jsonb end) c where c.value = '"n"'::jsonb) as no_sabe,
-        (select count(*) from jsonb_each(case when jsonb_typeof(datos.d -> m.id) = 'object' then datos.d -> m.id else '{}'::jsonb end) c where c.value = '"p"'::jsonb) as pendientes,
+        (select count(*) from estados e where e.mazo_id = m.id and e.estado = '1'::jsonb) as dominadas,
+        (select count(*) from estados e where e.mazo_id = m.id and e.estado = '"n"'::jsonb) as no_sabe,
+        (select count(*) from estados e where e.mazo_id = m.id and e.estado = '"p"'::jsonb) as pendientes,
         (select count(*) from est_todo e where e.mazo_id = m.id) as sesiones,
         (select coalesce(sum(e.respondidas), 0) from est_todo e where e.mazo_id = m.id) as respuestas,
         (select max(e.fin) from est_todo e where e.mazo_id = m.id) as ultimo_estudio
-      from mazos m cross join datos
+      from mazos m
     ),
     dias as (select generate_series(r.desde, r.hasta, interval '1 day')::date as dia),
     serie as (
@@ -685,6 +707,7 @@ revoke all on function public.es_admin() from public, anon;
 revoke all on function public.admin_ids() from public, anon, authenticated;
 revoke all on function public.admin_exigir() from public, anon, authenticated;
 revoke all on function public.admin_rango(date, date) from public, anon, authenticated;
+revoke all on function public.admin_tarjetas() from public, anon, authenticated;
 revoke all on function public.registrar_visita(text, integer, jsonb, integer, text) from public, anon;
 revoke all on function public.registrar_estudio(text, text, text, text, text, text, text, integer, integer, integer, integer, integer, integer, boolean) from public, anon;
 revoke all on function public.admin_resumen(date, date, boolean) from public, anon;

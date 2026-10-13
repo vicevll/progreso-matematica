@@ -119,7 +119,7 @@
 
   function contenido() {
     var entry = entradaCatalogo() || {};
-    var total = entry.cards ? entry.cards.length : 54;
+    var total = entry.cards ? entry.cards.length : 60;
     var arte = window.MagoArte;
     switch (paso) {
       case 0:

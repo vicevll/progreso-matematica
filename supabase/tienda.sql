@@ -31,7 +31,7 @@ insert into public.store_catalog (catalog_id, title, description, color, is_free
 values (
   'paes-ciencias-mago',
   'Mazo del mago',
-  '54 tarjetas de conocimiento sobre estructura atómica, en 6 submazos que puedes jugar por separado.',
+  '60 tarjetas de conocimiento sobre estructura atómica, en 6 submazos que puedes jugar por separado.',
   '#7b5cff',
   true,
   true
