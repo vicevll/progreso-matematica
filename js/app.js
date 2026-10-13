@@ -932,6 +932,14 @@
     session = { deckId: deck.id, seccion: sec ? sec.id : null, filtro: filtro, order: order, pos: 0, flipped: false, prepared: false, shuffle: true };
   }
 
+  // Avisa a js/analitica.js (si está cargado) de lo que pasa en el estudio.
+  function avisarEstudio(fase, extra) {
+    if (!session) return;
+    var detalle = { fase: fase, deckId: session.deckId, seccion: session.seccion || null, filtro: session.filtro, total: session.order.length };
+    if (extra) Object.keys(extra).forEach(function (k) { detalle[k] = extra[k]; });
+    try { window.dispatchEvent(new CustomEvent("studappy:estudio", { detail: detalle })); } catch (e) { /* navegador antiguo */ }
+  }
+
   var ETIQUETA_ESTADO = { sabe: "la sabes", no: "no la sabías", pendiente: "pendiente" };
 
   function findCard(deck, cardId) {
@@ -1009,6 +1017,7 @@
   }
 
   function renderSummary(deck, stats) {
+    avisarEstudio("fin");
     var alcance = alcanceSesion(deck);
     var allDone = stats.total > 0 && stats.done === stats.total;
     var detalle = "Sabes <strong>" + stats.done + " de " + stats.total + "</strong> tarjetas de <strong>" + esc(alcance.titulo) + "</strong>" +
@@ -1084,6 +1093,7 @@
     if (!deck) return;
     var cardId = session.order[session.pos];
     window.DeckStore.setStatus(deck.id, cardId, tipo);
+    avisarEstudio("respuesta", { tipo: tipo });
     if (tipo === "no") session.order.push(cardId);
     session.pos++;
     session.flipped = false;
@@ -1152,6 +1162,7 @@
       session.shuffle = !shuffleChoice || shuffleChoice.checked;
       if (session.shuffle) session.order = shuffle(session.order);
       session.prepared = true;
+      avisarEstudio("inicio");
       renderStudy();
       return;
     }
