@@ -305,7 +305,25 @@
     return authReady && !!(window.Auth && window.Auth.isSignedIn && window.Auth.isSignedIn());
   }
 
+  // Redibujos de fondo (sincronización, mazos de la tienda): lo que ya se
+  // veía aparece de inmediato, sin repetir el fundido de entrada.
+  var sinEntrada = false;
+  function enSilencio(fn) {
+    sinEntrada = true;
+    try { fn(); } finally { sinEntrada = false; }
+  }
+
   function setupReveal() {
+    if (sinEntrada) {
+      var quietos = document.querySelectorAll(".reveal:not(.is-visible)");
+      Array.prototype.forEach.call(quietos, function (el) { el.classList.add("sin-entrada", "is-visible"); });
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          Array.prototype.forEach.call(quietos, function (el) { el.classList.remove("sin-entrada"); });
+        });
+      });
+      return;
+    }
     if (reduceMotion || typeof window.IntersectionObserver !== "function") {
       Array.prototype.forEach.call(document.querySelectorAll(".reveal"), function (el) {
         el.classList.add("is-visible");
@@ -1293,7 +1311,13 @@
     enterRoute();
   });
   if (window.Auth && window.Auth.onChange) {
+    var cuentaVista;
     window.Auth.onChange(function () {
+      // Solo se redibuja si cambió la cuenta (entrar, salir, modo prueba).
+      var u = window.Auth.user ? window.Auth.user() : null;
+      var cuenta = u ? String(u.id) : "";
+      if (authReady && cuenta === cuentaVista) return;
+      cuentaVista = cuenta;
       authReady = true;
       route();
     });
@@ -1318,22 +1342,33 @@
     var search = document.getElementById("deck-search");
     var term = search ? search.value : "";
     var hadFocus = search && document.activeElement === search;
-    renderHome();
-    var again = document.getElementById("deck-search");
-    if (again && term) {
-      again.value = term;
-      renderGrid(term);
-    }
-    if (again && hadFocus) again.focus();
+    enSilencio(function () {
+      renderHome();
+      var again = document.getElementById("deck-search");
+      if (again && term) {
+        again.value = term;
+        renderGrid(term);
+      }
+      if (again && hadFocus) again.focus();
+    });
   }
   window.addEventListener("studappy:mazos-sincronizados", refreshHomeFromSync);
-  window.addEventListener("studappy:mazos-cargando", refreshHomeFromSync);
+  // "Cargando tus mazos…" solo se ve cuando todavía no hay ninguno: si ya hay
+  // mazos en pantalla, empezar o terminar de cargar no cambia nada.
+  window.addEventListener("studappy:mazos-cargando", function () {
+    if (!window.DeckStore.all().length || document.querySelector("#app .empty-state")) refreshHomeFromSync();
+  });
 
   window.addEventListener("studappy:cloud-decks-changed", function () {
     if (!isSignedIn()) return;
     if (retryDeckRoute()) return;
     var hash = location.hash.replace(/^#\/?/, "").split("/")[0];
-    if (!hash || hash === "tienda") route();
+    if (!hash) refreshHomeFromSync();
+    else if (hash === "tienda") {
+      var y = window.scrollY;
+      enSilencio(route);
+      window.scrollTo(0, y);
+    }
   });
   setupParallax();
   route();

@@ -12,6 +12,7 @@
   var error = null;
   var cargando = null;
   var ultimaCarga = 0;
+  var firmaEstado = "";
   var sinServidor = null; // id del usuario para el que falta supabase/misiones.sql: no se insiste hasta recargar
   var usuarioCargado = null;
   var reclamando = {};
@@ -132,7 +133,28 @@
 
   // ---------- estado ----------
 
-  function cargar(forzar) {
+  // Firma del estado sin la hora del servidor: si no cambió, un refresco de
+  // fondo no vuelve a dibujar nada (así no se reinician las animaciones).
+  function firmaDe(d) {
+    try { return JSON.stringify(Object.assign({}, d, { ahora: null })); } catch (e) { return String(Math.random()); }
+  }
+
+  // Último estado guardado en este navegador: al recargar, el contador y las
+  // misiones se dibujan de inmediato (sin aparecer tarde y empujar la página).
+  function leerCache(uid) {
+    try {
+      var c = JSON.parse(localStorage.getItem("studappy-eco:" + uid) || "null");
+      return c && c.misiones && c.items ? c : null;
+    } catch (e) { return null; }
+  }
+  function guardarCache(uid, d) {
+    try { localStorage.setItem("studappy-eco:" + uid, JSON.stringify(d)); } catch (e) { /* sin espacio o sin almacenamiento */ }
+  }
+  var desdeCache = false;
+
+  // silencioso = refresco de fondo (volver a la pestaña, otra pestaña, avisos):
+  // solo redibuja si algo cambió.
+  function cargar(forzar, silencioso) {
     var uid = usuario();
     if (!uid || !window.SB || !window.SB.client) {
       estado = null;
@@ -142,23 +164,35 @@
       return Promise.resolve(null);
     }
     if (uid !== usuarioCargado) {
-      estado = null;
       usuarioCargado = uid;
+      estado = leerCache(uid);
+      firmaEstado = estado ? firmaDe(estado) : "";
+      desdeCache = !!estado;
+      if (estado) {
+        if (!probando && window.StudappyTema) window.StudappyTema.aplicar(estado.tema);
+        pintar();
+      }
     }
     if (sinServidor === uid) return Promise.resolve(null);
     if (cargando && !forzar) return cargando;
     var pedido = rpc("economia_estado").then(function (data) {
       if (usuario() !== uid) return null;
+      var firma = firmaDe(data);
+      var igual = (silencioso || desdeCache) && estado && !error && firma === firmaEstado;
+      desdeCache = false;
       estado = data;
       error = null;
+      firmaEstado = firma;
+      guardarCache(uid, data);
       ultimaCarga = Date.now();
       if (!probando && window.StudappyTema) window.StudappyTema.aplicar(estado.tema);
-      pintar();
+      if (!igual) pintar();
       return estado;
     }, function (e) {
       if (usuario() !== uid) return null;
       error = e;
-      if (falta(e)) sinServidor = uid;
+      desdeCache = false;
+      if (falta(e)) { sinServidor = uid; estado = null; }
       else if (window.console) console.error("Misiones:", e);
       pintar();
       return null;
@@ -174,7 +208,7 @@
   function refrescarPronto(ms) {
     if (!disponible()) return;
     clearTimeout(refrescoPendiente);
-    refrescoPendiente = setTimeout(function () { cargar(true); }, ms || 1200);
+    refrescoPendiente = setTimeout(function () { cargar(true, true); }, ms || 1200);
   }
 
   // ---------- barra superior y resumen ----------
@@ -348,7 +382,7 @@
         bloqueHtml("diaria", "Misiones diarias", "reloj", estado.dia.termina) +
         bloqueHtml("semanal", "Misiones semanales", "trofeo", estado.semana.termina) +
         movimientosHtml();
-      if (!desdeEstado && Date.now() - ultimaCarga > 15000) cargar(true);
+      if (!desdeEstado && Date.now() - ultimaCarga > 15000) cargar(true, true);
     }
     container.innerHTML = migas + '<div class="eco-pantalla" data-pantalla="misiones">' + heroHtml() + cuerpo + "</div>";
   }
@@ -632,7 +666,7 @@
   window.addEventListener("storage", function (e) {
     if (e.key !== "studappy-eco-cambio") return;
     sinServidor = null;
-    if (disponible()) cargar(true);
+    if (disponible()) cargar(true, true);
   });
   // Los contadores de "se renuevan en..." y el cambio de día.
   setInterval(function () {

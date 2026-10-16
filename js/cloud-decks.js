@@ -22,6 +22,13 @@
     return result ? result.data : null;
   }
 
+  var ultimaFirma = null;   // mazos de la tienda del último aviso
+  var firmaDeCuenta = null; // cuenta a la que corresponde ultimaFirma
+
+  function firmaTienda(uid, lista) {
+    return uid + ":" + JSON.stringify(lista.map(function (d) { return [d.id, d.catalogId, d.cards.length]; }));
+  }
+
   function emit() {
     listeners.forEach(function (callback) {
       try { callback(); } catch (e) { /* ignorar */ }
@@ -98,6 +105,8 @@
       syncVersion++;
       syncing = false;
       activeSync = null;
+      ultimaFirma = null;
+      firmaDeCuenta = null;
       window.DeckStore.replaceStoreDecks([]);
       emit();
       return Promise.resolve([]);
@@ -108,6 +117,12 @@
       syncVersion++;
       syncing = false;
       activeSync = null;
+    }
+    // Al recargar, los mazos de la tienda ya están guardados en el navegador y
+    // se dibujaron así: si la cuenta trae los mismos, no hay nada que avisar.
+    if (firmaDeCuenta !== currentUser.id) {
+      firmaDeCuenta = currentUser.id;
+      ultimaFirma = firmaTienda(currentUser.id, window.DeckStore.all().filter(function (d) { return d.origen === "tienda"; }));
     }
     var version = ++syncVersion;
     syncing = true;
@@ -142,7 +157,13 @@
         return decks;
       })
       .then(function (decks) {
-        if (version === syncVersion) emit();
+        // Solo avisa si cambió algo: si no, cada sincronización (por ejemplo,
+        // al volver a la pestaña) redibujaba la pantalla entera.
+        var firma = firmaTienda(currentUser.id, decks);
+        if (version === syncVersion && firma !== ultimaFirma) {
+          ultimaFirma = firma;
+          emit();
+        }
         return decks;
       })
       .catch(function (error) {

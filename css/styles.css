@@ -1892,6 +1892,11 @@ html.dark-mode .bento-icon.blue {
   transform: none;
 }
 
+/* Redibujo de fondo: aparece ya visible, sin fundido. */
+.reveal.sin-entrada {
+  transition: none !important;
+}
+
 @keyframes fade {
   from { opacity: 0; }
   to { opacity: 1; }

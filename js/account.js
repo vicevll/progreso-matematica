@@ -73,9 +73,25 @@
     });
   }
 
+  function firmaPerfil(s) {
+    var u = s && s.user;
+    var meta = (u && u.user_metadata) || {};
+    return u ? [u.id, u.email, meta.full_name, meta.name, meta.avatar_url, meta.picture].join("|") : "";
+  }
+
   function setSession(next) {
     // Una sesión real de Google siempre tiene prioridad sobre el modo prueba.
     if (!next && demoWanted()) next = DEMO_SESSION;
+    // Supabase vuelve a anunciar la misma sesión al volver a la pestaña y al
+    // renovar el token. No es un cambio de cuenta: se guarda la sesión nueva
+    // sin avisar a los demás módulos (si no, se redibuja toda la pantalla).
+    if (ready && session && next && session.user && next.user &&
+        session.user.id === next.user.id && !!session.demo === !!next.demo) {
+      var antes = firmaPerfil(session);
+      session = next;
+      if (firmaPerfil(next) !== antes) render();
+      return;
+    }
     session = next;
     // Antes de avisar a los demás módulos, el almacén pasa a los mazos de
     // esta cuenta (o a ninguno si no hay sesión).
