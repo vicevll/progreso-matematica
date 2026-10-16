@@ -175,13 +175,13 @@
     var pct = stats.total ? Math.round((stats.done / stats.total) * 100) : 0;
     var entry = catalogoDe(deck) || {};
     var subs = submazosDe(deck) || [];
+    // Submazos compactos, lado a lado (el nombre completo va en el título).
     var chips = subs.map(function (sub) {
       var st = deckStats(deck, sub.cards);
       var lleno = st.total && st.done === st.total;
-      return '<a class="mago-chip aq-chip' + (lleno ? " completo" : "") + '" href="#/mazo/' + deck.id + "/" + esc(sub.id) + '" title="Jugar ' + esc(sub.title) + '">' +
-        iconoQuimica(sub.icon, 32) +
-        '<span class="mago-chip-txt"><span class="mago-chip-num">Submazo ' + sub.num + "</span><strong>" + esc(sub.title) + "</strong></span>" +
-        '<span class="mago-chip-pct">' + st.done + "/" + st.total + "</span>" +
+      return '<a class="aq-sub' + (lleno ? " completo" : "") + '" href="#/mazo/' + deck.id + "/" + esc(sub.id) + '" title="Jugar ' + esc(sub.title) + '">' +
+        iconoQuimica(sub.icon, 26) +
+        '<span class="aq-sub-txt"><span class="aq-sub-num">Submazo ' + sub.num + "</span><strong>" + st.done + "/" + st.total + "</strong></span>" +
       "</a>";
     }).join("");
     var nivel = nivelAurora(entry);
@@ -191,15 +191,14 @@
           escenaAuroraHtml() + AQ_IMG +
           (nivel ? '<span class="aq-nivel">' + esc(nivel) + "</span>" : "") +
           '<div class="deck-menu aq-menu">' +
-            '<span class="deck-owned-badge">' + ic("check", { size: 14 }) + "Adquirido</span>" +
+            '<span class="deck-owned-badge aq-adquirido" title="Adquirido">' + ic("check", { size: 14 }) + '<span class="aq-oculto">Adquirido</span></span>' +
             '<button class="icon-btn danger" type="button" data-remove-store="' + deck.id + '" title="Eliminar de mi biblioteca" aria-label="Eliminar de mi biblioteca">' + ic("trash") + "</button>" +
           "</div>" +
         "</div>" +
         '<div class="aq-cuerpo">' +
           '<span class="eyebrow">' + esc((entry.subtitle || "Química").toUpperCase()) + "</span>" +
-          '<a class="deck-link" href="#/mazo/' + deck.id + '">' +
+          '<a class="deck-link" href="#/mazo/' + deck.id + '" title="' + esc(deck.descripcion) + '">' +
             "<h3>" + esc(deck.nombre) + "</h3>" +
-            "<p>" + esc(deck.descripcion) + "</p>" +
           "</a>" +
           '<div class="aq-chips">' + chips + "</div>" +
           '<div class="deck-foot">' +

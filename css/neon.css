@@ -1946,13 +1946,15 @@ html.dark-mode .store-mago .btn.primary:hover {
 .aq-arte {
   position: relative;
   display: grid;
-  height: 170px;
+  flex: none;
+  height: 100px;
   place-items: center;
   overflow: hidden;
 }
 
 .aq-arte .aq-img {
-  width: 132px;
+  width: 84px;
+  margin: 6px 44px 0 0;   /* un poco a la izquierda: a la derecha van ✓ y quitar */
 }
 
 .aq-arte .aq-flota {
@@ -1966,7 +1968,8 @@ html.dark-mode .store-mago .btn.primary:hover {
   display: flex;
   flex: 1;
   flex-direction: column;
-  padding: 16px 18px 18px;
+  min-height: 0;
+  padding: 12px 16px 14px;
 }
 
 /* «Adquirido» y quitar, sobre la franja de arte. */
@@ -1982,12 +1985,93 @@ html.dark-mode .store-mago .btn.primary:hover {
   background: rgba(3, 26, 30, 0.82);
 }
 
-.aq-cuerpo > .eyebrow {
-  font-size: 0.6rem;
+/* «Adquirido» solo con el ✓, para no tapar el matraz. */
+.deck-owned-badge.aq-adquirido {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  place-items: center;
+  border-radius: 50%;
 }
 
-.aq-chip strong {
-  white-space: normal;
+.aq-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.aq-cuerpo > .eyebrow {
+  flex: none;
+  overflow: hidden;
+  font-size: 0.56rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Submazos compactos: dos botones lado a lado. */
+.aq-chips {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: auto;
+}
+
+.aq-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 7px 8px;
+  border: 1px solid rgba(95, 224, 192, 0.24);
+  border-radius: 10px;
+  background: rgba(3, 30, 34, 0.72);
+  color: var(--text);
+  text-decoration: none;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.aq-sub:hover,
+.aq-sub:focus-visible {
+  border-color: rgba(166, 242, 223, 0.6);
+  background: rgba(6, 44, 48, 0.9);
+  transform: translateY(-1px);
+}
+
+.aq-sub.completo {
+  border-color: rgba(95, 207, 165, 0.5);
+}
+
+.aq-sub .px-icono {
+  flex: none;
+  width: 26px;
+  height: 26px;
+}
+
+.aq-sub-txt {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.aq-sub-num {
+  overflow: hidden;
+  color: #6fd9bd;
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+  letter-spacing: 0.06em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.aq-sub-txt strong {
+  font-size: 0.78rem;
+  font-weight: 650;
 }
 
 .aq-cuerpo > .eyebrow,
@@ -1996,45 +2080,63 @@ html.dark-mode .store-mago .btn.primary:hover {
   color: #7ff0d0;
 }
 
+.deck-aq .deck-link {
+  flex: none;
+}
+
 .deck-aq .deck-link h3 {
-  margin: 4px 0 6px;
+  display: -webkit-box;
+  margin: 4px 0 8px;
+  overflow: hidden;
   color: #ffffff;
   font-family: "Inter Tight", var(--font-ui);
-  font-size: 1.45rem;
+  font-size: 1.15rem;
   font-weight: 700;
   letter-spacing: -0.01em;
-  line-height: 1.08;
+  line-height: 1.1;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
-.deck-aq .deck-link p {
-  color: #b9d9d3;
-  font-size: 0.84rem;
-}
-
-.aq-chips {
-  display: grid;
-  gap: 8px;
-  margin-top: 14px;
-}
-
-.mago-chip.aq-chip {
-  border-color: rgba(95, 224, 192, 0.24);
-  background: rgba(3, 30, 34, 0.72);
-}
-
-.mago-chip.aq-chip:hover,
-.mago-chip.aq-chip:focus-visible {
-  border-color: rgba(166, 242, 223, 0.6);
-  background: rgba(6, 44, 48, 0.9);
-}
-
-.aq-chip .mago-chip-num,
 .aq-submazos .submazo-num {
   color: #6fd9bd;
 }
 
 .deck-aq .deck-foot {
-  margin-top: 16px;
+  margin-top: 10px;
+}
+
+.deck-aq .deck-pend {
+  margin-top: 6px;
+}
+
+/* ---------- Mis mazos: todas las tarjetas del mismo tamaño ---------- */
+
+/* El Mazo del mago ocupa su propia fila; las demás miden lo mismo, así una
+   tarjeta más alta no estira a las de su fila. */
+.deck-grid > .deck-card:not(.deck-mago) {
+  height: 300px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.deck-grid > .deck-card:not(.deck-mago) .deck-link {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.deck-grid > .deck-card:not(.deck-mago) .deck-link h3 {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.deck-grid > .deck-card:not(.deck-mago):not(.deck-aq) .deck-link p {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
 }
 
 .deck-aq .mini-bar > span,
@@ -2202,11 +2304,6 @@ html.dark-mode .store-aq .btn.primary:hover {
 }
 
 @media (max-width: 720px) {
-  .aq-arte {
-    height: 150px;
-  }
-
-  .aq-arte .aq-img,
   .sa-arte .aq-img {
     width: 112px;
   }
