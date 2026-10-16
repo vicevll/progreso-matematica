@@ -6,16 +6,15 @@
 //   - Sesiones de estudio: cada ronda, con sus respuestas. app.js avisa con
 //     el evento "studappy:estudio" ({ fase: "inicio" | "respuesta" | "fin" }).
 // Los datos se guardan con supabase/admin.sql (registrar_visita y
-// registrar_estudio). En localhost no se registra nada, salvo que se active
-// con localStorage "studappy-analitica" = "1".
+// registrar_estudio). Las sesiones de estudio también avanzan las misiones
+// (supabase/misiones.sql), así que se registran siempre. El tiempo de
+// estancia no se registra en localhost, salvo que se active con
+// localStorage "studappy-analitica" = "1".
 (function () {
   var LOCAL = /^(localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0)$/.test(location.hostname) || /\.localhost$/.test(location.hostname);
   var forzado = false;
   try { forzado = localStorage.getItem("studappy-analitica") === "1"; } catch (e) { /* sin almacenamiento */ }
-  if (LOCAL && !forzado) {
-    window.Analitica = { activa: false };
-    return;
-  }
+  var sinVisitas = LOCAL && !forzado;
 
   var TICK = 5000;                 // cada cuánto se mide
   var ENVIO = 30000;               // cada cuánto se guarda
@@ -84,7 +83,7 @@
 
   // final = la página se está ocultando o cerrando: fetch con keepalive para
   // que el envío sobreviva al cierre de la pestaña.
-  function rpc(nombre, args, final) {
+  function rpc(nombre, args, final, alGuardar) {
     if (apagado) return;
     if (final) {
       var cfg = window.APP_CONFIG || {};
@@ -103,11 +102,12 @@
     if (!window.SB || !window.SB.client) return;
     window.SB.client.rpc(nombre, args).then(function (res) {
       if (res && res.error) siFalta(res.error);
+      else if (alGuardar) alGuardar();
     }, function () { /* sin conexión: se reintenta en el próximo envío */ });
   }
 
   function enviarVisita(final) {
-    if (!visita || !usuario) return;
+    if (sinVisitas || !visita || !usuario) return;
     var seg = Math.round(visita.segundos);
     if (seg < 1) return;
     if (seg === visita.enviado.segundos && visita.vistas === visita.enviado.vistas) return;
@@ -144,7 +144,10 @@
       p_no_sabe: estudio.no,
       p_pendiente: estudio.pendiente,
       p_completada: estudio.completada
-    }, final);
+    }, final, function () {
+      // Avisa a js/economia.js: puede haber avanzado una misión.
+      try { window.dispatchEvent(new CustomEvent("studappy:estudio-guardado")); } catch (e) { /* navegador antiguo */ }
+    });
   }
 
   function enviarTodo(final) {
@@ -231,7 +234,7 @@
 
   window.addEventListener("studappy:estudio", function (e) {
     var d = (e && e.detail) || {};
-    revisarUsuario();
+    tick(); // el tiempo de estudio queda al día antes de enviarlo
     if (!usuario || !d.deckId) return;
     actividad();
     if (d.fase === "inicio") {
@@ -299,6 +302,7 @@
 
   window.Analitica = {
     activa: true,
+    visitas: !sinVisitas,
     // Para pruebas: fuerza un envío inmediato.
     enviar: function () { tick(); enviarTodo(false); },
     estado: function () {

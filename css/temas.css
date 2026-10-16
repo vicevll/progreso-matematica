@@ -1,0 +1,133 @@
+/* Studappy · temas visuales que se canjean con puntos (ver supabase/misiones.sql).
+   Cada tema reemplaza los tokens de neon.css. Se aplican con
+   <html data-tema="..."> (js/temas.js). Sin data-tema queda el tema Noche. */
+
+html.dark-mode[data-tema="aurora"] {
+  --bg: #031014;
+  --surface: #08191d;
+  --surface-soft: #0c2226;
+  --surface-deep: #061417;
+  --surface-raise: #0b1e22;
+  --text: #e2f3ef;
+  --text-muted: #96b8b1;
+  --text-faint: #648780;
+  --border: rgba(130, 214, 190, 0.13);
+  --border-strong: rgba(130, 214, 190, 0.24);
+  --accent: #5fe0c0;
+  --accent-strong: #a6f2df;
+  --accent-rgb: 95, 224, 192;
+  --sky: #5fe0c0;
+  --brand-a: #9ff5d6;
+  --brand-b: #2fb8a0;
+  --brand-grad: linear-gradient(100deg, #b6f7dd 0%, #5fe0c0 45%, #2f9fd0 100%);
+  --card-fill: linear-gradient(180deg, #0a1d21, #061417);
+  --estrella-rgb: 170, 240, 220;
+  --cielo-rgb: 20, 130, 115;
+  --ia-grad: linear-gradient(110deg, #1f9e8a, #4fd6c0, #3a8fd0, #1f9e8a);
+  --progreso-a: #6fe8c8;
+  --progreso-b: #2fa8a0;
+  --carta-a: #3fb8a0;
+  --carta-b: #2a7f8f;
+}
+
+html.dark-mode[data-tema="atardecer"] {
+  --bg: #120810;
+  --surface: #1c0e18;
+  --surface-soft: #24121f;
+  --surface-deep: #170b14;
+  --surface-raise: #21111c;
+  --text: #f6e8ea;
+  --text-muted: #c4a3ac;
+  --text-faint: #8e6f79;
+  --border: rgba(240, 170, 170, 0.13);
+  --border-strong: rgba(240, 170, 170, 0.24);
+  --accent: #ff9e7a;
+  --accent-strong: #ffc9b3;
+  --accent-rgb: 255, 158, 122;
+  --sky: #ff9e7a;
+  --brand-a: #ffd27a;
+  --brand-b: #e8607a;
+  --brand-grad: linear-gradient(100deg, #ffd27a 0%, #ff9e7a 45%, #e85d9a 100%);
+  --card-fill: linear-gradient(180deg, #1f0f1b, #170b14);
+  --estrella-rgb: 255, 214, 196;
+  --cielo-rgb: 160, 52, 92;
+  --ia-grad: linear-gradient(110deg, #e8607a, #ffa070, #c454a0, #e8607a);
+  --progreso-a: #ffb07a;
+  --progreso-b: #e8607a;
+  --carta-a: #d77a6a;
+  --carta-b: #a5476b;
+}
+
+html.dark-mode[data-tema="bosque"] {
+  --bg: #050e08;
+  --surface: #0b1a10;
+  --surface-soft: #102216;
+  --surface-deep: #08150c;
+  --surface-raise: #0e1e13;
+  --text: #e6f2e4;
+  --text-muted: #a0b89c;
+  --text-faint: #6c8568;
+  --border: rgba(150, 210, 140, 0.13);
+  --border-strong: rgba(150, 210, 140, 0.24);
+  --accent: #9ad86a;
+  --accent-strong: #c8efab;
+  --accent-rgb: 154, 216, 106;
+  --sky: #9ad86a;
+  --brand-a: #e0f59a;
+  --brand-b: #3fa86a;
+  --brand-grad: linear-gradient(100deg, #e0f59a 0%, #9ad86a 45%, #3fa86a 100%);
+  --card-fill: linear-gradient(180deg, #0d1d12, #08150c);
+  --estrella-rgb: 214, 240, 186;
+  --cielo-rgb: 44, 116, 56;
+  --ia-grad: linear-gradient(110deg, #3f9e5a, #8fd46b, #3f8f8a, #3f9e5a);
+  --progreso-a: #a8e07a;
+  --progreso-b: #3fa86a;
+  --carta-a: #5f9e5a;
+  --carta-b: #3f6f4a;
+}
+
+html.dark-mode[data-tema="arcade"] {
+  --bg: #0b0418;
+  --surface: #150a28;
+  --surface-soft: #1c0f33;
+  --surface-deep: #11071f;
+  --surface-raise: #1a0d2e;
+  --text: #f3eaff;
+  --text-muted: #b9a5d8;
+  --text-faint: #7f6aa0;
+  --border: rgba(220, 120, 255, 0.16);
+  --border-strong: rgba(220, 120, 255, 0.3);
+  --accent: #ff5fd2;
+  --accent-strong: #ffaee9;
+  --accent-rgb: 255, 95, 210;
+  --sky: #5ff3ff;
+  --brand-a: #5ff3ff;
+  --brand-b: #ff5fd2;
+  --brand-grad: linear-gradient(100deg, #5ff3ff 0%, #b06bff 50%, #ff5fd2 100%);
+  --card-fill: linear-gradient(180deg, #180b2d, #11071f);
+  --estrella-rgb: 120, 240, 255;
+  --cielo-rgb: 150, 44, 210;
+  --ia-grad: linear-gradient(110deg, #ff5fd2, #5ff3ff, #b06bff, #ff5fd2);
+  --progreso-a: #5ff3ff;
+  --progreso-b: #ff5fd2;
+  --carta-a: #b06bff;
+  --carta-b: #ff5fd2;
+}
+
+/* Arcade: cuadrícula retro en el horizonte. */
+html.dark-mode[data-tema="arcade"] body::after {
+  display: block;
+  position: fixed;
+  z-index: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 34vh;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 95, 210, 0.1) 0 1px, transparent 1px 64px),
+    repeating-linear-gradient(0deg, rgba(95, 243, 255, 0.08) 0 1px, transparent 1px 32px);
+  content: "";
+  -webkit-mask-image: linear-gradient(0deg, #000, transparent);
+  mask-image: linear-gradient(0deg, #000, transparent);
+  pointer-events: none;
+}

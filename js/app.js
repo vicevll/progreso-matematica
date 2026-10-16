@@ -561,6 +561,7 @@
           '<button class="btn primary lg" id="new-deck" type="button">' + ic("plus") + '<span>Nuevo mazo</span></button>' +
         '</div>' +
       "</section>" +
+      '<div id="eco-resumen" class="eco-resumen" hidden></div>' +
       (!decks.length && window.SyncMazos && window.SyncMazos.cargando()
         ? '<div class="empty-state"><span class="empty-icon">' + ic("refresh", { size: 34 }) + "</span><h2>Cargando tus mazos…</h2><p>Los estamos trayendo desde tu cuenta.</p></div>"
         : decks.length
@@ -585,6 +586,7 @@
             '<a class="btn ghost" href="#/tienda">' + ic("layers") + "<span>Explorar tienda</span></a>" +
           "</div>");
 
+    if (window.Economia) window.Economia.pintarResumen();
     setupReveal();
   }
 
@@ -1260,6 +1262,10 @@
       session = null;
       if (window.Tienda) window.Tienda.render(app);
       else app.innerHTML = '<p class="store-setup-note">La tienda aún no está disponible.</p>';
+    } else if (parts[0] === "misiones") {
+      session = null;
+      if (window.Economia) window.Economia.render(app);
+      else app.innerHTML = '<p class="store-setup-note">Las misiones aún no están disponibles.</p>';
     } else if (parts[0] === "mazo" && parts[1]) {
       var deck = window.DeckStore.get(parts[1]);
       if (!deck) return renderHome();

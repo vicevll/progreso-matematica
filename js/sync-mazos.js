@@ -163,6 +163,7 @@
         client().from(TABLA_MAZOS).upsert(guardar.map(fila), { onConflict: "user_id,id" }).then(check).then(function () {
           if (userId !== uidActual) return;
           versiones.forEach(function (v) { window.DeckStore.markSynced(v.id, "guardar", v.actualizado); });
+          emitir("studappy:mazos-subidos"); // puede completar una misión (js/economia.js)
         })
       );
     }

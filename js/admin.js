@@ -3,7 +3,8 @@
 // Los datos salen de las funciones admin_* de supabase/admin.sql, que solo
 // responden a las cuentas de la tabla admins: este archivo solo arma la
 // vista. Los textos que vienen de los usuarios (nombres, correos, mazos) se
-// escapan siempre antes de pintarlos.
+// escapan siempre antes de pintarlos. La vista «Misiones y puntos» está en
+// js/admin-economia.js.
 (function () {
   "use strict";
 
@@ -43,7 +44,9 @@
     usuarios: null,
     pedido: 0,
     fichaPedido: 0,
-    fichaUid: null
+    fichaUid: null,
+    // Vista del panel: "uso" (cómo usan la app) o "economia" (misiones y puntos).
+    vista: /^#economia/.test(location.hash) ? "economia" : guardado("adm-vista", "uso") === "economia" ? "economia" : "uso"
   };
   if (!METRICAS[estado.metrica]) estado.metrica = "activos";
   if (["7", "30", "90", "todo"].indexOf(estado.rango) === -1) estado.rango = "30";
@@ -263,12 +266,63 @@
       cuerpo + "</section>";
   }
 
+  function pestanas() {
+    var vistas = [
+      { id: "uso", label: "Uso de la app", icono: '<span aria-hidden="true">' + ic("target", 15) + "</span>" },
+      { id: "economia", label: "Misiones y puntos", icono: '<img class="px-ico" src="img/juego/moneda.svg?v=1" width="16" height="16" alt="" />' }
+    ];
+    return '<nav class="adm-vistas" role="tablist" aria-label="Vistas del panel">' + vistas.map(function (v) {
+      var sel = v.id === estado.vista;
+      return '<button type="button" role="tab" id="adm-tab-' + v.id + '" aria-selected="' + sel + '" aria-controls="adm-vista" data-vista="' + v.id + '"' + (sel ? ' class="sel"' : ' tabindex="-1"') + ">" + v.icono + "<span>" + v.label + "</span></button>";
+    }).join("") + "</nav>";
+  }
+
+  function pantallaEconomia() {
+    pantalla(
+      '<section class="adm-head">' +
+        '<div><span class="adm-kicker">Panel de administración</span><h1>Misiones y puntos</h1>' +
+        '<p class="adm-sub">Comprueba que todo funcione: diagnóstico automático y herramientas para tu cuenta.</p></div>' +
+      "</section>" +
+      pestanas() +
+      '<div id="adm-vista" role="tabpanel" aria-labelledby="adm-tab-economia"></div>'
+    );
+    var cont = document.getElementById("adm-vista");
+    if (!window.AdminEconomia) {
+      cont.innerHTML = '<div class="adm-aviso error" role="alert">No se pudo cargar js/admin-economia.js.</div>';
+      return;
+    }
+    var u = estado.sesion && estado.sesion.user;
+    window.AdminEconomia.montar(cont, { client: window.SB.client, esc: esc, num: num, ic: ic, fechaHora: fechaHora, email: u ? u.email : "" });
+  }
+
+  function cambiarVista(vista) {
+    if (vista === estado.vista) return;
+    estado.vista = vista;
+    guardar("adm-vista", vista);
+    try { history.replaceState(null, "", location.pathname + location.search + (vista === "economia" ? "#economia" : "")); } catch (e) { /* sin historial */ }
+    abrirVista();
+    var tab = document.getElementById("adm-tab-" + vista);
+    if (tab) tab.focus();
+  }
+
+  function abrirVista() {
+    guardar("adm-vista", estado.vista);
+    if (estado.vista === "economia") {
+      pantallaEconomia();
+      return;
+    }
+    pantallaPanel();
+    if (estado.resumen) pintarTodo();
+    else cargar();
+  }
+
   function pantallaPanel() {
     pantalla(
       '<section class="adm-head">' +
         '<div><span class="adm-kicker">Panel de administración</span><h1>Cómo usan Studappy</h1>' +
         '<p class="adm-sub" id="adm-sub">&nbsp;</p></div>' +
       "</section>" +
+      pestanas() +
       '<div class="adm-filtros">' +
         segmentado("adm-rango", [{ id: "7", label: "7 días" }, { id: "30", label: "30 días" }, { id: "90", label: "90 días" }, { id: "todo", label: "Todo" }], estado.rango, "Período") +
         '<label class="adm-check"><input type="checkbox" id="adm-incluirme"' + (estado.incluirme ? " checked" : "") + " /><span>Incluir cuentas admin</span></label>" +
@@ -920,6 +974,8 @@
       }
       return;
     }
+    var pestana = t.closest(".adm-vistas [data-vista]");
+    if (pestana) { cambiarVista(pestana.getAttribute("data-vista")); return; }
     if (t.closest("#adm-actualizar")) { cargar(); return; }
     if (t.closest("#adm-mas")) { estado.limite += 50; pintarUsuarios(); return; }
     var orden = t.closest(".adm-orden");
@@ -939,6 +995,12 @@
 
   document.addEventListener("keydown", function (e) {
     var ficha = document.getElementById("adm-ficha");
+    // Flechas entre pestañas.
+    if ((e.key === "ArrowRight" || e.key === "ArrowLeft") && e.target.closest && e.target.closest(".adm-vistas")) {
+      e.preventDefault();
+      cambiarVista(estado.vista === "uso" ? "economia" : "uso");
+      return;
+    }
     if (e.key === "Escape" && ficha) { cerrarFicha(); return; }
     if ((e.key === "Enter" || e.key === " ") && e.target.classList && e.target.classList.contains("adm-fila")) {
       e.preventDefault();
@@ -1002,8 +1064,7 @@
     rpc("es_admin").then(function (ok) {
       if (estado.uid !== uid) return;
       if (ok === true) {
-        pantallaPanel();
-        cargar();
+        abrirVista();
       } else {
         pantallaSinPermiso();
       }
@@ -1013,6 +1074,11 @@
       else pantallaError(e.message);
     });
   }
+
+  window.addEventListener("hashchange", function () {
+    var v = /^#economia/.test(location.hash) ? "economia" : "uso";
+    if (v !== estado.vista && document.querySelector(".adm-vistas")) cambiarVista(v);
+  });
 
   if (!window.SB || !window.SB.client) {
     pantallaError("No se pudo conectar con Supabase (revisa js/config.js).");

@@ -18,10 +18,16 @@
     var owned = window.CloudDecks && window.CloudDecks.isOwned(item.id);
     var available = item.status === "available";
     var disabled = !available || !!busy[item.id];
+    // Mazo que se canjea con puntos (supabase/misiones.sql) y todavía no se canjeó.
+    var conPuntos = available && !owned && window.Economia && window.Economia.mazoDelCatalogo(item.id);
+    var porCanjear = conPuntos && !conPuntos.tengo;
     var action;
     if (owned) {
       var deck = window.DeckStore.all().filter(function (entry) { return entry.catalogId === item.id; })[0];
       action = '<a class="btn primary" href="#/mazo/' + esc(deck ? deck.id : "") + '">' + icon("play") + "<span>Estudiar mazo</span></a>";
+    } else if (porCanjear) {
+      action = '<button class="btn eco-canjear" type="button" data-canjear="' + esc(conPuntos.id) + '">' + window.Economia.px("moneda", 14) +
+        "<span>Canjear · " + esc(new Intl.NumberFormat("es-CL").format(conPuntos.precio)) + " pts</span></button>";
     } else if (available) {
       action = '<button class="btn primary" type="button" data-acquire="' + esc(item.id) + '"' + (disabled ? " disabled" : "") + '>' +
         icon(busy[item.id] ? "refresh" : "plus") +
@@ -29,19 +35,20 @@
     } else {
       action = '<button class="btn ghost" type="button" disabled><span>Próximamente</span></button>';
     }
-    var message = messages[item.id] || (owned ? "Ya está en Mis mazos y se sincroniza con tu cuenta." : available ? "Gratis · se guarda en tu cuenta." : "Estamos preparando este mazo gratuito.");
+    var message = messages[item.id] || (owned ? "Ya está en Mis mazos y se sincroniza con tu cuenta." : porCanjear ? "Se canjea con puntos de las misiones." : conPuntos ? "Ya lo canjeaste: añádelo a tu biblioteca." : available ? "Gratis · se guarda en tu cuenta." : "Estamos preparando este mazo gratuito.");
+    var etiqueta = owned ? "En tu biblioteca" : conPuntos ? new Intl.NumberFormat("es-CL").format(conPuntos.precio) + " pts" : available ? "Gratis" : "Próximamente";
     var breakdown = item.breakdown || {};
     var counts = !item.cards.length
       ? "Contenido en preparación"
       : item.sections && item.sections.length
         ? item.cards.length + " tarjetas · " + item.sections.length + " submazos"
         : item.cards.length + " tarjetas · " + (breakdown.concepts || 0) + " conceptos · " + (breakdown.exercises || 0) + " ejercicios · " + (breakdown.formulas || 0) + " fórmulas";
-    if (item.theme === "mago" && window.MagoArte) return magoItemHtml(item, owned, available, action, message, counts);
+    if (item.theme === "mago" && window.MagoArte) return magoItemHtml(item, owned, available, action, message, counts, etiqueta);
     var mark = icon(available ? "cards" : "sparkle", 22);
     return (
       '<article class="store-card' + (owned ? " owned" : "") + (item.theme ? " store-" + esc(item.theme) : "") + '" style="--deck-color:' + esc(item.color) + '">' +
         '<div class="store-card-top"><span class="store-mark" style="background:' + esc(item.color) + '">' + mark + "</span>" +
-          '<span class="store-badge' + (available ? " free" : " soon") + '">' + (owned ? "En tu biblioteca" : available ? "Gratis" : "Próximamente") + "</span></div>" +
+          '<span class="store-badge' + (available ? " free" : " soon") + '">' + esc(etiqueta) + "</span></div>" +
         '<div class="store-card-copy"><span class="store-kicker">' + esc(item.tags.join(" · ")) + "</span><h2>" + esc(item.title) + "</h2><p>" + esc(item.description) + "</p></div>" +
         '<div class="store-card-bottom"><span class="store-card-count">' + icon("cards", 15) + esc(counts) + "</span>" +
           '<div class="store-tags">' + item.tags.map(function (tag) { return '<span>' + esc(tag) + "</span>"; }).join("") + "</div>" +
@@ -53,7 +60,7 @@
 
   // Mazo del mago: versión compacta de su tarjeta de Mis mazos (mismo cielo,
   // el mago con su química en pixel art y un ícono por submazo).
-  function magoItemHtml(item, owned, available, action, message, counts) {
+  function magoItemHtml(item, owned, available, action, message, counts, etiqueta) {
     var arte = window.MagoArte;
     var iconos = (item.sections || []).map(function (sec, i) {
       return '<span class="sm-submazo" title="Submazo ' + (i + 1) + ": " + esc(sec.title) + '">' + arte.icono(sec.icon, 32) + "</span>";
@@ -61,7 +68,7 @@
     return (
       '<article class="store-card store-mago' + (owned ? " owned" : "") + '" style="--deck-color:' + esc(item.color) + '">' +
         '<div class="sm-arte">' + arte.escenaHtml() + arte.imagenHtml() +
-          '<span class="store-badge sm-badge' + (available ? " free" : " soon") + '">' + (owned ? "En tu biblioteca" : available ? "Gratis" : "Próximamente") + "</span>" +
+          '<span class="store-badge sm-badge' + (available ? " free" : " soon") + '">' + esc(etiqueta) + "</span>" +
         "</div>" +
         '<div class="sm-cuerpo">' +
           '<span class="eyebrow">' + esc(String(item.subtitle || item.tags.join(" · ")).toUpperCase()) + "</span>" +
@@ -83,15 +90,18 @@
     var ownedCount = items.filter(function (item) { return window.CloudDecks && window.CloudDecks.isOwned(item.id); }).length;
     container.innerHTML =
       '<nav class="breadcrumb"><a href="#/">Mis mazos</a><span class="sep">' + icon("chevronRight", 14) + "</span><span>Tienda</span></nav>" +
-      '<section class="store-header"><span class="eyebrow">BIBLIOTECA DE ESTUDIO</span><h1>Tienda de mazos</h1>' +
-        '<p>Explora mazos de flashcards. Al añadir uno gratis, queda en tu cuenta y puedes estudiarlo desde Mis mazos.</p>' +
+      '<section class="store-header"><span class="eyebrow">BIBLIOTECA DE ESTUDIO</span><h1>Tienda</h1>' +
+        '<p>Añade mazos gratis a tu cuenta y canjea los puntos de las misiones por temas visuales, IA plus y mazos.</p>' +
         '<div class="store-stats"><span><strong>' + availableCount + "</strong> " + (availableCount === 1 ? "mazo disponible" : "mazos disponibles") + "</span><span><strong>" + ownedCount + "</strong> " + (ownedCount === 1 ? "adquirido" : "adquiridos") + "</span></div></section>" +
       (window.CloudDecks && window.CloudDecks.configured()
         ? ""
         : window.Auth && window.Auth.isDemo && window.Auth.isDemo()
           ? '<p class="store-setup-note">Estás en modo prueba: puedes ver el catálogo, pero para añadir mazos entra con Google.</p>'
           : '<p class="store-setup-note">Para guardar adquisiciones, configura Supabase y ejecuta <code>supabase/tienda.sql</code> en el SQL Editor.</p>') +
-      '<section class="store-grid">' + items.map(itemHtml).join("") + "</section>";
+      (window.Economia ? window.Economia.billeteraHtml() : "") +
+      '<h2 class="eco-titulo">' + (window.Economia ? window.Economia.px("carta", 28) : "") + "Mazos</h2>" +
+      '<section class="store-grid">' + items.map(itemHtml).join("") + "</section>" +
+      (window.Economia ? window.Economia.tiendaHtml() : "");
   }
 
   // Solo se redibuja si la tienda sigue en pantalla: si el usuario se fue a

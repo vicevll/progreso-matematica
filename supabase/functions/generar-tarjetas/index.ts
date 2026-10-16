@@ -12,21 +12,25 @@
 //   GEMINI_API_KEY        obligatorio, tu key de Google AI Studio
 //   GEMINI_MODELO_TEXTO   opcional, modelo para generar tarjetas
 //   GEMINI_MODELO_VISION  opcional, modelo para leer PDF e imágenes
+//   GEMINI_MODELO_PLUS    opcional, modelo de los mazos IA plus (canje con puntos)
 // SUPABASE_URL, SUPABASE_ANON_KEY y SUPABASE_SERVICE_ROLE_KEY los pone Supabase.
 //
 // Pedidos (POST JSON). "sesion" identifica el mazo que se está generando:
-//   { accion: "transcribir", sesion, archivo: { mime, datos }, clave? }   datos en base64
-//   { accion: "generar", sesion, texto, cantidad, evitar?, clave? }
+//   { accion: "transcribir", sesion, archivo: { mime, datos }, clave?, plus? }   datos en base64
+//   { accion: "generar", sesion, texto, cantidad, evitar?, clave?, plus? }
+//   plus: true usa un canje de IA plus (mejor modelo, hasta 40 tarjetas, sin límite diario)
 //   { accion: "estado" }              cuántos mazos le quedan hoy (no gasta)
 //   { accion: "verificar", clave }    comprueba una API key con Google (no gasta)
 // Respuesta: { texto, restantes, limite, periodo } (o { texto, propia: true } con
-// key propia), o { error, codigo } con status 4xx/5xx.
+// key propia, o { texto, plus: true } con IA plus), o { error, codigo } con status 4xx/5xx.
 
 const GEMINI_KEY = Deno.env.get("GEMINI_API_KEY") ?? "";
 // Por defecto, la familia Flash-Lite (la más barata). Si quieres más calidad
 // al generar, define GEMINI_MODELO_TEXTO = "gemini-flash-latest".
 const MODELO_TEXTO = Deno.env.get("GEMINI_MODELO_TEXTO") || "gemini-flash-lite-latest";
 const MODELO_VISION = Deno.env.get("GEMINI_MODELO_VISION") || "gemini-flash-lite-latest";
+// IA plus (supabase/misiones.sql): un mazo con un modelo mejor y hasta 40 tarjetas.
+const MODELO_PLUS = Deno.env.get("GEMINI_MODELO_PLUS") || "gemini-flash-latest";
 const GEMINI_BASE = Deno.env.get("GEMINI_BASE_URL") || "https://generativelanguage.googleapis.com/v1beta";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
@@ -37,6 +41,7 @@ const MAX_ARCHIVO_MB = 25;
 const MAX_ARCHIVO_BYTES = MAX_ARCHIVO_MB * 1024 * 1024;
 const MAX_TEXTO = 40000;
 const MAX_TARJETAS = 20; // máximo de tarjetas por mazo generado con IA
+const MAX_TARJETAS_PLUS = 40;
 const TIPOS_ARCHIVO = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
 const FORMATO_CLAVE = /^[A-Za-z0-9._-]{20,200}$/;
 
@@ -131,6 +136,9 @@ async function rpc(nombre: string, args: Record<string, unknown>): Promise<unkno
     try { detalle = JSON.parse(texto); } catch { /* texto plano */ }
     if (detalle.hint === "cuota_agotada") {
       throw new ErrorUsuario(429, detalle.message || "Ya usaste tus mazos con IA de hoy.", "cuota");
+    }
+    if (detalle.hint === "sin_plus" || detalle.hint === "plus_agotado") {
+      throw new ErrorUsuario(400, detalle.message || "No tienes IA plus disponible.", detalle.hint);
     }
     if (detalle.hint === "cuota_mazo") {
       throw new ErrorUsuario(429, detalle.message || "Este mazo ya usó todas sus llamadas a la IA.", "cuota_mazo");
@@ -249,7 +257,7 @@ function validar(body: any) {
     if (datos.length > Math.ceil(MAX_ARCHIVO_BYTES / 3) * 4 + 16) {
       throw new ErrorUsuario(413, `El archivo supera los ${MAX_ARCHIVO_MB} MB.`, "tamano");
     }
-    return { accion: "transcribir" as const, sesion, clave, mime, datos };
+    return { accion: "transcribir" as const, sesion, clave, plus: body.plus === true, mime, datos };
   }
   if (body.accion === "generar") {
     const texto = String(body.texto ?? "").trim();
@@ -257,11 +265,11 @@ function validar(body: any) {
     if (texto.length > MAX_TEXTO) {
       throw new ErrorUsuario(413, `El texto es muy largo (máximo ${MAX_TEXTO.toLocaleString("es-CL")} caracteres). Divídelo en partes.`, "tamano");
     }
-    const cantidad = Math.min(MAX_TARJETAS, Math.max(5, Math.round(Number(body.cantidad) || 10)));
+    const cantidad = Math.min(body.plus === true ? MAX_TARJETAS_PLUS : MAX_TARJETAS, Math.max(5, Math.round(Number(body.cantidad) || 10)));
     const evitar = Array.isArray(body.evitar)
       ? body.evitar.map((q: unknown) => String(q ?? "").slice(0, 300)).filter(Boolean).slice(0, 60)
       : [];
-    return { accion: "generar" as const, sesion, clave, texto, cantidad, evitar };
+    return { accion: "generar" as const, sesion, clave, plus: body.plus === true, texto, cantidad, evitar };
   }
   throw new ErrorUsuario(400, "Acción desconocida.", "pedido");
 }
@@ -274,6 +282,7 @@ Deno.serve(async (req: Request) => {
   let sesion = "";
   let consumido = false;
   let devolver = false;
+  let plus = false;
   try {
     userId = await usuarioDe(req);
     const pedido = validar(await req.json().catch(() => null));
@@ -288,12 +297,18 @@ Deno.serve(async (req: Request) => {
     }
 
     sesion = pedido.sesion;
-    const propia = pedido.clave;
+    // IA plus usa siempre la key de Studappy (es un premio), aunque el usuario tenga la suya.
+    plus = pedido.plus;
+    const propia = plus ? "" : pedido.clave;
     if (!propia && !GEMINI_KEY) throw new ErrorUsuario(500, "Falta configurar GEMINI_API_KEY en los secretos de Supabase.", "config");
 
     // Con la key del usuario no se descuenta nada: el costo es de su cuenta de Google.
+    // Un mazo IA plus tampoco cuenta en el límite diario: gasta su canje.
     let cuota: Cuota | null = null;
-    if (!propia) {
+    if (plus) {
+      await rpc("ia_plus_usar", { p_user: userId, p_sesion: sesion });
+      consumido = true;
+    } else if (!propia) {
       cuota = (await rpc("ia_consumir", { p_user: userId, p_sesion: sesion })) as Cuota | null;
       consumido = true;
     }
@@ -302,14 +317,14 @@ Deno.serve(async (req: Request) => {
     try {
       if (pedido.accion === "transcribir") {
         texto = await gemini(
-          MODELO_VISION,
+          plus ? MODELO_PLUS : MODELO_VISION,
           [{ text: PROMPT_TRANSCRIBIR }, { inline_data: { mime_type: pedido.mime, data: pedido.datos } }],
           { temperature: 0.2, maxOutputTokens: 8192 },
           propia,
         );
       } else {
         texto = await gemini(
-          MODELO_TEXTO,
+          plus ? MODELO_PLUS : MODELO_TEXTO,
           [{ text: promptGenerar(pedido.cantidad, pedido.evitar) }, { text: "Contenido:\n\n" + pedido.texto }],
           {
             temperature: 0.5,
@@ -337,6 +352,15 @@ Deno.serve(async (req: Request) => {
         if (Array.isArray(tarjetas)) texto = JSON.stringify(tarjetas.slice(0, pedido.cantidad));
       } catch { /* formato inesperado: el navegador lo repara y también recorta */ }
     }
+    if (pedido.accion === "generar") {
+      // Para las misiones ("Crea un mazo con IA"). Si misiones.sql no está, no pasa nada.
+      try {
+        await rpc("ia_registrar_generacion", { p_user: userId, p_sesion: sesion, p_propia: !!propia, p_plus: plus });
+      } catch (e) {
+        console.error("No se pudo registrar la generación", e);
+      }
+    }
+    if (plus) return responder(200, { texto, plus: true });
     if (propia) return responder(200, { texto, propia: true });
     return responder(200, {
       texto,
@@ -346,7 +370,8 @@ Deno.serve(async (req: Request) => {
     });
   } catch (e) {
     if (consumido && devolver) {
-      try { await rpc("ia_devolver", { p_user: userId, p_sesion: sesion }); } catch (e2) { console.error("No se pudo devolver el uso", e2); }
+      const funcion = plus ? "ia_plus_devolver" : "ia_devolver";
+      try { await rpc(funcion, { p_user: userId, p_sesion: sesion }); } catch (e2) { console.error("No se pudo devolver el uso", e2); }
     }
     if (e instanceof ErrorUsuario) return responder(e.status, { error: e.message, codigo: e.codigo });
     console.error("Error inesperado", e);

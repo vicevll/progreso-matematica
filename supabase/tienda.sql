@@ -132,10 +132,20 @@ begin
 
   select * into v_catalog
   from public.store_catalog
-  where catalog_id = p_catalog_id and active = true and is_free = true;
+  where catalog_id = p_catalog_id and active = true;
 
   if not found then
     raise exception 'El mazo no está disponible para adquisición gratuita.';
+  end if;
+
+  -- Mazos que se canjean con puntos (supabase/misiones.sql): hace falta el canje.
+  if not v_catalog.is_free then
+    if to_regclass('public.canjes') is null then
+      raise exception 'El mazo no está disponible para adquisición gratuita.';
+    end if;
+    if not exists (select 1 from public.canjes where user_id = v_user_id and item = 'mazo:' || p_catalog_id) then
+      raise exception 'Este mazo se canjea con puntos en la tienda.';
+    end if;
   end if;
 
   if p_cards is null or coalesce(jsonb_typeof(p_cards), '') <> 'array' then
