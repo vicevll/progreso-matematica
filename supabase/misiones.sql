@@ -94,13 +94,18 @@ insert into public.tienda_items (id, tipo, titulo, descripcion, precio, estado, 
   ('tema:atardecer', 'tema', 'Atardecer', 'Naranjos y rosados de fin de día.', 500, 'disponible', false, '{}', 12),
   ('tema:bosque', 'tema', 'Bosque', 'Verdes de bosque nativo.', 500, 'disponible', false, '{}', 13),
   ('tema:arcade', 'tema', 'Arcade', 'Neón retro de sala de juegos.', 800, 'disponible', false, '{}', 14),
-  ('ia-plus', 'ia_plus', 'IA plus', '1 mazo extra con un modelo de IA de mejor calidad y hasta 40 tarjetas. Úsalo dentro de 7 días.', 350, 'disponible', true, '{"dias": 7, "tarjetas": 40}', 20),
-  -- Mazos por puntos: cuando haya uno real, agrega una fila 'mazo:<id del catálogo>'
-  -- con datos {"catalog_id": "<id>", "nivel": "pequeno|grande|premium"} y su
-  -- entrada en data/catalogo-tienda.js. Mientras tanto se muestran estos.
-  ('mazo:proximo-pequeno', 'mazo', 'Mazo pequeño', 'Hasta 20 tarjetas sobre un tema puntual.', 250, 'proximamente', false, '{"nivel": "pequeno"}', 30),
-  ('mazo:proximo-grande', 'mazo', 'Mazo grande', '40 tarjetas o más para repasar una unidad completa.', 600, 'proximamente', false, '{"nivel": "grande"}', 31),
-  ('mazo:proximo-premium', 'mazo', 'Mazo premium', 'Diseño especial y submazos, como el Mazo del mago.', 1000, 'proximamente', false, '{"nivel": "premium"}', 32)
+  -- IA plus: el día que se canjea, el generador deja crear 3 mazos con IA en
+  -- vez de 2 (mismo modelo y mismas tarjetas). Vale hasta las 00:00 de Chile.
+  ('ia-plus', 'ia_plus', 'IA plus', 'Crea 3 mazos con IA hoy en vez de 2. Vale hasta las 00:00.', 400, 'disponible', true, '{"extra": 1}', 20),
+  -- Mazos por puntos: 'mazo:<id del catálogo>' con datos {"catalog_id", "nivel"}.
+  -- Cada uno necesita su fila en store_catalog (tienda.sql, is_free = false) y su
+  -- entrada en data/catalogo-tienda.js.
+  ('mazo:paes-quimica-estequiometria', 'mazo', 'Estequiometría', 'Mol, masa molar, balanceo y reactivo limitante, con 15 ejercicios.', 200, 'disponible', false, '{"catalog_id": "paes-quimica-estequiometria", "nivel": "pequeno"}', 30),
+  ('mazo:medicina-estequiometria', 'mazo', 'Estequiometría nivel medicina', 'Leyes ponderales, fórmulas, peso equivalente y rendimiento, con 10 ejercicios.', 500, 'disponible', false, '{"catalog_id": "medicina-estequiometria", "nivel": "grande"}', 31),
+  -- Ejemplos de antes: quedan ocultos (el premium se muestra como «Próximamente»).
+  ('mazo:proximo-pequeno', 'mazo', 'Mazo pequeño', 'Hasta 20 tarjetas sobre un tema puntual.', 250, 'oculto', false, '{"nivel": "pequeno"}', 40),
+  ('mazo:proximo-grande', 'mazo', 'Mazo grande', '40 tarjetas o más para repasar una unidad completa.', 600, 'oculto', false, '{"nivel": "grande"}', 41),
+  ('mazo:proximo-premium', 'mazo', 'Mazo premium', 'Diseño especial y submazos, como el Mazo del mago.', 1000, 'proximamente', false, '{"nivel": "premium"}', 42)
 on conflict (id) do update set
   tipo = excluded.tipo, titulo = excluded.titulo, descripcion = excluded.descripcion, precio = excluded.precio,
   estado = excluded.estado, repetible = excluded.repetible, datos = excluded.datos, orden = excluded.orden;
@@ -135,9 +140,9 @@ create table if not exists public.canjes (
   item text not null references public.tienda_items(id),
   puntos integer not null,
   creado timestamptz not null default now(),
-  vence timestamptz,          -- IA plus: hasta cuándo se puede usar
-  usado timestamptz,          -- IA plus: cuándo se empezó a usar
-  sesion text,                -- IA plus: sesión del generador que lo usa
+  vence timestamptz,          -- IA plus: hasta cuándo sube el límite (fin del día)
+  usado timestamptz,          -- (versión anterior de IA plus, sin uso)
+  sesion text,                -- (versión anterior de IA plus, sin uso)
   llamadas integer not null default 0
 );
 create index if not exists canjes_user_idx on public.canjes(user_id, item);
@@ -461,10 +466,8 @@ begin
       from public.tienda_items i where i.estado <> 'oculto'
     ),
     'plus', jsonb_build_object(
-      'disponibles', (select count(*) from public.canjes c
-                      where c.user_id = v_user and c.item = 'ia-plus' and c.usado is null and c.vence > now()),
-      'vence', (select min(c.vence) from public.canjes c
-                where c.user_id = v_user and c.item = 'ia-plus' and c.usado is null and c.vence > now())
+      'activo', exists (select 1 from public.canjes c where c.user_id = v_user and c.item = 'ia-plus' and c.vence > now()),
+      'vence', (select max(c.vence) from public.canjes c where c.user_id = v_user and c.item = 'ia-plus' and c.vence > now())
     ),
     'movimientos', (
       select coalesce(jsonb_agg(jsonb_build_object('cantidad', x.cantidad, 'motivo', x.motivo, 'ref', x.ref, 'creado', x.creado) order by x.creado desc, x.id desc), '[]'::jsonb)
@@ -569,6 +572,9 @@ begin
   if not i.repetible and exists (select 1 from public.canjes where user_id = v_user and item = i.id) then
     raise exception 'Ya canjeaste este ítem.' using hint = 'tengo';
   end if;
+  if i.tipo = 'ia_plus' and exists (select 1 from public.canjes where user_id = v_user and item = i.id and vence > now()) then
+    raise exception 'Ya tienes IA plus hoy: vuelve a canjearlo mañana.' using hint = 'tengo';
+  end if;
 
   v_saldo := public.economia_saldo(v_user);
   if v_saldo < i.precio then
@@ -576,7 +582,7 @@ begin
   end if;
 
   if i.tipo = 'ia_plus' then
-    v_vence := now() + make_interval(days => coalesce((i.datos ->> 'dias')::integer, 7));
+    v_vence := (public.economia_periodo('diaria')).fin;   -- hasta las 00:00 de Chile
   end if;
 
   insert into public.canjes (user_id, item, puntos, vence) values (v_user, i.id, i.precio, v_vence);
@@ -620,62 +626,12 @@ end;
 $$;
 
 -- ---------------------------------------------------------------------------
--- IA plus y registro de generaciones (solo la Edge Function)
+-- Registro de generaciones (solo la Edge Function)
 -- ---------------------------------------------------------------------------
 
--- Usa un IA plus en una sesión del generador. La primera llamada de la sesión
--- toma el canje más antiguo sin usar; las siguientes (leer otro archivo,
--- regenerar) usan el mismo, hasta 8 llamadas.
-create or replace function public.ia_plus_usar(p_user uuid, p_sesion text)
-returns jsonb
-language plpgsql
-security definer
-set search_path = public
-as $$
-declare
-  c public.canjes%rowtype;
-begin
-  if p_user is null or coalesce(p_sesion, '') = '' then
-    raise exception 'Faltan el usuario o la sesión.';
-  end if;
-  perform pg_advisory_xact_lock(hashtext('economia:' || p_user::text));
-
-  select * into c from public.canjes
-  where user_id = p_user and item = 'ia-plus' and sesion = p_sesion;
-  if found then
-    if c.llamadas >= 8 then
-      raise exception 'Este mazo plus ya usó sus 8 llamadas a la IA.' using hint = 'plus_agotado';
-    end if;
-    update public.canjes set llamadas = llamadas + 1 where id = c.id;
-  else
-    select * into c from public.canjes
-    where user_id = p_user and item = 'ia-plus' and usado is null and vence > now()
-    order by vence, id limit 1;
-    if not found then
-      raise exception 'No tienes IA plus disponible. Canjéalo en la tienda.' using hint = 'sin_plus';
-    end if;
-    update public.canjes set usado = now(), sesion = p_sesion, llamadas = 1 where id = c.id;
-  end if;
-  return jsonb_build_object('tarjetas', 40);
-end;
-$$;
-
--- Devuelve una llamada si Gemini falló. Si era la primera, el IA plus vuelve a
--- quedar disponible.
-create or replace function public.ia_plus_devolver(p_user uuid, p_sesion text)
-returns void
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  update public.canjes
-  set llamadas = greatest(llamadas - 1, 0),
-      usado = case when llamadas <= 1 then null else usado end,
-      sesion = case when llamadas <= 1 then null else sesion end
-  where user_id = p_user and item = 'ia-plus' and sesion = p_sesion;
-end;
-$$;
+-- Versión anterior de IA plus (un mazo con otro modelo): ya no se usa.
+drop function if exists public.ia_plus_usar(uuid, text);
+drop function if exists public.ia_plus_devolver(uuid, text);
 
 create or replace function public.ia_registrar_generacion(p_user uuid, p_sesion text, p_propia boolean, p_plus boolean)
 returns void
@@ -706,16 +662,12 @@ revoke all on function public.economia_estado() from public, anon;
 revoke all on function public.reclamar_mision(text) from public, anon;
 revoke all on function public.canjear(text) from public, anon;
 revoke all on function public.elegir_tema(text) from public, anon;
-revoke all on function public.ia_plus_usar(uuid, text) from public, anon, authenticated;
-revoke all on function public.ia_plus_devolver(uuid, text) from public, anon, authenticated;
 revoke all on function public.ia_registrar_generacion(uuid, text, boolean, boolean) from public, anon, authenticated;
 
 grant execute on function public.economia_estado() to authenticated;
 grant execute on function public.reclamar_mision(text) to authenticated;
 grant execute on function public.canjear(text) to authenticated;
 grant execute on function public.elegir_tema(text) to authenticated;
-grant execute on function public.ia_plus_usar(uuid, text) to service_role;
-grant execute on function public.ia_plus_devolver(uuid, text) to service_role;
 grant execute on function public.ia_registrar_generacion(uuid, text, boolean, boolean) to service_role;
 
 notify pgrst, 'reload schema';

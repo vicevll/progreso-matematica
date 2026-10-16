@@ -14,7 +14,9 @@
     return window.icon ? window.icon(name, { size: size || 18 }) : "";
   }
 
-  function itemHtml(item) {
+  // opts.canje (desde js/economia.js): botón para canjear el mazo con puntos.
+  function itemHtml(item, opts) {
+    opts = opts || {};
     var owned = window.CloudDecks && window.CloudDecks.isOwned(item.id);
     var available = item.status === "available";
     var disabled = !available || !!busy[item.id];
@@ -26,8 +28,8 @@
       var deck = window.DeckStore.all().filter(function (entry) { return entry.catalogId === item.id; })[0];
       action = '<a class="btn primary" href="#/mazo/' + esc(deck ? deck.id : "") + '">' + icon("play") + "<span>Estudiar mazo</span></a>";
     } else if (porCanjear) {
-      action = '<button class="btn eco-canjear" type="button" data-canjear="' + esc(conPuntos.id) + '">' + window.Economia.px("moneda", 14) +
-        "<span>Canjear · " + esc(new Intl.NumberFormat("es-CL").format(conPuntos.precio)) + " pts</span></button>";
+      action = opts.canje || ('<button class="btn eco-canjear" type="button" data-canjear="' + esc(conPuntos.id) + '">' + window.Economia.px("moneda", 14) +
+        "<span>Canjear · " + esc(new Intl.NumberFormat("es-CL").format(conPuntos.precio)) + " pts</span></button>");
     } else if (available) {
       action = '<button class="btn primary" type="button" data-acquire="' + esc(item.id) + '"' + (disabled ? " disabled" : "") + '>' +
         icon(busy[item.id] ? "refresh" : "plus") +
@@ -44,6 +46,7 @@
         ? item.cards.length + " tarjetas · " + item.sections.length + " submazos"
         : item.cards.length + " tarjetas · " + (breakdown.concepts || 0) + " conceptos · " + (breakdown.exercises || 0) + " ejercicios · " + (breakdown.formulas || 0) + " fórmulas";
     if (item.theme === "mago" && window.MagoArte) return magoItemHtml(item, owned, available, action, message, counts, etiqueta);
+    if (item.theme === "aurora-quimica" && window.AuroraQuimicaArte) return auroraItemHtml(item, owned, action, message, counts, etiqueta, conPuntos);
     var mark = icon(available ? "cards" : "sparkle", 22);
     return (
       '<article class="store-card' + (owned ? " owned" : "") + (item.theme ? " store-" + esc(item.theme) : "") + '" style="--deck-color:' + esc(item.color) + '">' +
@@ -82,6 +85,36 @@
     );
   }
 
+  // Mazo Aurora química (se canjea con puntos): franja de aurora con el matraz,
+  // su nivel, sus submazos y el precio.
+  function auroraItemHtml(item, owned, action, message, counts, etiqueta, conPuntos) {
+    var arte = window.AuroraQuimicaArte;
+    var nivel = arte.nivel(item);
+    var iconos = (item.sections || []).map(function (sec, i) {
+      return '<span class="sm-submazo" title="Submazo ' + (i + 1) + ": " + esc(sec.title) + '">' + arte.icono(sec.icon, 32) + "</span>";
+    }).join("");
+    var precio = conPuntos && !owned
+      ? '<span class="sa-precio">' + (window.Economia ? window.Economia.px("moneda", 16) : "") + esc(new Intl.NumberFormat("es-CL").format(conPuntos.precio)) + "</span>"
+      : "";
+    return (
+      '<article class="store-card store-aq' + (owned ? " owned" : "") + '" style="--deck-color:' + esc(item.color) + '">' +
+        '<div class="sa-arte">' + arte.escenaHtml() + arte.imagenHtml() +
+          (nivel ? '<span class="aq-nivel">' + esc(nivel) + "</span>" : "") +
+          (owned || (conPuntos && conPuntos.tengo) ? '<span class="store-badge sm-badge sa-badge free">' + (owned ? "En tu biblioteca" : "Canjeado") + "</span>" : "") +
+        "</div>" +
+        '<div class="sm-cuerpo">' +
+          '<span class="eyebrow">' + esc(String(item.subtitle || item.tags.join(" · ")).toUpperCase()) + "</span>" +
+          "<h2>" + esc(item.title) + "</h2>" +
+          "<p>" + esc(item.description) + "</p>" +
+          '<div class="sm-submazos" aria-hidden="true">' + iconos + "</div>" +
+          '<span class="store-card-count">' + icon("cards", 15) + esc(counts) + "</span>" +
+          '<p class="store-message' + (messages[item.id] && !owned ? " error" : "") + '" role="status">' + esc(message) + "</p>" +
+          '<div class="sa-pie">' + precio + action + "</div>" +
+        "</div>" +
+      "</article>"
+    );
+  }
+
   function render(container) {
     container = container || document.getElementById("app");
     if (!container) return;
@@ -100,7 +133,8 @@
           : '<p class="store-setup-note">Para guardar adquisiciones, configura Supabase y ejecuta <code>supabase/tienda.sql</code> en el SQL Editor.</p>') +
       (window.Economia ? window.Economia.billeteraHtml() : "") +
       '<h2 class="eco-titulo">' + (window.Economia ? window.Economia.px("carta", 28) : "") + "Mazos</h2>" +
-      '<section class="store-grid">' + items.map(itemHtml).join("") + "</section>" +
+      // Los mazos que se canjean con puntos van en «Mazos por puntos» (js/economia.js).
+      '<section class="store-grid">' + items.filter(function (item) { return !(item.price > 0); }).map(function (item) { return itemHtml(item); }).join("") + "</section>" +
       (window.Economia ? window.Economia.tiendaHtml() : "");
   }
 
@@ -135,5 +169,5 @@
       });
   });
 
-  window.Tienda = { render: render };
+  window.Tienda = { render: render, itemHtml: itemHtml };
 })();

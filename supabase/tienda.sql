@@ -43,6 +43,24 @@ on conflict (catalog_id) do update set
   is_free = excluded.is_free,
   active = excluded.active;
 
+-- Mazos que se canjean con puntos (tema Aurora química). El precio está en
+-- tienda_items (supabase/misiones.sql); is_free = false hace que adquirir_mazo
+-- pida el canje.
+insert into public.store_catalog (catalog_id, title, description, color, is_free, active)
+values
+  ('paes-quimica-estequiometria', 'Estequiometría',
+   '23 tarjetas: 8 conceptos clave y 15 ejercicios de resolución (moles, masas, balanceo y reactivo limitante).',
+   '#2fb8a0', false, true),
+  ('medicina-estequiometria', 'Estequiometría nivel medicina',
+   '25 tarjetas: 15 conceptos de leyes ponderales y 10 ejercicios de resolución de nivel medicina.',
+   '#2f9fd0', false, true)
+on conflict (catalog_id) do update set
+  title = excluded.title,
+  description = excluded.description,
+  color = excluded.color,
+  is_free = excluded.is_free,
+  active = excluded.active;
+
 create table if not exists public.user_decks (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,

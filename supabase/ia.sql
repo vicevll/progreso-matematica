@@ -7,6 +7,9 @@
 -- Quien guarda su propia API key de Gemini no pasa por este límite (la
 -- Edge Function no llama a ia_consumir en ese caso).
 --
+-- El día que alguien canjea IA plus en la tienda (supabase/misiones.sql),
+-- su límite sube en 1 (ver ia_limite).
+--
 -- Para cambiar los límites, edita ia_config y vuelve a ejecutar este archivo.
 
 -- Versión anterior (límite por llamadas): se reemplaza.
@@ -60,6 +63,28 @@ as $$
   end;
 $$;
 
+-- Límite de mazos con IA del usuario en el período: el de ia_config, más 1
+-- el día que canjea IA plus con puntos (supabase/misiones.sql). Si misiones.sql
+-- no está, es el límite normal.
+create or replace function public.ia_limite(p_user uuid)
+returns integer
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v_limite integer := (public.ia_config()->>'limite_mazos')::integer;
+begin
+  if to_regclass('public.canjes') is not null and to_regclass('public.tienda_items') is not null then
+    if exists (select 1 from public.canjes c where c.user_id = p_user and c.item = 'ia-plus' and c.vence > now()) then
+      v_limite := v_limite + coalesce((select (i.datos->>'extra')::integer from public.tienda_items i where i.id = 'ia-plus'), 1);
+    end if;
+  end if;
+  return v_limite;
+end;
+$$;
+
 -- Cuántos mazos con IA le quedan al usuario en el período (sin gastar nada).
 create or replace function public.ia_estado(p_user uuid)
 returns jsonb
@@ -70,7 +95,7 @@ set search_path = public
 as $$
 declare
   v_cfg jsonb := public.ia_config();
-  v_limite integer := (v_cfg->>'limite_mazos')::integer;
+  v_limite integer := public.ia_limite(p_user);
   v_periodo text := v_cfg->>'periodo';
   v_mazos integer;
 begin
@@ -93,7 +118,7 @@ set search_path = public
 as $$
 declare
   v_cfg jsonb := public.ia_config();
-  v_limite_mazos integer := (v_cfg->>'limite_mazos')::integer;
+  v_limite_mazos integer := public.ia_limite(p_user);
   v_llamadas_por_mazo integer := (v_cfg->>'llamadas_por_mazo')::integer;
   v_periodo text := v_cfg->>'periodo';
   v_inicio timestamptz := public.ia_inicio_periodo(v_cfg->>'periodo');
@@ -164,11 +189,13 @@ $$;
 -- Solo la Edge Function (con la service role key) puede llamarlas.
 revoke all on function public.ia_config() from public, anon, authenticated;
 revoke all on function public.ia_inicio_periodo(text) from public, anon, authenticated;
+revoke all on function public.ia_limite(uuid) from public, anon, authenticated;
 revoke all on function public.ia_estado(uuid) from public, anon, authenticated;
 revoke all on function public.ia_consumir(uuid, text) from public, anon, authenticated;
 revoke all on function public.ia_devolver(uuid, text) from public, anon, authenticated;
 grant execute on function public.ia_config() to service_role;
 grant execute on function public.ia_inicio_periodo(text) to service_role;
+grant execute on function public.ia_limite(uuid) to service_role;
 grant execute on function public.ia_estado(uuid) to service_role;
 grant execute on function public.ia_consumir(uuid, text) to service_role;
 grant execute on function public.ia_devolver(uuid, text) to service_role;

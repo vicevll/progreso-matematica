@@ -188,7 +188,9 @@
 
   function acquire(catalogId) {
     var entry = (window.STORE_CATALOG || []).filter(function (item) { return item.id === catalogId; })[0];
-    if (!entry || entry.status !== "available" || entry.price !== 0) {
+    // Los mazos con precio (puntos) también se agregan así: supabase/tienda.sql
+    // exige que ya estén canjeados (adquirir_mazo revisa la tabla canjes).
+    if (!entry || entry.status !== "available") {
       return Promise.reject(new Error("Este mazo no está disponible para adquisición gratuita."));
     }
     var currentUser = user();

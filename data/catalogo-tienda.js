@@ -125,6 +125,97 @@ window.STORE_CATALOG = [
     ]
   },
   {
+    // Estequiometría (PAES): mazo pequeño, 200 puntos.
+    id: "paes-quimica-estequiometria",
+    title: "Estequiometría",
+    subtitle: "PAES Ciencias · Química",
+    description: "23 tarjetas: 8 conceptos clave y 15 ejercicios de resolución (moles, masas, balanceo y reactivo limitante).",
+    color: "#2fb8a0",
+    price: 200,
+    status: "available",
+    // Diseño Aurora química (ver js/app.js y css/neon.css). Se canjea con puntos (misiones.sql).
+    theme: "aurora-quimica",
+    nivel: "pequeno",
+    tags: ["PAES Ciencias", "Química", "2 submazos"],
+    sections: [
+      { id: "e1", title: "Conceptos clave", description: "Mol, masa molar, coeficientes, conservación de la masa y reactivo limitante.", icon: "balanza" },
+      { id: "e2", title: "Ejercicios de resolución", description: "Calcula masas y moles, balancea ecuaciones y encuentra el reactivo limitante.", icon: "vaso" }
+    ],
+    cards: [
+      { id: "e1-c01", q: "¿Qué es un **mol**?", a: "La unidad del Sistema Internacional para la **cantidad de sustancia**. Un mol contiene $6{,}02\\cdot10^{23}$ entidades (átomos, moléculas o iones): el **número de Avogadro**." },
+      { id: "e1-c02", q: "¿Qué es la **masa molar** y en qué unidad se expresa?", a: "La masa de **1 mol** de una sustancia, en **g/mol**. Se obtiene sumando las masas atómicas de la fórmula: $\\mathrm{H_2O}$ $=2\\cdot1+16=18$ g/mol." },
+      { id: "e1-c03", q: "¿Cómo se relacionan la **masa**, los **moles** y la **masa molar**?", a: "$n=\\dfrac{m}{M}$: moles = masa (g) ÷ masa molar (g/mol). Ejemplo: 36 g de agua son $\\frac{36}{18}=2$ mol." },
+      { id: "e1-c04", q: "¿Cómo pasas de **moles** a número de **partículas**?", a: "Multiplicas por el número de Avogadro: $N=n\\cdot6{,}02\\cdot10^{23}$. Ejemplo: 2 mol de $\\mathrm{CO_2}$ son $1{,}204\\cdot10^{24}$ moléculas." },
+      { id: "e1-c05", q: "¿Qué indican los **coeficientes** de una ecuación balanceada?", a: "La proporción en **moles** (y en moléculas) en que reaccionan y se forman las sustancias. En $\\mathrm{2H_2+O_2\\rightarrow 2H_2O}$, 2 mol de $\\mathrm{H_2}$ reaccionan con 1 mol de $\\mathrm{O_2}$ y forman 2 mol de $\\mathrm{H_2O}$." },
+      { id: "e1-c06", q: "¿Qué dice la **ley de conservación de la masa** y por qué se balancean las ecuaciones?", a: "La masa total de los reactivos es igual a la de los productos (Lavoisier): los átomos no se crean ni se destruyen. Por eso cada elemento debe tener el **mismo número de átomos** a ambos lados de la ecuación." },
+      { id: "e1-c07", q: "¿Qué volumen ocupa **1 mol de gas** en condiciones normales (CNPT)?", a: "**22,4 L**, a 0 °C (273 K) y 1 atm, si el gas se comporta como gas ideal." },
+      { id: "e1-c08", q: "¿Qué es el **reactivo limitante**?", a: "El reactivo que **se acaba primero**: determina cuánto producto se forma. El otro no reacciona por completo: es el **reactivo en exceso**." },
+
+      { id: "e2-e01", q: "Calcula la masa molar del ácido sulfúrico, $\\mathrm{H_2SO_4}$. (H = 1, S = 32, O = 16)", a: "$2\\cdot1+32+4\\cdot16=$ **98 g/mol**." },
+      { id: "e2-e02", q: "¿Cuántos moles hay en 88 g de $\\mathrm{CO_2}$? (C = 12, O = 16)", a: "$M=12+2\\cdot16=44$ g/mol, así que $n=\\frac{88}{44}=$ **2 mol**." },
+      { id: "e2-e03", q: "¿Cuántos gramos son 0,5 mol de $\\mathrm{NaCl}$? (Na = 23, Cl = 35,5)", a: "$M=23+35{,}5=58{,}5$ g/mol, así que $m=0{,}5\\cdot58{,}5=$ **29,25 g**." },
+      { id: "e2-e04", q: "¿Cuántas moléculas hay en 9 g de agua? (H = 1, O = 16)", a: "$n=\\frac{9}{18}=0{,}5$ mol. $N=0{,}5\\cdot6{,}02\\cdot10^{23}=$ **$3{,}01\\cdot10^{23}$ moléculas**." },
+      { id: "e2-e05", q: "Balancea: $\\mathrm{H_2+O_2\\rightarrow H_2O}$", a: "$\\mathrm{2H_2+O_2\\rightarrow 2H_2O}$. Quedan 4 H y 2 O a cada lado." },
+      { id: "e2-e06", q: "Balancea la combustión del metano: $\\mathrm{CH_4+O_2\\rightarrow CO_2+H_2O}$", a: "$\\mathrm{CH_4+2O_2\\rightarrow CO_2+2H_2O}$. C: 1 = 1; H: 4 = 4; O: 4 = 2 + 2." },
+      { id: "e2-e07", q: "Balancea la oxidación del hierro: $\\mathrm{Fe+O_2\\rightarrow Fe_2O_3}$", a: "$\\mathrm{4Fe+3O_2\\rightarrow 2Fe_2O_3}$. Fe: 4 = 4; O: 6 = 6." },
+      { id: "e2-e08", q: "Balancea la combustión del propano: $\\mathrm{C_3H_8+O_2\\rightarrow CO_2+H_2O}$", a: "$\\mathrm{C_3H_8+5O_2\\rightarrow 3CO_2+4H_2O}$. Primero el C (3 $\\mathrm{CO_2}$), luego el H (8 H → 4 $\\mathrm{H_2O}$) y al final el O: $3\\cdot2+4=10$ átomos → 5 $\\mathrm{O_2}$." },
+      { id: "e2-e09", q: "En $\\mathrm{N_2+3H_2\\rightarrow 2NH_3}$, ¿cuántos moles de amoníaco se forman con 6 mol de $\\mathrm{H_2}$ (y $\\mathrm{N_2}$ suficiente)?", a: "Por cada 3 mol de $\\mathrm{H_2}$ se forman 2 de $\\mathrm{NH_3}$: $6\\cdot\\frac{2}{3}=$ **4 mol de $\\mathrm{NH_3}$**." },
+      { id: "e2-e10", q: "En $\\mathrm{2H_2+O_2\\rightarrow 2H_2O}$, ¿cuántos gramos de agua se forman con 8 g de $\\mathrm{H_2}$ (y $\\mathrm{O_2}$ suficiente)?", a: "$n=\\frac{8}{2}=4$ mol de $\\mathrm{H_2}$ → 4 mol de $\\mathrm{H_2O}$ (relación 2:2). $m=4\\cdot18=$ **72 g**." },
+      { id: "e2-e11", q: "¿Cuántos gramos de $\\mathrm{O_2}$ se necesitan para quemar 32 g de metano? $\\mathrm{CH_4+2O_2\\rightarrow CO_2+2H_2O}$", a: "$n=\\frac{32}{16}=2$ mol de $\\mathrm{CH_4}$ → necesitan $2\\cdot2=4$ mol de $\\mathrm{O_2}$. $m=4\\cdot32=$ **128 g**." },
+      { id: "e2-e12", q: "Al calentar 200 g de $\\mathrm{CaCO_3}$ ocurre $\\mathrm{CaCO_3\\rightarrow CaO+CO_2}$. ¿Cuántos gramos de $\\mathrm{CaO}$ se obtienen? (Ca = 40, C = 12, O = 16)", a: "$M_{\\mathrm{CaCO_3}}=100$ g/mol → 2 mol → 2 mol de $\\mathrm{CaO}$. Con $M_{\\mathrm{CaO}}=56$ g/mol: $2\\cdot56=$ **112 g**." },
+      { id: "e2-e13", q: "¿Qué volumen ocupan 44 g de $\\mathrm{CO_2}$ en CNPT?", a: "$n=\\frac{44}{44}=1$ mol, que en CNPT ocupa **22,4 L**." },
+      { id: "e2-e14", q: "En $\\mathrm{2H_2+O_2\\rightarrow 2H_2O}$ se mezclan 4 mol de $\\mathrm{H_2}$ y 3 mol de $\\mathrm{O_2}$. ¿Cuál es el reactivo limitante y cuánta agua se forma?", a: "4 mol de $\\mathrm{H_2}$ necesitan solo 2 mol de $\\mathrm{O_2}$ (hay 3). El **limitante es el $\\mathrm{H_2}$**: se forman **4 mol de agua** y sobra 1 mol de $\\mathrm{O_2}$." },
+      { id: "e2-e15", q: "Con 28 g de $\\mathrm{N_2}$ e hidrógeno en exceso se obtienen 27,2 g de $\\mathrm{NH_3}$: $\\mathrm{N_2+3H_2\\rightarrow 2NH_3}$. ¿Cuál es el porcentaje de rendimiento? (N = 14, H = 1)", a: "Teórico: 1 mol de $\\mathrm{N_2}$ → 2 mol de $\\mathrm{NH_3}$ $=2\\cdot17=34$ g. Rendimiento $=\\frac{27{,}2}{34}\\cdot100=$ **80 %**." }
+    ]
+  },
+  {
+    // Estequiometría nivel medicina (apunte Química MED): mazo grande, 500 puntos.
+    id: "medicina-estequiometria",
+    title: "Estequiometría nivel medicina",
+    subtitle: "Química MED · Leyes ponderales",
+    description: "25 tarjetas: 15 conceptos de leyes ponderales y 10 ejercicios de resolución de nivel medicina.",
+    color: "#2f9fd0",
+    price: 500,
+    status: "available",
+    // Diseño Aurora química (ver js/app.js y css/neon.css). Se canjea con puntos (misiones.sql).
+    theme: "aurora-quimica",
+    nivel: "grande",
+    tags: ["Química MED", "Estequiometría", "2 submazos"],
+    sections: [
+      { id: "q1", title: "Conceptos y leyes ponderales", description: "Mol, fórmulas empírica y molecular, leyes ponderales, peso equivalente y rendimiento.", icon: "capsula" },
+      { id: "q2", title: "Resolución nivel medicina", description: "Fórmulas, reactivo limitante, rendimiento y equivalentes, con contexto biomédico.", icon: "corazon" }
+    ],
+    cards: [
+      { id: "q1-c01", q: "¿Qué es la **unidad de masa atómica** (u.m.a.)?", a: "La unidad para expresar la masa de un átomo: **1/12 de la masa de un átomo de carbono-12**. Por eso el $\\mathrm{^{12}C}$ pesa exactamente 12 u.m.a." },
+      { id: "q1-c02", q: "¿Qué es un **mol** según el Sistema Internacional?", a: "La unidad de **cantidad de sustancia**: una cantidad fija de entidades fundamentales igual al número de Avogadro, $6{,}02\\cdot10^{23}$ átomos o moléculas." },
+      { id: "q1-c03", q: "¿Qué diferencia hay entre **átomo-gramo** y **mol-gramo**?", a: "**Átomo-gramo**: la masa de 1 mol de **átomos**, en gramos (la masa atómica en g). **Mol-gramo**: la masa de 1 mol de **moléculas** o entidades, en gramos (la masa molar en g). Ej.: 1 at-g de C = 12 g; 1 mol-g de $\\mathrm{CO_2}$ = 44 g." },
+      { id: "q1-c04", q: "¿Por qué 1 mol de gas ocupa **22,4 L** en condiciones estándar?", a: "Por la ecuación de los gases ideales: $V=\\frac{nRT}{P}=\\frac{1\\cdot0{,}082\\cdot273}{1}\\approx22{,}4$ L, con 1 mol, 273 K, 1 atm y $R=0{,}082\\ \\frac{\\mathrm{atm\\cdot L}}{\\mathrm{mol\\cdot K}}$. Solo vale en esas condiciones." },
+      { id: "q1-c05", q: "¿Cómo se calcula la **composición porcentual** de un elemento en un compuesto?", a: "$\\%=\\dfrac{n\\cdot M_{\\text{elemento}}}{M_{\\text{compuesto}}}\\cdot100$, con $n$ el subíndice del elemento. En la glucosa ($\\mathrm{C_6H_{12}O_6}$): C 40 %, H 6,7 % y O 53,3 %." },
+      { id: "q1-c06", q: "¿Qué diferencia hay entre **fórmula empírica** y **fórmula molecular**?", a: "La **molecular** da el número real de átomos ($\\mathrm{C_6H_{12}O_6}$). La **empírica** da la mínima relación entera entre ellos ($\\mathrm{CH_2O}$, relación 1:2:1)." },
+      { id: "q1-c07", q: "¿Cómo se obtiene la **fórmula empírica** desde la composición porcentual?", a: "1) Divide el % de cada elemento por su masa molar (moles en 100 g). 2) Divide todos los resultados por el menor. 3) Si quedan decimales, amplifica hasta tener enteros: esos son los subíndices." },
+      { id: "q1-c08", q: "¿Cómo se pasa de la **fórmula empírica** a la **molecular**?", a: "Divide la masa molar del compuesto por la de la fórmula empírica: el resultado es el factor que multiplica cada subíndice. Glucosa: $\\frac{180}{30}=6$, así que $\\mathrm{(CH_2O)_6=C_6H_{12}O_6}$." },
+      { id: "q1-c09", q: "¿Qué dice la **ley de conservación de la masa** (Lavoisier)?", a: "La materia no se crea ni se destruye por métodos químicos ordinarios: la masa de los reactivos es igual a la de los productos. Ej.: $\\mathrm{MgCO_3}$ (84,3 g) → $\\mathrm{CO_2}$ (44,0 g) + $\\mathrm{MgO}$ (40,3 g)." },
+      { id: "q1-c10", q: "¿Qué dice la **ley de las proporciones definidas** (Proust)?", a: "Distintas muestras de un mismo compuesto siempre tienen los mismos elementos en la **misma proporción en masa**. El $\\mathrm{CO_2}$ de cualquier fuente tiene 27,3 % de C y 72,7 % de O." },
+      { id: "q1-c11", q: "¿Qué dice la **ley de las proporciones múltiples**?", a: "Si dos elementos forman más de un compuesto, las masas de uno que se combinan con una masa fija del otro están en relación de **números enteros sencillos**. Ej.: por cada 12 g de C, el CO tiene 16 g de O y el $\\mathrm{CO_2}$ 32 g: relación 1:2." },
+      { id: "q1-c12", q: "¿Qué es el **peso equivalente** (ley de las proporciones recíprocas de Richter)?", a: "La masa de una sustancia que reacciona, desplaza o sustituye a **1,008 partes en masa de hidrógeno** o a **8 de oxígeno**. Ej.: 16 g de $\\mathrm{CH_4}$ reaccionan con 64 g de $\\mathrm{O_2}$, así que $PE=\\frac{16\\cdot8}{64}=2$." },
+      { id: "q1-c13", q: "¿Cómo se calcula el **peso equivalente** con el **parámetro de carga** $\\theta$?", a: "$PE=\\dfrac{M}{\\theta}$. $\\theta$ es la **valencia** (elemento), el valor absoluto de la **carga** (ion), los **H⁺ que cede** (ácido), los **OH⁻ que se sustituyen** (hidróxido), **2 × n.º de O** (óxido) o la **carga total** del catión o del anión (sal)." },
+      { id: "q1-c14", q: "¿Qué es un **equivalente-gramo** y qué dice la **ley de los equivalentes**?", a: "Un eq-g es el peso equivalente expresado en gramos: $\\#\\text{eq-g}=\\frac{m}{PE}$. En una reacción, todas las sustancias se consumen y se forman en el **mismo número de equivalentes-gramo**." },
+      { id: "q1-c15", q: "¿Qué son el **rendimiento teórico**, el **real** y el **porcentaje de rendimiento**?", a: "Teórico: el producto que se formaría si reaccionara todo el **reactivo limitante**. Real: lo que se obtiene en la práctica. $\\%=\\frac{\\text{real}}{\\text{teórico}}\\cdot100$. Suele ser menor que 100 % porque muchas reacciones son reversibles." },
+
+      { id: "q2-e01", q: "Un hidrocarburo tiene 92,3 % de C y 7,7 % de H, y su masa molar es 78 g/mol. ¿Cuáles son su fórmula empírica y su fórmula molecular? (C = 12, H = 1)", a: "C: $\\frac{92{,}3}{12}=7{,}69$; H: $\\frac{7{,}7}{1}=7{,}7$ → relación 1:1 → empírica **CH** (13 g/mol). Factor $\\frac{78}{13}=6$ → molecular **$\\mathrm{C_6H_6}$** (benceno)." },
+      { id: "q2-e02", q: "¿Qué porcentaje de nitrógeno tiene la urea, $\\mathrm{CO(NH_2)_2}$, la sustancia con que eliminamos nitrógeno en la orina? (C = 12, O = 16, N = 14, H = 1)", a: "$M=12+16+2\\cdot(14+2)=60$ g/mol. $\\%\\mathrm{N}=\\frac{2\\cdot14}{60}\\cdot100\\approx$ **46,7 %**." },
+      { id: "q2-e03", q: "En la respiración celular, $\\mathrm{C_6H_{12}O_6+6O_2\\rightarrow 6CO_2+6H_2O}$. ¿Qué volumen de $\\mathrm{CO_2}$ en CNPT se produce al oxidar 45 g de glucosa (180 g/mol)?", a: "$n=\\frac{45}{180}=0{,}25$ mol → $6\\cdot0{,}25=1{,}5$ mol de $\\mathrm{CO_2}$. $V=1{,}5\\cdot22{,}4=$ **33,6 L**." },
+      { id: "q2-e04", q: "Reaccionan 54 g de Al con 142 g de $\\mathrm{Cl_2}$: $\\mathrm{2Al+3Cl_2\\rightarrow 2AlCl_3}$. ¿Cuál es el limitante, cuánto $\\mathrm{AlCl_3}$ se forma y cuánto sobra? (Al = 27, Cl = 35,5)", a: "Al: $\\frac{54}{27}=2$ mol; $\\mathrm{Cl_2}$: $\\frac{142}{71}=2$ mol. 2 mol de Al necesitan 3 de $\\mathrm{Cl_2}$: el **limitante es el $\\mathrm{Cl_2}$**. Se forman $2\\cdot\\frac{2}{3}=1{,}33$ mol de $\\mathrm{AlCl_3}$ (133,5 g/mol) = **178 g**. Reaccionan 36 g de Al: **sobran 18 g**. Comprueba: 54 + 142 = 178 + 18." },
+      { id: "q2-e05", q: "La aspirina ($\\mathrm{C_9H_8O_4}$, 180 g/mol) se obtiene del ácido salicílico ($\\mathrm{C_7H_6O_3}$, 138 g/mol) en relación 1:1. Con 2,76 g de ácido salicílico se obtienen 2,70 g de aspirina. ¿Cuál es el rendimiento?", a: "$n=\\frac{2{,}76}{138}=0{,}02$ mol → teórico $0{,}02\\cdot180=3{,}6$ g. Rendimiento $=\\frac{2{,}70}{3{,}6}\\cdot100=$ **75 %**." },
+      { id: "q2-e06", q: "Un antiácido con $\\mathrm{Mg(OH)_2}$ neutraliza el ácido del estómago: $\\mathrm{Mg(OH)_2+2HCl\\rightarrow MgCl_2+2H_2O}$. ¿Qué masa de $\\mathrm{Mg(OH)_2}$ neutraliza 0,73 g de HCl? (Mg = 24, O = 16, H = 1, Cl = 35,5)", a: "$n_{\\mathrm{HCl}}=\\frac{0{,}73}{36{,}5}=0{,}02$ mol → $0{,}01$ mol de $\\mathrm{Mg(OH)_2}$ (relación 1:2). Con 58 g/mol: **0,58 g**." },
+      { id: "q2-e07", q: "Calcula el peso equivalente del $\\mathrm{H_3PO_4}$ si en la reacción forma $\\mathrm{HPO_4^{2-}}$. (H = 1, P = 31, O = 16)", a: "$M=3+31+64=98$ g/mol. Cede 2 H⁺, así que $\\theta=2$ y $PE=\\frac{98}{2}=$ **49 g/eq**." },
+      { id: "q2-e08", q: "Calcula el peso equivalente del fosfato de calcio, $\\mathrm{Ca_3(PO_4)_2}$, el mineral de los huesos. (Ca = 40, P = 31, O = 16)", a: "$M=3\\cdot40+2\\cdot(31+64)=310$ g/mol. Carga total del catión: $3\\cdot(+2)=6$, así que $\\theta=6$ y $PE=\\frac{310}{6}\\approx$ **51,7 g/eq**." },
+      { id: "q2-e09", q: "¿Qué masa de NaOH neutraliza completamente 4,9 g de $\\mathrm{H_2SO_4}$? Usa la ley de los equivalentes. (H = 1, S = 32, O = 16, Na = 23)", a: "$PE_{\\mathrm{H_2SO_4}}=\\frac{98}{2}=49$ → $\\frac{4{,}9}{49}=0{,}1$ eq-g. Reacciona el mismo número de eq-g de NaOH ($PE=\\frac{40}{1}=40$): $0{,}1\\cdot40=$ **4 g**." },
+      { id: "q2-e10", q: "Al quemar 2,4 g de un metal divalente se obtienen 4,0 g de su óxido. ¿Cuál es su peso equivalente y de qué metal se trata?", a: "Oxígeno combinado: $4{,}0-2{,}4=1{,}6$ g. $PE=\\frac{2{,}4\\cdot8}{1{,}6}=$ **12 g/eq**. Si es divalente, $M=12\\cdot2=24$ g/mol: es **magnesio**." }
+    ]
+  }
+,
+  {
     id: "paes-m1-proximo",
     title: "PAES M1 · Próximo mazo",
     description: "Segundo mazo gratuito del catálogo. Estamos definiendo sus contenidos después de validar el de Números.",

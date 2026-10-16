@@ -60,7 +60,8 @@ begin
     'mazos', (select count(*) from public.mazos_propios where user_id = p_user),
     'tienda', (select count(*) from public.user_decks where user_id = p_user),
     'log', (select count(*) from public.mazos_adquiridos_log where user_id = p_user),
-    'generaciones', (select count(*) from public.ia_generaciones where user_id = p_user)
+    'generaciones', (select count(*) from public.ia_generaciones where user_id = p_user),
+    'ia', (select count(*) from public.ia_sesiones where user_id = p_user)
   );
 end;
 $$;
@@ -92,6 +93,8 @@ declare
   k integer;
   v_total integer;
   v_pagado integer;
+  v_base integer;
+  j integer;
   v_ok boolean;
   v_txt text;
   v_lista text[];
@@ -124,7 +127,7 @@ begin
   end if;
 
   select array_agg(f) into v_lista
-  from unnest(array['economia_estado', 'reclamar_mision', 'canjear', 'elegir_tema', 'ia_plus_usar', 'ia_plus_devolver',
+  from unnest(array['economia_estado', 'reclamar_mision', 'canjear', 'elegir_tema', 'ia_limite', 'ia_consumir',
                     'ia_registrar_generacion', 'registrar_estudio', 'adquirir_mazo', 'mision_progreso', 'mision_avance',
                     'mision_estado', 'misiones_del_periodo', 'economia_periodo', 'economia_saldo']) f
   where not exists (select 1 from pg_proc p where p.proname = f and p.pronamespace = 'public'::regnamespace);
@@ -136,7 +139,7 @@ begin
       and has_function_privilege('authenticated', 'public.reclamar_mision(text)', 'execute')
       and has_function_privilege('authenticated', 'public.canjear(text)', 'execute')
       and has_function_privilege('authenticated', 'public.elegir_tema(text)', 'execute')
-      and has_function_privilege('service_role', 'public.ia_plus_usar(uuid, text)', 'execute');
+      and has_function_privilege('service_role', 'public.ia_consumir(uuid, text)', 'execute');
     c := c || public.admin_eco_item(g, 'La web y el generador pueden usar misiones y canjes', v_ok,
       case when v_ok then 'Permisos correctos' else 'Faltan permisos: vuelve a ejecutar misiones.sql' end);
 
@@ -144,7 +147,8 @@ begin
       and not has_function_privilege('anon', 'public.canjear(text)', 'execute')
       and not has_function_privilege('authenticated', 'public.economia_saldo(uuid)', 'execute')
       and not has_function_privilege('authenticated', 'public.mision_progreso(uuid, text, jsonb, timestamptz, timestamptz)', 'execute')
-      and not has_function_privilege('authenticated', 'public.ia_plus_usar(uuid, text)', 'execute')
+      and not has_function_privilege('authenticated', 'public.ia_consumir(uuid, text)', 'execute')
+      and not has_function_privilege('authenticated', 'public.ia_limite(uuid)', 'execute')
       and not has_function_privilege('authenticated', 'public.ia_registrar_generacion(uuid, text, boolean, boolean)', 'execute')
       and not has_function_privilege('authenticated', 'public.admin_eco_probar(text)', 'execute');
     c := c || public.admin_eco_item(g, 'Nadie puede darse puntos desde el navegador', v_ok,
@@ -237,9 +241,9 @@ begin
 
     select * into r from public.tienda_items where id = 'ia-plus';
     v_ok := found and r.estado = 'disponible' and r.repetible and r.precio > 0
-      and coalesce((r.datos ->> 'dias')::integer, 0) > 0;
+      and coalesce((r.datos ->> 'extra')::integer, 0) > 0;
     c := c || public.admin_eco_item(g, 'IA plus a la venta', v_ok,
-      case when v_ok then format('%s pts · %s días · %s tarjetas', r.precio, r.datos ->> 'dias', coalesce(r.datos ->> 'tarjetas', '40')) else 'Revisa la fila ia-plus en tienda_items' end);
+      case when v_ok then format('%s pts · +%s mazo con IA el día que se canjea', r.precio, r.datos ->> 'extra') else 'Revisa la fila ia-plus en tienda_items' end);
 
     select array_agg(i.id) into v_lista from public.tienda_items i
     where i.tipo = 'mazo' and i.estado = 'disponible'
@@ -284,12 +288,12 @@ begin
       case when n = 0 then (select count(*) from public.canjes) || ' canjes revisados' else n || ' canjes no cuadran' end);
 
     select count(*) into n from public.canjes
-    where item = 'ia-plus' and (llamadas > 8 or (usado is null) <> (sesion is null) or vence is null);
+    where item = 'ia-plus' and vence is null;
     c := c || public.admin_eco_item(g, 'IA plus en buen estado', n = 0,
-      case when n = 0 then format('%s sin usar · %s usados',
-        (select count(*) from public.canjes where item = 'ia-plus' and usado is null and vence > now()),
-        (select count(*) from public.canjes where item = 'ia-plus' and usado is not null))
-      else n || ' canjes de IA plus con datos raros' end);
+      case when n = 0 then format('%s activos hoy · %s canjes en total',
+        (select count(distinct user_id) from public.canjes where item = 'ia-plus' and vence > now()),
+        (select count(*) from public.canjes where item = 'ia-plus'))
+      else n || ' canjes de IA plus sin fecha de término' end);
 
     select count(*) into n from public.juego_perfil j join public.tienda_items i on i.id = j.tema
     where i.precio > 0 and not exists (select 1 from public.canjes c2 where c2.user_id = j.user_id and c2.item = j.tema);
@@ -501,52 +505,62 @@ begin
       coalesce(x ->> 'error', 'Canjeó con 1 punto'));
     insert into public.puntos_movimientos (user_id, cantidad, motivo, ref) values (v_user, 5000, 'ajuste', 'diagnostico');
 
-    -- IA plus.
+    -- IA plus: el día que se canjea, el generador deja crear 3 mazos con IA en vez de 2.
+    delete from public.ia_sesiones where user_id = v_user;   -- solo dentro de la simulación
+    v_base := (public.ia_config() ->> 'limite_mazos')::integer;
+    v_lista := null;
+    for j in 1..v_base loop
+      x := public.admin_eco_probar(format($q$select public.ia_consumir(%L::uuid, %L)$q$, v_user, 'diagnostico-ia-' || j));
+      if not (x ->> 'ok')::boolean then v_lista := v_lista || (x ->> 'error'); end if;
+    end loop;
+    y := public.admin_eco_probar(format($q$select public.ia_consumir(%L::uuid, 'diagnostico-ia-extra')$q$, v_user));
+    c := c || public.admin_eco_item(g, format('Sin IA plus: %s mazos con IA por día', v_base),
+      v_lista is null and public.ia_limite(v_user) = v_base and y ->> 'hint' = 'cuota_agotada',
+      coalesce(array_to_string(v_lista, ' · '), format('%s mazos y el siguiente se bloquea', v_base)));
+
     x := public.admin_eco_probar($q$select public.canjear('ia-plus')$q$);
     y := public.economia_estado();
-    v_ok := (x ->> 'ok')::boolean and (y -> 'plus' ->> 'disponibles')::integer = 1
-      and (x -> 'valor' ->> 'vence')::timestamptz between now() + interval '6 days 23 hours' and now() + interval '7 days 1 hour';
-    c := c || public.admin_eco_item(g, 'Canjear IA plus da 1 mazo por 7 días', v_ok,
-      coalesce(x ->> 'error', 'Vence ' || to_char((x -> 'valor' ->> 'vence')::timestamptz at time zone 'America/Santiago', 'DD-MM HH24:MI')));
+    v_ok := (x ->> 'ok')::boolean and (y -> 'plus' ->> 'activo')::boolean
+      and (x -> 'valor' ->> 'vence')::timestamptz = (public.economia_periodo('diaria')).fin
+      and public.ia_limite(v_user) = v_base + 1;
+    c := c || public.admin_eco_item(g, format('Canjear IA plus sube el límite a %s mazos solo hoy', v_base + 1), v_ok,
+      coalesce(x ->> 'error', 'Activo hasta ' || to_char((x -> 'valor' ->> 'vence')::timestamptz at time zone 'America/Santiago', 'DD-MM HH24:MI')));
 
-    x := public.admin_eco_probar(format($q$select public.ia_plus_usar(%L::uuid, 'diag-plus-1')$q$, v_user));
-    y := public.admin_eco_probar(format($q$select public.ia_plus_usar(%L::uuid, 'diag-plus-1')$q$, v_user));
-    v_ok := (x ->> 'ok')::boolean and (x -> 'valor' ->> 'tarjetas')::integer = 40 and (y ->> 'ok')::boolean
-      and (public.economia_estado() -> 'plus' ->> 'disponibles')::integer = 0;
-    c := c || public.admin_eco_item(g, 'El generador lo usa (40 tarjetas; leer y regenerar usan el mismo)', v_ok,
-      coalesce(x ->> 'error', y ->> 'error', '2 llamadas al mismo IA plus'));
-
-    x := public.admin_eco_probar(format($q$select public.ia_plus_usar(%L::uuid, 'diag-plus-2')$q$, v_user));
-    c := c || public.admin_eco_item(g, 'Un IA plus sirve para un solo mazo', x ->> 'hint' = 'sin_plus', coalesce(x ->> 'error', 'Otro mazo lo usó también'));
-
-    x := public.admin_eco_probar(format($q$select to_jsonb((public.ia_plus_devolver(%L::uuid, 'diag-plus-1'))::text)$q$, v_user));
-    y := public.admin_eco_probar(format($q$select to_jsonb((public.ia_plus_devolver(%L::uuid, 'diag-plus-1'))::text)$q$, v_user));
-    n := (public.economia_estado() -> 'plus' ->> 'disponibles')::integer;
-    c := c || public.admin_eco_item(g, 'Si la IA falla, el IA plus se devuelve', (x ->> 'ok')::boolean and n = 1,
-      coalesce(x ->> 'error', format('disponibles otra vez: %s', n)));
-
-    for k in 1..8 loop
-      x := public.admin_eco_probar(format($q$select public.ia_plus_usar(%L::uuid, 'diag-plus-3')$q$, v_user));
-    end loop;
-    y := public.admin_eco_probar(format($q$select public.ia_plus_usar(%L::uuid, 'diag-plus-3')$q$, v_user));
-    c := c || public.admin_eco_item(g, 'Máximo 8 llamadas a la IA por mazo plus', (x ->> 'ok')::boolean and y ->> 'hint' = 'plus_agotado',
-      coalesce(x ->> 'error', y ->> 'error', 'La 9ª llamada pasó'));
+    x := public.admin_eco_probar(format($q$select public.ia_consumir(%L::uuid, 'diagnostico-ia-extra')$q$, v_user));
+    y := public.admin_eco_probar(format($q$select public.ia_consumir(%L::uuid, 'diagnostico-ia-extra-2')$q$, v_user));
+    c := c || public.admin_eco_item(g, 'Con IA plus se crea 1 mazo más (y no más)',
+      (x ->> 'ok')::boolean and (x -> 'valor' ->> 'limite')::integer = v_base + 1 and y ->> 'hint' = 'cuota_agotada',
+      coalesce(x ->> 'error', format('mazo %s permitido · el %s se bloquea', v_base + 1, v_base + 2)));
 
     x := public.admin_eco_probar($q$select public.canjear('ia-plus')$q$);
-    update public.canjes set vence = now() - interval '1 second' where user_id = v_user and item = 'ia-plus' and usado is null;
-    y := public.admin_eco_probar(format($q$select public.ia_plus_usar(%L::uuid, 'diag-plus-4')$q$, v_user));
-    c := c || public.admin_eco_item(g, 'Se puede canjear de nuevo, y uno vencido no sirve', (x ->> 'ok')::boolean and y ->> 'hint' = 'sin_plus',
-      coalesce(x ->> 'error', y ->> 'error', 'Usó un IA plus vencido'));
+    c := c || public.admin_eco_item(g, 'IA plus se canjea una vez por día', x ->> 'hint' = 'tengo', coalesce(x ->> 'error', 'Se cobró dos veces el mismo día'));
 
-    -- Mazos de pago.
-    select s.catalog_id into v_cat from public.store_catalog s where s.active and not s.is_free order by s.catalog_id limit 1;
+    update public.canjes set vence = now() - interval '1 second' where user_id = v_user and item = 'ia-plus';
+    v_ok := public.ia_limite(v_user) = v_base and not (public.economia_estado() -> 'plus' ->> 'activo')::boolean;
+    c := c || public.admin_eco_item(g, format('Al terminar el día vuelve a %s', v_base), v_ok, format('límite: %s', public.ia_limite(v_user)));
+
+    -- Mazos por puntos: sin canje no se agregan; canjeados, sí.
+    select s.catalog_id into v_cat from public.store_catalog s
+    where s.active and not s.is_free
+      and exists (select 1 from public.tienda_items i where i.id = 'mazo:' || s.catalog_id and i.estado = 'disponible')
+    order by s.catalog_id limit 1;
     if v_cat is null then
-      c := c || public.admin_eco_item(g, 'Mazos de pago piden su canje', true, 'Todavía no hay mazos de pago (se omitió)');
+      c := c || public.admin_eco_item(g, 'Mazos por puntos', true, 'Todavía no hay mazos a la venta (se omitió)');
     else
       delete from public.user_decks where user_id = v_user and catalog_id = v_cat;
       x := public.admin_eco_probar(format($q$select to_jsonb(public.adquirir_mazo(%L, '[{"id": "c1", "q": "P", "a": "R"}]'))$q$, v_cat));
-      c := c || public.admin_eco_item(g, 'Mazos de pago piden su canje', not (x ->> 'ok')::boolean and x ->> 'error' ilike '%puntos%',
+      c := c || public.admin_eco_item(g, 'Un mazo por puntos no se agrega sin canjearlo', not (x ->> 'ok')::boolean and x ->> 'error' ilike '%puntos%',
         coalesce(x ->> 'error', 'Se agregó sin canjear'));
+      m := public.economia_saldo(v_user);
+      v_precio := (select precio from public.tienda_items where id = 'mazo:' || v_cat);
+      x := public.admin_eco_probar(format('select public.canjear(%L)', 'mazo:' || v_cat));
+      y := public.admin_eco_probar(format($q$select to_jsonb(public.adquirir_mazo(%L, '[{"id": "c1", "q": "P", "a": "R"}]'))$q$, v_cat));
+      v_ok := (x ->> 'ok')::boolean and (y ->> 'ok')::boolean and public.economia_saldo(v_user) = m - v_precio
+        and exists (select 1 from public.user_decks d where d.user_id = v_user and d.catalog_id = v_cat);
+      c := c || public.admin_eco_item(g, 'Canjear un mazo por puntos lo deja en Mis mazos', v_ok,
+        coalesce(x ->> 'error', y ->> 'error', format('%s: -%s pts y agregado', (select titulo from public.tienda_items where id = 'mazo:' || v_cat), v_precio)));
+      x := public.admin_eco_probar(format('select public.canjear(%L)', 'mazo:' || v_cat));
+      c := c || public.admin_eco_item(g, 'Un mazo no se canjea dos veces', x ->> 'hint' = 'tengo', coalesce(x ->> 'error', 'Lo cobró otra vez'));
     end if;
 
     y := public.economia_estado();

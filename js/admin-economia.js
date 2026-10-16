@@ -276,7 +276,7 @@
     }
     var temas = (e.items || []).filter(function (i) { return i.tipo === "tema"; });
     var tema = temas.filter(function (i) { return i.id === e.tema; })[0];
-    var plus = (e.plus && e.plus.disponibles) || 0;
+    var plusActivo = !!(e.plus && e.plus.activo);
     var ocupado = !!st.ocupado;
     var dis = ocupado ? " disabled" : "";
     var misiones = e.misiones || [];
@@ -287,7 +287,7 @@
         '<div class="eco-saldo">' + px("moneda", 34) +
           '<div><strong id="eco-adm-saldo">' + num(e.saldo) + "</strong><span>puntos</span></div>" +
           '<ul class="eco-saldo-extra"><li>' + px("paleta", 14) + "Tema: <b>" + esc(tema ? tema.titulo : "Noche") + "</b></li>" +
-          "<li>" + px("chispa", 14) + "IA plus: <b>" + num(plus) + (plus === 1 ? " disponible" : " disponibles") + "</b></li>" +
+          "<li>" + px("chispa", 14) + "IA plus: <b>" + (plusActivo ? "activo hoy (3 mazos con IA)" : "no activo") + "</b></li>" +
           "<li>" + px("cofre", 14) + "Temas: <b>" + num(temas.filter(function (t) { return t.tengo; }).length) + " de " + num(temas.length) + "</b></li></ul>" +
         "</div>" +
         '<div class="eco-puntos">' +

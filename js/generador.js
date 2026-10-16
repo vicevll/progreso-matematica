@@ -4,7 +4,6 @@
   var overlay = null;
   var step = 1;
   var MAX_TARJETAS = 20; // máximo de tarjetas por mazo generado con IA (la función aplica el mismo límite)
-  var MAX_TARJETAS_PLUS = 40; // con un canje de IA plus (supabase/misiones.sql)
   // Cada llamada a la IA recibe un número; si el wizard se cierra o se
   // retrocede, se incrementa y las respuestas antiguas se ignoran.
   var requestId = 0;
@@ -18,9 +17,7 @@
       usoIA: false,       // este mazo ya usó la IA (ya cuenta en el límite)
       vistaClave: null,   // { motivo: "cuota" | "invalida" } muestra el panel de API key
       pendiente: null,    // acción a reintentar después de guardar la key
-      claveOcupado: false,
-      plus: false,        // este mazo usa un canje de IA plus
-      plusUsado: false    // ya se gastó el canje en este mazo
+      claveOcupado: false
     };
   }
 
@@ -40,6 +37,19 @@
 
   function ic(name, size) {
     return window.icon ? window.icon(name, { size: size || 18 }) : "";
+  }
+
+  // IA plus (tienda, supabase/misiones.sql): el día que se canjea, el límite
+  // sube de 2 a 3 mazos. Se ofrece si hoy no está activo.
+  function plusOfertaHtml() {
+    var E = window.Economia;
+    if (!E || !E.estado || !E.estado() || !E.plus || E.plus().activo) return "";
+    var it = (E.estado().items || []).filter(function (i) { return i.id === "ia-plus"; })[0];
+    if (!it || it.estado !== "disponible") return "";
+    return '<div class="gen-plus-oferta">' + E.px("chispa", 30) +
+      "<span><b>IA plus</b>: canjéalo por " + new Intl.NumberFormat("es-CL").format(it.precio) + " puntos y crea 1 mazo más hoy.</span>" +
+      '<button class="btn eco-canjear" id="gen-ir-plus" type="button"><span>Ir a la tienda</span></button></div>' +
+      '<p class="gen-clave-o">O conecta tu propia API key:</p>';
   }
 
   function isOpen() {
@@ -162,7 +172,7 @@
     window.IA.estado().then(function (est) {
       if (!est || overlay !== ov) return;
       state.cuota = est.propia ? null : est;
-      if (!est.propia && est.restantes === 0 && !plusDisponibles() && !state.usoIA && !state.busy && !state.vistaClave && step === 1) {
+      if (!est.propia && est.restantes === 0 && !state.usoIA && !state.busy && !state.vistaClave && step === 1) {
         mostrarClave("cuota", null);
         return;
       }
@@ -182,7 +192,6 @@
   // Errores que se resuelven con una API key: devuelve true si los manejó.
   function manejarErrorClave(err, reintentar) {
     var codigo = err && err.codigo;
-    if (state.plus) return false;
     var propia = window.IA && window.IA.clavePropia && window.IA.clavePropia();
     if (codigo === "cuota" && !propia) { mostrarClave("cuota", reintentar); return true; }
     if (codigo === "clave_invalida" && propia) { mostrarClave("invalida", reintentar); return true; }
@@ -199,16 +208,12 @@
       ? "Google rechazó la API key que tenías guardada. Revisa que esté bien copiada o crea una nueva y pégala aquí."
       : (RENUEVAN[periodo] ? RENUEVAN[periodo] + " " : "") +
         "Si quieres seguir ahora, conecta tu propia API key de Gemini: es gratis y toma un par de minutos.";
-    var plusN = invalida ? 0 : plusDisponibles();
     return (
       '<div class="gen-step gen-clave">' +
         '<span class="gen-icon">' + ic("key", 28) + "</span>" +
         "<h2>" + esc(titulo) + "</h2>" +
         "<p>" + esc(texto) + "</p>" +
-        (plusN ? '<div class="gen-plus-oferta">' + (window.Economia ? window.Economia.px("chispa", 30) : "") +
-          "<span><b>Tienes " + plusN + (plusN === 1 ? " IA plus" : " IA plus") + "</b>: úsalo en este mazo, sin API key.</span>" +
-          '<button class="btn eco-canjear" id="gen-usar-plus" type="button"><span>Usar IA plus</span></button></div>' +
-          '<p class="gen-clave-o">O conecta tu propia API key:</p>' : "") +
+        (invalida ? "" : plusOfertaHtml()) +
         '<ol class="gen-clave-pasos">' +
           '<li>Entra a <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a> con tu cuenta de Google. Si es tu primera vez, acepta los términos.</li>' +
           "<li>Presiona <strong>Create API key</strong> (Crear clave de API). Si te pide un proyecto, elige el que aparece o crea uno nuevo.</li>" +
@@ -290,7 +295,6 @@
           ? '<div class="gen-status error" role="status">En modo prueba el generador no puede usar la IA. Entra con Google para probarlo.</div>'
           : "") +
         '<div class="gen-cuota" id="gen-cuota"' + (cuotaHtml() ? "" : " hidden") + ">" + cuotaHtml() + "</div>" +
-        plusHtml() +
         '<div class="gen-tabs"><button class="gen-tab active" data-tab="file" type="button">Subir archivo</button><button class="gen-tab" data-tab="text" type="button">Pegar texto</button></div>' +
         '<div id="gen-tab-file" class="gen-tab-panel active">' +
           '<label class="gen-drop" id="gen-drop" for="gen-file-input">' +
@@ -312,7 +316,6 @@
         '<span class="gen-icon">' + ic("edit", 28) + "</span>" +
         '<h2>Revisa el texto extraído</h2>' +
         '<p>Revisa el contenido y corrige lo que necesites. Después elige cuántas tarjetas quieres.</p>' +
-        plusHtml() +
         '<div class="gen-cards-controls">' + countHtml() + "</div>" +
         statusHtml() +
         '<textarea id="gen-markdown" rows="12" placeholder="Markdown del contenido...">' + esc(state.markdown) + "</textarea>" +
@@ -337,31 +340,9 @@
     );
   }
 
-  function maxTarjetas() {
-    return state.plus ? MAX_TARJETAS_PLUS : MAX_TARJETAS;
-  }
-
-  function plusDisponibles() {
-    var p = window.Economia && window.Economia.plus ? window.Economia.plus() : null;
-    return p && p.disponibles ? p.disponibles : 0;
-  }
-
-  // Interruptor de IA plus: solo aparece si tiene un canje (o ya lo está usando).
-  function plusHtml() {
-    var n = plusDisponibles();
-    if (!state.plus && !n) return "";
-    var px = window.Economia && window.Economia.px ? window.Economia.px("chispa", 26) : ic("sparkle", 20);
-    var texto = state.plusUsado
-      ? "<b>IA plus activo en este mazo</b> · modelo mejor y hasta 40 tarjetas."
-      : "<b>Usar IA plus</b> · modelo mejor y hasta 40 tarjetas. Tienes " + n + (n === 1 ? " canje" : " canjes") + ".";
-    return '<label class="gen-plus' + (state.plus ? " activo" : "") + '">' +
-      '<input type="checkbox" id="gen-plus"' + (state.plus ? " checked" : "") + (state.plusUsado ? " disabled" : "") + " />" +
-      px + "<span>" + texto + "</span></label>";
-  }
-
   function countHtml() {
     return '<label class="gen-count"><span>Cantidad: <output id="gen-count-output">' + state.count + "</output></span>" +
-      '<input id="gen-count" type="range" min="5" max="' + maxTarjetas() + '" value="' + state.count + '" /></label>';
+      '<input id="gen-count" type="range" min="5" max="' + MAX_TARJETAS + '" value="' + state.count + '" /></label>';
   }
 
   function renderCards() {
@@ -483,6 +464,13 @@
       askAbandon(close);
       return;
     }
+    if (e.target.closest("#gen-ir-plus")) {
+      var irTienda = function () { close(); location.hash = "#/tienda"; };
+      // Si todavía no se generó nada, no hay nada que perder.
+      if (step === 1 && !state.usoIA) irTienda();
+      else askAbandon(irTienda);
+      return;
+    }
     if (e.target.closest("#gen-back")) {
       askAbandon(function () {
         requestId++; // descarta una generación en curso
@@ -494,15 +482,6 @@
       return;
     }
     if (e.target.closest("#gen-clave-guardar")) { guardarClave(); return; }
-    if (e.target.closest("#gen-usar-plus")) {
-      var pendientePlus = state.pendiente;
-      state.plus = true;
-      state.vistaClave = null;
-      state.pendiente = null;
-      render();
-      if (pendientePlus) pendientePlus();
-      return;
-    }
     if (e.target.closest("#gen-clave-quitar")) { quitarClave(); return; }
     if (e.target.closest("#gen-clave-volver")) {
       state.vistaClave = null;
@@ -551,7 +530,7 @@
       syncButtons(); // habilita "Siguiente" en cuanto hay texto pegado
     }
     if (e.target.id === "gen-count") {
-      state.count = Math.min(maxTarjetas(), parseInt(e.target.value, 10) || 10);
+      state.count = Math.min(MAX_TARJETAS, parseInt(e.target.value, 10) || 10);
       var output = document.getElementById("gen-count-output");
       if (output) output.textContent = state.count;
     }
@@ -562,13 +541,6 @@
   }
 
   function handleChange(e) {
-    if (e.target.id === "gen-plus") {
-      state.plus = !!e.target.checked;
-      state.count = Math.min(state.count, maxTarjetas());
-      if (step === 3) collectCardsFromDom();
-      render();
-      return;
-    }
     if (e.target.id === "gen-file-input") handleFile(e.target.files && e.target.files[0]);
   }
 
@@ -585,13 +557,11 @@
     state.markdown = "";
     setStatus("");
     syncButtons();
-    var conPlus = state.plus;
     IA.transcribirArchivo(file, function (msg) {
       if (token === requestId) fileStatus(msg);
-    }, state.sesion, conPlus).then(function (text) {
+    }, state.sesion).then(function (text) {
       if (token !== requestId || !overlay) return;
       state.usoIA = true;
-      if (conPlus) state.plusUsado = true;
       state.markdown = text;
       fileStatus("Listo · " + text.length + " caracteres");
       syncButtons();
@@ -629,13 +599,12 @@
   function toCards(raw) {
     var cards = IA.parseJson(raw);
     if (!Array.isArray(cards) || !cards.length) throw new Error("La IA no devolvió tarjetas válidas.");
-    return cards.slice(0, maxTarjetas()).map(function (c) { return { q: String(c.q || ""), a: String(c.a || "") }; });
+    return cards.slice(0, MAX_TARJETAS).map(function (c) { return { q: String(c.q || ""), a: String(c.a || "") }; });
   }
 
   // Lanza una generación y gestiona el estado "ocupado", los mensajes y los
   // errores. onCards recibe las tarjetas solo si la respuesta sigue vigente.
   function listoMensaje(n) {
-    if (state.plusUsado) return "Listo · " + n + " tarjetas · con IA plus";
     if (window.IA && window.IA.clavePropia && window.IA.clavePropia()) return "Listo · " + n + " tarjetas · con tu API key";
     var quedan = window.IA && window.IA.restantes ? window.IA.restantes() : null;
     if (typeof quedan !== "number") return "Listo · " + n + " tarjetas";
@@ -649,13 +618,11 @@
     state.busy = true;
     setStatus(startMessage);
     syncButtons();
-    var conPlus = state.plus;
     IA.generarTarjetas(state.markdown, count, function (msg) {
       if (token === requestId) setStatus(msg);
-    }, evitar, state.sesion, conPlus).then(function (raw) {
+    }, evitar, state.sesion).then(function (raw) {
       if (token !== requestId || !overlay) return;
       state.usoIA = true;
-      if (conPlus) state.plusUsado = true;
       var cards = toCards(raw);
       state.busy = false;
       state.cards = cards;
@@ -666,10 +633,6 @@
       if (token !== requestId || !overlay) return;
       state.busy = false;
       if (manejarErrorClave(err, function () { requestCards(count, startMessage, onCards, evitar); })) return;
-      if (err && (err.codigo === "sin_plus") && !state.plusUsado) {
-        state.plus = false;
-        render();
-      }
       setStatus("Error: " + (err && err.message ? err.message : err), true);
       syncButtons();
     });

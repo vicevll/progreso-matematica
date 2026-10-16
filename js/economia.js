@@ -422,16 +422,17 @@
     );
   }
 
+  // IA plus: el día que se canjea, el generador deja crear 3 mazos con IA en vez de 2.
   function plusHtml(it) {
     var p = (estado && estado.plus) || {};
-    var tiene = p.disponibles > 0;
     return (
-      '<article class="eco-item eco-plus">' +
+      '<article class="eco-item eco-plus' + (p.activo ? " activo" : "") + '">' +
         '<div class="eco-item-arte">' + px("chispa", 56) + "</div>" +
         '<div class="eco-item-cuerpo"><h3>' + esc(it.titulo) + "</h3><p>" + esc(it.descripcion) + "</p>" +
-          (tiene ? '<p class="eco-plus-tienes">' + px("estrella", 14) + "Tienes <b>" + p.disponibles + "</b> · el primero vence " + esc(restante(p.vence)) + "</p>" : "") +
+          (p.activo ? '<p class="eco-plus-tienes">' + px("estrella", 14) + "<b>Activo hoy</b> · termina " + esc(restante(p.vence)) + "</p>" : "") +
         "</div>" +
-        '<div class="eco-item-pie">' + precioHtml(it.precio) + '<div class="eco-acciones">' + botonCanje(it) + "</div></div>" +
+        '<div class="eco-item-pie">' + precioHtml(it.precio) + '<div class="eco-acciones">' +
+          (p.activo ? '<span class="eco-hecha">' + ic("check", 15) + "Activo hoy</span>" : botonCanje(it)) + "</div></div>" +
         (mensajes[it.id] ? '<p class="eco-msg error" role="status">' + esc(mensajes[it.id]) + "</p>" : "") +
       "</article>"
     );
@@ -449,6 +450,17 @@
         "</div></div>" +
       "</article>"
     );
+  }
+
+  // Un mazo por puntos con su entrada en el catálogo se muestra con su diseño
+  // (js/tienda.js); los que aún no existen, como «Próximamente».
+  function mazoPuntosItem(it) {
+    var catalogo = it.datos && it.datos.catalog_id;
+    var entry = catalogo && (window.STORE_CATALOG || []).filter(function (e) { return e.id === catalogo; })[0];
+    if (entry && window.Tienda && window.Tienda.itemHtml && it.estado === "disponible") {
+      return window.Tienda.itemHtml(entry, { canje: botonCanje(it) });
+    }
+    return mazoPuntosHtml(it);
   }
 
   function billeteraHtml() {
@@ -474,7 +486,7 @@
     var items = estado.items || [];
     var temas = items.filter(function (i) { return i.tipo === "tema"; });
     var plus = items.filter(function (i) { return i.tipo === "ia_plus"; });
-    var mazos = items.filter(function (i) { return i.tipo === "mazo" && !(i.datos && i.datos.catalog_id); });
+    var mazos = items.filter(function (i) { return i.tipo === "mazo"; });
     return (
       '<section id="eco-tienda" class="eco-tienda">' +
         (probando ? '<div class="eco-probando" role="status">' + px("paleta", 22) + "<span>Estás probando el tema <b>" + esc((item("tema:" + probando) || {}).titulo || probando) + "</b>.</span>" +
@@ -482,7 +494,7 @@
         '<h2 class="eco-titulo">' + px("paleta", 28) + "Temas visuales</h2>" +
         '<div class="eco-grid eco-grid-temas">' + temas.map(temaHtml).join("") + "</div>" +
         (plus.length ? '<h2 class="eco-titulo">' + px("chispa", 28) + "Potenciadores</h2><div class=\"eco-grid eco-grid-plus\">" + plus.map(plusHtml).join("") + "</div>" : "") +
-        (mazos.length ? '<h2 class="eco-titulo">' + px("cofre", 28) + "Mazos por puntos</h2><div class=\"eco-grid eco-grid-mazos\">" + mazos.map(mazoPuntosHtml).join("") + "</div>" : "") +
+        (mazos.length ? '<h2 class="eco-titulo">' + px("cofre", 28) + "Mazos por puntos</h2><div class=\"store-grid eco-mazos-puntos\">" + mazos.map(mazoPuntosItem).join("") + "</div>" : "") +
       "</section>"
     );
   }
@@ -571,7 +583,7 @@
           if (window.StudappyTema) window.StudappyTema.aplicar(id);
           aviso("¡Listo! Ya tienes el tema " + it.titulo + ".");
         } else if (it.tipo === "ia_plus") {
-          aviso("¡Listo! Tienes un mazo IA plus para usar en el generador.");
+          aviso("¡Listo! Hoy puedes crear 3 mazos con IA.");
         } else {
           aviso("¡Listo! Canjeaste " + it.titulo + ".");
         }
@@ -587,7 +599,8 @@
       });
     };
     if (window.StudappyConfirm) {
-      window.StudappyConfirm.ask("Se descontarán " + num(it.precio) + " puntos y te quedarán " + num(queda) + ".", hacer,
+      window.StudappyConfirm.ask("Se descontarán " + num(it.precio) + " puntos y te quedarán " + num(queda) + "." +
+        (it.tipo === "ia_plus" ? " Hoy podrás crear 3 mazos con IA (hasta las 00:00)." : it.tipo === "mazo" ? " El mazo se agrega a Mis mazos." : ""), hacer,
         { title: "¿Canjear " + it.titulo + "?", confirmLabel: "Canjear", cancelLabel: "Cancelar", confirmClass: "primary" });
     } else {
       hacer();
@@ -689,7 +702,7 @@
     tiendaHtml: tiendaHtml,
     billeteraHtml: billeteraHtml,
     mazoDelCatalogo: mazoDelCatalogo,
-    plus: function () { return (estado && estado.plus) || { disponibles: 0 }; },
+    plus: function () { return (estado && estado.plus) || { activo: false }; },
     refrescar: function () { refrescarPronto(200); },
     px: px
   };

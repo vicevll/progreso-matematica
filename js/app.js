@@ -71,9 +71,18 @@
     return null;
   }
 
-  function esMago(deck) {
+  function temaDe(deck) {
     var entry = catalogoDe(deck);
-    return !!(entry && entry.theme === "mago");
+    return (entry && entry.theme) || null;
+  }
+
+  function esMago(deck) {
+    return temaDe(deck) === "mago";
+  }
+
+  // Mazos de estequiometría (se canjean con puntos): tema Aurora química.
+  function esAurora(deck) {
+    return temaDe(deck) === "aurora-quimica";
   }
 
   function iconoQuimica(nombre, size) {
@@ -115,6 +124,94 @@
     imagenHtml: function () { return MAGO_IMG; },
     icono: iconoQuimica
   };
+
+  /* ---------- Tema Aurora química ---------- */
+
+  // Matraz en pixel art con líquido de aurora (img/aurora-quimica.svg).
+  var AQ_IMG = '<img class="aq-img" src="img/aurora-quimica.svg?v=1" alt="Matraz con líquido de aurora, burbujas y un átomo" width="48" height="48" decoding="async" />';
+  // [ícono, x %, y %, tamaño px, giro, duración s, desfase s]
+  var AQ_FLOTA = [
+    ["atomo", 6, 10, 34, -8, 15, -2], ["molecula", 86, 12, 30, 10, 18, -6], ["tubo", 8, 64, 28, -16, 16, -9],
+    ["vaso", 88, 58, 28, 8, 20, -4], ["balanza", 74, 32, 24, 0, 17, -7], ["capsula", 20, 36, 22, -10, 21, -12]
+  ];
+  // Partículas que suben como burbujas: [x %, duración s, tamaño px, desfase s]
+  var AQ_PARTICULAS = [
+    [6, 9, 3, 0], [14, 12, 2, -4], [24, 10, 2, -7], [33, 14, 3, -2], [44, 11, 2, -9], [55, 13, 2, -5],
+    [63, 9, 3, -1], [72, 12, 2, -6], [81, 15, 2, -3], [90, 10, 3, -8], [38, 16, 2, -11], [96, 13, 2, -12]
+  ];
+
+  // Cielo polar con cintas de aurora, partículas y química en pixel art.
+  function escenaAuroraHtml() {
+    var flotan = AQ_FLOTA.map(function (f) {
+      return '<span class="aq-flota" style="--x:' + f[1] + "%;--y:" + f[2] + "%;--s:" + f[3] + "px;--r:" + f[4] + "deg;--t:" + f[5] + "s;--d:" + f[6] + 's">' + iconoQuimica(f[0], f[3]) + "</span>";
+    }).join("");
+    var particulas = AQ_PARTICULAS.map(function (q) {
+      return '<span class="aq-part" style="--x:' + q[0] + "%;--t:" + q[1] + "s;--s:" + q[2] + "px;--d:" + q[3] + 's"></span>';
+    }).join("");
+    return (
+      '<div class="aq-escena" aria-hidden="true">' +
+        '<span class="aq-cinta c1"></span><span class="aq-cinta c2"></span><span class="aq-cinta c3"></span>' +
+        '<span class="aq-brillo"></span>' +
+        particulas + flotan +
+      "</div>"
+    );
+  }
+
+  function nivelAurora(entry) {
+    return ({ pequeno: "Mazo pequeño", grande: "Mazo grande", premium: "Mazo premium" })[(entry && entry.nivel) || ""] || "";
+  }
+
+  window.AuroraQuimicaArte = {
+    escenaHtml: escenaAuroraHtml,
+    imagenHtml: function () { return AQ_IMG; },
+    icono: iconoQuimica,
+    nivel: nivelAurora
+  };
+
+  // Tarjeta de un mazo Aurora química en Mis mazos: franja con la aurora y el
+  // matraz arriba, y un acceso por submazo.
+  function auroraCardHtml(deck, index) {
+    var stats = deckStats(deck);
+    var pct = stats.total ? Math.round((stats.done / stats.total) * 100) : 0;
+    var entry = catalogoDe(deck) || {};
+    var subs = submazosDe(deck) || [];
+    var chips = subs.map(function (sub) {
+      var st = deckStats(deck, sub.cards);
+      var lleno = st.total && st.done === st.total;
+      return '<a class="mago-chip aq-chip' + (lleno ? " completo" : "") + '" href="#/mazo/' + deck.id + "/" + esc(sub.id) + '" title="Jugar ' + esc(sub.title) + '">' +
+        iconoQuimica(sub.icon, 32) +
+        '<span class="mago-chip-txt"><span class="mago-chip-num">Submazo ' + sub.num + "</span><strong>" + esc(sub.title) + "</strong></span>" +
+        '<span class="mago-chip-pct">' + st.done + "/" + st.total + "</span>" +
+      "</a>";
+    }).join("");
+    var nivel = nivelAurora(entry);
+    return (
+      '<div class="deck-card owned deck-aq reveal" style="--deck-color:' + esc(deck.color) + ";transition-delay:" + (index % 8) * 35 + 'ms">' +
+        '<div class="aq-arte">' +
+          escenaAuroraHtml() + AQ_IMG +
+          (nivel ? '<span class="aq-nivel">' + esc(nivel) + "</span>" : "") +
+          '<div class="deck-menu aq-menu">' +
+            '<span class="deck-owned-badge">' + ic("check", { size: 14 }) + "Adquirido</span>" +
+            '<button class="icon-btn danger" type="button" data-remove-store="' + deck.id + '" title="Eliminar de mi biblioteca" aria-label="Eliminar de mi biblioteca">' + ic("trash") + "</button>" +
+          "</div>" +
+        "</div>" +
+        '<div class="aq-cuerpo">' +
+          '<span class="eyebrow">' + esc((entry.subtitle || "Química").toUpperCase()) + "</span>" +
+          '<a class="deck-link" href="#/mazo/' + deck.id + '">' +
+            "<h3>" + esc(deck.nombre) + "</h3>" +
+            "<p>" + esc(deck.descripcion) + "</p>" +
+          "</a>" +
+          '<div class="aq-chips">' + chips + "</div>" +
+          '<div class="deck-foot">' +
+            '<span class="deck-count">' + ic("cards", { size: 16 }) + stats.total + "</span>" +
+            '<div class="mini-bar"><span style="width:' + pct + '%"></span></div>' +
+            '<span class="deck-pct" title="Tarjetas que ya sabes">' + stats.done + "/" + stats.total + "</span>" +
+          "</div>" +
+          pendHtml(stats.pend, "deck-pend") +
+        "</div>" +
+      "</div>"
+    );
+  }
 
   // Tarjeta destacada del Mazo del mago en Mis mazos.
   function magoCardHtml(deck, index) {
@@ -167,6 +264,7 @@
 
   function renderSubmazos(deck, subs) {
     vistaSubmazos = deck.id;
+    var aurora = esAurora(deck);
     var stats = deckStats(deck);
     var pct = stats.total ? Math.round((stats.done / stats.total) * 100) : 0;
     var entry = catalogoDe(deck) || {};
@@ -190,9 +288,9 @@
 
     app.innerHTML =
       '<nav class="breadcrumb"><a href="#/">Mis mazos</a><span class="sep">' + ic("chevronRight", { size: 14 }) + "</span><span>" + esc(deck.nombre) + "</span></nav>" +
-      '<section class="mago-portada reveal">' +
+      '<section class="mago-portada' + (aurora ? " aq-portada" : "") + ' reveal">' +
         '<div class="mago-portada-texto">' +
-          '<span class="eyebrow">' + esc((entry.subtitle || "").toUpperCase()) + "</span>" +
+          '<span class="eyebrow">' + esc((entry.subtitle || "").toUpperCase()) + (aurora && nivelAurora(entry) ? " · " + esc(nivelAurora(entry).toUpperCase()) : "") + "</span>" +
           "<h1>" + esc(deck.nombre) + "</h1>" +
           "<p>Elige un submazo para estudiar por partes, o juega todas las cartas juntas.</p>" +
           '<div class="mago-progreso">' +
@@ -204,9 +302,9 @@
         "</div>" +
         // La escena (química flotante, anillo y brillos) va solo detrás del mago,
         // para que no se cruce con el texto.
-        '<div class="mago-portada-img">' + escenaMagoHtml() + MAGO_IMG + "</div>" +
+        '<div class="mago-portada-img">' + (aurora ? escenaAuroraHtml() + AQ_IMG : escenaMagoHtml() + MAGO_IMG) + "</div>" +
       "</section>" +
-      '<section class="submazos-grid" aria-label="Submazos">' + tiles + "</section>";
+      '<section class="submazos-grid' + (aurora ? " aq-submazos" : "") + '" aria-label="Submazos">' + tiles + "</section>";
     setupReveal();
   }
 
@@ -509,6 +607,7 @@
 
   function deckCardHtml(deck, index) {
     if (esMago(deck) && submazosDe(deck)) return magoCardHtml(deck, index);
+    if (esAurora(deck) && submazosDe(deck)) return auroraCardHtml(deck, index);
     var stats = deckStats(deck);
     var pct = stats.total ? Math.round((stats.done / stats.total) * 100) : 0;
     var menu = deck.origen === "tienda"
@@ -989,7 +1088,7 @@
 
     app.innerHTML =
       migasEstudio(deck, alcance.sec, true) +
-      '<section class="study' + (esMago(deck) ? " study-mago" : "") + '">' +
+      '<section class="study' + (esMago(deck) ? " study-mago" : esAurora(deck) ? " study-aq" : "") + '">' +
         '<header class="study-head">' +
           "<h1>" + esc(alcance.titulo) + "</h1>" +
           '<div class="study-stats">' +

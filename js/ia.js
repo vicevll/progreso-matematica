@@ -110,7 +110,7 @@
           });
         }
         var data = res.data || {};
-        if (data.propia || data.plus) {
+        if (data.propia) {
           restantes = null;
         } else {
           if (typeof data.restantes === "number") restantes = data.restantes;
@@ -121,10 +121,8 @@
       });
   }
 
-  // Agrega la key propia (si hay) a un pedido que usa la IA. Un mazo IA plus
-  // usa siempre la key de Studappy.
+  // Agrega la key propia (si hay) a un pedido que usa la IA.
   function conClave(body) {
-    if (body.plus) return body;
     var k = clavePropia();
     if (k) body.clave = k;
     return body;
@@ -232,28 +230,23 @@
 
   // "sesion" identifica el mazo que se está generando: todas las llamadas de
   // una misma sesión cuentan como un solo mazo en el límite.
-  // plus: true usa un canje de IA plus (mejor modelo, hasta 40 tarjetas).
-  function transcribirArchivo(file, progress, sesion, plus) {
+  function transcribirArchivo(file, progress, sesion) {
     var mime = fileToMime(file);
     if (TIPOS.indexOf(mime) === -1) return Promise.reject(new Error("Formato no soportado. Usa PDF, JPG, PNG o WEBP."));
     if (file.size > MAX_ARCHIVO) return Promise.reject(new Error("El archivo pesa " + (file.size / 1048576).toFixed(1) + " MB; el máximo es " + MAX_MB + " MB."));
     if (typeof progress === "function") progress("Leyendo archivo...");
     return fileToBase64(file).then(function (b64) {
       if (typeof progress === "function") progress(mime === "application/pdf" ? "La IA está leyendo el PDF..." : "La IA está leyendo la imagen...");
-      var body = { accion: "transcribir", sesion: sesion, archivo: { mime: mime, datos: b64 } };
-      if (plus) body.plus = true;
-      return invocar(conClave(body));
+      return invocar(conClave({ accion: "transcribir", sesion: sesion, archivo: { mime: mime, datos: b64 } }));
     }).then(function (data) {
       return String(data.texto || "");
     });
   }
 
   // Devuelve el texto crudo de la IA; se convierte con parseJson.
-  function generarTarjetas(markdown, count, progress, evitar, sesion, plus) {
-    if (typeof progress === "function") progress(plus ? "La IA plus está creando las tarjetas..." : "La IA está creando las tarjetas...");
-    var body = { accion: "generar", sesion: sesion, texto: markdown, cantidad: count, evitar: evitar || [] };
-    if (plus) body.plus = true;
-    return invocar(conClave(body)).then(function (data) {
+  function generarTarjetas(markdown, count, progress, evitar, sesion) {
+    if (typeof progress === "function") progress("La IA está creando las tarjetas...");
+    return invocar(conClave({ accion: "generar", sesion: sesion, texto: markdown, cantidad: count, evitar: evitar || [] })).then(function (data) {
       return String(data.texto || "");
     });
   }

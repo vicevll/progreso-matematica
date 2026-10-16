@@ -1771,6 +1771,464 @@ html.dark-mode .store-mago .btn.primary:hover {
   color: #ffffff;
 }
 
+/* =====================================================================
+   Aurora química: mazos de estequiometría que se canjean con puntos.
+   Cielo polar con cintas de aurora, partículas que suben como burbujas y
+   química en pixel art. Usa la estructura del Mazo del mago con otros colores.
+   ===================================================================== */
+
+.deck-card.deck-aq,
+.mago-portada.aq-portada,
+.store-card.store-aq {
+  --aq-cielo:
+    radial-gradient(ellipse 70% 60% at 25% -10%, rgba(95, 224, 192, 0.24), transparent 70%),
+    radial-gradient(ellipse 60% 55% at 85% 0%, rgba(106, 92, 255, 0.2), transparent 72%),
+    linear-gradient(180deg, #031418 0%, #04191e 55%, #061a28 100%);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid rgba(95, 224, 192, 0.32);
+  background: var(--aq-cielo);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(47, 184, 160, 0.1);
+}
+
+.aq-escena {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Cintas de aurora: bandas difusas que ondulan despacio. */
+.aq-cinta {
+  position: absolute;
+  left: -25%;
+  width: 150%;
+  height: 58%;
+  border-radius: 50%;
+  filter: blur(14px);
+  mix-blend-mode: screen;
+  opacity: 0.65;
+  transform: rotate(var(--r));
+  animation: aq-ondear var(--t) ease-in-out var(--d) infinite alternate;
+}
+
+.aq-cinta.c1 {
+  --r: -9deg;
+  --t: 13s;
+  --d: 0s;
+  top: -22%;
+  background: linear-gradient(100deg, transparent 8%, rgba(95, 224, 192, 0.6) 34%, rgba(166, 242, 223, 0.45) 50%, transparent 74%);
+}
+
+.aq-cinta.c2 {
+  --r: 7deg;
+  --t: 18s;
+  --d: -6s;
+  top: -8%;
+  background: linear-gradient(100deg, transparent 18%, rgba(47, 159, 208, 0.5) 44%, rgba(106, 92, 255, 0.42) 64%, transparent 86%);
+}
+
+.aq-cinta.c3 {
+  --r: -3deg;
+  --t: 22s;
+  --d: -11s;
+  top: 6%;
+  height: 38%;
+  background: linear-gradient(100deg, transparent 28%, rgba(95, 224, 192, 0.34) 54%, transparent 80%);
+}
+
+@keyframes aq-ondear {
+  from { transform: translateX(-6%) rotate(var(--r)) scaleY(0.9); opacity: 0.5; }
+  to { transform: translateX(6%) rotate(var(--r)) scaleY(1.12); opacity: 0.88; }
+}
+
+/* Resplandor bajo el matraz. */
+.aq-brillo {
+  position: absolute;
+  bottom: -30%;
+  left: 50%;
+  width: 70%;
+  aspect-ratio: 1.6;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(95, 224, 192, 0.24), transparent 65%);
+  transform: translateX(-50%);
+}
+
+/* Partículas cuadradas (pixel) que suben como burbujas. */
+.aq-part {
+  position: absolute;
+  bottom: -8px;
+  left: var(--x);
+  width: var(--s);
+  height: var(--s);
+  background: #a6f2df;
+  box-shadow: 0 0 6px rgba(95, 224, 192, 0.9);
+  opacity: 0;
+  animation: aq-subir var(--t) linear var(--d) infinite;
+}
+
+.aq-part:nth-of-type(3n) {
+  background: #9fe4ff;
+  box-shadow: 0 0 6px rgba(102, 220, 255, 0.9);
+}
+
+.aq-part:nth-of-type(4n) {
+  background: #b9a6ff;
+  box-shadow: 0 0 6px rgba(148, 120, 255, 0.9);
+}
+
+@keyframes aq-subir {
+  0% { transform: translateY(0); opacity: 0; }
+  12% { opacity: 0.95; }
+  75% { opacity: 0.6; }
+  100% { transform: translateY(-340px); opacity: 0; }
+}
+
+.aq-flota {
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  width: var(--s);
+  height: var(--s);
+  opacity: 0.8;
+  filter: drop-shadow(0 0 8px rgba(95, 224, 192, 0.4));
+  transform: rotate(var(--r));
+  animation: mago-flotar var(--t) ease-in-out var(--d) infinite;
+}
+
+.aq-flota .px-icono {
+  width: 100%;
+  height: 100%;
+}
+
+.aq-img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 18px rgba(95, 224, 192, 0.35)) drop-shadow(0 6px 0 rgba(0, 0, 0, 0.35));
+  animation: flotar-mago 8s ease-in-out infinite;
+}
+
+.aq-nivel {
+  position: absolute;
+  bottom: 12px;
+  left: 14px;
+  z-index: 2;
+  padding: 4px 10px;
+  border: 1px solid rgba(166, 242, 223, 0.45);
+  border-radius: 999px;
+  background: rgba(3, 26, 30, 0.82);
+  color: #a6f2df;
+  font-family: var(--font-pixel);
+  font-size: 0.56rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ---------- Tarjeta en Mis mazos ---------- */
+
+.deck-card.deck-aq {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.deck-card.deck-aq:hover,
+.deck-card.deck-aq:focus-within {
+  border-color: rgba(166, 242, 223, 0.55);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45), 0 0 46px rgba(47, 184, 160, 0.18);
+}
+
+.aq-arte {
+  position: relative;
+  display: grid;
+  height: 170px;
+  place-items: center;
+  overflow: hidden;
+}
+
+.aq-arte .aq-img {
+  width: 132px;
+}
+
+.aq-arte .aq-flota {
+  width: calc(var(--s) * 0.7);
+  height: calc(var(--s) * 0.7);
+}
+
+.aq-cuerpo {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 16px 18px 18px;
+}
+
+/* «Adquirido» y quitar, sobre la franja de arte. */
+.aq-menu {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+}
+
+.aq-menu .deck-owned-badge,
+.aq-menu .icon-btn {
+  background: rgba(3, 26, 30, 0.82);
+}
+
+.aq-cuerpo > .eyebrow {
+  font-size: 0.6rem;
+}
+
+.aq-chip strong {
+  white-space: normal;
+}
+
+.aq-cuerpo > .eyebrow,
+.aq-portada .eyebrow,
+.store-aq .sm-cuerpo .eyebrow {
+  color: #7ff0d0;
+}
+
+.deck-aq .deck-link h3 {
+  margin: 4px 0 6px;
+  color: #ffffff;
+  font-family: "Inter Tight", var(--font-ui);
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.08;
+}
+
+.deck-aq .deck-link p {
+  color: #b9d9d3;
+  font-size: 0.84rem;
+}
+
+.aq-chips {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.mago-chip.aq-chip {
+  border-color: rgba(95, 224, 192, 0.24);
+  background: rgba(3, 30, 34, 0.72);
+}
+
+.mago-chip.aq-chip:hover,
+.mago-chip.aq-chip:focus-visible {
+  border-color: rgba(166, 242, 223, 0.6);
+  background: rgba(6, 44, 48, 0.9);
+}
+
+.aq-chip .mago-chip-num,
+.aq-submazos .submazo-num {
+  color: #6fd9bd;
+}
+
+.deck-aq .deck-foot {
+  margin-top: 16px;
+}
+
+.deck-aq .mini-bar > span,
+.aq-portada .mini-bar > span,
+.aq-submazos .submazo .mini-bar > span {
+  background: linear-gradient(90deg, #a6f2df, #2fb8a0 45%, #2f9fd0 75%, #6a5cff);
+  opacity: 1;
+}
+
+html.dark-mode .deck-aq .btn.primary,
+html.dark-mode .aq-portada .btn.primary,
+html.dark-mode .store-aq .btn.primary {
+  border: 1px solid rgba(95, 224, 192, 0.55);
+  background: #073a38;
+  color: #e8fff8;
+}
+
+html.dark-mode .deck-aq .btn.primary:hover,
+html.dark-mode .aq-portada .btn.primary:hover,
+html.dark-mode .store-aq .btn.primary:hover {
+  border-color: rgba(166, 242, 223, 0.95);
+  background: #0a4a47;
+  color: #ffffff;
+}
+
+/* ---------- Portada del mazo y submazos ---------- */
+
+.mago-portada.aq-portada {
+  border-color: rgba(95, 224, 192, 0.32);
+}
+
+.aq-portada p {
+  color: #b9d9d3;
+}
+
+/* La aurora se funde hacia el texto (sin corte a la izquierda). */
+.mago-portada-img .aq-escena {
+  inset: -34px -38px -34px -120px;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 45%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 45%);
+}
+
+.mago-portada-img .aq-img {
+  width: min(250px, 80%);
+}
+
+.aq-submazos .submazo:hover,
+.aq-submazos .submazo:focus-visible {
+  border-color: rgba(95, 224, 192, 0.5);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.36), 0 0 26px rgba(47, 184, 160, 0.14);
+}
+
+.aq-submazos .submazo-icono,
+.study-aq .ready-icon.ready-px {
+  border-color: rgba(95, 224, 192, 0.3);
+  background: radial-gradient(circle, rgba(47, 184, 160, 0.26), rgba(3, 30, 34, 0.7));
+}
+
+.aq-submazos .submazo-jugar {
+  border-color: rgba(95, 224, 192, 0.5);
+  background: #073a38;
+  color: #e8fff8;
+}
+
+.aq-submazos .submazo:hover .submazo-jugar {
+  border-color: rgba(166, 242, 223, 0.95);
+  background: #0a4a47;
+}
+
+/* ---------- Tienda ---------- */
+
+.store-card.store-aq {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0;
+}
+
+.store-card.store-aq:hover {
+  border-color: rgba(166, 242, 223, 0.55);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.42), 0 0 40px rgba(47, 184, 160, 0.18);
+}
+
+.sa-arte {
+  position: relative;
+  display: grid;
+  height: 176px;
+  place-items: center;
+  overflow: hidden;
+}
+
+.sa-arte .aq-img {
+  width: 128px;
+}
+
+.sa-arte .aq-flota {
+  width: calc(var(--s) * 0.66);
+  height: calc(var(--s) * 0.66);
+}
+
+.store-aq h2 {
+  margin: 6px 0 6px;
+  color: #ffffff;
+  font-family: "Inter Tight", var(--font-ui);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.08;
+}
+
+.store-aq .sm-cuerpo > p:not(.store-message) {
+  color: #b9d9d3;
+}
+
+.store-aq .sm-submazo {
+  border-color: rgba(95, 224, 192, 0.25);
+  background: rgba(3, 30, 34, 0.72);
+}
+
+.store-aq .store-message {
+  flex: 1;
+  min-height: 1.4em;
+  margin: 8px 0 10px;
+}
+
+.sa-pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.sa-precio {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #ffe6a6;
+  font-family: var(--font-pixel);
+  font-size: 0.9rem;
+}
+
+.sa-precio .px-ico {
+  image-rendering: pixelated;
+}
+
+.store-badge.sa-badge {
+  border-color: rgba(95, 224, 192, 0.45);
+  background: #06302d;
+  color: #a6f2df;
+}
+
+/* Mazos por puntos: misma grilla que los mazos de la tienda. */
+.store-grid.eco-mazos-puntos > .eco-item {
+  height: 100%;
+}
+
+/* Portada apilada (arte arriba): la aurora se funde hacia abajo. */
+@media (max-width: 900px) {
+  .mago-portada-img .aq-escena {
+    inset: -34px -38px -10px;
+    -webkit-mask-image: linear-gradient(180deg, #000 62%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 62%, transparent 100%);
+  }
+}
+
+@media (max-width: 720px) {
+  .aq-arte {
+    height: 150px;
+  }
+
+  .aq-arte .aq-img,
+  .sa-arte .aq-img {
+    width: 112px;
+  }
+
+  .mago-portada-img .aq-img {
+    width: min(190px, 60%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aq-cinta,
+  .aq-part,
+  .aq-flota,
+  .aq-img {
+    animation: none;
+  }
+
+  .aq-part {
+    display: none;
+  }
+}
+
 /* ---------- Pantallas angostas ---------- */
 
 @media (max-width: 900px) {
