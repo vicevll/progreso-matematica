@@ -1,0 +1,449 @@
+/* Studappy · tema «Gran Guerra» (mazo Primera Guerra Mundial).
+   Usa la misma tarjeta que Aurora química (clases aq-* de neon.css) y cambia
+   el cielo, los colores y la escena: anochecer de batalla con reflectores,
+   una bengala que cae, brasas, un biplano que cruza, sacos de arena con
+   alambre de púas y un tanque Mark I en pixel art. Bronce, oliva y amapola. */
+
+.deck-card.deck-gg,
+.mago-portada.gg-portada,
+.store-card.store-gg {
+  --gg-bronce: #e3b24c;
+  --gg-bronce-claro: #ffd98a;
+  --gg-oliva: #c2d266;
+  --gg-amapola: #ec4436;
+  --gg-cielo:
+    radial-gradient(ellipse 85% 45% at 50% 122%, rgba(255, 112, 40, 0.24), transparent 70%),
+    radial-gradient(ellipse 55% 45% at 12% -5%, rgba(140, 160, 70, 0.2), transparent 72%),
+    radial-gradient(ellipse 40% 40% at 88% 0%, rgba(236, 68, 54, 0.14), transparent 70%),
+    linear-gradient(180deg, #0f130b 0%, #171810 42%, #261a0f 76%, #34190c 100%);
+  border-color: rgba(227, 178, 76, 0.36);
+  background: var(--gg-cielo);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 40px rgba(236, 68, 54, 0.1);
+}
+
+/* ---------- Escena ---------- */
+
+/* Reflectores que barren el cielo despacio. */
+.gg-foco {
+  position: absolute;
+  bottom: 12%;
+  width: 46px;
+  height: 150%;
+  background: linear-gradient(to top, rgba(255, 236, 190, 0.26), rgba(255, 236, 190, 0.06) 70%, transparent 90%);
+  clip-path: polygon(44% 100%, 56% 100%, 100% 0, 0 0);
+  mix-blend-mode: screen;
+  transform-origin: 50% 100%;
+  animation: gg-barrer 13s ease-in-out infinite alternate;
+}
+
+.gg-foco.f1 {
+  left: 22%;
+  --a: -26deg;
+  --b: 6deg;
+}
+
+.gg-foco.f2 {
+  left: 70%;
+  --a: 20deg;
+  --b: -10deg;
+  animation-duration: 17s;
+  animation-delay: -6s;
+}
+
+@keyframes gg-barrer {
+  from { transform: rotate(var(--a)); }
+  to { transform: rotate(var(--b)); }
+}
+
+/* Fuego en el horizonte, detrás del parapeto. */
+.gg-resplandor {
+  position: absolute;
+  bottom: -18%;
+  left: 50%;
+  width: 90%;
+  aspect-ratio: 2.4;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(255, 140, 60, 0.32), transparent 66%);
+  transform: translateX(-50%);
+  animation: gg-latir 5s ease-in-out infinite;
+}
+
+@keyframes gg-latir {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; }
+}
+
+/* Bengala: un punto de luz que cae balanceándose e ilumina el cielo. */
+.gg-bengala {
+  position: absolute;
+  top: 6%;
+  left: 60%;
+  width: 4px;
+  height: 4px;
+  background: #fff6d8;
+  box-shadow: 0 0 0 2px rgba(255, 196, 92, 0.85), 0 0 18px 6px rgba(255, 170, 70, 0.55);
+  animation: gg-caer 11s ease-in infinite;
+}
+
+.gg-bengala::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 196, 110, 0.2), transparent 65%);
+  transform: translate(-50%, -50%);
+  content: "";
+}
+
+@keyframes gg-caer {
+  0% { transform: translate(0, 0); opacity: 0; }
+  8% { opacity: 1; }
+  30% { transform: translate(10px, 18px); }
+  55% { transform: translate(-8px, 38px); }
+  80% { transform: translate(6px, 58px); opacity: 0.9; }
+  100% { transform: translate(-4px, 74px); opacity: 0; }
+}
+
+/* Brasas cuadradas (pixel) que suben. */
+.gg-brasa {
+  position: absolute;
+  bottom: 6%;
+  left: var(--x);
+  width: var(--s);
+  height: var(--s);
+  background: #ffb347;
+  box-shadow: 0 0 6px rgba(255, 120, 40, 0.9);
+  opacity: 0;
+  animation: gg-subir var(--t) linear var(--d) infinite;
+}
+
+.gg-brasa:nth-of-type(3n) {
+  background: #ff6b3d;
+}
+
+.gg-brasa:nth-of-type(4n) {
+  background: #ffe39a;
+}
+
+@keyframes gg-subir {
+  0% { transform: translate(0, 0); opacity: 0; }
+  12% { opacity: 0.95; }
+  60% { transform: translate(8px, -150px); opacity: 0.55; }
+  100% { transform: translate(-6px, -300px); opacity: 0; }
+}
+
+.gg-flota {
+  filter: drop-shadow(0 0 8px rgba(255, 170, 70, 0.28));
+}
+
+/* El biplano cruza de lado a lado. */
+.gg-avion {
+  position: absolute;
+  top: 10%;
+  left: 0;
+  width: 34px;
+  height: 34px;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 6px rgba(255, 220, 160, 0.3));
+  animation: gg-volar 26s linear infinite;
+}
+
+.gg-avion .px-icono {
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes gg-volar {
+  0% { left: -12%; transform: translateY(0) rotate(-3deg); }
+  25% { transform: translateY(-6px) rotate(2deg); }
+  50% { transform: translateY(4px) rotate(-2deg); }
+  75% { transform: translateY(-4px) rotate(3deg); }
+  100% { left: 104%; transform: translateY(0) rotate(-3deg); }
+}
+
+/* Parapeto de sacos de arena con alambre de púas. */
+.gg-parapeto {
+  position: absolute;
+  right: -4%;
+  bottom: 0;
+  left: -4%;
+  height: 20%;
+  background:
+    radial-gradient(ellipse 52% 70% at 50% 100%, #1d150c 68%, transparent 71%) 0 100% / 30px 100% repeat-x,
+    linear-gradient(#1d150c, #120d07) 0 100% / 100% 45% no-repeat;
+}
+
+.gg-alambre {
+  position: absolute;
+  right: 0;
+  bottom: 15%;
+  left: 0;
+  height: 10px;
+  opacity: 0.75;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='10' shape-rendering='crispEdges'%3E%3Crect x='0' y='5' width='24' height='1' fill='%23857f6e'/%3E%3Crect x='10' y='3' width='1' height='1' fill='%23b9b3a1'/%3E%3Crect x='11' y='4' width='1' height='1' fill='%23b9b3a1'/%3E%3Crect x='12' y='6' width='1' height='1' fill='%23b9b3a1'/%3E%3Crect x='13' y='7' width='1' height='1' fill='%23b9b3a1'/%3E%3Crect x='13' y='3' width='1' height='1' fill='%23b9b3a1'/%3E%3Crect x='12' y='4' width='1' height='1' fill='%23b9b3a1'/%3E%3Crect x='11' y='6' width='1' height='1' fill='%23b9b3a1'/%3E%3Crect x='10' y='7' width='1' height='1' fill='%23b9b3a1'/%3E%3C/svg%3E") 0 0 / 24px 10px repeat-x;
+}
+
+/* El tanque: pixel art nítido que retumba de vez en cuando. */
+.gg-img {
+  filter: drop-shadow(0 0 16px rgba(255, 150, 60, 0.32)) drop-shadow(0 5px 0 rgba(0, 0, 0, 0.4));
+  animation: gg-retumbar 6s steps(1, end) infinite;
+}
+
+@keyframes gg-retumbar {
+  0%, 84%, 100% { transform: translate(0, 0); }
+  86% { transform: translate(1px, -1px); }
+  88% { transform: translate(-1px, 0); }
+  90% { transform: translate(1px, 1px); }
+  92% { transform: translate(0, -1px); }
+}
+
+/* Nivel del mazo como timbre militar, arriba a la izquierda (abajo va el tanque). */
+.deck-gg .aq-nivel,
+.store-gg .aq-nivel {
+  top: 12px;
+  bottom: auto;
+  border: 2px solid rgba(236, 68, 54, 0.85);
+  border-radius: 4px;
+  background: rgba(36, 10, 6, 0.82);
+  color: #ff9c8a;
+  letter-spacing: 0.14em;
+  transform: rotate(-4deg);
+}
+
+/* ---------- Tarjeta en Mis mazos ---------- */
+
+.deck-card.deck-gg:hover,
+.deck-card.deck-gg:focus-within {
+  border-color: rgba(255, 217, 138, 0.6);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5), 0 0 46px rgba(236, 68, 54, 0.16);
+}
+
+.aq-arte .gg-img {
+  width: 92px;
+  margin: 18px 40px 0 0;
+}
+
+.aq-arte .gg-avion {
+  width: 24px;
+  height: 24px;
+}
+
+.deck-gg .aq-menu .deck-owned-badge,
+.deck-gg .aq-menu .icon-btn {
+  background: rgba(28, 20, 10, 0.85);
+}
+
+.deck-gg .aq-sub {
+  border-color: rgba(227, 178, 76, 0.26);
+  background: rgba(30, 24, 12, 0.78);
+}
+
+.deck-gg .aq-sub:hover,
+.deck-gg .aq-sub:focus-visible {
+  border-color: rgba(255, 217, 138, 0.62);
+  background: rgba(46, 36, 16, 0.92);
+}
+
+.deck-gg .aq-sub.completo {
+  border-color: rgba(194, 210, 102, 0.6);
+}
+
+.deck-gg .aq-sub-num,
+.gg-submazos .submazo-num {
+  color: var(--gg-bronce, #e3b24c);
+}
+
+.deck-gg .aq-cuerpo > .eyebrow,
+.gg-portada .eyebrow,
+.store-gg .sm-cuerpo .eyebrow {
+  color: #f2cd78;
+}
+
+.deck-gg .mini-bar > span,
+.gg-portada .mini-bar > span,
+.gg-submazos .submazo .mini-bar > span {
+  background: linear-gradient(90deg, #ec4436, #e3b24c 45%, #c2d266 85%);
+  opacity: 1;
+}
+
+html.dark-mode .deck-gg .btn.primary,
+html.dark-mode .gg-portada .btn.primary,
+html.dark-mode .store-gg .btn.primary {
+  border: 1px solid rgba(227, 178, 76, 0.6);
+  background: #33280f;
+  color: #fff3d6;
+}
+
+html.dark-mode .deck-gg .btn.primary:hover,
+html.dark-mode .gg-portada .btn.primary:hover,
+html.dark-mode .store-gg .btn.primary:hover {
+  border-color: rgba(255, 217, 138, 0.95);
+  background: #42341a;
+  color: #ffffff;
+}
+
+/* ---------- Portada del mazo y submazos ---------- */
+
+.mago-portada.aq-portada.gg-portada {
+  border-color: rgba(227, 178, 76, 0.36);
+}
+
+.gg-portada p {
+  color: #d8ccb0;
+}
+
+.mago-portada-img .gg-img {
+  width: min(300px, 86%);
+  margin-top: 34px;
+}
+
+.mago-portada-img .gg-avion {
+  top: 6%;
+}
+
+.gg-submazos .submazo:hover,
+.gg-submazos .submazo:focus-visible {
+  border-color: rgba(227, 178, 76, 0.55);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.36), 0 0 26px rgba(236, 68, 54, 0.14);
+}
+
+.gg-submazos .submazo-icono,
+.study-gg .ready-icon.ready-px {
+  border-color: rgba(227, 178, 76, 0.34);
+  background: radial-gradient(circle, rgba(227, 178, 76, 0.22), rgba(30, 22, 10, 0.75));
+}
+
+.gg-submazos .submazo-icono .px-icono,
+.study-gg .ready-icon .px-icono {
+  image-rendering: pixelated;
+}
+
+.gg-submazos .submazo-jugar {
+  border-color: rgba(227, 178, 76, 0.55);
+  background: #33280f;
+  color: #fff3d6;
+}
+
+.gg-submazos .submazo:hover .submazo-jugar {
+  border-color: rgba(255, 217, 138, 0.95);
+  background: #42341a;
+}
+
+/* ---------- Estudio: carta con marco de bronce ---------- */
+
+.study-gg {
+  --carta-a: #e3b24c;
+  --carta-b: #8f5f1d;
+}
+
+.study-gg .flashcard-back {
+  background: linear-gradient(140deg, #c2d266, #5f6e27);
+}
+
+.study-gg .flashcard-front .flashcard-kicker {
+  color: #f2cd78;
+}
+
+.study-gg .flashcard-back .flashcard-kicker {
+  color: #d6e58a;
+}
+
+.study-gg .mini-bar > span {
+  background: linear-gradient(90deg, #ec4436, #e3b24c 45%, #c2d266 85%);
+  opacity: 1;
+}
+
+/* ---------- Tienda ---------- */
+
+.store-card.store-gg:hover {
+  border-color: rgba(255, 217, 138, 0.6);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), 0 0 40px rgba(236, 68, 54, 0.16);
+}
+
+.sa-arte .gg-img {
+  width: 150px;
+  margin-top: 26px;
+}
+
+.store-gg .sm-cuerpo > p:not(.store-message) {
+  color: #d8ccb0;
+}
+
+.store-gg .sm-submazo {
+  border-color: rgba(227, 178, 76, 0.26);
+  background: rgba(30, 24, 12, 0.78);
+}
+
+.store-gg .store-badge.sa-badge {
+  border-color: rgba(194, 210, 102, 0.5);
+  background: #262c10;
+  color: #d6e58a;
+}
+
+/* ---------- Pantallas angostas y sin animación ---------- */
+
+@media (max-width: 900px) {
+  .mago-portada-img .gg-escena {
+    inset: -34px -38px -10px;
+  }
+}
+
+@media (max-width: 720px) {
+  .sa-arte .gg-img {
+    width: 128px;
+  }
+
+  .mago-portada-img .gg-img {
+    width: min(230px, 70%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gg-foco,
+  .gg-bengala,
+  .gg-brasa,
+  .gg-avion,
+  .gg-img,
+  .gg-resplandor {
+    animation: none;
+  }
+
+  .gg-brasa,
+  .gg-bengala {
+    display: none;
+  }
+
+  .gg-avion {
+    left: 12%;
+  }
+}
+
+/* Listas dentro de las tarjetas de estudio (por ejemplo, «MANÍ»). */
+.flashcard-text ul,
+.flashcard-text ol {
+  margin: 4px 0;
+  padding-left: 1.2em;
+}
+
+.flashcard-text li {
+  margin: 2px 0;
+  line-height: 1.5;
+}
+
+.flashcard-text li::marker {
+  color: var(--accent);
+}
+
+@media (max-width: 720px) {
+  .flashcard-text ul,
+  .flashcard-text ol {
+    margin: 2px 0;
+  }
+
+  .flashcard-text li {
+    margin: 1px 0;
+    line-height: 1.42;
+  }
+}

@@ -85,6 +85,21 @@
     return temaDe(deck) === "aurora-quimica";
   }
 
+  // Mazos por puntos con diseño propio (Aurora química, Gran Guerra). Usan la
+  // misma tarjeta (clases aq-*) y cambian escena, ilustración e íconos.
+  function temaMazo(deck) {
+    var t = temaDe(deck);
+    if (t === "aurora-quimica") return { clase: "aq", escena: escenaAuroraHtml, img: AQ_IMG, icono: iconoQuimica };
+    if (t === "gran-guerra") return { clase: "gg", escena: escenaGuerraHtml, img: GG_IMG, icono: iconoGuerra };
+    return null;
+  }
+
+  // Ícono de un submazo según el tema del mazo.
+  function iconoSubmazo(deck, nombre, size) {
+    var tm = temaMazo(deck);
+    return (tm ? tm.icono : iconoQuimica)(nombre, size);
+  }
+
   function iconoQuimica(nombre, size) {
     return '<img class="px-icono" src="img/quimica/' + esc(nombre) + '.svg" alt="" width="' + (size || 32) + '" height="' + (size || 32) + '" />';
   }
@@ -168,9 +183,57 @@
     nivel: nivelAurora
   };
 
+  /* ---------- Tema Gran Guerra ---------- */
+
+  function iconoGuerra(nombre, size) {
+    return '<img class="px-icono" src="img/guerra/' + esc(nombre) + '.svg?v=1" alt="" width="' + (size || 32) + '" height="' + (size || 32) + '" />';
+  }
+
+  // Tanque Mark I en pixel art, sobre el barro y con amapolas (img/gran-guerra.svg).
+  var GG_IMG = '<img class="aq-img gg-img" src="img/gran-guerra.svg?v=1" alt="Tanque de la Primera Guerra Mundial en pixel art, con amapolas" width="48" height="32" decoding="async" />';
+  // [ícono, x %, y %, tamaño px, giro, duración s, desfase s]
+  var GG_FLOTA = [
+    ["zepelin", 78, 6, 34, 3, 22, -8], ["medalla", 88, 54, 26, 8, 19, -2], ["amapola", 6, 60, 26, -10, 15, -5],
+    ["telegrama", 70, 30, 22, -6, 18, -10], ["casco", 20, 34, 22, 10, 20, -12]
+  ];
+  // Brasas que suben: [x %, duración s, tamaño px, desfase s]
+  var GG_BRASAS = [
+    [8, 8, 3, 0], [17, 11, 2, -3], [29, 9, 2, -6], [41, 12, 3, -2], [52, 10, 2, -8], [61, 13, 2, -4],
+    [69, 9, 3, -1], [78, 11, 2, -7], [87, 14, 2, -5], [94, 10, 3, -9]
+  ];
+
+  // Cielo de batalla al anochecer: reflectores, una bengala que cae, brasas,
+  // un biplano que cruza y el parapeto de sacos con alambre de púas.
+  function escenaGuerraHtml() {
+    var flotan = GG_FLOTA.map(function (f) {
+      return '<span class="aq-flota gg-flota" style="--x:' + f[1] + "%;--y:" + f[2] + "%;--s:" + f[3] + "px;--r:" + f[4] + "deg;--t:" + f[5] + "s;--d:" + f[6] + 's">' + iconoGuerra(f[0], f[3]) + "</span>";
+    }).join("");
+    var brasas = GG_BRASAS.map(function (q) {
+      return '<span class="gg-brasa" style="--x:' + q[0] + "%;--t:" + q[1] + "s;--s:" + q[2] + "px;--d:" + q[3] + 's"></span>';
+    }).join("");
+    return (
+      '<div class="aq-escena gg-escena" aria-hidden="true">' +
+        '<span class="gg-foco f1"></span><span class="gg-foco f2"></span>' +
+        '<span class="gg-resplandor"></span>' +
+        '<span class="gg-bengala"></span>' +
+        '<span class="gg-avion">' + iconoGuerra("biplano", 34) + "</span>" +
+        brasas + flotan +
+        '<span class="gg-parapeto"></span><span class="gg-alambre"></span>' +
+      "</div>"
+    );
+  }
+
+  window.GranGuerraArte = {
+    escenaHtml: escenaGuerraHtml,
+    imagenHtml: function () { return GG_IMG; },
+    icono: iconoGuerra,
+    nivel: nivelAurora
+  };
+
   // Tarjeta de un mazo Aurora química en Mis mazos: franja con la aurora y el
   // matraz arriba, y un acceso por submazo.
   function auroraCardHtml(deck, index) {
+    var tm = temaMazo(deck);
     var stats = deckStats(deck);
     var pct = stats.total ? Math.round((stats.done / stats.total) * 100) : 0;
     var entry = catalogoDe(deck) || {};
@@ -180,15 +243,15 @@
       var st = deckStats(deck, sub.cards);
       var lleno = st.total && st.done === st.total;
       return '<a class="aq-sub' + (lleno ? " completo" : "") + '" href="#/mazo/' + deck.id + "/" + esc(sub.id) + '" title="Jugar ' + esc(sub.title) + '">' +
-        iconoQuimica(sub.icon, 26) +
+        tm.icono(sub.icon, 26) +
         '<span class="aq-sub-txt"><span class="aq-sub-num">Submazo ' + sub.num + "</span><strong>" + st.done + "/" + st.total + "</strong></span>" +
       "</a>";
     }).join("");
     var nivel = nivelAurora(entry);
     return (
-      '<div class="deck-card owned deck-aq reveal" style="--deck-color:' + esc(deck.color) + ";transition-delay:" + (index % 8) * 35 + 'ms">' +
+      '<div class="deck-card owned deck-aq' + (tm.clase !== "aq" ? " deck-" + tm.clase : "") + ' reveal" style="--deck-color:' + esc(deck.color) + ";transition-delay:" + (index % 8) * 35 + 'ms">' +
         '<div class="aq-arte">' +
-          escenaAuroraHtml() + AQ_IMG +
+          tm.escena() + tm.img +
           (nivel ? '<span class="aq-nivel">' + esc(nivel) + "</span>" : "") +
           '<div class="deck-menu aq-menu">' +
             '<span class="deck-owned-badge aq-adquirido" title="Adquirido">' + ic("check", { size: 14 }) + '<span class="aq-oculto">Adquirido</span></span>' +
@@ -196,7 +259,7 @@
           "</div>" +
         "</div>" +
         '<div class="aq-cuerpo">' +
-          '<span class="eyebrow">' + esc((entry.subtitle || "Química").toUpperCase()) + "</span>" +
+          '<span class="eyebrow">' + esc((entry.subtitle || "").toUpperCase()) + "</span>" +
           '<a class="deck-link" href="#/mazo/' + deck.id + '" title="' + esc(deck.descripcion) + '">' +
             "<h3>" + esc(deck.nombre) + "</h3>" +
           "</a>" +
@@ -263,7 +326,9 @@
 
   function renderSubmazos(deck, subs) {
     vistaSubmazos = deck.id;
-    var aurora = esAurora(deck);
+    var tm = temaMazo(deck);
+    var aurora = !!tm;
+    var extra = tm && tm.clase !== "aq" ? " " + tm.clase : "";
     var stats = deckStats(deck);
     var pct = stats.total ? Math.round((stats.done / stats.total) * 100) : 0;
     var entry = catalogoDe(deck) || {};
@@ -271,7 +336,7 @@
       var st = deckStats(deck, sub.cards);
       var p = st.total ? Math.round((st.done / st.total) * 100) : 0;
       return '<a class="submazo reveal' + (st.total && st.done === st.total ? " completo" : "") + '" href="#/mazo/' + deck.id + "/" + esc(sub.id) + '" style="transition-delay:' + i * 40 + 'ms">' +
-        '<span class="submazo-icono">' + iconoQuimica(sub.icon, 48) + "</span>" +
+        '<span class="submazo-icono">' + iconoSubmazo(deck, sub.icon, 48) + "</span>" +
         '<span class="submazo-num">Submazo ' + sub.num + "</span>" +
         "<h2>" + esc(sub.title) + "</h2>" +
         "<p>" + esc(sub.description) + "</p>" +
@@ -287,7 +352,7 @@
 
     app.innerHTML =
       '<nav class="breadcrumb"><a href="#/">Mis mazos</a><span class="sep">' + ic("chevronRight", { size: 14 }) + "</span><span>" + esc(deck.nombre) + "</span></nav>" +
-      '<section class="mago-portada' + (aurora ? " aq-portada" : "") + ' reveal">' +
+      '<section class="mago-portada' + (aurora ? " aq-portada" + (extra ? extra + "-portada" : "") : "") + ' reveal">' +
         '<div class="mago-portada-texto">' +
           '<span class="eyebrow">' + esc((entry.subtitle || "").toUpperCase()) + (aurora && nivelAurora(entry) ? " · " + esc(nivelAurora(entry).toUpperCase()) : "") + "</span>" +
           "<h1>" + esc(deck.nombre) + "</h1>" +
@@ -301,9 +366,9 @@
         "</div>" +
         // La escena (química flotante, anillo y brillos) va solo detrás del mago,
         // para que no se cruce con el texto.
-        '<div class="mago-portada-img">' + (aurora ? escenaAuroraHtml() + AQ_IMG : escenaMagoHtml() + MAGO_IMG) + "</div>" +
+        '<div class="mago-portada-img">' + (aurora ? tm.escena() + tm.img : escenaMagoHtml() + MAGO_IMG) + "</div>" +
       "</section>" +
-      '<section class="submazos-grid' + (aurora ? " aq-submazos" : "") + '" aria-label="Submazos">' + tiles + "</section>";
+      '<section class="submazos-grid' + (aurora ? " aq-submazos" + (extra ? extra + "-submazos" : "") : "") + '" aria-label="Submazos">' + tiles + "</section>";
     setupReveal();
   }
 
@@ -627,7 +692,7 @@
 
   function deckCardHtml(deck, index) {
     if (esMago(deck) && submazosDe(deck)) return magoCardHtml(deck, index);
-    if (esAurora(deck) && submazosDe(deck)) return auroraCardHtml(deck, index);
+    if (temaMazo(deck) && submazosDe(deck)) return auroraCardHtml(deck, index);
     var stats = deckStats(deck);
     var pct = stats.total ? Math.round((stats.done / stats.total) * 100) : 0;
     var menu = deck.origen === "tienda"
@@ -1196,7 +1261,7 @@
 
     app.innerHTML =
       migasEstudio(deck, alcance.sec, true) +
-      '<section class="study' + (esMago(deck) ? " study-mago" : esAurora(deck) ? " study-aq" : "") + '">' +
+      '<section class="study' + (esMago(deck) ? " study-mago" : temaMazo(deck) ? " study-aq" + (temaMazo(deck).clase !== "aq" ? " study-" + temaMazo(deck).clase : "") : "") + '">' +
         '<header class="study-head">' +
           "<h1>" + esc(alcance.titulo) + "</h1>" +
           '<div class="study-stats">' +
@@ -1276,9 +1341,9 @@
     var pend = deckStats(deck, alcance.cards).pend;
     app.innerHTML =
       migasEstudio(deck, alcance.sec, true) +
-      '<section class="study-ready reveal">' +
+      '<section class="study-ready reveal' + (temaMazo(deck) ? " study-aq" + (temaMazo(deck).clase !== "aq" ? " study-" + temaMazo(deck).clase : "") : "") + '">' +
         (alcance.sec
-          ? '<span class="ready-icon ready-px">' + iconoQuimica(alcance.sec.icon, 48) + "</span>" +
+          ? '<span class="ready-icon ready-px">' + iconoSubmazo(deck, alcance.sec.icon, 48) + "</span>" +
             '<span class="eyebrow">SUBMAZO ' + alcance.sec.num + " · " + esc(deck.nombre.toUpperCase()) + "</span>"
           : '<span class="ready-icon">' + ic("sparkle", { size: 34 }) + "</span>" +
             '<span class="eyebrow">MODO DE ESTUDIO</span>') +

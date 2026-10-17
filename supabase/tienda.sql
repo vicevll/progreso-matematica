@@ -43,7 +43,7 @@ on conflict (catalog_id) do update set
   is_free = excluded.is_free,
   active = excluded.active;
 
--- Mazos que se canjean con puntos (tema Aurora química). El precio está en
+-- Mazos que se canjean con puntos (temas Aurora química y Gran Guerra). El precio está en
 -- tienda_items (supabase/misiones.sql); is_free = false hace que adquirir_mazo
 -- pida el canje.
 insert into public.store_catalog (catalog_id, title, description, color, is_free, active)
@@ -53,7 +53,11 @@ values
    '#2fb8a0', false, true),
   ('medicina-estequiometria', 'Estequiometría nivel medicina',
    '25 tarjetas: 15 conceptos de leyes ponderales y 10 ejercicios de resolución de nivel medicina.',
-   '#2f9fd0', false, true)
+   '#2f9fd0', false, true),
+  -- Tema Gran Guerra.
+  ('historia-primera-guerra-mundial', 'Primera Guerra Mundial',
+   '27 tarjetas: 12 cosas que debes saber y 15 preguntas de cuestionario (causas, trincheras, 1917 y el Tratado de Versalles).',
+   '#d9a441', false, true)
 on conflict (catalog_id) do update set
   title = excluded.title,
   description = excluded.description,

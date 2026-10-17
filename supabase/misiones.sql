@@ -102,6 +102,7 @@ insert into public.tienda_items (id, tipo, titulo, descripcion, precio, estado, 
   -- entrada en data/catalogo-tienda.js.
   ('mazo:paes-quimica-estequiometria', 'mazo', 'Estequiometría', 'Mol, masa molar, balanceo y reactivo limitante, con 15 ejercicios.', 200, 'disponible', false, '{"catalog_id": "paes-quimica-estequiometria", "nivel": "pequeno"}', 30),
   ('mazo:medicina-estequiometria', 'mazo', 'Estequiometría nivel medicina', 'Leyes ponderales, fórmulas, peso equivalente y rendimiento, con 10 ejercicios.', 500, 'disponible', false, '{"catalog_id": "medicina-estequiometria", "nivel": "grande"}', 31),
+  ('mazo:historia-primera-guerra-mundial', 'mazo', 'Primera Guerra Mundial', 'Causas, trincheras, 1917 y la paz, con 15 preguntas de cuestionario.', 200, 'disponible', false, '{"catalog_id": "historia-primera-guerra-mundial", "nivel": "pequeno"}', 32),
   -- Ejemplos de antes: quedan ocultos (el premium se muestra como «Próximamente»).
   ('mazo:proximo-pequeno', 'mazo', 'Mazo pequeño', 'Hasta 20 tarjetas sobre un tema puntual.', 250, 'oculto', false, '{"nivel": "pequeno"}', 40),
   ('mazo:proximo-grande', 'mazo', 'Mazo grande', '40 tarjetas o más para repasar una unidad completa.', 600, 'oculto', false, '{"nivel": "grande"}', 41),

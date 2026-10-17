@@ -213,8 +213,55 @@ window.STORE_CATALOG = [
       { id: "q2-e09", q: "¿Qué masa de NaOH neutraliza completamente 4,9 g de $\\mathrm{H_2SO_4}$? Usa la ley de los equivalentes. (H = 1, S = 32, O = 16, Na = 23)", a: "$PE_{\\mathrm{H_2SO_4}}=\\frac{98}{2}=49$ → $\\frac{4{,}9}{49}=0{,}1$ eq-g. Reacciona el mismo número de eq-g de NaOH ($PE=\\frac{40}{1}=40$): $0{,}1\\cdot40=$ **4 g**." },
       { id: "q2-e10", q: "Al quemar 2,4 g de un metal divalente se obtienen 4,0 g de su óxido. ¿Cuál es su peso equivalente y de qué metal se trata?", a: "Oxígeno combinado: $4{,}0-2{,}4=1{,}6$ g. $PE=\\frac{2{,}4\\cdot8}{1{,}6}=$ **12 g/eq**. Si es divalente, $M=12\\cdot2=24$ g/mol: es **magnesio**." }
     ]
-  }
-,
+  },
+  {
+    // Primera Guerra Mundial (tema Gran Guerra): 12 cosas que debes saber y 15 preguntas.
+    id: "historia-primera-guerra-mundial",
+    title: "Primera Guerra Mundial",
+    subtitle: "Historia · Siglo XX",
+    description: "27 tarjetas: 12 cosas que debes saber y 15 preguntas de cuestionario (causas, trincheras, 1917 y el Tratado de Versalles).",
+    color: "#d9a441",
+    price: 200,
+    status: "available",
+    // Diseño Gran Guerra (ver js/app.js y css/gran-guerra.css). Se canjea con puntos (misiones.sql).
+    theme: "gran-guerra",
+    nivel: "pequeno",
+    tags: ["Historia", "Siglo XX", "2 submazos"],
+    sections: [
+      { id: "gm1", title: "Lo que debes saber", description: "Causas, bandos, Sarajevo, trincheras, armas nuevas, 1917 y el fin de la guerra.", icon: "casco" },
+      { id: "gm2", title: "Cuestionario", description: "Preguntas tipo prueba: verdadero o falso, orden cronológico, batallas, Versalles y Chile en la guerra.", icon: "medalla" }
+    ],
+    cards: [
+      { id: "gm1-c01", q: "¿Qué fue la **Primera Guerra Mundial** y cuándo ocurrió?", a: "Una enorme guerra entre las grandes potencias, también llamada **la Gran Guerra**. Duró de **1914 a 1918**. Se peleó sobre todo en Europa, pero fue **mundial** porque participaron países y colonias de los cinco continentes. Murieron cerca de **10 millones de soldados**." },
+      { id: "gm1-c02", q: "¿Cuáles fueron las **4 causas de fondo**? Pista: recuerda **MANÍ**.", a: "- **M**ilitarismo: competían por tener más armas y soldados.\n- **A**lianzas: si atacaban a uno, sus aliados entraban.\n- **N**acionalismo: orgullo extremo por la propia nación.\n- **I**mperialismo: peleas por colonias en África y Asia." },
+      { id: "gm1-c03", q: "¿Qué fue la **Paz Armada**?", a: "El período de **1871 a 1914**: las potencias no peleaban entre sí, pero desconfiaban y se preparaban para la guerra. Extendieron el **servicio militar obligatorio** y compitieron en una **carrera armamentista**. Era una paz con el dedo en el gatillo." },
+      { id: "gm1-c04", q: "¿Qué **dos bandos** se enfrentaron?", a: "- **Potencias Centrales**: Alemania, Austria-Hungría, el Imperio otomano y Bulgaria.\n- **Aliados**: Francia, Reino Unido, Rusia, Serbia y Bélgica; luego **Italia** (1915) y **EE.UU.** (1917).\nItalia era aliada de Alemania, pero al empezar la guerra se declaró neutral." },
+      { id: "gm1-c05", q: "¿Por qué a los **Balcanes** les decían el **«polvorín de Europa»**?", a: "Porque estaban a punto de explotar, como un barril de pólvora. Muchos eslavos bajo Austria-Hungría querían unirse a **Serbia**, que ya era independiente. **Rusia** apoyaba a Serbia, pero **Austria-Hungría** quería dominar la zona: en 1908 se quedó con **Bosnia**." },
+      { id: "gm1-c06", q: "¿Cuál fue el **detonante** de la guerra?", a: "El **atentado de Sarajevo** (28 de junio de 1914): el nacionalista **Gavrilo Princip** mató al archiduque **Francisco Fernando**, heredero de Austria-Hungría. Austria culpó a Serbia y le declaró la guerra. Por las alianzas, los países entraron uno tras otro: un **efecto dominó**." },
+      { id: "gm1-c07", q: "¿Qué fue el **Plan Schlieffen** y por qué fracasó?", a: "El plan alemán para ganar rápido: derrotar a **Francia** pasando por **Bélgica** (un país neutral) y después atacar a **Rusia**. Fracasó en la **batalla del Marne** (septiembre de 1914), donde franceses y británicos frenaron a los alemanes cerca de París." },
+      { id: "gm1-c08", q: "¿Cómo era la **guerra de trincheras**?", a: "Desde fines de 1914 se cavaron trincheras **del mar del Norte a Suiza**. Los soldados vivían entre barro, ratas y frío, y atacar significaba cruzar la **tierra de nadie** bajo las ametralladoras. Casi nadie avanzaba: era una **guerra de desgaste**." },
+      { id: "gm1-c09", q: "¿Qué **armas nuevas** aparecieron?", a: "- **Ametralladoras** y **artillería** pesada.\n- **Gas venenoso** (desde 1915).\n- **Tanques** (desde 1916).\n- **Aviones** y **zepelines**, para espiar y bombardear.\n- **Submarinos** alemanes que hundían barcos." },
+      { id: "gm1-c10", q: "¿Por qué se dice que fue una **guerra total**?", a: "Porque **toda la sociedad** trabajó para ganar, no solo los soldados: las fábricas hacían armas, se **racionó** la comida y se usó **propaganda** para reclutar. Con los hombres en el frente, las **mujeres** ocuparon sus trabajos." },
+      { id: "gm1-c11", q: "¿Por qué **1917** fue un año clave?", a: "- **Entró EE.UU.**, por los submarinos alemanes y el **telegrama Zimmermann**.\n- **Salió Rusia**, tras la **Revolución rusa**: Lenin pactó un armisticio con Alemania (la paz llegó en 1918).\nCon los soldados y el dinero de EE.UU., los Aliados tomaron ventaja." },
+      { id: "gm1-c12", q: "¿Cómo terminó la guerra y qué cambió?", a: "El **armisticio** del **11 de noviembre de 1918** detuvo los combates. Luego:\n- El **Tratado de Versalles** (1919) castigó a Alemania.\n- Cayeron **4 imperios** y nacieron países nuevos.\n- Nació la **Sociedad de las Naciones**." },
+
+      { id: "gm2-q01", q: "**Verdadero o falso:** la Primera Guerra Mundial comenzó cuando Alemania invadió Polonia.", a: "**Falso.** Eso pasó en 1939 y dio inicio a la **Segunda** Guerra Mundial. La Primera comenzó en **1914**, después del atentado de Sarajevo, cuando Austria-Hungría le declaró la guerra a Serbia." },
+      { id: "gm2-q02", q: "¿Por qué la invasión alemana de **Bélgica** hizo entrar al **Reino Unido** en la guerra?", a: "Porque Bélgica era **neutral** y el Reino Unido se había comprometido a defenderla. Además, no quería a Alemania dominando la costa frente a Inglaterra. Le declaró la guerra el **4 de agosto de 1914**." },
+      { id: "gm2-q03", q: "Ordena del más antiguo al más reciente: **Tratado de Versalles**, **atentado de Sarajevo**, **entrada de EE.UU.** y **batalla del Marne**.", a: "1. Atentado de Sarajevo (junio de **1914**)\n2. Batalla del Marne (septiembre de **1914**)\n3. Entrada de EE.UU. (abril de **1917**)\n4. Tratado de Versalles (junio de **1919**)" },
+      { id: "gm2-q04", q: "¿Qué era la **«tierra de nadie»**?", a: "La franja de terreno **entre las trincheras** de los dos bandos, llena de alambre de púas, cráteres y barro. Quien la cruzaba quedaba a la vista de las ametralladoras enemigas: por eso cada ataque costaba miles de vidas." },
+      { id: "gm2-q05", q: "¿Qué batalla de 1916 se volvió el símbolo de la resistencia francesa?", a: "**Verdún** (de febrero a diciembre de 1916). Alemania quiso agotar al ejército francés, pero Francia resistió casi **10 meses** con el lema **«¡No pasarán!»**. Murieron cientos de miles de soldados y el frente casi no se movió." },
+      { id: "gm2-q06", q: "¿En qué batalla se usaron **tanques** por primera vez y quién los usó?", a: "En la **batalla del Somme**, en **septiembre de 1916**. Los usaron los **británicos**: eran lentos y se echaban a perder seguido, pero podían aplastar el alambre de púas y cruzar trincheras." },
+      { id: "gm2-q07", q: "¿Qué proponía el **telegrama Zimmermann**?", a: "Un mensaje secreto de Alemania a **México** (1917): si EE.UU. entraba en la guerra y México lo atacaba, lo ayudaría a recuperar **Texas, Nuevo México y Arizona**. Los británicos lo descifraron y se lo pasaron a EE.UU., que lo publicó. Fue una razón para que **EE.UU. entrara en la guerra**." },
+      { id: "gm2-q08", q: "¿Por qué **Rusia** salió de la guerra antes del final?", a: "Por las derrotas y el hambre estalló la **Revolución rusa** (1917): cayó el zar **Nicolás II** y los bolcheviques de **Lenin** tomaron el poder. Firmaron la paz con Alemania en **Brest-Litovsk** (1918), aunque Rusia perdió grandes territorios." },
+      { id: "gm2-q09", q: "¿Qué pasó **«a la hora 11 del día 11 del mes 11»** de 1918?", a: "Empezó el **armisticio**: los combates se detuvieron. Alemania lo firmó en un vagón de tren en **Compiègne** (Francia). Sus aliados ya se habían rendido y el káiser **Guillermo II** había dejado el trono dos días antes." },
+      { id: "gm2-q10", q: "Nombra **tres castigos** del Tratado de Versalles a Alemania.", a: "- Aceptar la **culpa** de la guerra.\n- Pagar **reparaciones** a los vencedores.\n- Perder **Alsacia y Lorena** y **todas sus colonias**.\n- Tener un ejército de solo **100.000 soldados**, sin aviones, tanques ni submarinos." },
+      { id: "gm2-q11", q: "¿Qué **cuatro imperios** desaparecieron con la guerra?", a: "El **alemán**, el **austrohúngaro**, el **ruso** y el **otomano** (turco). En su lugar aparecieron o volvieron a existir países como **Polonia**, **Checoslovaquia**, **Yugoslavia**, **Austria**, **Hungría** y **Finlandia**." },
+      { id: "gm2-q12", q: "¿Qué fue la **Sociedad de las Naciones** y por qué fracasó?", a: "Una organización creada en **1919** por idea del presidente de EE.UU. **Woodrow Wilson**, para resolver los conflictos conversando. Fracasó porque **EE.UU. nunca entró** y **no tenía ejército**. No evitó la Segunda Guerra Mundial y la reemplazó la **ONU**." },
+      { id: "gm2-q13", q: "¿Cómo cambió la guerra la vida de las **mujeres**?", a: "Con los hombres en el frente, trabajaron en **fábricas de municiones**, transporte, campos y hospitales. Eso impulsó el **voto femenino**: Alemania y el Reino Unido lo aprobaron en **1918** (en el Reino Unido, primero desde los 30 años)." },
+      { id: "gm2-q14", q: "¿Qué país salió de la guerra como **nueva gran potencia** y por qué?", a: "**Estados Unidos.** No se peleó en su territorio, así que su industria quedó intacta. Además, vendió armas y comida y **prestó dinero** a los Aliados: Europa terminó destruida y endeudada con EE.UU." },
+      { id: "gm2-q15", q: "Chile fue **neutral**, pero la guerra llegó a sus costas. ¿Qué pasó?", a: "- **Batalla de Coronel** (1914): barcos alemanes vencieron a los británicos frente a Coronel.\n- El crucero alemán **Dresden** se hundió en la isla **Robinson Crusoe** (1915).\n- El **salitre** se vendió mucho para explosivos; después, el sintético lo llevó a la crisis." }
+    ]
+  },
   {
     id: "paes-m1-proximo",
     title: "PAES M1 · Próximo mazo",
