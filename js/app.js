@@ -563,11 +563,19 @@
     );
   }
 
+  // Ícono pixel del juego (img/juego) o de química.
+  function pxIco(nombre, size) {
+    if (window.Economia && window.Economia.px) return window.Economia.px(nombre, size);
+    return '<img class="px-ico" src="img/juego/' + encodeURIComponent(nombre) + '.svg?v=1" width="' + size + '" height="' + size + '" alt="" decoding="async" />';
+  }
+
   function renderLanding() {
     var tag = document.getElementById("topbar-tag");
     if (tag) tag.textContent = "Flashcards";
-    // Solo en localhost (ver account.js): entrar sin Google para probar.
+    // Solo en localhost (ver account.js): entrar sin Supabase para probar.
     var canDemo = !!(window.Auth && window.Auth.canDemo && window.Auth.canDemo());
+    // «Probar gratis»: cuenta de prueba sin registro (account.js).
+    var canTrial = !!(window.Auth && window.Auth.canTrial && window.Auth.canTrial());
     app.innerHTML =
       '<section class="landing-hero hero-mago">' +
         fondoMagicoHtml() +
@@ -579,13 +587,26 @@
           '<span class="eyebrow">ESTUDIO · FLASHCARDS</span>' +
           '<h1 class="wordmark">Studappy</h1>' +
           '<p>Convierte lo que necesitas aprender en tarjetas claras, visuales y fáciles de repasar.</p>' +
-          '<div class="landing-actions">' +
-            '<button class="btn primary landing-login" id="landing-login" type="button">' + (window.GOOGLE_ICON || "") + "<span>Iniciar sesión con Google</span></button>" +
-            (canDemo ? '<button class="btn ghost" id="landing-demo" type="button">' + ic("play", { size: 16 }) + "<span>Entrar en modo prueba</span></button>" : "") +
+          '<div class="landing-actions' + (canTrial ? " con-prueba" : "") + '">' +
+            (canTrial
+              ? '<button class="btn prueba-cta landing-prueba" id="landing-prueba" type="button">' +
+                  '<span class="prueba-cta-chip">GRATIS</span>' +
+                  '<span class="prueba-cta-txt">Probar sin registrarme</span>' + ic("chevronRight", { size: 18 }) +
+                "</button>"
+              : "") +
+            '<button class="btn ' + (canTrial ? "ghost" : "primary") + ' landing-login" id="landing-login" type="button">' + (window.GOOGLE_ICON || "") + "<span>Iniciar sesión con Google</span></button>" +
           "</div>" +
-          (canDemo
-            ? "<small>Modo prueba: solo aparece en localhost, no usa tu cuenta y la tienda queda desactivada.</small>"
+          (canTrial
+            ? '<ul class="landing-prueba-lista" aria-label="Qué incluye la prueba">' +
+                "<li>" + pxIco("chispa", 22) + "<span><b>1 mazo</b> con IA</span></li>" +
+                "<li>" + pxIco("lapiz", 22) + "<span><b>1 mazo</b> a mano</span></li>" +
+                "<li>" + pxIco("cofre", 22) + "<span>Tienda <b>para mirar</b></span></li>" +
+              "</ul>" +
+              "<small>Sin correo ni contraseña. Cuando quieras, guarda todo con Google.</small>"
             : "<small>Tu espacio de estudio se abre después de iniciar sesión.</small>") +
+          (canDemo
+            ? '<button class="landing-demo-link" id="landing-demo" type="button">' + ic("play", { size: 14 }) + "<span>Modo local (solo localhost, sin Supabase)</span></button>"
+            : "") +
         "</div>" +
       "</section>" +
       '<section class="marquee" aria-label="Ejemplos de flashcards">' +
@@ -652,6 +673,91 @@
     setupReveal();
   }
 
+  /* ---------- Modo de prueba (cuenta anónima, sin registro) ---------- */
+
+  function esPrueba() {
+    return !!(window.Auth && window.Auth.isTrial && window.Auth.isTrial());
+  }
+
+  // Mazo creado con el generador: sus tarjetas tienen ids "g<n>-...".
+  function esMazoIA(deck) {
+    return deck.origen !== "tienda" && !!deck.cards.length && /^g\d+-/.test(String(deck.cards[0].id));
+  }
+
+  // En la prueba: 1 mazo a mano y 1 con IA (este último lo cuenta también el servidor).
+  function cuposPrueba() {
+    var propios = window.DeckStore.all().filter(function (d) { return d.origen !== "tienda"; });
+    var ia = propios.filter(esMazoIA).length;
+    return { manual: propios.length - ia, ia: ia };
+  }
+
+  function limitePrueba(tipo) {
+    var ia = tipo === "ia";
+    if (!window.StudappyConfirm) return;
+    window.StudappyConfirm.ask(
+      ia
+        ? "En el modo de prueba puedes crear 1 mazo con IA. Con tu cuenta gratis creas 2 cada día y te llevas los que ya hiciste."
+        : "En el modo de prueba puedes tener 1 mazo hecho a mano. Con tu cuenta gratis creas todos los que quieras y te llevas este.",
+      function () { if (window.Auth && window.Auth.crearCuenta) window.Auth.crearCuenta(); },
+      {
+        title: ia ? "Ya creaste tu mazo con IA de prueba" : "Ya tienes tu mazo de prueba",
+        confirmLabel: "Crear cuenta gratis",
+        cancelLabel: "Ahora no",
+        confirmClass: "primary"
+      }
+    );
+  }
+
+  function pruebaBannerHtml() {
+    var c = cuposPrueba();
+    function cupo(icono, nombre, usados, total) {
+      var lleno = usados >= total;
+      return '<li class="prueba-cupo' + (lleno ? " lleno" : "") + '">' + pxIco(icono, 22) +
+        "<span>" + nombre + "</span><b>" + Math.min(usados, total) + "/" + total + "</b></li>";
+    }
+    return (
+      '<section class="prueba-banner" aria-label="Modo prueba">' +
+        '<div class="prueba-banner-texto">' +
+          '<span class="prueba-badge">' + pxIco("estrella", 16) + "Modo prueba</span>" +
+          "<h2>Estás probando Studappy gratis</h2>" +
+          "<p>Crea tu cuenta cuando quieras: te llevas tus mazos y tu avance.</p>" +
+          '<ul class="prueba-cupos">' +
+            cupo("lapiz", "Mazo a mano", c.manual, 1) +
+            cupo("chispa", "Mazo con IA", c.ia, 1) +
+            '<li class="prueba-cupo">' + pxIco("cofre", 22) + "<span>Tienda</span><b>solo mirar</b></li>" +
+          "</ul>" +
+        "</div>" +
+        '<div class="prueba-banner-cta">' +
+          '<button class="btn prueba-cta" type="button" data-crear-cuenta>' + (window.GOOGLE_ICON || "") + '<span class="prueba-cta-txt">Crear cuenta gratis</span></button>' +
+          "<small>Mazos sin límite · 2 mazos con IA al día · misiones y puntos</small>" +
+        "</div>" +
+      "</section>"
+    );
+  }
+
+  // Sin mazos todavía en la prueba: las dos formas de empezar, bien visibles.
+  function pruebaVacioHtml() {
+    return (
+      '<div class="prueba-inicio">' +
+        '<button class="prueba-opcion" data-abrir-generador type="button">' +
+          '<span class="prueba-opcion-ico">' + pxIco("chispa", 40) + "</span>" +
+          "<b>Genera un mazo con IA</b>" +
+          "<span>Sube un PDF, una foto o pega texto y la IA hace las tarjetas.</span>" +
+        "</button>" +
+        '<button class="prueba-opcion" data-nuevo-mazo type="button">' +
+          '<span class="prueba-opcion-ico">' + pxIco("lapiz", 40) + "</span>" +
+          "<b>Crea un mazo a mano</b>" +
+          "<span>Escribe tus preguntas y respuestas, con fórmulas si quieres.</span>" +
+        "</button>" +
+        '<a class="prueba-opcion" href="#/tienda">' +
+          '<span class="prueba-opcion-ico">' + pxIco("cofre", 40) + "</span>" +
+          "<b>Mira la tienda</b>" +
+          "<span>Mazos listos, temas visuales y más (para usar con tu cuenta).</span>" +
+        "</a>" +
+      "</div>"
+    );
+  }
+
   function renderHome() {
     updateTopbarTag();
     var decks = window.DeckStore.all();
@@ -677,8 +783,11 @@
           '<button class="btn primary lg" id="new-deck" type="button">' + ic("plus") + '<span>Nuevo mazo</span></button>' +
         '</div>' +
       "</section>" +
+      (esPrueba() ? pruebaBannerHtml() : "") +
       '<div id="eco-resumen" class="eco-resumen" hidden></div>' +
-      (!decks.length && window.SyncMazos && window.SyncMazos.cargando()
+      (!decks.length && esPrueba() && !(window.SyncMazos && window.SyncMazos.cargando())
+        ? pruebaVacioHtml()
+        : !decks.length && window.SyncMazos && window.SyncMazos.cargando()
         ? '<div class="empty-state"><span class="empty-icon">' + ic("refresh", { size: 34 }) + "</span><h2>Cargando tus mazos…</h2><p>Los estamos trayendo desde tu cuenta.</p></div>"
         : decks.length
         ? '<div class="toolbar">' +
@@ -1239,11 +1348,27 @@
       if (window.Auth && window.Auth.startDemo) window.Auth.startDemo();
       return;
     }
-    if (e.target.closest("#new-deck")) {
+    var probar = e.target.closest("#landing-prueba");
+    if (probar) {
+      if (probar.disabled || !window.Auth || !window.Auth.startTrial) return;
+      probar.disabled = true;
+      probar.classList.add("cargando");
+      var txt = probar.querySelector(".prueba-cta-txt");
+      if (txt) txt.textContent = "Preparando tu prueba…";
+      window.Auth.startTrial().catch(function () {
+        probar.disabled = false;
+        probar.classList.remove("cargando");
+        if (txt) txt.textContent = "Probar sin registrarme";
+      });
+      return;
+    }
+    if (e.target.closest("#new-deck, [data-nuevo-mazo]")) {
+      if (esPrueba() && cuposPrueba().manual >= 1) { limitePrueba("manual"); return; }
       openEditor(null);
       return;
     }
-    if (e.target.closest("#open-generador")) {
+    if (e.target.closest("#open-generador, [data-abrir-generador]")) {
+      if (esPrueba() && cuposPrueba().ia >= 1) { limitePrueba("ia"); return; }
       openGenerador();
       return;
     }

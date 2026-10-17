@@ -697,6 +697,54 @@ html.dark-mode .btn.primary:hover {
   backdrop-filter: blur(8px);
 }
 
+/* Avisos de js/supabase.js (Novedades): abajo a la derecha. */
+.update-banner {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 450;
+  max-width: min(380px, calc(100vw - 36px));
+  padding: 12px 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+  animation: update-entra 0.25s ease-out;
+}
+
+.update-banner .update-kicker {
+  color: var(--accent);
+  font-size: 0.62rem;
+}
+
+.update-banner p {
+  margin: 5px 0 0;
+  color: var(--text);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.update-banner.update-error {
+  border-color: rgba(255, 123, 134, 0.45);
+}
+
+.update-banner.update-error .update-kicker {
+  color: var(--danger);
+}
+
+@keyframes update-entra {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (max-width: 520px) {
+  .update-banner {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    max-width: none;
+  }
+}
+
 /* ---------- Tienda ---------- */
 
 .store-card {

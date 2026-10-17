@@ -341,6 +341,7 @@
         tarjeta("card-embudo", "Usuarios nuevos: qué tan lejos llegan", "Personas que crearon su cuenta en el período", "", '<div id="adm-embudo"></div>') +
         tarjeta("card-mazos-nuevos", "Mazos nuevos", "Creados o agregados en el período", "", '<div id="adm-mazos-nuevos"></div>') +
       "</div>" +
+      tarjeta("card-prueba", "Modo de prueba", "Cuentas de «Probar gratis» (sin registro) abiertas en el período", "", '<div id="adm-prueba"></div>') +
       tarjeta("card-top", "Mazos más estudiados", "Ordenados por respuestas en el período", "", '<div class="adm-tabla-wrap" id="adm-top"></div>') +
       tarjeta("card-usuarios", "Usuarios", "Haz clic en una persona para ver su ficha",
         '<label class="adm-buscar">' + ic("search", 15) + '<input id="adm-buscar" type="search" placeholder="Buscar por nombre o correo" autocomplete="off" /></label>',
@@ -398,6 +399,7 @@
     pintarSecciones(R);
     pintarHorario(R);
     pintarEmbudo(R);
+    pintarPrueba(R);
     pintarMazosNuevos(R);
     pintarTop(R);
     pintarUsuarios();
@@ -715,6 +717,42 @@
       : '<p class="adm-vacio">Nadie creó su cuenta en este período.</p>';
   }
 
+  // Modo de prueba: cuántos lo abren, qué hacen y cuántos crean su cuenta.
+  function pintarPrueba(R) {
+    var el = document.getElementById("adm-prueba");
+    if (!el) return;
+    var p = R.prueba;
+    if (!p) {
+      el.innerHTML = '<p class="adm-vacio">Ejecuta la versión nueva de <code>supabase/admin.sql</code> para ver el modo de prueba.</p>';
+      return;
+    }
+    var base = Number(p.cuentas) || 0;
+    if (!base) {
+      el.innerHTML = '<p class="adm-vacio">Nadie abrió el modo de prueba en este período.</p>';
+      return;
+    }
+    var pasos = [
+      { label: "Abrieron la prueba", valor: base },
+      { label: "Crearon un mazo", valor: Number(p.con_mazo) || 0 },
+      { label: "Usaron la IA", valor: Number(p.con_ia) || 0 },
+      { label: "Estudiaron", valor: Number(p.estudiaron) || 0 },
+      { label: "Crearon su cuenta", valor: Number(p.se_registraron) || 0 }
+    ];
+    var items = pasos.map(function (paso, i) {
+      return {
+        label: paso.label,
+        valor: paso.valor,
+        texto: num(paso.valor),
+        sub: i ? pct(paso.valor, base) : "",
+        tipV: num(paso.valor) + "|" + pct(paso.valor, base),
+        tipL: "personas|de las pruebas"
+      };
+    });
+    el.innerHTML = barrasH(items) +
+      '<p class="adm-nota">' + num(p.importaron) + (Number(p.importaron) === 1 ? " trajo sus mazos" : " trajeron sus mazos") +
+      " a su cuenta · " + dur(p.segundos) + " de uso en total. Las cuentas de prueba no cuentan en los usuarios de arriba.</p>";
+  }
+
   function pintarMazosNuevos(R) {
     var m = R.mazos || {};
     var items = [
@@ -797,7 +835,7 @@
         var mazos = u.propios + u.ia + u.tienda;
         var dom = u.tarjetas ? u.dominadas / u.tarjetas : 0;
         return '<tr class="adm-fila" tabindex="0" data-uid="' + esc(u.id) + '" aria-label="Ver ficha de ' + esc(u.nombre) + '">' +
-          '<td><span class="adm-usuario">' + avatarHtml(u) + '<span class="adm-usuario-txt"><strong>' + esc(u.nombre) + (u.admin ? ' <span class="adm-chip">admin</span>' : "") + "</strong><small>" + esc(u.email) + "</small></span></span></td>" +
+          '<td><span class="adm-usuario">' + avatarHtml(u) + '<span class="adm-usuario-txt"><strong>' + esc(u.nombre) + (u.admin ? ' <span class="adm-chip">admin</span>' : "") + (u.de_prueba ? ' <span class="adm-chip adm-chip-prueba" title="Creó su cuenta después de usar «Probar gratis»">vino de prueba</span>' : "") + "</strong><small>" + esc(u.email) + "</small></span></span></td>" +
           '<td class="adm-td-ultimo">' + esc(hace(u.ultimo)) + '<small class="adm-bajo">desde ' + esc(fechaCorta(new Intl.DateTimeFormat("en-CA", { timeZone: TZ }).format(new Date(u.creado)))) + "</small></td>" +
           '<td class="num" data-l="Días activos">' + num(u.dias) + '</td><td class="num" data-l="Tiempo">' + dur(u.segundos) + "</td>" +
           '<td class="num" data-l="Mazos">' + num(mazos) + "</td>" +

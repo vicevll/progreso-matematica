@@ -127,7 +127,7 @@
     var progress = overlay.querySelector("#gen-progress");
     if (progress) progress.innerHTML = dots();
     var title = overlay.querySelector("#gen-title");
-    if (title) title.textContent = conClave ? "Tu API key" : ["Origen", "Texto", "Tarjetas", "Crear mazo"][step - 1];
+    if (title) title.textContent = conClave ? (esVistaPrueba() ? "Modo prueba" : "Tu API key") : ["Origen", "Texto", "Tarjetas", "Crear mazo"][step - 1];
     focusFirst();
   }
 
@@ -144,8 +144,22 @@
     return (state.cuota && state.cuota.periodo) || (window.IA && window.IA.periodo ? window.IA.periodo() : "dia");
   }
 
+  // Modo de prueba (cuenta anónima): 1 mazo con IA en total y sin API key propia.
+  function esPrueba() {
+    return !!(window.Auth && window.Auth.isTrial && window.Auth.isTrial());
+  }
+
+  function esVistaPrueba() {
+    return !!(state.vistaClave && state.vistaClave.motivo === "prueba");
+  }
+
   function cuotaHtml() {
     if (!window.IA || !window.IA.disponible || !window.IA.disponible()) return "";
+    if (esPrueba() || (state.cuota && state.cuota.periodo === "prueba")) {
+      var cp = state.cuota;
+      if (!cp || typeof cp.restantes !== "number" || cp.restantes < 1) return "";
+      return '<span class="gen-cuota-txt gen-cuota-prueba">' + ic("sparkle", 15) + "Modo prueba: puedes crear <b>1 mazo con IA</b></span>";
+    }
     if (window.IA.clavePropia && window.IA.clavePropia()) {
       return '<span class="gen-cuota-txt">' + ic("key", 15) + "Usando tu API key de Gemini</span>" +
         '<button class="gen-link" id="gen-clave-quitar" type="button">Quitar</button>';
@@ -173,7 +187,7 @@
       if (!est || overlay !== ov) return;
       state.cuota = est.propia ? null : est;
       if (!est.propia && est.restantes === 0 && !state.usoIA && !state.busy && !state.vistaClave && step === 1) {
-        mostrarClave("cuota", null);
+        mostrarClave(est.periodo === "prueba" || esPrueba() ? "prueba" : "cuota", null);
         return;
       }
       actualizarCuota();
@@ -193,12 +207,30 @@
   function manejarErrorClave(err, reintentar) {
     var codigo = err && err.codigo;
     var propia = window.IA && window.IA.clavePropia && window.IA.clavePropia();
+    if (codigo === "prueba" || (codigo === "cuota" && esPrueba())) { mostrarClave("prueba", null); return true; }
     if (codigo === "cuota" && !propia) { mostrarClave("cuota", reintentar); return true; }
     if (codigo === "clave_invalida" && propia) { mostrarClave("invalida", reintentar); return true; }
     return false;
   }
 
+  // Ya usó su mazo con IA de prueba: en vez de la API key, crear la cuenta.
+  function pruebaHtml() {
+    return (
+      '<div class="gen-step gen-clave gen-prueba">' +
+        '<span class="prueba-badge">' + (window.Economia ? window.Economia.px("estrella", 16) : "") + "Modo prueba</span>" +
+        "<h2>Ya creaste tu mazo con IA de prueba</h2>" +
+        "<p>Crea tu cuenta gratis con Google y sigue creando: <b>2 mazos con IA cada día</b>, mazos a mano sin límite, misiones con puntos y la tienda completa.</p>" +
+        '<ul class="prueba-lista">' +
+          "<li>" + ic("check", 15) + "Tus mazos de prueba se pueden pasar a tu cuenta</li>" +
+          "<li>" + ic("check", 15) + "Tu avance se guarda y te sigue en cualquier dispositivo</li>" +
+          "<li>" + ic("check", 15) + "Gratis, en un clic</li>" +
+        "</ul>" +
+      "</div>"
+    );
+  }
+
   function claveHtml() {
+    if (esVistaPrueba()) return pruebaHtml();
     var invalida = state.vistaClave && state.vistaClave.motivo === "invalida";
     var periodo = periodoActual();
     var titulo = invalida
@@ -231,6 +263,15 @@
   }
 
   function claveFooterHtml() {
+    if (esVistaPrueba()) {
+      return (
+        '<span class="gen-footer-note"></span>' +
+        '<div class="gen-footer-actions">' +
+          '<button class="btn ghost" id="gen-cancel" type="button">Ahora no</button>' +
+          '<button class="btn prueba-cta" type="button" data-crear-cuenta>' + (window.GOOGLE_ICON || "") + "<span>Crear cuenta gratis</span></button>" +
+        "</div>"
+      );
+    }
     return (
       '<span class="gen-footer-note"></span>' +
       '<div class="gen-footer-actions">' +
@@ -292,7 +333,7 @@
         '<h2>¿De dónde sacamos el contenido?</h2>' +
         '<p>Sube un PDF o una imagen (foto, captura, escaneo) y la IA lo convierte en tarjetas. También puedes pegar texto directamente.</p>' +
         (window.IA && window.IA.disponible && !window.IA.disponible()
-          ? '<div class="gen-status error" role="status">En modo prueba el generador no puede usar la IA. Entra con Google para probarlo.</div>'
+          ? '<div class="gen-status error" role="status">En modo local el generador no puede usar la IA. Entra con Google para probarlo.</div>'
           : "") +
         '<div class="gen-cuota" id="gen-cuota"' + (cuotaHtml() ? "" : " hidden") + ">" + cuotaHtml() + "</div>" +
         '<div class="gen-tabs"><button class="gen-tab active" data-tab="file" type="button">Subir archivo</button><button class="gen-tab" data-tab="text" type="button">Pegar texto</button></div>' +
@@ -388,7 +429,7 @@
     var createDisabled = state.busy || state.cards.length < 1 ? " disabled" : "";
     var nextLabel = state.busy ? "Generando…" : "Siguiente";
     return (
-      '<span class="gen-footer-note">' + (step === 4 ? (window.Auth && window.Auth.isDemo && window.Auth.isDemo() ? "Modo prueba: se guarda en este navegador." : "Se guarda en tu cuenta.") : "") + '</span>' +
+      '<span class="gen-footer-note">' + (step === 4 ? (window.Auth && window.Auth.isDemo && window.Auth.isDemo() ? "Modo local: se guarda en este navegador." : window.Auth && window.Auth.isTrial && window.Auth.isTrial() ? "Modo prueba: tu mazo se guarda; crea tu cuenta para no perderlo." : "Se guarda en tu cuenta.") : "") + '</span>' +
       '<div class="gen-footer-actions">' +
         '<button class="btn ghost" id="gen-cancel" type="button">Cancelar</button>' +
         (step > 1 ? '<button class="btn ghost" id="gen-back" type="button">' + ic("arrowLeft", 16) + " Atrás</button>" : "") +
@@ -461,6 +502,7 @@
 
   function handleClick(e) {
     if (e.target === overlay || e.target.closest("#gen-close") || e.target.closest("#gen-cancel")) {
+      if (esVistaPrueba() && !state.usoIA) { close(); return; }
       askAbandon(close);
       return;
     }
@@ -605,6 +647,7 @@
   // Lanza una generación y gestiona el estado "ocupado", los mensajes y los
   // errores. onCards recibe las tarjetas solo si la respuesta sigue vigente.
   function listoMensaje(n) {
+    if (esPrueba()) return "Listo · " + n + " tarjetas · tu mazo con IA de prueba (puedes regenerar)";
     if (window.IA && window.IA.clavePropia && window.IA.clavePropia()) return "Listo · " + n + " tarjetas · con tu API key";
     var quedan = window.IA && window.IA.restantes ? window.IA.restantes() : null;
     if (typeof quedan !== "number") return "Listo · " + n + " tarjetas";

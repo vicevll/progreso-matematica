@@ -67,6 +67,17 @@
     return !!(window.Auth && window.Auth.isDemo && window.Auth.isDemo());
   }
 
+  // Modo de prueba (cuenta anónima): ve la tienda con sus precios, pero no
+  // tiene puntos ni misiones, y no canjea (el servidor también lo impide).
+  function esPrueba() {
+    return !!(window.Auth && window.Auth.isTrial && window.Auth.isTrial());
+  }
+
+  function ctaCuenta(texto, clase) {
+    return '<button class="btn prueba-cta-sm' + (clase ? " " + clase : "") + '" type="button" data-crear-cuenta title="Crea tu cuenta gratis para canjear">' +
+      (window.GOOGLE_ICON || "") + "<span>" + esc(texto || "Crea tu cuenta para canjear") + "</span></button>";
+  }
+
   function disponible() {
     return !!(usuario() && window.SB && window.SB.client);
   }
@@ -225,7 +236,7 @@
     }
     var listas = misionesListas();
     if (pill) {
-      var ver = disponible() && estado;
+      var ver = disponible() && estado && !esPrueba();
       pill.hidden = !ver;
       if (ver) {
         pill.innerHTML = px("moneda", 18) + '<strong id="eco-pill-saldo">' + num(estado.saldo) + "</strong>" +
@@ -236,6 +247,7 @@
     }
     var dot = document.getElementById("eco-nav-dot");
     if (dot) {
+      if (esPrueba()) listas = 0;
       dot.hidden = !listas;
       dot.textContent = listas ? String(listas) : "";
     }
@@ -244,7 +256,7 @@
   function pintarResumen() {
     var el = document.getElementById("eco-resumen");
     if (!el) return;
-    if (!disponible() || !estado) {
+    if (!disponible() || !estado || esPrueba()) {
       el.hidden = true;
       return;
     }
@@ -349,7 +361,7 @@
           '<span class="eyebrow">MISIONES DEL MAGO</span>' +
           "<h1>Cumple misiones y gana puntos</h1>" +
           "<p>Canjéalos en la tienda por temas visuales, IA plus y mazos.</p>" +
-          '<div class="eco-saldo">' + px("moneda", 44, "eco-saldo-moneda") + '<strong id="eco-saldo-num">' + (estado ? num(estado.saldo) : "–") + "</strong><span>puntos</span></div>" +
+          (esPrueba() ? "" : '<div class="eco-saldo">' + px("moneda", 44, "eco-saldo-moneda") + '<strong id="eco-saldo-num">' + (estado ? num(estado.saldo) : "–") + "</strong><span>puntos</span></div>") +
           '<a class="btn primary" href="#/tienda">' + ic("layers") + "<span>Ir a la tienda</span></a>" +
         "</div>" +
         '<div class="eco-hero-arte" aria-hidden="true">' +
@@ -369,7 +381,11 @@
     var migas = '<nav class="breadcrumb"><a href="#/">Mis mazos</a><span class="sep">' + ic("chevronRight", 14) + "</span><span>Misiones</span></nav>";
     var cuerpo;
     if (esDemo()) {
-      cuerpo = '<div class="eco-nota">' + px("candado", 32) + "<p>En el modo prueba no se guardan puntos. <b>Entra con Google</b> para cumplir misiones y canjear premios.</p></div>";
+      cuerpo = '<div class="eco-nota">' + px("candado", 32) + "<p>En el modo local no se guardan puntos. <b>Entra con Google</b> para cumplir misiones y canjear premios.</p></div>";
+    } else if (esPrueba()) {
+      cuerpo = '<div class="eco-nota eco-nota-prueba">' + px("cofre", 40) +
+        "<p><b>Las misiones son para cuentas.</b> Crea la tuya gratis: estudia, cumple misiones diarias y semanales, y canjea los puntos por temas, IA plus y mazos.</p>" +
+        ctaCuenta("Crear cuenta gratis", "lg") + "</div>";
     } else if (error && falta(error)) {
       cuerpo = '<div class="eco-nota">' + px("candado", 32) + "<p>Las misiones todavía no están activadas. Ejecuta <code>supabase/misiones.sql</code> en el SQL Editor de Supabase.</p></div>";
     } else if (!estado) {
@@ -394,6 +410,8 @@
   }
 
   function botonCanje(it) {
+    // En los temas (tarjetas angostas) el texto va corto.
+    if (esPrueba()) return ctaCuenta(it.tipo === "tema" ? "Crear cuenta" : "Crea tu cuenta para canjear");
     if (canjeando[it.id]) return '<button class="btn eco-canjear" type="button" disabled><span>Canjeando…</span></button>';
     var saldo = estado ? estado.saldo : 0;
     if (saldo < it.precio) {
@@ -464,6 +482,14 @@
   }
 
   function billeteraHtml() {
+    if (esPrueba()) {
+      return (
+        '<div id="eco-billetera" class="eco-billetera eco-billetera-prueba">' + px("candado", 30) +
+          "<div><strong>Modo prueba: mira todo lo que hay</strong><span>Con tu cuenta ganas puntos con las misiones y los canjeas aquí.</span></div>" +
+          ctaCuenta("Crear cuenta gratis") +
+        "</div>"
+      );
+    }
     if (!disponible()) return '<div id="eco-billetera" hidden></div>';
     if (!estado) return '<div id="eco-billetera" class="eco-billetera">' + px("moneda", 28) + "<span>Cargando tus puntos…</span></div>";
     var listas = misionesListas();
@@ -545,7 +571,7 @@
   }
 
   function reclamar(id, boton) {
-    if (reclamando[id] || !disponible()) return;
+    if (reclamando[id] || !disponible() || esPrueba()) return;
     reclamando[id] = true;
     delete mensajes[id];
     var antes = estado ? estado.saldo : 0;
@@ -570,7 +596,7 @@
 
   function canjear(id) {
     var it = item(id);
-    if (!it || canjeando[id] || !estado) return;
+    if (!it || canjeando[id] || !estado || esPrueba()) return;
     var queda = estado.saldo - it.precio;
     var hacer = function () {
       canjeando[id] = true;
@@ -608,7 +634,7 @@
   }
 
   function usarTema(id) {
-    if (!disponible()) return;
+    if (!disponible() || esPrueba()) return;
     probando = null;
     if (window.StudappyTema) window.StudappyTema.aplicar(id);
     rpc("elegir_tema", { p_tema: id }).then(function () { return cargar(true); }, function (e) {

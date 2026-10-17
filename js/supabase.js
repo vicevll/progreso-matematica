@@ -113,6 +113,18 @@
           throw new Error("No se pudo abrir el inicio de sesión de Google");
         });
     },
+    // «Probar gratis»: cuenta anónima de Supabase (sin correo). Requiere
+    // activar «Allow anonymous sign-ins» en Authentication -> Sign In / Providers.
+    signInAnonymously: function () {
+      if (!client) return notConfigured();
+      if (typeof client.auth.signInAnonymously !== "function") {
+        return Promise.reject(new Error("Esta versión de Supabase no permite cuentas de prueba"));
+      }
+      return client.auth.signInAnonymously().then(function (res) {
+        if (res && res.error) throw res.error;
+        return res && res.data ? res.data.session : null;
+      });
+    },
     signOut: function () {
       if (!client) return notConfigured();
       return client.auth.signOut();

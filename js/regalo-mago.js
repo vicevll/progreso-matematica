@@ -22,6 +22,11 @@
     return !!(window.Auth && window.Auth.isDemo && window.Auth.isDemo());
   }
 
+  // El modo de prueba no agrega mazos de la tienda (el regalo llega al crear la cuenta).
+  function isTrial() {
+    return !!(window.Auth && window.Auth.isTrial && window.Auth.isTrial());
+  }
+
   function apagado() {
     if (!LOCAL) return false;
     try { return localStorage.getItem("studappy-tour-off") === "1"; } catch (e) { return false; }
@@ -46,7 +51,7 @@
 
   function revisar() {
     var u = user();
-    if (!u || isDemo() || revisado[u.id] || apagado()) return;
+    if (!u || isDemo() || isTrial() || revisado[u.id] || apagado()) return;
     revisado[u.id] = true;
     if (yaDado(u) || !window.CloudDecks) return;
     // Primero llegan los mazos de la cuenta, para no agregarlo dos veces.

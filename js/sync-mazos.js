@@ -252,9 +252,78 @@
     timerProgreso = setTimeout(function () { subirProgreso().catch(avisar); }, 2500);
   }
 
+  /* ---------- Mazos del modo de prueba ---------- */
+
+  var PRUEBA_KEY = "studappy-prueba-uid";
+
+  function esPrueba() {
+    return !!(window.Auth && window.Auth.isTrial && window.Auth.isTrial());
+  }
+
+  // Cuenta en /admin quién creó su cuenta después de probar (supabase/admin.sql).
+  function registrarConversion(idPrueba, importo) {
+    var c = client();
+    if (!c || !c.rpc) return;
+    try {
+      c.rpc("registrar_conversion", { p_prueba: idPrueba, p_importo: !!importo }).then(function (res) {
+        if (res && res.error && window.console) console.warn("No se pudo registrar la conversión:", res.error.message || res.error);
+      }, function () { /* sin conexión: no importa */ });
+    } catch (e) { /* ignorar */ }
+  }
+
+  // Al entrar con Google en el navegador donde se usó «Probar gratis»:
+  // pregunta si trae los mazos de prueba (con su avance) a la cuenta.
+  // Cerrar el aviso sin responder lo deja para la próxima vez.
+  function ofrecerPrueba(despues) {
+    var idPrueba = "";
+    try { idPrueba = localStorage.getItem(PRUEBA_KEY) || ""; } catch (e) { /* sin almacenamiento */ }
+    if (!idPrueba || idPrueba === userId) return despues();
+    var uidActual = userId;
+    var data = window.DeckStore.mazosDeCuenta(idPrueba);
+    function terminar(importo) {
+      registrarConversion(idPrueba, importo);
+      try {
+        localStorage.removeItem(PRUEBA_KEY);
+        localStorage.removeItem("studappy-eco:" + idPrueba);
+      } catch (e) { /* ignorar */ }
+      window.DeckStore.forgetAccount(idPrueba);
+    }
+    if (!data.decks.length) {
+      terminar(false);
+      return despues();
+    }
+    if (!window.StudappyConfirm) return despues();
+    var n = data.decks.length;
+    window.StudappyConfirm.ask(
+      n === 1
+        ? "Creaste 1 mazo en el modo de prueba. ¿Quieres agregarlo a tu cuenta con su avance?"
+        : "Creaste " + n + " mazos en el modo de prueba. ¿Quieres agregarlos a tu cuenta con su avance?",
+      function () {
+        if (userId !== uidActual) return;
+        window.DeckStore.importarMazos(data);
+        terminar(true);
+        emitir("studappy:mazos-sincronizados"); // redibuja Mis mazos de inmediato
+        sincronizar();
+        if (window.Novedades && window.Novedades.notify) {
+          window.Novedades.notify(n === 1 ? "Tu mazo de prueba ya está en tu cuenta." : "Tus " + n + " mazos de prueba ya están en tu cuenta.");
+        }
+        despues();
+      },
+      {
+        title: n === 1 ? "¿Traer tu mazo de prueba?" : "¿Traer tus mazos de prueba?",
+        confirmLabel: "Agregar a mi cuenta",
+        cancelLabel: "Descartar",
+        confirmClass: "primary",
+        onCancel: function () { terminar(false); despues(); }
+      }
+    );
+  }
+
   /* ---------- Mazos de versiones anteriores ---------- */
 
   function ofrecerLegado() {
+    // Una cuenta de prueba no se queda con ellos: se ofrecen al crear la cuenta.
+    if (esPrueba()) return;
     var data = window.DeckStore.legacy();
     if (!data.decks.length) {
       window.DeckStore.clearLegacy();
@@ -294,7 +363,8 @@
     }
     setCargando(true);
     sincronizar().then(function () { setCargando(false); });
-    ofrecerLegado();
+    if (esPrueba()) return;
+    ofrecerPrueba(ofrecerLegado);
   }
 
   // Sube lo pendiente (máximo unos segundos), cierra la sesión y, si todo

@@ -102,7 +102,8 @@ function responder(status: number, body: unknown): Response {
   });
 }
 
-async function usuarioDe(req: Request): Promise<string> {
+// Usuario de la sesión. «prueba» = cuenta anónima de «Probar gratis».
+async function usuarioDe(req: Request): Promise<{ id: string; prueba: boolean }> {
   const auth = req.headers.get("Authorization") ?? "";
   if (!auth.startsWith("Bearer ")) {
     throw new ErrorUsuario(401, "Inicia sesión para usar el generador.", "sin_sesion");
@@ -114,7 +115,7 @@ async function usuarioDe(req: Request): Promise<string> {
   if (!user || !user.id) {
     throw new ErrorUsuario(401, "Tu sesión expiró. Vuelve a iniciar sesión.", "sin_sesion");
   }
-  return String(user.id);
+  return { id: String(user.id), prueba: user.is_anonymous === true };
 }
 
 async function rpc(nombre: string, args: Record<string, unknown>): Promise<unknown> {
@@ -133,6 +134,9 @@ async function rpc(nombre: string, args: Record<string, unknown>): Promise<unkno
     try { detalle = JSON.parse(texto); } catch { /* texto plano */ }
     if (detalle.hint === "cuota_agotada") {
       throw new ErrorUsuario(429, detalle.message || "Ya usaste tus mazos con IA de hoy.", "cuota");
+    }
+    if (detalle.hint === "cuota_prueba") {
+      throw new ErrorUsuario(429, detalle.message || "Ya creaste tu mazo con IA de prueba. Crea tu cuenta gratis para seguir.", "prueba");
     }
     if (detalle.hint === "cuota_mazo") {
       throw new ErrorUsuario(429, detalle.message || "Este mazo ya usó todas sus llamadas a la IA.", "cuota_mazo");
@@ -277,8 +281,14 @@ Deno.serve(async (req: Request) => {
   let consumido = false;
   let devolver = false;
   try {
-    userId = await usuarioDe(req);
+    const usuario = await usuarioDe(req);
+    userId = usuario.id;
     const pedido = validar(await req.json().catch(() => null));
+
+    // En el modo de prueba solo se usa la key de Studappy (1 mazo con IA en total).
+    if (usuario.prueba && (pedido.accion === "verificar" || ("clave" in pedido && pedido.clave))) {
+      throw new ErrorUsuario(403, "En el modo de prueba no se usa una API key propia. Crea tu cuenta gratis para seguir creando mazos con IA.", "prueba");
+    }
 
     if (pedido.accion === "estado") {
       const est = (await rpc("ia_estado", { p_user: userId })) as Cuota | null;

@@ -1,0 +1,562 @@
+/* Studappy · modo de prueba («Probar gratis», sin registro).
+   Portada, aviso en Mis mazos, barra superior, tienda y generador.
+   Borde con degradado que se mueve despacio: llama la atención sin brillar de más. */
+
+:root {
+  --prueba-a: #5fd8ff;
+  --prueba-b: #8a6bff;
+  --prueba-c: #ff7ad9;
+  --prueba-borde: linear-gradient(100deg, var(--prueba-a), var(--prueba-b) 33%, var(--prueba-c) 66%, var(--prueba-a));
+  --prueba-fondo: linear-gradient(180deg, #1c1350, #120c36);
+}
+
+@keyframes prueba-borde {
+  from { background-position: 0 0, 0% 0; }
+  to { background-position: 0 0, 150% 0; }
+}
+
+@keyframes prueba-latido {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 122, 217, 0.55); }
+  60% { box-shadow: 0 0 0 6px rgba(255, 122, 217, 0); }
+}
+
+/* ---------- Botón principal ---------- */
+
+.btn.prueba-cta,
+html.dark-mode .btn.prueba-cta,
+html.dark-mode .hero-mago .btn.prueba-cta {
+  position: relative;
+  gap: 10px;
+  padding: 13px 20px 13px 13px;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  background: var(--prueba-fondo) padding-box, var(--prueba-borde) border-box;
+  background-size: 100% 100%, 300% 100%;
+  box-shadow: 0 10px 28px rgba(110, 80, 230, 0.3);
+  color: #ffffff;
+  font-size: 0.98rem;
+  font-weight: 800;
+  letter-spacing: 0.005em;
+  animation: prueba-borde 6s linear infinite;
+}
+
+.btn.prueba-cta:hover,
+html.dark-mode .btn.prueba-cta:hover,
+html.dark-mode .hero-mago .btn.prueba-cta:hover {
+  background: linear-gradient(180deg, #241866, #170f44) padding-box, var(--prueba-borde) border-box;
+  background-size: 100% 100%, 300% 100%;
+  box-shadow: 0 14px 34px rgba(110, 80, 230, 0.42);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.btn.prueba-cta:active {
+  transform: translateY(1px);
+}
+
+.btn.prueba-cta svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+.btn.prueba-cta.cargando {
+  cursor: progress;
+  opacity: 0.85;
+}
+
+.btn.prueba-cta.cargando .prueba-cta-chip {
+  animation: prueba-latido 1.1s ease-out infinite;
+}
+
+.prueba-cta-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 8px 4px;
+  border-radius: 7px;
+  background: var(--oro-grad, linear-gradient(180deg, #ffe08a, #f0a43c));
+  box-shadow: 0 2px 0 var(--oro-sombra, #6b3a0c);
+  color: #3a2208;
+  font-family: var(--font-pixel);
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+/* ---------- Portada ---------- */
+
+/* En pantallas bajas el mago se achica para que «Probar» se vea sin bajar. */
+@media (min-width: 721px) {
+  .landing-hero.hero-mago {
+    --mago-w: min(820px, 96vw, max(380px, calc((100vh - 430px) * 1.72)));
+  }
+}
+
+.account-probar {
+  font-size: 0.74rem;
+}
+
+.account-probar:disabled {
+  cursor: progress;
+  opacity: 0.8;
+}
+
+.hero-mago .landing-actions.con-prueba {
+  align-items: center;
+  gap: 12px;
+}
+
+.landing-prueba {
+  min-height: 54px;
+  padding-right: 18px;
+  font-size: 1.04rem;
+}
+
+.landing-prueba .prueba-cta-txt {
+  white-space: nowrap;
+}
+
+.landing-actions.con-prueba .landing-login {
+  min-height: 54px;
+  border-radius: 14px;
+}
+
+.landing-prueba-lista {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.landing-prueba-lista li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px 6px 8px;
+  border: 1px solid rgba(165, 145, 255, 0.24);
+  border-radius: 999px;
+  background: rgba(18, 8, 54, 0.72);
+  color: #cfc8f2;
+  font-size: 0.8rem;
+}
+
+.landing-prueba-lista b {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.landing-prueba-lista .px-ico,
+.prueba-cupo .px-ico,
+.prueba-opcion-ico .px-ico,
+.prueba-badge .px-ico {
+  image-rendering: pixelated;
+}
+
+.landing-demo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: #8d86b8;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.74rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.landing-demo-link:hover {
+  color: #d2ccf2;
+}
+
+/* ---------- Barra superior ---------- */
+
+.account-prueba {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 122, 217, 0.32);
+  border-radius: 999px;
+  background: rgba(255, 122, 217, 0.08);
+  color: #ffc8ef;
+  font-family: var(--font-pixel);
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.prueba-dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--prueba-c);
+  animation: prueba-latido 2.2s ease-out infinite;
+}
+
+.prueba-cta-mini,
+.btn.prueba-cta-sm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1.5px solid transparent;
+  background: var(--prueba-fondo) padding-box, var(--prueba-borde) border-box;
+  background-size: 100% 100%, 300% 100%;
+  color: #ffffff;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-weight: 750;
+  white-space: nowrap;
+  animation: prueba-borde 6s linear infinite;
+}
+
+.prueba-cta-mini {
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+}
+
+.btn.prueba-cta-sm {
+  padding: 10px 14px;
+  border-radius: 11px;
+  font-size: 0.8rem;
+}
+
+.eco-acciones .btn.prueba-cta-sm {
+  max-width: 100%;
+}
+
+html.modo-prueba .eco-acciones {
+  flex-wrap: wrap;
+}
+
+.btn.prueba-cta-sm.lg {
+  padding: 12px 18px;
+  font-size: 0.9rem;
+}
+
+.prueba-cta-mini:hover,
+.btn.prueba-cta-sm:hover {
+  background: linear-gradient(180deg, #241866, #170f44) padding-box, var(--prueba-borde) border-box;
+  background-size: 100% 100%, 300% 100%;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.prueba-cta-mini svg,
+.btn.prueba-cta-sm svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+}
+
+/* ---------- Mis mazos: aviso ---------- */
+
+.prueba-banner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px 28px;
+  margin: 0 0 22px;
+  padding: 22px 24px;
+  border: 2px solid transparent;
+  border-radius: 18px;
+  background:
+    radial-gradient(ellipse 60% 120% at 0% 0%, rgba(138, 107, 255, 0.22), transparent 70%) padding-box,
+    radial-gradient(ellipse 40% 100% at 100% 100%, rgba(255, 122, 217, 0.12), transparent 70%) padding-box,
+    linear-gradient(180deg, #120c34, #0d0a28) padding-box,
+    var(--prueba-borde) border-box;
+  background-size: 100% 100%, 100% 100%, 100% 100%, 300% 100%;
+  box-shadow: 0 14px 36px rgba(60, 30, 160, 0.22);
+  animation: prueba-borde-banner 8s linear infinite;
+}
+
+@keyframes prueba-borde-banner {
+  from { background-position: 0 0, 0 0, 0 0, 0% 0; }
+  to { background-position: 0 0, 0 0, 0 0, 150% 0; }
+}
+
+.prueba-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 10px 5px 7px;
+  border-radius: 8px;
+  background: rgba(255, 122, 217, 0.12);
+  color: #ffc8ef;
+  font-family: var(--font-pixel);
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.prueba-banner h2 {
+  margin: 12px 0 4px;
+  color: #ffffff;
+  font-size: clamp(1.15rem, 2.4vw, 1.45rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.prueba-banner p {
+  margin: 0;
+  color: #bdb6e4;
+  font-size: 0.9rem;
+}
+
+.prueba-cupos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.prueba-cupo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px 7px 8px;
+  border: 1px solid rgba(165, 145, 255, 0.26);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #d6d0f6;
+  font-size: 0.82rem;
+}
+
+.prueba-cupo b {
+  padding-left: 8px;
+  border-left: 1px solid rgba(165, 145, 255, 0.26);
+  color: #ffffff;
+  font-family: var(--font-pixel);
+  font-size: 0.7rem;
+  font-weight: 400;
+}
+
+.prueba-cupo.lleno {
+  border-color: rgba(255, 211, 107, 0.4);
+  background: rgba(255, 211, 107, 0.07);
+}
+
+.prueba-cupo.lleno b {
+  color: var(--oro-txt, #ffe6a6);
+}
+
+.prueba-banner-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  text-align: center;
+}
+
+.prueba-banner-cta .btn.prueba-cta {
+  min-height: 52px;
+  padding: 13px 22px;
+}
+
+.prueba-banner-cta small {
+  max-width: 250px;
+  color: #9a93c6;
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+/* Sin mazos todavía: las tres formas de empezar. */
+.prueba-inicio {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.prueba-opcion {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-height: 180px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card-fill);
+  color: var(--text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  text-align: left;
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.prueba-opcion b {
+  margin-top: 6px;
+  color: var(--text);
+  font-size: 1.02rem;
+}
+
+.prueba-opcion:hover {
+  border-color: rgba(165, 145, 255, 0.55);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+  transform: translateY(-3px);
+}
+
+.prueba-opcion:first-child {
+  border: 2px solid transparent;
+  background: linear-gradient(180deg, #171046, #0f0b30) padding-box, var(--prueba-borde) border-box;
+  background-size: 100% 100%, 300% 100%;
+  animation: prueba-borde 6s linear infinite;
+}
+
+.prueba-opcion-ico {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  border-radius: 14px;
+  background: rgba(138, 107, 255, 0.14);
+}
+
+/* ---------- Tienda, misiones y generador ---------- */
+
+.eco-billetera.eco-billetera-prueba {
+  border-color: rgba(255, 122, 217, 0.3);
+  background: linear-gradient(90deg, rgba(138, 107, 255, 0.14), rgba(255, 255, 255, 0.01) 70%);
+}
+
+.eco-billetera.eco-billetera-prueba strong {
+  color: #ffffff;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 750;
+}
+
+.eco-nota.eco-nota-prueba {
+  border-color: rgba(165, 145, 255, 0.32);
+}
+
+.eco-nota.eco-nota-prueba b {
+  color: var(--text);
+}
+
+.gen-cuota-prueba b {
+  color: #ffffff;
+}
+
+.gen-prueba {
+  align-items: flex-start;
+}
+
+.gen-prueba h2 {
+  margin-top: 14px;
+}
+
+.prueba-lista {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.prueba-lista li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.prueba-lista svg {
+  flex: none;
+  color: var(--ok);
+}
+
+.modal-foot .btn.prueba-cta {
+  padding: 11px 18px;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+/* ---------- Celular ---------- */
+
+@media (max-width: 860px) {
+  .prueba-banner {
+    grid-template-columns: 1fr;
+  }
+
+  .prueba-banner-cta {
+    align-items: stretch;
+  }
+
+  .prueba-banner-cta small {
+    max-width: none;
+  }
+
+  .prueba-inicio {
+    grid-template-columns: 1fr;
+  }
+
+  .prueba-opcion {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .hero-mago .landing-actions.con-prueba {
+    align-items: stretch;
+  }
+
+  .landing-prueba {
+    justify-content: center;
+  }
+
+  .landing-prueba-lista {
+    gap: 6px;
+  }
+
+  .landing-prueba-lista li {
+    font-size: 0.76rem;
+  }
+
+  /* En el celular la barra solo deja «Crear cuenta» y «Salir». */
+  .account-prueba,
+  .account-probar {
+    display: none;
+  }
+
+  .prueba-banner {
+    padding: 18px;
+  }
+
+  .prueba-cupos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .prueba-cupo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 9px 10px;
+    font-size: 0.76rem;
+  }
+
+  .prueba-cupo b {
+    padding-left: 0;
+    border-left: 0;
+  }
+}

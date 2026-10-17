@@ -40,7 +40,14 @@
     }
 
     overlay.addEventListener("click", function (event) {
-      if (event.target === overlay || event.target.closest("#confirm-stay")) {
+      // options.onCancel: solo con el botón de cancelar (cerrar con Escape o
+      // tocando fuera no cuenta como respuesta).
+      if (event.target.closest("#confirm-stay")) {
+        close();
+        if (typeof options.onCancel === "function") options.onCancel();
+        return;
+      }
+      if (event.target === overlay) {
         close();
         return;
       }

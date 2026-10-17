@@ -1,6 +1,7 @@
 // Studappy · registro de uso para el panel de administración (/admin).
 //
-// Solo con sesión iniciada (nunca visitantes anónimos ni el modo prueba):
+// Solo con sesión iniciada, incluidas las cuentas de «Probar gratis» (nunca
+// visitantes sin sesión ni el modo local):
 //   - Tiempo de estancia: segundos con la pestaña visible y en uso (se deja
 //     de contar tras 5 minutos sin tocar nada), repartidos por sección.
 //   - Sesiones de estudio: cada ronda, con sus respuestas. app.js avisa con

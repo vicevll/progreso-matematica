@@ -3,7 +3,8 @@
 -- ejecutar sin perder datos. Requiere haber ejecutado antes mazos.sql,
 -- tienda.sql e ia.sql.
 --
--- Qué se registra (solo usuarios con sesión iniciada, nunca visitantes anónimos):
+-- Qué se registra (solo usuarios con sesión iniciada, incluidas las cuentas de
+-- prueba de «Probar gratis»; nunca visitantes sin sesión):
 --   visitas            tiempo activo en la web por visita (pestaña visible y en
 --                      uso), repartido por sección, pantallas vistas y dispositivo.
 --   estudio_sesiones   cada ronda de estudio: mazo, duración y respuestas
@@ -86,11 +87,69 @@ declare
   v_hoy date := (now() at time zone 'America/Santiago')::date;
 begin
   hasta := least(coalesce(p_hasta, v_hoy), v_hoy);
-  desde := coalesce(p_desde, (select min((created_at at time zone 'America/Santiago')::date) from auth.users), v_hoy);
+  desde := coalesce(p_desde, (select min((created_at at time zone 'America/Santiago')::date) from auth.users where not coalesce(is_anonymous, false)), v_hoy);
   if desde > hasta then desde := hasta; end if;
   if hasta - desde > 730 then desde := hasta - 730; end if;
   ini := desde::timestamp at time zone 'America/Santiago';
   fin := (hasta + 1)::timestamp at time zone 'America/Santiago';
+end;
+$$;
+
+-- ---------------------------------------------------------------------------
+-- Cuentas de prueba («Probar gratis», sin registro)
+-- ---------------------------------------------------------------------------
+
+-- Usuarios anónimos de Supabase (sin correo) que se crean con «Probar gratis»
+-- en la portada (js/account.js). No cuentan en los usuarios del panel: tienen
+-- su propio bloque (admin_resumen -> prueba). La misma función está en
+-- tienda.sql, ia.sql, misiones.sql y admin.sql.
+create or replace function public.cuenta_prueba(p_user uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce((select u.is_anonymous from auth.users u where u.id = p_user), false);
+$$;
+revoke all on function public.cuenta_prueba(uuid) from public, anon;
+grant execute on function public.cuenta_prueba(uuid) to authenticated, service_role;
+
+-- Quién creó su cuenta después de probar: la cuenta nueva (user_id), la de
+-- prueba de la que viene (prueba_id) y si trajo sus mazos de prueba.
+create table if not exists public.conversiones_prueba (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  prueba_id uuid not null unique,
+  importo boolean not null default false,
+  creada timestamptz not null default now()
+);
+
+alter table public.conversiones_prueba enable row level security;
+-- Sin políticas: solo se escribe con registrar_conversion y se lee con admin_*.
+
+-- La web la llama al entrar con Google en el mismo navegador donde se usó
+-- «Probar gratis». Solo cuenta una vez por cuenta y por prueba.
+create or replace function public.registrar_conversion(p_prueba uuid, p_importo boolean default false)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_user uuid := auth.uid();
+begin
+  if v_user is null or public.cuenta_prueba(v_user) then
+    raise exception 'Inicia sesión con tu cuenta para continuar.' using errcode = '42501';
+  end if;
+  if p_prueba is null or p_prueba = v_user or not public.cuenta_prueba(p_prueba) then
+    return;   -- no es una cuenta de prueba (o ya se borró): no hay nada que registrar
+  end if;
+  insert into public.conversiones_prueba as c (user_id, prueba_id, importo)
+  values (v_user, p_prueba, coalesce(p_importo, false))
+  on conflict (user_id) do update set importo = c.importo or excluded.importo
+    where c.prueba_id = excluded.prueba_id;
+exception when unique_violation then
+  null;   -- esa prueba ya se registró con otra cuenta
 end;
 $$;
 
@@ -313,7 +372,24 @@ begin
     with
     u as (
       select id, created_at from auth.users
-      where p_incluir_admins or id not in (select public.admin_ids())
+      where (p_incluir_admins or id not in (select public.admin_ids()))
+        and not coalesce(is_anonymous, false)
+    ),
+    -- Cuentas de prueba creadas en el período.
+    pr as (
+      select id from auth.users
+      where coalesce(is_anonymous, false) and created_at >= r.ini and created_at < r.fin
+    ),
+    prueba as (
+      select
+        count(*) as cuentas,
+        count(*) filter (where exists (select 1 from public.mazos_propios m where m.user_id = pr.id)) as con_mazo,
+        count(*) filter (where exists (select 1 from public.ia_sesiones s where s.user_id = pr.id and s.llamadas > 0)) as con_ia,
+        count(*) filter (where exists (select 1 from public.estudio_sesiones e where e.user_id = pr.id)) as estudiaron,
+        count(*) filter (where exists (select 1 from public.conversiones_prueba c where c.prueba_id = pr.id)) as se_registraron,
+        count(*) filter (where exists (select 1 from public.conversiones_prueba c where c.prueba_id = pr.id and c.importo)) as importaron,
+        coalesce((select sum(v.segundos) from public.visitas v where v.user_id in (select id from pr)), 0) as segundos
+      from pr
     ),
     vis_todo as (select v.* from public.visitas v join u on u.id = v.user_id),
     vis as (select * from vis_todo where inicio >= r.ini and inicio < r.fin),
@@ -470,7 +546,8 @@ begin
       'horas', (select coalesce(jsonb_agg(to_jsonb(horas)), '[]'::jsonb) from horas),
       'top_mazos', (select coalesce(jsonb_agg(to_jsonb(top_con_autor) order by respuestas desc, sesiones desc), '[]'::jsonb) from top_con_autor),
       'tienda', (select coalesce(jsonb_agg(to_jsonb(tienda) order by adquisiciones desc), '[]'::jsonb) from tienda),
-      'embudo', (select to_jsonb(embudo) from embudo)
+      'embudo', (select to_jsonb(embudo) from embudo),
+      'prueba', (select to_jsonb(prueba) from prueba)
     )
   );
 end;
@@ -500,7 +577,8 @@ begin
     u as (
       select id, email, created_at, last_sign_in_at, raw_user_meta_data as meta
       from auth.users
-      where p_incluir_admins or id not in (select public.admin_ids())
+      where (p_incluir_admins or id not in (select public.admin_ids()))
+        and not coalesce(is_anonymous, false)
     ),
     vis as (
       select user_id, sum(segundos) as segundos, count(*) as visitas,
@@ -566,6 +644,7 @@ begin
       'sabe', coalesce(est.sabe, 0),
       'segundos_estudio', coalesce(est.segundos, 0),
       'generador', coalesce(gen.n, 0),
+      'de_prueba', exists (select 1 from public.conversiones_prueba c where c.user_id = u.id),
       'admin', u.id in (select public.admin_ids())
     ) order by greatest(vu.ultimo, u.last_sign_in_at) desc nulls last, u.created_at desc), '[]'::jsonb)
     from u
@@ -713,6 +792,7 @@ revoke all on function public.registrar_estudio(text, text, text, text, text, te
 revoke all on function public.admin_resumen(date, date, boolean) from public, anon;
 revoke all on function public.admin_usuarios(date, date, boolean) from public, anon;
 revoke all on function public.admin_usuario(uuid, date, date) from public, anon;
+revoke all on function public.registrar_conversion(uuid, boolean) from public, anon;
 
 grant execute on function public.es_admin() to authenticated;
 grant execute on function public.registrar_visita(text, integer, jsonb, integer, text) to authenticated;
@@ -720,5 +800,6 @@ grant execute on function public.registrar_estudio(text, text, text, text, text,
 grant execute on function public.admin_resumen(date, date, boolean) to authenticated;
 grant execute on function public.admin_usuarios(date, date, boolean) to authenticated;
 grant execute on function public.admin_usuario(uuid, date, date) to authenticated;
+grant execute on function public.registrar_conversion(uuid, boolean) to authenticated;
 
 notify pgrst, 'reload schema';

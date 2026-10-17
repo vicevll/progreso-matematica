@@ -134,6 +134,14 @@ begin
   c := c || public.admin_eco_item(g, 'Funciones del servidor', v_lista is null,
     coalesce('Faltan: ' || array_to_string(v_lista, ', ') || '. Vuelve a ejecutar misiones.sql.', '15 funciones listas'));
 
+  v_ok := to_regclass('public.conversiones_prueba') is not null
+    and exists (select 1 from pg_proc p where p.proname = 'cuenta_prueba' and p.pronamespace = 'public'::regnamespace)
+    and exists (select 1 from pg_proc p where p.proname = 'registrar_conversion' and p.pronamespace = 'public'::regnamespace)
+    and public.ia_config() ? 'limite_prueba';
+  c := c || public.admin_eco_item(g, 'Modo de prueba (sin registro)', v_ok,
+    case when v_ok then format('Listo: %s mazo con IA y la tienda solo para mirar', public.ia_config() ->> 'limite_prueba')
+    else 'Falta: vuelve a ejecutar tienda.sql, ia.sql, admin.sql y misiones.sql' end);
+
   begin
     v_ok := has_function_privilege('authenticated', 'public.economia_estado()', 'execute')
       and has_function_privilege('authenticated', 'public.reclamar_mision(text)', 'execute')
@@ -299,6 +307,15 @@ begin
     where i.precio > 0 and not exists (select 1 from public.canjes c2 where c2.user_id = j.user_id and c2.item = j.tema);
     c := c || public.admin_eco_item(g, 'Nadie usa un tema que no canjeó', n = 0,
       case when n = 0 then (select count(*) from public.juego_perfil) || ' perfiles revisados' else n || ' perfiles con tema sin canjear' end);
+
+    select count(*) into n from auth.users u
+    where coalesce(u.is_anonymous, false)
+      and (exists (select 1 from public.canjes c2 where c2.user_id = u.id)
+        or exists (select 1 from public.user_decks d where d.user_id = u.id)
+        or exists (select 1 from public.misiones_reclamadas r2 where r2.user_id = u.id));
+    c := c || public.admin_eco_item(g, 'Las cuentas de prueba no canjearon ni agregaron mazos', n = 0,
+      case when n = 0 then (select count(*) from auth.users where coalesce(is_anonymous, false)) || ' cuentas de prueba revisadas'
+      else n || ' cuentas de prueba con canjes, misiones o mazos de la tienda' end);
   exception when others then
     c := c || public.admin_eco_item(g, 'Error inesperado', false, sqlerrm);
   end;
@@ -568,6 +585,35 @@ begin
       and jsonb_array_length(y -> 'movimientos') between 1 and 8
       and not exists (select 1 from jsonb_array_elements(y -> 'misiones') e where (e ->> 'reclamable')::integer > 0 or not (e ->> 'completa')::boolean);
     c := c || public.admin_eco_item(g, 'Lo que ve la web cuadra', v_ok, format('saldo %s · %s movimientos recientes', y ->> 'saldo', jsonb_array_length(y -> 'movimientos')));
+
+    -- Modo de prueba: tu cuenta, como si fuera de prueba (también se deshace).
+    begin
+      update auth.users set is_anonymous = true where id = v_user;
+      v_ok := true;
+    exception when insufficient_privilege then
+      v_ok := false;
+    end;
+    if not v_ok then
+      c := c || public.admin_eco_item(g, 'Modo de prueba', true, 'Se omitió: sin permiso para simular una cuenta de prueba');
+    else
+      delete from public.ia_sesiones where user_id = v_user;
+      x := public.admin_eco_probar(format($q$select public.ia_consumir(%L::uuid, 'diagnostico-prueba-1')$q$, v_user));
+      y := public.admin_eco_probar(format($q$select public.ia_consumir(%L::uuid, 'diagnostico-prueba-2')$q$, v_user));
+      c := c || public.admin_eco_item(g, 'Modo de prueba: 1 mazo con IA en total',
+        (x ->> 'ok')::boolean and (x -> 'valor' ->> 'limite')::integer = 1 and x -> 'valor' ->> 'periodo' = 'prueba' and y ->> 'hint' = 'cuota_prueba',
+        coalesce(x ->> 'error', case when y ->> 'hint' = 'cuota_prueba' then 'El 1.º se crea · el 2.º pide crear la cuenta' else 'El 2.º no se bloqueó' end));
+
+      select catalog_id into v_cat from public.store_catalog where active and is_free order by catalog_id limit 1;
+      x := public.admin_eco_probar($q$select public.canjear('ia-plus')$q$);
+      y := public.admin_eco_probar(format($q$select to_jsonb(public.adquirir_mazo(%L, '[{"id": "c1", "q": "P", "a": "R"}]'))$q$, coalesce(v_cat, 'x')));
+      v_ok := x ->> 'hint' = 'prueba' and (v_cat is null or y ->> 'hint' = 'prueba')
+        and (public.economia_estado() ->> 'prueba')::boolean
+        and jsonb_array_length(public.economia_estado() -> 'items') > 0;
+      c := c || public.admin_eco_item(g, 'Modo de prueba: ve la tienda, pero no canjea ni agrega mazos', v_ok,
+        case when v_ok then 'Canje y mazo gratis bloqueados aunque tenga puntos'
+        else coalesce('Canjeó: ' || (x ->> 'ok'), '') || coalesce(' · mazo: ' || (y ->> 'error'), '') end);
+      update auth.users set is_anonymous = false where id = v_user;
+    end if;
 
     raise exception '__fin_diagnostico__';
   exception when others then

@@ -36,6 +36,21 @@ create policy ia_sesiones_read_own on public.ia_sesiones
 
 grant select on public.ia_sesiones to authenticated;
 
+-- Cuentas de prueba: usuarios anónimos de Supabase (sin correo) que se crean
+-- con «Probar gratis» en la portada (js/account.js). La misma función está en
+-- tienda.sql, ia.sql, misiones.sql y admin.sql.
+create or replace function public.cuenta_prueba(p_user uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce((select u.is_anonymous from auth.users u where u.id = p_user), false);
+$$;
+revoke all on function public.cuenta_prueba(uuid) from public, anon;
+grant execute on function public.cuenta_prueba(uuid) to authenticated, service_role;
+
 -- Límites del generador (un solo lugar).
 create or replace function public.ia_config()
 returns jsonb
@@ -44,6 +59,7 @@ immutable
 as $$
   select jsonb_build_object(
     'limite_mazos', 2,        -- mazos con IA por período, con la key de Studappy
+    'limite_prueba', 1,       -- cuentas de prueba: mazos con IA en total
     'llamadas_por_mazo', 8,   -- leer archivos + generar + regenerar dentro de un mazo
     'periodo', 'dia'          -- 'dia' | 'semana' | 'mes' | 'total'
   );
@@ -76,6 +92,9 @@ as $$
 declare
   v_limite integer := (public.ia_config()->>'limite_mazos')::integer;
 begin
+  if public.cuenta_prueba(p_user) then
+    return (public.ia_config()->>'limite_prueba')::integer;
+  end if;
   if to_regclass('public.canjes') is not null and to_regclass('public.tienda_items') is not null then
     if exists (select 1 from public.canjes c where c.user_id = p_user and c.item = 'ia-plus' and c.vence > now()) then
       v_limite := v_limite + coalesce((select (i.datos->>'extra')::integer from public.tienda_items i where i.id = 'ia-plus'), 1);
@@ -96,7 +115,9 @@ as $$
 declare
   v_cfg jsonb := public.ia_config();
   v_limite integer := public.ia_limite(p_user);
-  v_periodo text := v_cfg->>'periodo';
+  v_prueba boolean := public.cuenta_prueba(p_user);
+  -- En una cuenta de prueba el límite es en total, no por día.
+  v_periodo text := case when v_prueba then 'prueba' else v_cfg->>'periodo' end;
   v_mazos integer;
 begin
   select count(*) into v_mazos
@@ -120,8 +141,9 @@ declare
   v_cfg jsonb := public.ia_config();
   v_limite_mazos integer := public.ia_limite(p_user);
   v_llamadas_por_mazo integer := (v_cfg->>'llamadas_por_mazo')::integer;
-  v_periodo text := v_cfg->>'periodo';
-  v_inicio timestamptz := public.ia_inicio_periodo(v_cfg->>'periodo');
+  v_prueba boolean := public.cuenta_prueba(p_user);
+  v_periodo text := case when v_prueba then 'prueba' else v_cfg->>'periodo' end;
+  v_inicio timestamptz := public.ia_inicio_periodo(v_periodo);
   v_llamadas integer;
   v_mazos integer;
   v_cuando text;
@@ -156,6 +178,10 @@ begin
     from public.ia_sesiones
     where user_id = p_user and creada >= v_inicio and llamadas > 0;
     if v_mazos >= v_limite_mazos then
+      if v_prueba then
+        raise exception 'Ya creaste tu mazo con IA de prueba. Crea tu cuenta gratis para seguir.'
+          using hint = 'cuota_prueba';
+      end if;
       raise exception 'Ya usaste tus % mazos con IA %.', v_limite_mazos, v_cuando
         using hint = 'cuota_agotada';
     end if;

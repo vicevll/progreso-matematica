@@ -303,6 +303,46 @@
       return added;
     },
 
+    /* ---- Modo de prueba (cuenta anónima) ---- */
+    // Mazos propios y avance que dejó otra cuenta en este navegador.
+    mazosDeCuenta: function (id) {
+      var cache = id ? readJson(CACHE_PREFIX + id) : null;
+      var own = cache && Array.isArray(cache.decks)
+        ? cache.decks.filter(function (deck) { return deck && deck.origen !== "tienda"; }).map(normalize)
+        : [];
+      var prog = {};
+      var old = cache && isObject(cache.progreso) ? cache.progreso : {};
+      own.forEach(function (deck) { if (isObject(old[deck.id])) prog[deck.id] = clone(old[deck.id]); });
+      return { decks: own, progreso: prog };
+    },
+    // Agrega a la cuenta activa los mazos de la prueba con su avance tal cual
+    // (Lo sé / No lo sé / Pendiente). Si un id ya existe, el mazo recibe otro.
+    importarMazos: function (data) {
+      if (!account || !data) return 0;
+      var added = 0;
+      var prog = data.progreso || {};
+      (data.decks || []).forEach(function (deck) {
+        var copy = normalize(clone(deck));
+        var idAntes = copy.id;
+        if (indexOf(copy.id) !== -1) copy.id = uid("d");
+        copy.origen = "local";
+        copy.catalogId = "";
+        copy.actualizado = Date.now();
+        decks.push(copy);
+        pendientes[copy.id] = "guardar";
+        if (isObject(prog[idAntes])) progreso[copy.id] = clone(prog[idAntes]);
+        added++;
+      });
+      if (added) {
+        progresoActualizado = Date.now();
+        progresoPendiente = true;
+        persist();
+        emit();
+        emitProgress();
+      }
+      return added;
+    },
+
     onChange: function (cb) {
       listeners.push(cb);
       return function () {

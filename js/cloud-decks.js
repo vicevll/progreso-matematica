@@ -13,7 +13,7 @@
   }
 
   function configured() {
-    // En modo prueba no hay sesión real de Supabase: la tienda queda desactivada.
+    // En modo local no hay sesión real de Supabase: la tienda queda desactivada.
     return !isDemo() && !!(window.SB && window.SB.configured && window.SB.client);
   }
 
@@ -195,7 +195,10 @@
     }
     var currentUser = user();
     if (!currentUser) return Promise.reject(new Error("Inicia sesión para agregar el mazo a tu biblioteca."));
-    if (isDemo()) return Promise.reject(new Error("En modo prueba la tienda no guarda mazos. Entra con Google para probarla."));
+    if (isDemo()) return Promise.reject(new Error("En modo local la tienda no guarda mazos. Entra con Google para probarla."));
+    if (window.Auth && window.Auth.isTrial && window.Auth.isTrial()) {
+      return Promise.reject(new Error("En el modo de prueba puedes mirar la tienda. Crea tu cuenta gratis para agregar mazos."));
+    }
     if (!configured()) return Promise.reject(new Error("Supabase no está configurado."));
     if (isOwned(catalogId)) return Promise.resolve(window.DeckStore.all().filter(function (deck) { return deck.catalogId === catalogId; })[0]);
 

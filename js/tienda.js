@@ -14,9 +14,15 @@
     return window.icon ? window.icon(name, { size: size || 18 }) : "";
   }
 
+  // Modo de prueba (cuenta anónima): se mira todo, pero no se agrega nada.
+  function esPrueba() {
+    return !!(window.Auth && window.Auth.isTrial && window.Auth.isTrial());
+  }
+
   // opts.canje (desde js/economia.js): botón para canjear el mazo con puntos.
   function itemHtml(item, opts) {
     opts = opts || {};
+    var prueba = esPrueba();
     var owned = window.CloudDecks && window.CloudDecks.isOwned(item.id);
     var available = item.status === "available";
     var disabled = !available || !!busy[item.id];
@@ -30,6 +36,8 @@
     } else if (porCanjear) {
       action = opts.canje || ('<button class="btn eco-canjear" type="button" data-canjear="' + esc(conPuntos.id) + '">' + window.Economia.px("moneda", 14) +
         "<span>Canjear · " + esc(new Intl.NumberFormat("es-CL").format(conPuntos.precio)) + " pts</span></button>");
+    } else if (available && prueba) {
+      action = '<button class="btn prueba-cta-sm" type="button" data-crear-cuenta>' + (window.GOOGLE_ICON || "") + "<span>Crea tu cuenta para añadirlo</span></button>";
     } else if (available) {
       action = '<button class="btn primary" type="button" data-acquire="' + esc(item.id) + '"' + (disabled ? " disabled" : "") + '>' +
         icon(busy[item.id] ? "refresh" : "plus") +
@@ -37,7 +45,7 @@
     } else {
       action = '<button class="btn ghost" type="button" disabled><span>Próximamente</span></button>';
     }
-    var message = messages[item.id] || (owned ? "Ya está en Mis mazos y se sincroniza con tu cuenta." : porCanjear ? "Se canjea con puntos de las misiones." : conPuntos ? "Ya lo canjeaste: añádelo a tu biblioteca." : available ? "Gratis · se guarda en tu cuenta." : "Estamos preparando este mazo gratuito.");
+    var message = messages[item.id] || (owned ? "Ya está en Mis mazos y se sincroniza con tu cuenta." : porCanjear ? "Se canjea con puntos de las misiones." : conPuntos ? "Ya lo canjeaste: añádelo a tu biblioteca." : available && prueba ? "Gratis con tu cuenta de Studappy." : available ? "Gratis · se guarda en tu cuenta." : "Estamos preparando este mazo gratuito.");
     var etiqueta = owned ? "En tu biblioteca" : conPuntos ? new Intl.NumberFormat("es-CL").format(conPuntos.precio) + " pts" : available ? "Gratis" : "Próximamente";
     var breakdown = item.breakdown || {};
     var counts = !item.cards.length
@@ -129,7 +137,7 @@
       (window.CloudDecks && window.CloudDecks.configured()
         ? ""
         : window.Auth && window.Auth.isDemo && window.Auth.isDemo()
-          ? '<p class="store-setup-note">Estás en modo prueba: puedes ver el catálogo, pero para añadir mazos entra con Google.</p>'
+          ? '<p class="store-setup-note">Estás en modo local: puedes ver el catálogo, pero para añadir mazos entra con Google.</p>'
           : '<p class="store-setup-note">Para guardar adquisiciones, configura Supabase y ejecuta <code>supabase/tienda.sql</code> en el SQL Editor.</p>') +
       (window.Economia ? window.Economia.billeteraHtml() : "") +
       '<h2 class="eco-titulo">' + (window.Economia ? window.Economia.px("carta", 28) : "") + "Mazos</h2>" +
@@ -150,7 +158,7 @@
 
   document.addEventListener("click", function (event) {
     var button = event.target.closest("[data-acquire]");
-    if (!button || !window.CloudDecks) return;
+    if (!button || !window.CloudDecks || esPrueba()) return;
     var catalogId = button.getAttribute("data-acquire");
     if (busy[catalogId]) return;
     busy[catalogId] = true;

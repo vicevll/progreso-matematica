@@ -215,6 +215,22 @@ insert into public.mazos_adquiridos_log (user_id, catalog_id, primera)
 select user_id, catalog_id, acquired_at from public.user_decks
 on conflict (user_id, catalog_id) do nothing;
 
+-- Cuentas de prueba: usuarios anónimos de Supabase (sin correo) que se crean
+-- con «Probar gratis» en la portada (js/account.js). Ven la tienda, pero no
+-- reclaman misiones ni canjean. La misma función está en tienda.sql, ia.sql,
+-- misiones.sql y admin.sql.
+create or replace function public.cuenta_prueba(p_user uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce((select u.is_anonymous from auth.users u where u.id = p_user), false);
+$$;
+revoke all on function public.cuenta_prueba(uuid) from public, anon;
+grant execute on function public.cuenta_prueba(uuid) to authenticated, service_role;
+
 -- ---------------------------------------------------------------------------
 -- Períodos, rotación y progreso
 -- ---------------------------------------------------------------------------
@@ -445,6 +461,7 @@ begin
 
   return jsonb_build_object(
     'saldo', public.economia_saldo(v_user),
+    'prueba', public.cuenta_prueba(v_user),
     'ahora', now(),
     'dia', jsonb_build_object('clave', dia.clave, 'termina', dia.fin),
     'semana', jsonb_build_object('clave', sem.clave, 'termina', sem.fin),
@@ -495,6 +512,9 @@ declare
 begin
   if v_user is null then
     raise exception 'Inicia sesión para reclamar misiones.' using errcode = '42501';
+  end if;
+  if public.cuenta_prueba(v_user) then
+    raise exception 'En el modo de prueba puedes mirar la tienda. Crea tu cuenta gratis para reclamar misiones.' using hint = 'prueba';
   end if;
   -- Un reclamo a la vez por usuario (evita cobrar dos veces).
   perform pg_advisory_xact_lock(hashtext('economia:' || v_user::text));
@@ -557,6 +577,9 @@ begin
   if v_user is null then
     raise exception 'Inicia sesión para canjear.' using errcode = '42501';
   end if;
+  if public.cuenta_prueba(v_user) then
+    raise exception 'En el modo de prueba puedes mirar la tienda. Crea tu cuenta gratis para canjear.' using hint = 'prueba';
+  end if;
   perform pg_advisory_xact_lock(hashtext('economia:' || v_user::text));
 
   select * into i from public.tienda_items where id = p_item;
@@ -611,6 +634,9 @@ declare
 begin
   if v_user is null then
     raise exception 'Inicia sesión para cambiar el tema.' using errcode = '42501';
+  end if;
+  if public.cuenta_prueba(v_user) then
+    raise exception 'En el modo de prueba puedes mirar la tienda. Crea tu cuenta gratis para cambiar el tema.' using hint = 'prueba';
   end if;
   select * into i from public.tienda_items where id = p_tema and tipo = 'tema';
   if not found then

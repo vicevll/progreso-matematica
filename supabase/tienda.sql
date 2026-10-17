@@ -84,6 +84,22 @@ create table if not exists public.user_deck_cards (
   unique (deck_id, position)
 );
 
+-- Cuentas de prueba: usuarios anónimos de Supabase (sin correo) que se crean
+-- con «Probar gratis» en la portada (js/account.js). Pueden mirar la tienda,
+-- pero no agregar mazos. La misma función está en tienda.sql, ia.sql,
+-- misiones.sql y admin.sql.
+create or replace function public.cuenta_prueba(p_user uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce((select u.is_anonymous from auth.users u where u.id = p_user), false);
+$$;
+revoke all on function public.cuenta_prueba(uuid) from public, anon;
+grant execute on function public.cuenta_prueba(uuid) to authenticated, service_role;
+
 create index if not exists user_decks_user_idx on public.user_decks(user_id);
 create index if not exists user_deck_cards_user_deck_idx on public.user_deck_cards(user_id, deck_id);
 
@@ -108,6 +124,7 @@ create policy user_decks_add_free on public.user_decks
   for insert to authenticated
   with check (
     auth.uid() = user_id
+    and not public.cuenta_prueba(auth.uid())
     and exists (
       select 1 from public.store_catalog c
       where c.catalog_id = user_decks.catalog_id and c.active = true and c.is_free = true
@@ -146,6 +163,11 @@ declare
 begin
   if v_user_id is null then
     raise exception 'Debes iniciar sesión para adquirir un mazo.';
+  end if;
+
+  if public.cuenta_prueba(v_user_id) then
+    raise exception 'En el modo de prueba puedes mirar la tienda. Crea tu cuenta gratis para agregar mazos.'
+      using hint = 'prueba';
   end if;
 
   select * into v_catalog

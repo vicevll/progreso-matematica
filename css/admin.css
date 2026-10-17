@@ -805,6 +805,12 @@ th[aria-sort="descending"] .adm-orden {
   white-space: nowrap;
 }
 
+/* Creó su cuenta después de usar «Probar gratis». */
+.adm-chip.adm-chip-prueba {
+  border-color: rgba(255, 122, 217, 0.4);
+  color: #ffc8ef;
+}
+
 .adm-mazo-nombre {
   font-weight: 600;
 }

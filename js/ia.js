@@ -27,6 +27,8 @@
   function clavePropia() {
     var id = usuarioId();
     if (!id) return "";
+    // En el modo de prueba solo se usa la key de Studappy (1 mazo con IA).
+    if (window.Auth && window.Auth.isTrial && window.Auth.isTrial()) return "";
     if (clavesEnMemoria[id]) return clavesEnMemoria[id];
     try { return localStorage.getItem(CLAVE_PREFIJO + id) || ""; } catch (e) { return ""; }
   }
@@ -91,7 +93,7 @@
 
   function invocar(body) {
     if (isDemo()) {
-      return Promise.reject(new Error("En modo prueba el generador no está disponible. Entra con Google para usarlo."));
+      return Promise.reject(new Error("En modo local el generador no está disponible. Entra con Google para usarlo."));
     }
     if (!window.SB || !window.SB.client) {
       return Promise.reject(new Error("El generador no está disponible ahora."));
