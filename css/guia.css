@@ -1,0 +1,383 @@
+/* Studappy · tutorial guiado (js/guia.js).
+   Oscurece la página y deja un recuadro brillante sobre la parte de la web
+   que se explica, con una tarjeta al lado que dice qué hacer ahí. */
+
+:root {
+  --guia-luz: #8fdcf2;
+  --guia-luz-rgb: 143, 220, 242;
+  --guia-oro: #ffd36b;
+}
+
+@keyframes guia-pulso {
+  0% { box-shadow: 0 0 0 0 rgba(var(--guia-luz-rgb), 0.55); }
+  70% { box-shadow: 0 0 0 12px rgba(var(--guia-luz-rgb), 0); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--guia-luz-rgb), 0); }
+}
+
+@keyframes guia-entra {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes guia-entra-centro {
+  from { opacity: 0; transform: translate(-50%, calc(-50% + 10px)); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+@keyframes guia-aqui {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* Capa que tapa la página: los clics se quedan aquí mientras dura el recorrido. */
+.guia-capa {
+  position: fixed;
+  inset: 0;
+  z-index: 800;
+  background: transparent;
+  cursor: default;
+}
+
+/* El recuadro: su sombra enorme oscurece todo lo demás. */
+.guia-foco {
+  position: fixed;
+  z-index: 801;
+  border: 2px solid var(--guia-luz);
+  border-radius: 14px;
+  box-shadow: 0 0 0 9999px rgba(2, 5, 14, 0.74), 0 0 22px rgba(var(--guia-luz-rgb), 0.45), inset 0 0 14px rgba(var(--guia-luz-rgb), 0.18);
+  pointer-events: none;
+  transition: top 0.35s ease, left 0.35s ease, width 0.35s ease, height 0.35s ease, border-radius 0.35s ease;
+}
+
+.guia-foco::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  animation: guia-pulso 1.8s ease-out infinite;
+}
+
+/* Etiqueta «AQUÍ» sobre el recuadro. */
+.guia-foco::after {
+  content: "Aquí";
+  position: absolute;
+  top: -13px;
+  left: 12px;
+  padding: 4px 8px 3px;
+  border-radius: 6px;
+  background: var(--guia-luz);
+  box-shadow: 0 2px 0 #2b6f8a;
+  color: #06101f;
+  font-family: var(--font-pixel, monospace);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+  animation: guia-aqui 1.4s ease-in-out infinite;
+}
+
+.guia-foco.aqui-abajo::after {
+  top: auto;
+  bottom: -13px;
+}
+
+/* Sin parte que señalar (bienvenida y final): todo oscuro. */
+.guia-foco.centro {
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  box-shadow: 0 0 0 9999px rgba(2, 5, 14, 0.78);
+}
+
+.guia-foco.centro::before,
+.guia-foco.centro::after {
+  display: none;
+}
+
+/* ---------- Tarjeta ---------- */
+
+.guia-caja {
+  position: fixed;
+  z-index: 802;
+  width: min(390px, calc(100vw - 32px));
+  padding: 14px 16px 14px;
+  border: 1px solid rgba(var(--guia-luz-rgb), 0.5);
+  border-radius: 16px;
+  background: linear-gradient(180deg, #111c36, #0b1328);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  color: var(--text, #e4ebf7);
+  font-family: var(--font-ui, sans-serif);
+  animation: guia-entra 0.25s ease-out;
+}
+
+.guia-caja.centro {
+  top: 50%;
+  left: 50%;
+  width: min(440px, calc(100vw - 32px));
+  transform: translate(-50%, -50%);
+  animation: guia-entra-centro 0.3s ease-out;
+}
+
+/* Flecha que apunta al recuadro. */
+.guia-caja.flecha-arriba::before,
+.guia-caja.flecha-abajo::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--flecha, 50%) - 8px);
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgba(var(--guia-luz-rgb), 0.5);
+  background: #111c36;
+  transform: rotate(45deg);
+}
+
+.guia-caja.flecha-arriba::before {
+  top: -8px;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.guia-caja.flecha-abajo::before {
+  bottom: -8px;
+  border-top: 0;
+  border-left: 0;
+  background: #0b1328;
+}
+
+/* Al lado de recuadros altos (como la tarjeta del Mazo del mago). */
+.guia-caja.flecha-izq::before,
+.guia-caja.flecha-der::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--flecha, 40px) - 8px);
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgba(var(--guia-luz-rgb), 0.5);
+  background: #101a33;
+  transform: rotate(45deg);
+}
+
+.guia-caja.flecha-izq::before {
+  left: -8px;
+  border-top: 0;
+  border-right: 0;
+}
+
+.guia-caja.flecha-der::before {
+  right: -8px;
+  border-bottom: 0;
+  border-left: 0;
+}
+
+.guia-cabeza {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.guia-kicker {
+  color: var(--guia-luz);
+  font-family: var(--font-pixel, monospace);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.guia-puntos {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.guia-puntos i {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: rgba(var(--guia-luz-rgb), 0.18);
+}
+
+.guia-puntos i.hecho {
+  background: rgba(var(--guia-luz-rgb), 0.55);
+}
+
+.guia-puntos i.ahora {
+  width: 16px;
+  background: var(--guia-oro);
+}
+
+.guia-saltar {
+  margin-left: auto;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted, #9aa8c2);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.guia-saltar:hover,
+.guia-saltar:focus-visible {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text, #e4ebf7);
+}
+
+.guia-cuerpo {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.guia-ico {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 1px solid rgba(var(--guia-luz-rgb), 0.25);
+  border-radius: 12px;
+  background: radial-gradient(circle at 50% 40%, rgba(var(--guia-luz-rgb), 0.18), rgba(var(--guia-luz-rgb), 0.04));
+}
+
+.guia-ico .px-ico {
+  image-rendering: pixelated;
+}
+
+.guia-cuerpo h3 {
+  margin: 2px 0 5px;
+  color: #ffffff;
+  font-size: 1.04rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.guia-cuerpo p {
+  margin: 0;
+  color: var(--text-muted, #9aa8c2);
+  font-size: 0.89rem;
+  line-height: 1.5;
+}
+
+.guia-cuerpo p b {
+  color: var(--text, #e4ebf7);
+}
+
+.guia-cuerpo .guia-error {
+  margin-top: 8px;
+  color: var(--danger, #f08a99);
+  font-size: 0.82rem;
+}
+
+.guia-botones {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.guia-botones-der {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.guia-botones .btn {
+  padding: 9px 14px;
+  font-size: 0.86rem;
+}
+
+.guia-oferta {
+  margin-top: 14px;
+}
+
+.guia-oferta .btn,
+html.dark-mode .guia-oferta .btn.prueba-cta {
+  justify-content: center;
+  width: 100%;
+  padding: 11px 16px;
+  border-radius: 12px;
+  font-size: 0.92rem;
+}
+
+.guia-oferta + .guia-botones {
+  margin-top: 10px;
+}
+
+.guia-caja .btn svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+}
+
+.guia-atras {
+  padding-left: 10px !important;
+}
+
+/* Los avisos (por ejemplo «¡El Mazo del mago ya está en Mis mazos!») quedan por encima. */
+html.guia-activa .update-banner {
+  z-index: 820;
+}
+
+/* ---------- Celular: la tarjeta va abajo o arriba, a lo ancho ---------- */
+
+@media (max-width: 720px) {
+  .guia-caja.hoja {
+    right: 12px;
+    left: 12px;
+    width: auto;
+    padding: 13px 14px 12px;
+  }
+
+  .guia-caja.hoja.abajo {
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .guia-caja.hoja.arriba {
+    top: calc(12px + env(safe-area-inset-top, 0px));
+  }
+
+  .guia-ico {
+    width: 44px;
+    height: 44px;
+  }
+
+  .guia-ico .px-ico {
+    width: 30px;
+    height: 30px;
+  }
+
+  .guia-cuerpo h3 {
+    font-size: 0.98rem;
+  }
+
+  .guia-cuerpo p {
+    font-size: 0.85rem;
+  }
+
+  .guia-botones .btn {
+    padding: 8px 12px;
+    font-size: 0.82rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guia-foco,
+  .guia-caja,
+  .guia-caja.centro {
+    transition: none;
+    animation: none;
+  }
+
+  .guia-foco::before,
+  .guia-foco::after {
+    animation: none;
+  }
+}

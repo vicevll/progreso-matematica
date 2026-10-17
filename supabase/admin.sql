@@ -553,6 +553,26 @@ begin
 end;
 $$;
 
+-- Etiqueta de la cuenta («CometaAzul#4821», ver etiquetas.sql). Si etiquetas.sql
+-- todavía no se ejecutó, no hay etiquetas.
+create or replace function public.admin_etiqueta(p_user uuid)
+returns text
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v text;
+begin
+  if to_regclass('public.perfiles') is null then
+    return null;
+  end if;
+  execute 'select nombre || ''#'' || numero from public.perfiles where user_id = $1' into v using p_user;
+  return v;
+end;
+$$;
+
 -- Una fila por usuario con su actividad del período y su estado actual.
 create or replace function public.admin_usuarios(
   p_desde date default null,
@@ -645,6 +665,7 @@ begin
       'segundos_estudio', coalesce(est.segundos, 0),
       'generador', coalesce(gen.n, 0),
       'de_prueba', exists (select 1 from public.conversiones_prueba c where c.user_id = u.id),
+      'etiqueta', public.admin_etiqueta(u.id),
       'admin', u.id in (select public.admin_ids())
     ) order by greatest(vu.ultimo, u.last_sign_in_at) desc nulls last, u.created_at desc), '[]'::jsonb)
     from u
@@ -793,6 +814,7 @@ revoke all on function public.admin_resumen(date, date, boolean) from public, an
 revoke all on function public.admin_usuarios(date, date, boolean) from public, anon;
 revoke all on function public.admin_usuario(uuid, date, date) from public, anon;
 revoke all on function public.registrar_conversion(uuid, boolean) from public, anon;
+revoke all on function public.admin_etiqueta(uuid) from public, anon, authenticated;
 
 grant execute on function public.es_admin() to authenticated;
 grant execute on function public.registrar_visita(text, integer, jsonb, integer, text) to authenticated;

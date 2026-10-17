@@ -142,6 +142,30 @@
     });
   }
 
+  // Regalos y ajustes del administrador (supabase/etiquetas.sql): ref «regalo:mensaje».
+  function regaloTexto(mv) {
+    var ref = String(mv.ref || "");
+    var msg = ref.indexOf("regalo:") === 0 ? ref.slice(7).trim() : "";
+    return (mv.cantidad > 0 ? "Regalo de Studappy" : "Ajuste de Studappy") + (msg ? ": " + msg : "");
+  }
+
+  // Avisa una vez de los regalos de puntos nuevos (de la última semana).
+  function avisarRegalos(uid, d) {
+    var clave = "studappy-regalo-visto:" + uid;
+    var visto = 0;
+    try { visto = Number(localStorage.getItem(clave)) || 0; } catch (e) { /* sin almacenamiento */ }
+    var limite = Math.max(visto, Date.now() - 7 * 24 * 3600 * 1000);
+    var nuevos = (d.movimientos || []).filter(function (mv) {
+      return mv.motivo === "ajuste" && String(mv.ref || "").indexOf("regalo:") === 0 && mv.cantidad > 0 && new Date(mv.creado).getTime() > limite;
+    });
+    var ultimo = (d.movimientos || []).reduce(function (m, mv) { return Math.max(m, new Date(mv.creado).getTime() || 0); }, visto);
+    try { localStorage.setItem(clave, String(ultimo)); } catch (e) { /* sin almacenamiento */ }
+    nuevos.slice(0, 2).forEach(function (mv) {
+      var msg = String(mv.ref).slice(7).trim();
+      aviso("¡Studappy te regaló " + num(mv.cantidad) + " puntos!" + (msg ? " «" + msg + "»" : ""));
+    });
+  }
+
   // ---------- estado ----------
 
   // Firma del estado sin la hora del servidor: si no cambió, un refresco de
@@ -195,6 +219,7 @@
       error = null;
       firmaEstado = firma;
       guardarCache(uid, data);
+      if (!esPrueba()) avisarRegalos(uid, data);
       ultimaCarga = Date.now();
       if (!probando && window.StudappyTema) window.StudappyTema.aplicar(estado.tema);
       if (!igual) pintar();
@@ -346,7 +371,7 @@
       '<section class="eco-bloque eco-historial"><header class="eco-bloque-head"><h2>' + px("pergamino", 26) + "Últimos movimientos</h2></header><ul>" +
       movs.map(function (mv) {
         var ref = String(mv.ref || "").split("@")[0];
-        var nombre = mv.motivo === "mision" ? "Misión: " + (nombres[ref] || "completada") : mv.motivo === "canje" ? "Canje: " + (nombres[ref] || ref) : "Regalo de Studappy";
+        var nombre = mv.motivo === "mision" ? "Misión: " + (nombres[ref] || "completada") : mv.motivo === "canje" ? "Canje: " + (nombres[ref] || ref) : regaloTexto(mv);
         var fecha = new Intl.DateTimeFormat("es-CL", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(mv.creado));
         return '<li><span class="eco-mov-nombre">' + esc(nombre) + '<small>' + esc(fecha) + '</small></span><strong class="' + (mv.cantidad > 0 ? "mas" : "menos") + '">' + (mv.cantidad > 0 ? "+" : "−") + num(Math.abs(mv.cantidad)) + "</strong></li>";
       }).join("") + "</ul></section>"

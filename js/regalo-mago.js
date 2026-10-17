@@ -1,17 +1,14 @@
-// Regalo de bienvenida: el Mazo del mago.
+// El Mazo del mago, pedido desde el modo de prueba.
 //
-// Reemplaza al antiguo tour (js/tour.js), sin ventanas: la primera vez que una
-// cuenta entra, se agrega el Mazo del mago a Mis mazos en silencio.
-//
-// Que ya se dio queda guardado en este navegador y en la cuenta de Supabase
-// (user_metadata.tour_mago, la misma marca del tour), así las cuentas que ya
-// vieron el tour no lo reciben de nuevo y no se repite en otro dispositivo.
-// En localhost no se marca la cuenta. Para apagarlo en pruebas:
-// localStorage.setItem("studappy-tour-off", "1").
+// Ya no se regala solo: lo ofrece el tutorial (js/guia.js). Con cuenta se
+// agrega ahí mismo; en la prueba, el botón «Crear cuenta y llevármelo» deja
+// una marca en este navegador (studappy-quiere-mago, con la hora) y abre
+// Google. Al volver con la cuenta nueva, este archivo agrega el mazo y borra
+// la marca. La marca vale un día.
 (function () {
-  var LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(window.location.hostname);
   var MAZO = "paes-ciencias-mago";
-  var CLAVE = "studappy-tour-mago:";
+  var CLAVE = "studappy-quiere-mago";
+  var VIGENCIA = 24 * 60 * 60 * 1000;
   var revisado = {}; // cuentas ya revisadas en esta carga de la página
 
   function user() {
@@ -22,47 +19,39 @@
     return !!(window.Auth && window.Auth.isDemo && window.Auth.isDemo());
   }
 
-  // El modo de prueba no agrega mazos de la tienda (el regalo llega al crear la cuenta).
   function isTrial() {
     return !!(window.Auth && window.Auth.isTrial && window.Auth.isTrial());
   }
 
-  function apagado() {
-    if (!LOCAL) return false;
-    try { return localStorage.getItem("studappy-tour-off") === "1"; } catch (e) { return false; }
+  function pedido() {
+    var v = "";
+    try { v = localStorage.getItem(CLAVE) || ""; } catch (e) { return false; }
+    if (!v) return false;
+    var t = parseInt(v, 10);
+    if (v === "1" || (t && Date.now() - t < VIGENCIA)) return true;
+    borrar(); // marca vencida
+    return false;
   }
 
-  function yaDado(u) {
-    try {
-      if (localStorage.getItem(CLAVE + u.id) === "1") return true;
-    } catch (e) { /* sin almacenamiento */ }
-    return !!(u.user_metadata && u.user_metadata.tour_mago === "visto");
-  }
-
-  function marcar(u) {
-    try { localStorage.setItem(CLAVE + u.id, "1"); } catch (e) { /* sin almacenamiento */ }
-    if (LOCAL || !window.SB || !window.SB.client || !window.SB.client.auth) return;
-    if (u.user_metadata && u.user_metadata.tour_mago === "visto") return;
-    try {
-      window.SB.client.auth.updateUser({ data: { tour_mago: "visto" } })
-        .catch(function () { /* queda guardado en este navegador */ });
-    } catch (e) { /* ignorar */ }
+  function borrar() {
+    try { localStorage.removeItem(CLAVE); } catch (e) { /* sin almacenamiento */ }
   }
 
   function revisar() {
     var u = user();
-    if (!u || isDemo() || isTrial() || revisado[u.id] || apagado()) return;
+    if (!u || isDemo() || isTrial() || revisado[u.id] || !window.CloudDecks) return;
+    if (!pedido()) return;
     revisado[u.id] = true;
-    if (yaDado(u) || !window.CloudDecks) return;
     // Primero llegan los mazos de la cuenta, para no agregarlo dos veces.
     Promise.resolve(window.CloudDecks.sync ? window.CloudDecks.sync() : null)
       .catch(function () { /* se revisa igual */ })
       .then(function () {
         var actual = user();
         if (!actual || actual.id !== u.id) return;
-        if (window.CloudDecks.isOwned(MAZO)) { marcar(u); return; }
+        if (window.CloudDecks.isOwned(MAZO)) { borrar(); return; }
         return window.CloudDecks.acquire(MAZO).then(function () {
-          marcar(u);
+          borrar();
+          if (window.Novedades && window.Novedades.notify) window.Novedades.notify("¡El Mazo del mago ya está en Mis mazos!");
         }, function () {
           revisado[u.id] = false; // se intenta de nuevo en la próxima carga
         });

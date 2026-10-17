@@ -352,9 +352,11 @@ begin
     ) into v;
 
   elsif p_regla = 'crear_mazo_manual' then
+    -- Las copias de mazos compartidos (id «cp…», etiquetas.sql) no cuentan.
     select count(*) into v
     from public.mazos_propios m
     where m.user_id = p_user and m.creado_en >= p_ini and m.creado_en < p_fin
+      and m.id not like 'cp%'
       and not coalesce((m.cards -> 0 ->> 'id') ~ '^g[0-9]+-', false)
       and (select count(*) from jsonb_array_elements(m.cards) c
            where length(trim(coalesce(c ->> 'q', ''))) > 0 and length(trim(coalesce(c ->> 'a', ''))) > 0)

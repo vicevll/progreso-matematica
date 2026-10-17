@@ -1948,3 +1948,192 @@ body.adm-sin-scroll {
     transition: none;
   }
 }
+
+/* ---------- Regalar puntos por etiqueta (js/admin-regalos.js) ---------- */
+
+.etq {
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.etq b {
+  color: #ffd36b;
+  font-family: inherit;
+  font-weight: inherit;
+}
+
+.adm-usuario-txt small.adm-etq {
+  color: #8fdcf2;
+  font-family: var(--font-pixel, monospace);
+  font-size: 0.66rem;
+}
+
+.reg-card {
+  border-color: rgba(255, 211, 107, 0.28);
+  background:
+    radial-gradient(ellipse 50% 90% at 100% 0%, rgba(255, 200, 90, 0.08), transparent 70%),
+    var(--surface);
+}
+
+.reg-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.reg-buscar {
+  margin-bottom: 10px;
+}
+
+.reg-lista {
+  display: grid;
+  gap: 6px;
+  max-height: 320px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.reg-cuenta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-deep);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.reg-cuenta:hover {
+  border-color: var(--border-strong);
+}
+
+.reg-cuenta.activo {
+  border-color: rgba(255, 211, 107, 0.6);
+  background: rgba(255, 211, 107, 0.07);
+}
+
+.reg-cuenta-etq {
+  font-family: var(--font-pixel, monospace);
+  font-size: 0.8rem;
+}
+
+.reg-cuenta-info {
+  grid-column: 1;
+  overflow: hidden;
+  color: var(--text-faint);
+  font-size: 0.74rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reg-cuenta-saldo {
+  display: inline-flex;
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  align-items: center;
+  gap: 5px;
+  color: #ffe6a6;
+  font-family: var(--font-pixel, monospace);
+  font-size: 0.74rem;
+}
+
+.reg-elige {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 120px;
+  justify-content: center;
+  border: 1px dashed var(--border-strong);
+  border-radius: 12px;
+}
+
+.reg-destino {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 211, 107, 0.3);
+  border-radius: 12px;
+  background: rgba(255, 211, 107, 0.05);
+}
+
+.reg-destino strong {
+  display: block;
+  font-family: var(--font-pixel, monospace);
+  font-size: 0.95rem;
+}
+
+.reg-destino small {
+  color: var(--text-faint);
+  font-size: 0.74rem;
+}
+
+.reg-para {
+  display: block;
+  color: var(--text-faint);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.reg-campos {
+  display: grid;
+  gap: 10px;
+}
+
+.reg-campo {
+  display: grid;
+  gap: 5px;
+}
+
+.reg-campo > span {
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.reg-campo > span small {
+  color: var(--text-faint);
+  font-weight: 500;
+}
+
+.reg-campo input {
+  padding: 9px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: var(--surface-deep);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.88rem;
+}
+
+.reg-campo input:focus {
+  border-color: rgba(255, 211, 107, 0.6);
+  outline: none;
+}
+
+.reg-rapidos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.reg-campos .btn.primary {
+  justify-content: center;
+}
+
+@media (max-width: 900px) {
+  .reg-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

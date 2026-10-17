@@ -293,6 +293,8 @@
     }
     var u = estado.sesion && estado.sesion.user;
     window.AdminEconomia.montar(cont, { client: window.SB.client, esc: esc, num: num, ic: ic, fechaHora: fechaHora, email: u ? u.email : "" });
+    // Regalar puntos por etiqueta (js/admin-regalos.js), arriba de todo.
+    if (window.AdminRegalos) window.AdminRegalos.montar(cont, { client: window.SB.client, esc: esc, num: num, ic: ic, fechaHora: fechaHora });
   }
 
   function cambiarVista(vista) {
@@ -344,7 +346,7 @@
       tarjeta("card-prueba", "Modo de prueba", "Cuentas de «Probar gratis» (sin registro) abiertas en el período", "", '<div id="adm-prueba"></div>') +
       tarjeta("card-top", "Mazos más estudiados", "Ordenados por respuestas en el período", "", '<div class="adm-tabla-wrap" id="adm-top"></div>') +
       tarjeta("card-usuarios", "Usuarios", "Haz clic en una persona para ver su ficha",
-        '<label class="adm-buscar">' + ic("search", 15) + '<input id="adm-buscar" type="search" placeholder="Buscar por nombre o correo" autocomplete="off" /></label>',
+        '<label class="adm-buscar">' + ic("search", 15) + '<input id="adm-buscar" type="search" placeholder="Buscar por nombre, correo o etiqueta" autocomplete="off" /></label>',
         '<div class="adm-tabla-wrap" id="adm-usuarios"></div>')
     );
     var b = document.getElementById("adm-buscar");
@@ -812,7 +814,7 @@
     if (!el) return;
     var lista = (estado.usuarios || []).slice();
     var q = estado.busqueda.trim().toLowerCase();
-    if (q) lista = lista.filter(function (u) { return (String(u.nombre || "") + " " + String(u.email || "")).toLowerCase().indexOf(q) !== -1; });
+    if (q) lista = lista.filter(function (u) { return (String(u.nombre || "") + " " + String(u.email || "") + " " + String(u.etiqueta || "")).toLowerCase().indexOf(q) !== -1; });
     var col = COLUMNAS.filter(function (c) { return c.id === estado.orden.col; })[0] || COLUMNAS[1];
     lista.sort(function (a, b) {
       var va = col.valor(a), vb = col.valor(b);
@@ -835,7 +837,7 @@
         var mazos = u.propios + u.ia + u.tienda;
         var dom = u.tarjetas ? u.dominadas / u.tarjetas : 0;
         return '<tr class="adm-fila" tabindex="0" data-uid="' + esc(u.id) + '" aria-label="Ver ficha de ' + esc(u.nombre) + '">' +
-          '<td><span class="adm-usuario">' + avatarHtml(u) + '<span class="adm-usuario-txt"><strong>' + esc(u.nombre) + (u.admin ? ' <span class="adm-chip">admin</span>' : "") + (u.de_prueba ? ' <span class="adm-chip adm-chip-prueba" title="Creó su cuenta después de usar «Probar gratis»">vino de prueba</span>' : "") + "</strong><small>" + esc(u.email) + "</small></span></span></td>" +
+          '<td><span class="adm-usuario">' + avatarHtml(u) + '<span class="adm-usuario-txt"><strong>' + esc(u.nombre) + (u.admin ? ' <span class="adm-chip">admin</span>' : "") + (u.de_prueba ? ' <span class="adm-chip adm-chip-prueba" title="Creó su cuenta después de usar «Probar gratis»">vino de prueba</span>' : "") + "</strong><small>" + esc(u.email) + "</small>" + (u.etiqueta ? '<small class="adm-etq">' + esc(u.etiqueta) + "</small>" : "") + "</span></span></td>" +
           '<td class="adm-td-ultimo">' + esc(hace(u.ultimo)) + '<small class="adm-bajo">desde ' + esc(fechaCorta(new Intl.DateTimeFormat("en-CA", { timeZone: TZ }).format(new Date(u.creado)))) + "</small></td>" +
           '<td class="num" data-l="Días activos">' + num(u.dias) + '</td><td class="num" data-l="Tiempo">' + dur(u.segundos) + "</td>" +
           '<td class="num" data-l="Mazos">' + num(mazos) + "</td>" +

@@ -74,8 +74,23 @@
     return iniciandoPrueba;
   }
 
+  // Entra con Google y, al volver, sigue en la misma pantalla (por ejemplo,
+  // el perfil compartido que estaba mirando).
   function crearCuenta() {
-    if (window.SB && window.SB.beginLogin) window.SB.beginLogin();
+    var dest = /^#\/(u|tienda|perfil|misiones)\b/.test(location.hash) ? location.hash : "";
+    if (window.SB && window.SB.beginLogin) window.SB.beginLogin(dest);
+  }
+
+  // Después de entrar con Google, vuelve a la pantalla desde donde se pidió.
+  function volverADestino() {
+    var dest = "";
+    try {
+      dest = localStorage.getItem("mate-login-dest") || "";
+      localStorage.removeItem("mate-login-dest");
+    } catch (e) { /* sin almacenamiento */ }
+    if (/^#\/[A-Za-z0-9_\-\/%.]*$/.test(dest) && location.hash !== dest) {
+      setTimeout(function () { location.hash = dest; }, 0);
+    }
   }
 
   // Sale del modo de prueba: la cuenta anónima no se puede recuperar, así que
@@ -166,6 +181,7 @@
       try { localStorage.setItem(PRUEBA_KEY, String(next.user.id)); } catch (e) { /* sin almacenamiento */ }
     }
     document.documentElement.classList.toggle("modo-prueba", isTrial());
+    if (next && next.user && !next.demo && !isTrial()) volverADestino();
     // Antes de avisar a los demás módulos, el almacén pasa a los mazos de
     // esta cuenta (o a ninguno si no hay sesión).
     if (window.DeckStore && window.DeckStore.useAccount) {
@@ -213,13 +229,15 @@
         "</button>";
       return;
     }
+    var etq = window.Perfil && window.Perfil.estado && window.Perfil.estado();
     box.innerHTML =
-      '<span class="account-profile">' +
+      '<a class="account-profile" href="#/perfil" title="Mi perfil' + (etq && etq.etiqueta ? " · " + esc(etq.etiqueta) : "") + '">' +
         avatarHtml(u) +
         '<span class="account-name">' + esc(displayName(u)) + "</span>" +
-      "</span>" +
+      "</a>" +
       '<button class="account-btn" id="account-logout" type="button">Salir</button>';
   }
+  window.addEventListener("studappy:perfil", function () { if (user() && !isTrial() && !isDemo()) render(); });
 
   document.addEventListener("click", function (e) {
     if (e.target.closest("#account-login")) {

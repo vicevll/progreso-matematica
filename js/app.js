@@ -698,7 +698,9 @@
     var menu = deck.origen === "tienda"
       ? '<span class="deck-owned-badge">' + ic("check", { size: 14 }) + "Adquirido</span>" +
         '<button class="icon-btn danger" type="button" data-remove-store="' + deck.id + '" title="Eliminar de mi biblioteca" aria-label="Eliminar de mi biblioteca">' + ic("trash") + "</button>"
-      : '<button class="icon-btn" type="button" data-edit="' + deck.id + '" title="Editar mazo">' + ic("edit") + "</button>" +
+      : (window.Perfil && window.Perfil.compartido(deck.id) ? '<span class="deck-compartido" title="Compartido en tu perfil">' + ic("share", { size: 13 }) + "Compartido</span>" : "") +
+        '<button class="icon-btn" type="button" data-share="' + deck.id + '" title="Compartir mazo" aria-label="Compartir mazo">' + ic("share") + "</button>" +
+        '<button class="icon-btn" type="button" data-edit="' + deck.id + '" title="Editar mazo">' + ic("edit") + "</button>" +
         '<button class="icon-btn danger" type="button" data-del="' + deck.id + '" title="Eliminar mazo">' + ic("trash") + "</button>";
     return (
       '<div class="deck-card' + (deck.origen === "tienda" ? " owned" : "") + (deck.catalogId === "paes-m1-numeros" ? " store-numbers" : "") + ' reveal" style="--deck-color:' + esc(deck.color) + ";transition-delay:" + (index % 8) * 35 + 'ms">' +
@@ -720,9 +722,17 @@
     );
   }
 
+  // Mazos compartidos en el perfil (insignia «Compartido» en las tarjetas).
+  var firmaCompartidosGrid = "";
+  function firmaCompartidos() {
+    var p = window.Perfil && window.Perfil.estado ? window.Perfil.estado() : null;
+    return p && p.compartidos ? p.compartidos.map(function (c) { return c.id; }).sort().join(",") : "";
+  }
+
   function renderGrid(filter) {
     var grid = document.getElementById("deck-grid");
     if (!grid) return;
+    firmaCompartidosGrid = firmaCompartidos();
     var term = (filter || "").trim().toLowerCase();
     var decks = window.DeckStore.all().filter(function (deck) {
       if (!term) return true;
@@ -825,6 +835,7 @@
 
   function renderHome() {
     updateTopbarTag();
+    firmaCompartidosGrid = firmaCompartidos();
     var decks = window.DeckStore.all();
     var totalDone = 0;
     var totalCards = 0;
@@ -1437,6 +1448,12 @@
       openGenerador();
       return;
     }
+    var share = e.target.closest("[data-share]");
+    if (share) {
+      e.preventDefault();
+      if (window.Perfil) window.Perfil.abrirCompartir(share.getAttribute("data-share"));
+      return;
+    }
     var edit = e.target.closest("[data-edit]");
     if (edit) {
       e.preventDefault();
@@ -1547,6 +1564,17 @@
   function route() {
     var mainNav = document.getElementById("main-nav");
     if (mainNav) mainNav.hidden = !isSignedIn();
+    // Perfil público de otra persona (#/u/CometaAzul-4821[/mazo]): se ve
+    // también sin sesión, para abrir enlaces compartidos.
+    var partesU = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
+    if (partesU[0] === "u" && partesU[1]) {
+      session = null;
+      vistaSubmazos = null;
+      if (window.Perfil) window.Perfil.renderPublico(app, partesU[1], partesU[2]);
+      else app.innerHTML = '<p class="store-setup-note">Los perfiles aún no están disponibles.</p>';
+      window.scrollTo(0, 0);
+      return;
+    }
     if (!isSignedIn()) {
       session = null;
       if (window.Generador && window.Generador.isOpen && window.Generador.isOpen()) window.Generador.close();
@@ -1568,6 +1596,10 @@
       session = null;
       if (window.Tienda) window.Tienda.render(app);
       else app.innerHTML = '<p class="store-setup-note">La tienda aún no está disponible.</p>';
+    } else if (parts[0] === "perfil") {
+      session = null;
+      if (window.Perfil) window.Perfil.render(app);
+      else app.innerHTML = '<p class="store-setup-note">El perfil aún no está disponible.</p>';
     } else if (parts[0] === "misiones") {
       session = null;
       if (window.Economia) window.Economia.render(app);
@@ -1641,6 +1673,10 @@
     });
   }
   window.addEventListener("studappy:mazos-sincronizados", refreshHomeFromSync);
+  // Solo se redibuja si cambió qué mazos se comparten (no en cada carga del perfil).
+  window.addEventListener("studappy:perfil", function () {
+    if (document.getElementById("deck-grid") && firmaCompartidos() !== firmaCompartidosGrid) refreshHomeFromSync();
+  });
   // "Cargando tus mazos…" solo se ve cuando todavía no hay ninguno: si ya hay
   // mazos en pantalla, empezar o terminar de cargar no cambia nada.
   window.addEventListener("studappy:mazos-cargando", function () {
@@ -1658,6 +1694,15 @@
       window.scrollTo(0, y);
     }
   });
+  window.StudappyApp = {
+    renderMath: renderMath,
+    cardHtml: cardHtml,
+    cuposPrueba: cuposPrueba,
+    limitePrueba: limitePrueba,
+    esPrueba: esPrueba,
+    route: route
+  };
+
   setupParallax();
   route();
 })();
