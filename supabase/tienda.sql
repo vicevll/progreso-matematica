@@ -43,6 +43,23 @@ on conflict (catalog_id) do update set
   is_free = excluded.is_free,
   active = excluded.active;
 
+-- Raíces y potencias PAES: PAES M1, gratis (tema Raíces y potencias, 3 submazos).
+insert into public.store_catalog (catalog_id, title, description, color, is_free, active)
+values (
+  'paes-m1-raices-potencias',
+  'Raíces y potencias PAES',
+  '40 tarjetas: 20 propiedades para resolver y 20 preguntas tipo PAES (10 de potencias y 10 de raíces).',
+  '#ff5fb8',
+  true,
+  true
+)
+on conflict (catalog_id) do update set
+  title = excluded.title,
+  description = excluded.description,
+  color = excluded.color,
+  is_free = excluded.is_free,
+  active = excluded.active;
+
 -- Mazos que se canjean con puntos (temas Aurora química y Gran Guerra). El precio está en
 -- tienda_items (supabase/misiones.sql); is_free = false hace que adquirir_mazo
 -- pida el canje.

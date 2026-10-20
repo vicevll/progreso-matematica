@@ -91,6 +91,7 @@
     var t = temaDe(deck);
     if (t === "aurora-quimica") return { clase: "aq", escena: escenaAuroraHtml, img: AQ_IMG, icono: iconoQuimica };
     if (t === "gran-guerra") return { clase: "gg", escena: escenaGuerraHtml, img: GG_IMG, icono: iconoGuerra };
+    if (t === "raices-potencias") return { clase: "rp", escena: escenaPotenciasHtml, img: RP_IMG, icono: iconoPotencias };
     return null;
   }
 
@@ -227,6 +228,71 @@
     escenaHtml: escenaGuerraHtml,
     imagenHtml: function () { return GG_IMG; },
     icono: iconoGuerra,
+    nivel: nivelAurora
+  };
+
+  /* ---------- Tema Raíces y potencias ---------- */
+
+  function iconoPotencias(nombre, size) {
+    return '<img class="px-icono" src="img/potencias/' + esc(nombre) + '.svg?v=1" alt="" width="' + (size || 32) + '" height="' + (size || 32) + '" />';
+  }
+
+  // Cubo de 2x2x2 cubitos bajo una raíz cúbica dorada (∛8 = 2), en pixel art.
+  var RP_IMG = '<img class="aq-img rp-img" src="img/raices-potencias.svg?v=1" alt="Cubo de ocho cubitos bajo una raíz cúbica, en pixel art" width="58" height="44" decoding="async" />';
+  // [ícono, x %, y %, tamaño px, giro, duración s, desfase s]
+  var RP_FLOTA = [
+    ["potencia", 6, 10, 30, -8, 15, -2], ["raiz", 84, 8, 30, 8, 18, -6], ["cubo", 7, 60, 26, -10, 16, -9],
+    ["cuadrado", 88, 58, 24, 6, 20, -4], ["curva", 74, 32, 22, 0, 17, -7], ["pizarra", 19, 34, 22, -6, 21, -12]
+  ];
+  // Cuadraditos que suben, de 2, 4 y 8 px (potencias de 2): [x %, duración s, tamaño px, desfase s]
+  var RP_CUADROS = [
+    [5, 11, 2, 0], [13, 14, 4, -5], [24, 12, 2, -8], [35, 16, 8, -2], [46, 13, 2, -10], [57, 15, 4, -6],
+    [66, 11, 2, -1], [76, 17, 8, -9], [85, 12, 4, -3], [94, 14, 2, -12]
+  ];
+
+  // Curvas de la escena, en un lienzo de 400 x 200: la exponencial y = 2^x
+  // (crece cada vez más rápido) y la raíz y = √x (crece cada vez más lento).
+  var RP_CURVAS = (function () {
+    var exp = [], raiz = [];
+    for (var i = 0; i <= 40; i++) {
+      var x = i * 10;
+      exp.push((i ? "L" : "M") + x + " " + (192 - Math.pow(2, -4 + 8 * x / 400) / 16 * 176).toFixed(1));
+      raiz.push((i ? "L" : "M") + x + " " + (192 - Math.sqrt(16 * x / 400) / 4 * 118).toFixed(1));
+    }
+    return { exp: exp.join(""), raiz: raiz.join("") };
+  })();
+
+  // Papel milimetrado de noche: cuadrícula que se desliza, las dos curvas que
+  // se dibujan solas (con un destello que las recorre), cuadraditos que suben
+  // y símbolos de potencias y raíces flotando.
+  function escenaPotenciasHtml() {
+    var flotan = RP_FLOTA.map(function (f) {
+      return '<span class="aq-flota rp-flota" style="--x:' + f[1] + "%;--y:" + f[2] + "%;--s:" + f[3] + "px;--r:" + f[4] + "deg;--t:" + f[5] + "s;--d:" + f[6] + 's">' + iconoPotencias(f[0], f[3]) + "</span>";
+    }).join("");
+    var cuadros = RP_CUADROS.map(function (q) {
+      return '<span class="rp-cuadro" style="--x:' + q[0] + "%;--t:" + q[1] + "s;--s:" + q[2] + "px;--d:" + q[3] + 's"></span>';
+    }).join("");
+    return (
+      '<div class="aq-escena rp-escena" aria-hidden="true">' +
+        '<span class="rp-cuadricula"></span>' +
+        '<span class="rp-brillo"></span>' +
+        '<svg class="rp-curvas" viewBox="0 0 400 200" preserveAspectRatio="none" focusable="false">' +
+          '<path class="rp-curva rp-halo rp-exp" d="' + RP_CURVAS.exp + '" pathLength="100" vector-effect="non-scaling-stroke"/>' +
+          '<path class="rp-curva rp-halo rp-raiz" d="' + RP_CURVAS.raiz + '" pathLength="100" vector-effect="non-scaling-stroke"/>' +
+          '<path class="rp-curva rp-exp" d="' + RP_CURVAS.exp + '" pathLength="100" vector-effect="non-scaling-stroke"/>' +
+          '<path class="rp-curva rp-raiz" d="' + RP_CURVAS.raiz + '" pathLength="100" vector-effect="non-scaling-stroke"/>' +
+          '<path class="rp-destello rp-exp" d="' + RP_CURVAS.exp + '" pathLength="100" vector-effect="non-scaling-stroke"/>' +
+          '<path class="rp-destello rp-raiz" d="' + RP_CURVAS.raiz + '" pathLength="100" vector-effect="non-scaling-stroke"/>' +
+        "</svg>" +
+        cuadros + flotan +
+      "</div>"
+    );
+  }
+
+  window.RaicesPotenciasArte = {
+    escenaHtml: escenaPotenciasHtml,
+    imagenHtml: function () { return RP_IMG; },
+    icono: iconoPotencias,
     nivel: nivelAurora
   };
 
@@ -426,8 +492,15 @@
     }, 6000);
   }
 
+  // Alternativas seguidas («A)», «B)», «C)»…) de una pregunta: en dos columnas.
+  var OPCIONES_RE = /<p><strong>A\)<\/strong>(?:(?!<\/p>)[\s\S])*<\/p>(?:\s*<p><strong>[B-E]\)<\/strong>(?:(?!<\/p>)[\s\S])*<\/p>)+/g;
+
   function cardHtml(text) {
-    if (window.mdToHtml) return window.mdToHtml(text == null ? "" : String(text));
+    if (window.mdToHtml) {
+      return window.mdToHtml(text == null ? "" : String(text)).replace(OPCIONES_RE, function (m) {
+        return '<div class="card-opciones">' + m + "</div>";
+      });
+    }
     return "<p>" + escText(text) + "</p>";
   }
 
@@ -1316,8 +1389,29 @@
 
     renderMath(document.querySelector(".flashcard-front .flashcard-stage"));
     renderMath(document.querySelector(".flashcard-back .flashcard-stage"));
+    marcarScrollCartas();
+    // Las fuentes de las fórmulas pueden llegar después y cambiar el alto.
+    setTimeout(marcarScrollCartas, 500);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(marcarScrollCartas);
     setupReveal();
   }
+
+  // Tarjetas largas: si queda texto más abajo, el borde inferior se difumina
+  // (clase hay-mas) para que se note que se puede deslizar.
+  function marcarScroll(stage) {
+    if (!stage) return;
+    stage.classList.toggle("hay-mas", stage.scrollHeight - stage.clientHeight - stage.scrollTop > 4);
+  }
+
+  function marcarScrollCartas() {
+    var stages = document.querySelectorAll(".flashcard-stage");
+    for (var i = 0; i < stages.length; i++) marcarScroll(stages[i]);
+  }
+
+  document.addEventListener("scroll", function (e) {
+    if (e.target && e.target.classList && e.target.classList.contains("flashcard-stage")) marcarScroll(e.target);
+  }, true);
+  window.addEventListener("resize", marcarScrollCartas);
 
   function renderSummary(deck, stats) {
     avisarEstudio("fin");
@@ -1386,6 +1480,7 @@
     var grade = document.getElementById("fc-grade");
     if (show) show.style.display = session.flipped ? "none" : "inline-flex";
     if (grade) grade.hidden = !session.flipped;
+    marcarScrollCartas();   // la cara que se ve ahora recién tiene tamaño
   }
 
   // "sabe": dominada · "no": vuelve al final de esta ronda · "pendiente": se

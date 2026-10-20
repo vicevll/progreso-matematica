@@ -1,0 +1,415 @@
+/* Studappy · tema «Raíces y potencias» (mazo gratis de PAES M1).
+   Usa la misma tarjeta que Aurora química (clases aq-* de neon.css) y cambia
+   la escena: papel milimetrado de noche, la curva exponencial y = 2^x (rosada)
+   y la de la raíz y = √x (cian) que se dibujan solas, cuadraditos de 2, 4 y
+   8 px que suben (potencias de 2) y un cubo de 2x2x2 bajo una raíz cúbica. */
+
+.deck-card.deck-rp,
+.mago-portada.rp-portada,
+.store-card.store-rp {
+  --rp-rosa: #ff5fb8;
+  --rp-rosa-claro: #ffb3dc;
+  --rp-cian: #5ee6ff;
+  --rp-cian-claro: #c4f6ff;
+  --rp-oro: #ffd36b;
+  --rp-cielo:
+    radial-gradient(ellipse 70% 60% at 18% -12%, rgba(255, 95, 184, 0.24), transparent 70%),
+    radial-gradient(ellipse 60% 55% at 92% -4%, rgba(60, 196, 236, 0.22), transparent 72%),
+    radial-gradient(ellipse 80% 50% at 50% 115%, rgba(255, 211, 107, 0.1), transparent 70%),
+    linear-gradient(180deg, #0b0a2a 0%, #110c36 52%, #190e3b 100%);
+  border-color: rgba(255, 95, 184, 0.36);
+  background: var(--rp-cielo);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.42), 0 0 40px rgba(255, 95, 184, 0.1);
+}
+
+/* ---------- Escena ---------- */
+
+/* Papel milimetrado: líneas finas cada 12 px y gruesas cada 60 px. */
+.rp-cuadricula {
+  position: absolute;
+  inset: -60px;
+  background-image:
+    linear-gradient(rgba(140, 190, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(140, 190, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(rgba(140, 190, 255, 0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(140, 190, 255, 0.13) 1px, transparent 1px);
+  background-size: 12px 12px, 12px 12px, 60px 60px, 60px 60px;
+  -webkit-mask-image: radial-gradient(ellipse 75% 85% at 55% 45%, #000 30%, transparent 78%);
+  mask-image: radial-gradient(ellipse 75% 85% at 55% 45%, #000 30%, transparent 78%);
+  animation: rp-deslizar 24s linear infinite;
+}
+
+@keyframes rp-deslizar {
+  from { transform: translate(0, 0); }
+  to { transform: translate(60px, -60px); }
+}
+
+/* Resplandor bajo el cubo. */
+.rp-brillo {
+  position: absolute;
+  bottom: -34%;
+  left: 50%;
+  width: 72%;
+  aspect-ratio: 1.6;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(255, 95, 184, 0.22), rgba(94, 230, 255, 0.08) 45%, transparent 68%);
+  transform: translateX(-50%);
+}
+
+/* Las dos curvas: se dibujan, se quedan un rato y se borran. */
+.rp-curvas {
+  position: absolute;
+  inset: 8% 0 0;
+  width: 100%;
+  height: 92%;
+  overflow: visible;
+}
+
+.rp-curva {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 100 100;
+  stroke-dashoffset: 100;
+  opacity: 0.55;
+  animation: rp-dibujar 12s ease-in-out infinite;
+}
+
+.rp-curva.rp-exp {
+  stroke: var(--rp-rosa);
+}
+
+.rp-curva.rp-raiz {
+  stroke: var(--rp-cian);
+  animation-delay: -6s;
+}
+
+/* Halo: la misma curva, más ancha y transparente (brillo neón). */
+.rp-curva.rp-halo {
+  stroke-width: 7;
+  opacity: 0.16;
+}
+
+@keyframes rp-dibujar {
+  0% { stroke-dashoffset: 100; }
+  40%, 70% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -100; }
+}
+
+/* Un destello corto que recorre cada curva. */
+.rp-destello {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 3 200;
+  stroke-dashoffset: 3;
+  animation: rp-recorrer 6s linear infinite;
+}
+
+.rp-destello.rp-exp {
+  stroke: #fff0f8;
+}
+
+.rp-destello.rp-raiz {
+  stroke: #effdff;
+  animation-duration: 7.5s;
+  animation-delay: -3s;
+}
+
+@keyframes rp-recorrer {
+  from { stroke-dashoffset: 3; }
+  to { stroke-dashoffset: -100; }
+}
+
+/* Cuadraditos de 2, 4 y 8 px que suben girando: potencias de 2. */
+.rp-cuadro {
+  position: absolute;
+  bottom: -10px;
+  left: var(--x);
+  width: var(--s);
+  height: var(--s);
+  border: 1px solid var(--rp-rosa-claro);
+  box-shadow: 0 0 6px rgba(255, 95, 184, 0.8);
+  opacity: 0;
+  animation: rp-subir var(--t) linear var(--d) infinite;
+}
+
+.rp-cuadro:nth-of-type(3n) {
+  border-color: var(--rp-cian-claro);
+  box-shadow: 0 0 6px rgba(94, 230, 255, 0.8);
+}
+
+.rp-cuadro:nth-of-type(4n) {
+  border-color: #ffe39a;
+  box-shadow: 0 0 6px rgba(255, 211, 107, 0.8);
+}
+
+@keyframes rp-subir {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  12% { opacity: 0.9; }
+  75% { opacity: 0.55; }
+  100% { transform: translateY(-340px) rotate(180deg); opacity: 0; }
+}
+
+.rp-flota {
+  opacity: 0.85;
+  filter: drop-shadow(0 0 8px rgba(255, 95, 184, 0.35));
+}
+
+.rp-flota:nth-of-type(even) {
+  filter: drop-shadow(0 0 8px rgba(94, 230, 255, 0.35));
+}
+
+.rp-flota .px-icono,
+.rp-img {
+  image-rendering: pixelated;
+}
+
+/* El cubo flota y la raíz brilla. */
+.rp-img {
+  filter: drop-shadow(0 0 18px rgba(255, 95, 184, 0.35)) drop-shadow(0 0 10px rgba(255, 211, 107, 0.18)) drop-shadow(0 6px 0 rgba(0, 0, 0, 0.35));
+}
+
+/* ---------- Tarjeta en Mis mazos ---------- */
+
+.deck-card.deck-rp:hover,
+.deck-card.deck-rp:focus-within {
+  border-color: rgba(255, 179, 220, 0.62);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.48), 0 0 46px rgba(255, 95, 184, 0.18);
+}
+
+.aq-arte .rp-img {
+  width: 96px;
+  margin: 8px 46px 0 0;
+}
+
+.deck-rp .aq-menu .deck-owned-badge,
+.deck-rp .aq-menu .icon-btn {
+  background: rgba(20, 12, 46, 0.86);
+}
+
+/* Tres submazos en una fila: ícono y avance (el nombre va en el título). */
+.deck-rp .aq-chips {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.deck-rp .aq-sub {
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 4px;
+  border-color: rgba(255, 95, 184, 0.24);
+  background: rgba(24, 14, 54, 0.78);
+}
+
+.deck-rp .aq-sub .px-icono {
+  width: 24px;
+  height: 24px;
+}
+
+.deck-rp .aq-sub-num {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.deck-rp .aq-sub-txt strong {
+  font-family: var(--font-pixel);
+  font-size: 0.66rem;
+  font-weight: 400;
+}
+
+.deck-rp .aq-sub:hover,
+.deck-rp .aq-sub:focus-visible {
+  border-color: rgba(255, 179, 220, 0.66);
+  background: rgba(40, 20, 74, 0.94);
+}
+
+.deck-rp .aq-sub.completo {
+  border-color: rgba(94, 230, 255, 0.6);
+}
+
+.deck-rp .aq-sub-num,
+.rp-submazos .submazo-num {
+  color: #7fe0ff;
+}
+
+.deck-rp .aq-cuerpo > .eyebrow,
+.rp-portada .eyebrow,
+.store-rp .sm-cuerpo .eyebrow {
+  color: var(--rp-rosa-claro);
+}
+
+.deck-rp .mini-bar > span,
+.rp-portada .mini-bar > span,
+.rp-submazos .submazo .mini-bar > span,
+.study-rp .mini-bar > span {
+  background: linear-gradient(90deg, #ff5fb8, #ffd36b 50%, #5ee6ff);
+  opacity: 1;
+}
+
+html.dark-mode .deck-rp .btn.primary,
+html.dark-mode .rp-portada .btn.primary,
+html.dark-mode .store-rp .btn.primary {
+  border: 1px solid rgba(255, 95, 184, 0.6);
+  background: #3a1146;
+  color: #fff0f8;
+}
+
+html.dark-mode .deck-rp .btn.primary:hover,
+html.dark-mode .rp-portada .btn.primary:hover,
+html.dark-mode .store-rp .btn.primary:hover {
+  border-color: rgba(255, 179, 220, 0.95);
+  background: #4c1a5c;
+  color: #ffffff;
+}
+
+/* ---------- Portada del mazo y submazos ---------- */
+
+.mago-portada.aq-portada.rp-portada {
+  border-color: rgba(255, 95, 184, 0.36);
+}
+
+.rp-portada p {
+  color: #d8cdf0;
+}
+
+.mago-portada-img .rp-img {
+  width: min(280px, 82%);
+}
+
+.rp-submazos .submazo:hover,
+.rp-submazos .submazo:focus-visible {
+  border-color: rgba(255, 95, 184, 0.55);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.36), 0 0 26px rgba(255, 95, 184, 0.16);
+}
+
+.rp-submazos .submazo-icono,
+.study-rp .ready-icon.ready-px {
+  border-color: rgba(255, 95, 184, 0.34);
+  background: radial-gradient(circle, rgba(255, 95, 184, 0.24), rgba(24, 14, 54, 0.75));
+}
+
+.rp-submazos .submazo-icono .px-icono,
+.study-rp .ready-icon .px-icono {
+  image-rendering: pixelated;
+}
+
+.rp-submazos .submazo-jugar {
+  border-color: rgba(255, 95, 184, 0.55);
+  background: #3a1146;
+  color: #fff0f8;
+}
+
+.rp-submazos .submazo:hover .submazo-jugar {
+  border-color: rgba(255, 179, 220, 0.95);
+  background: #4c1a5c;
+}
+
+/* ---------- Estudio: carta rosada, respuesta cian ---------- */
+
+.study-rp {
+  --carta-a: #e0479e;
+  --carta-b: #6b2aa8;
+}
+
+.study-rp .flashcard-back {
+  background: linear-gradient(140deg, #2a9fd0, #3a4fb8);
+}
+
+.study-rp .flashcard-front .flashcard-kicker {
+  color: #ffd0ea;
+}
+
+.study-rp .flashcard-back .flashcard-kicker {
+  color: #c4f6ff;
+}
+
+/* Fórmulas en bloque más compactas (muchas tarjetas tienen una), y las
+   alternativas A, B, C y D con un poco de aire. */
+.study-rp .flashcard-text .katex-display {
+  margin: 0.35em 0 0.55em;
+  padding: 0.3em 0;
+  border-top: 1px solid rgba(255, 95, 184, 0.18);
+  border-bottom: 1px solid rgba(255, 95, 184, 0.18);
+}
+
+.study-rp .flashcard-text p + p {
+  margin-top: 0.1em;
+}
+
+/* ---------- Tienda ---------- */
+
+.store-card.store-rp:hover {
+  border-color: rgba(255, 179, 220, 0.62);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), 0 0 40px rgba(255, 95, 184, 0.18);
+}
+
+.sa-arte .rp-img {
+  width: 150px;
+  margin-top: 8px;
+}
+
+.store-rp .sm-cuerpo > p:not(.store-message) {
+  color: #d8cdf0;
+}
+
+.store-rp .sm-submazo {
+  border-color: rgba(255, 95, 184, 0.26);
+  background: rgba(24, 14, 54, 0.78);
+}
+
+.store-rp .store-badge.sa-badge {
+  border-color: rgba(94, 230, 255, 0.5);
+  background: #0e2a44;
+  color: #c4f6ff;
+}
+
+/* «Gratis» en dorado, como una moneda que no se paga. */
+.store-rp .store-badge.sa-gratis {
+  border-color: rgba(255, 211, 107, 0.7);
+  background: #3a2a08;
+  color: #ffe6a6;
+  font-family: var(--font-pixel);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ---------- Pantallas angostas y sin animación ---------- */
+
+@media (max-width: 720px) {
+  .study-rp .flashcard-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .sa-arte .rp-img {
+    width: 128px;
+  }
+
+  .mago-portada-img .rp-img {
+    width: min(210px, 64%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rp-cuadricula,
+  .rp-curva,
+  .rp-destello,
+  .rp-cuadro {
+    animation: none;
+  }
+
+  .rp-curva {
+    stroke-dashoffset: 0;
+  }
+
+  .rp-destello,
+  .rp-cuadro {
+    display: none;
+  }
+}

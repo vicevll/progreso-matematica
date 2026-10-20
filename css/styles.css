@@ -2581,14 +2581,46 @@ html.dark-mode {
   }
 }
 
-/* Ajusta el tamaño y el scroll del texto de ejercicios largos. */
+/* Ajusta el tamaño y el scroll del texto de ejercicios largos. El texto se
+   centra con márgenes automáticos (no con align-items: center): si no cabe,
+   se puede bajar para leerlo entero sin que se corte el comienzo. */
 .flashcard-stage {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   overflow-x: hidden;
   overflow-y: auto;
   padding: 14px 4px;
+}
+
+.flashcard-stage > .flashcard-text {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+/* Sin margen sobrante al final (no suma un scroll de unos pocos píxeles). */
+.flashcard-text > :last-child,
+.flashcard-text > :last-child > :last-child {
+  margin-bottom: 0;
+}
+
+/* Queda texto más abajo: el borde inferior se difumina (js/app.js). */
+.flashcard-stage.hay-mas {
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 34px), transparent);
+  mask-image: linear-gradient(180deg, #000 calc(100% - 34px), transparent);
+}
+
+/* Alternativas A), B), C), D) de una pregunta: en dos columnas (js/app.js). */
+.card-opciones {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.3em 1.2em;
+  margin: 0.35em 0 0.55em;
+}
+
+.flashcard-text .card-opciones p,
+.card-opciones p {
+  margin: 0;
 }
 
 .flashcard-text {

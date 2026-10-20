@@ -56,6 +56,7 @@
     if (item.theme === "mago" && window.MagoArte) return magoItemHtml(item, owned, available, action, message, counts, etiqueta);
     if (item.theme === "aurora-quimica" && window.AuroraQuimicaArte) return auroraItemHtml(item, owned, action, message, counts, etiqueta, conPuntos, window.AuroraQuimicaArte, "");
     if (item.theme === "gran-guerra" && window.GranGuerraArte) return auroraItemHtml(item, owned, action, message, counts, etiqueta, conPuntos, window.GranGuerraArte, " store-gg");
+    if (item.theme === "raices-potencias" && window.RaicesPotenciasArte) return auroraItemHtml(item, owned, action, message, counts, etiqueta, conPuntos, window.RaicesPotenciasArte, " store-rp");
     var mark = icon(available ? "cards" : "sparkle", 22);
     return (
       '<article class="store-card' + (owned ? " owned" : "") + (item.theme ? " store-" + esc(item.theme) : "") + '" style="--deck-color:' + esc(item.color) + '">' +
@@ -94,8 +95,9 @@
     );
   }
 
-  // Mazo por puntos con diseño propio (Aurora química o Gran Guerra): franja
-  // de arte con su ilustración, su nivel, sus submazos y el precio.
+  // Mazo con diseño propio (Aurora química, Gran Guerra o Raíces y potencias):
+  // franja de arte con su ilustración, su nivel, sus submazos y el precio
+  // (o «Gratis» si no se canjea con puntos).
   function auroraItemHtml(item, owned, action, message, counts, etiqueta, conPuntos, arte, claseTema) {
     var nivel = arte.nivel(item);
     var iconos = (item.sections || []).map(function (sec, i) {
@@ -108,7 +110,8 @@
       '<article class="store-card store-aq' + (claseTema || "") + (owned ? " owned" : "") + '" style="--deck-color:' + esc(item.color) + '">' +
         '<div class="sa-arte">' + arte.escenaHtml() + arte.imagenHtml() +
           (nivel ? '<span class="aq-nivel">' + esc(nivel) + "</span>" : "") +
-          (owned || (conPuntos && conPuntos.tengo) ? '<span class="store-badge sm-badge sa-badge free">' + (owned ? "En tu biblioteca" : "Canjeado") + "</span>" : "") +
+          (owned || (conPuntos && conPuntos.tengo) ? '<span class="store-badge sm-badge sa-badge free">' + (owned ? "En tu biblioteca" : "Canjeado") + "</span>"
+            : !conPuntos && !(item.price > 0) && item.status === "available" ? '<span class="store-badge sm-badge sa-badge free sa-gratis">Gratis</span>' : "") +
         "</div>" +
         '<div class="sm-cuerpo">' +
           '<span class="eyebrow">' + esc(String(item.subtitle || item.tags.join(" · ")).toUpperCase()) + "</span>" +
